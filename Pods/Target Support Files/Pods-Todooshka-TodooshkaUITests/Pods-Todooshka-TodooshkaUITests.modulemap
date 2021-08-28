@@ -1,0 +1,6 @@
+framework module Pods_Todooshka_TodooshkaUITests {
+  umbrella header "Pods-Todooshka-TodooshkaUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

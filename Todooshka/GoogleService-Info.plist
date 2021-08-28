@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>422696095896-u0qjfclt9jhhlookg1be9ffv68i7ffgs.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.422696095896-u0qjfclt9jhhlookg1be9ffv68i7ffgs</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDOtAHQ2_KpkzfvmxwEmgEhoihO8E_FiSY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>422696095896</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>Piu.Todooshka</string>
+	<key>PROJECT_ID</key>
+	<string>tudushka-ab3f7</string>
+	<key>STORAGE_BUCKET</key>
+	<string>tudushka-ab3f7.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:422696095896:ios:d4f12e926b5accf4a7c0ed</string>
+	<key>DATABASE_URL</key>
+	<string>https://tudushka-ab3f7.firebaseio.com</string>
+</dict>
+</plist>
