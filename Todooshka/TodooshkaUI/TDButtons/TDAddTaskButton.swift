@@ -10,9 +10,7 @@ import UIKit
 class TDAddTaskButton: UIButton {
     
     override func draw(_ rect: CGRect) {
-        
-        cornerRadius = bounds.width / 2
-        
+    
         layer.shadowOffset = CGSize(width: 0.0, height: 4.0)
         layer.shadowOpacity = 1.0
         layer.shadowRadius = 18.0
@@ -27,6 +25,8 @@ class TDAddTaskButton: UIButton {
         addSubview(imageView)
         imageView.anchorCenterXToSuperview()
         imageView.anchorCenterYToSuperview()
+        
+        cornerRadius = bounds.width / 2
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

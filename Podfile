@@ -23,6 +23,7 @@ pod 'SwipeCellKit'
 pod 'ObjectMapper'
 pod 'SwiftyOnboard'
 pod 'lottie-ios'
+pod 'NightNight'
 
   target 'TodooshkaTests' do
     inherit! :search_paths

@@ -87,12 +87,15 @@ class OnboardingViewController: UIViewController {
         skipButton.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, bottomConstant: 16)
         skipButton.anchorCenterXToSuperview()
         
-       // authButton.configure(text: "Create an account or sign in")
-        authButton.setTitle("Create an account or sign in", for: .normal)
-        
         view.addSubview(authButton)
         authButton.anchor(left: view.leftAnchor, bottom: skipButton.topAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 26, rightConstant: 16, heightConstant: 50)
         
+        authButton.backgroundColor = Style.blueRibbon
+        authButton.cornerRadius = 25
+        
+        let attrString = NSAttributedString(string: "Create an account or sign in", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
+        authButton.setAttributedTitle(attrString, for: .normal)
+
         secondDot.anchor(bottom: authButton.topAnchor, bottomConstant: 74, widthConstant: 6, heightConstant: 6)
         secondDot.anchorCenterXToSuperview()
 

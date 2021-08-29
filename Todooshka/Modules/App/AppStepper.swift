@@ -22,6 +22,6 @@ class AppStepper: Stepper {
     var initialStep: Step {
         
         //MARK: - Проверяем нужен ли онбоардинг
-        return AppStep.onboardingIsCompleted
+        return UserDefaults.standard.bool(forKey: "isOnboardingCompleted") ? AppStep.onboardingIsCompleted : AppStep.onboardingIsRequired
     }
 }

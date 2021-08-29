@@ -23,7 +23,7 @@ class TaskListViewController: UIViewController {
     var viewModel: TaskListViewModel!
     
     //MARK: - UI Elements
-    private lazy var overdueTaskButton = UIButton(type: .custom) //TDTopRoundButton(imageName: "timer-pause")
+    private lazy var overdueTaskButton = TDTopRoundButton(image: UIImage(named: "timer-pause")?.original)
     
     private lazy var headerImageView: UIImageView = {
         let imageView = UIImageView()
@@ -112,10 +112,10 @@ class TaskListViewController: UIViewController {
         view.addSubview(collectionView)
         collectionView.anchor(top: taskCountLabel.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 29, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
         
-        overdueTaskButton.setImage(UIImage(named: "timer-pause"), for: .normal)
-        
         view.addSubview(overdueTaskButton)
         overdueTaskButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50, heightConstant: 50)
+        
+        
         
     }
     

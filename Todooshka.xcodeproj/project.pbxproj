@@ -97,6 +97,7 @@
 		60D5662D26CC2CBB00D865DD /* OnboardingCollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662C26CC2CBB00D865DD /* OnboardingCollectionViewCellModel.swift */; };
 		60D6645A269362550032908E /* DeletedTasksListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D66459269362550032908E /* DeletedTasksListViewController.swift */; };
 		60D6645C269362670032908E /* DeletedTasksListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D6645B269362670032908E /* DeletedTasksListViewModel.swift */; };
+		60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */; };
 		60EB113F2656A32500992BF8 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB113E2656A32400992BF8 /* Task.swift */; };
 		60EB11412656A9B000992BF8 /* TaskListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB11402656A9B000992BF8 /* TaskListCollectionViewCell.swift */; };
 		60F0719326DA70600048AB71 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F0719226DA70600048AB71 /* Colors.swift */; };
@@ -228,6 +229,7 @@
 		60D5662C26CC2CBB00D865DD /* OnboardingCollectionViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCollectionViewCellModel.swift; sourceTree = "<group>"; };
 		60D66459269362550032908E /* DeletedTasksListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTasksListViewController.swift; sourceTree = "<group>"; };
 		60D6645B269362670032908E /* DeletedTasksListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTasksListViewModel.swift; sourceTree = "<group>"; };
+		60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDTopRoundButton.swift; sourceTree = "<group>"; };
 		60EB113C2656850C00992BF8 /* Todooshka.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Todooshka.entitlements; sourceTree = "<group>"; };
 		60EB113E2656A32400992BF8 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		60EB11402656A9B000992BF8 /* TaskListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -689,6 +691,7 @@
 			isa = PBXGroup;
 			children = (
 				60F0719B26DA77B70048AB71 /* TDAddTaskButton.swift */,
+				60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */,
 			);
 			path = TDButtons;
 			sourceTree = "<group>";
@@ -954,6 +957,7 @@
 				60BE45AA26D40854004B67E5 /* AuthViewController.swift in Sources */,
 				60FA514126D806CC007B3B36 /* ConfirmRemoveTaskViewModel.swift in Sources */,
 				60CA046926A1CA990052CECF /* CoreDataTask+CoreDataProperties.swift in Sources */,
+				60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */,
 				60BABA40269B48FF00D5E40B /* Cell.swift in Sources */,
 				60B82FEB265457BF00BF5F94 /* NetworkServicesConstants.swift in Sources */,
 				6067D9A126B1EF7700F0FB72 /* TabBar.swift in Sources */,

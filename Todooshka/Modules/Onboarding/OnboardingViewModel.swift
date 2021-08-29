@@ -50,6 +50,7 @@ class OnboardingViewModel: Stepper {
     }
     
     func skipButtonClick() {
+        UserDefaults.standard.setValue(true, forKey: "isOnboardingCompleted")
         steps.accept(AppStep.onboardingIsCompleted)
     }
     

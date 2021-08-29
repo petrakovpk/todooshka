@@ -18,12 +18,10 @@ class UserProfileViewController: UIViewController {
     var viewModel: UserProfileViewModel!
     
     let disposeBag = DisposeBag()
-    
-    //let cellWidth = (UIScreen.main.bounds.width - 6 * 5 - 32)/7
-    
+        
     //MARK: - UI Elements
-    let settingsButton = UIButton(type: .custom) //TDTopRoundButton(imageName: "setting")
-    let ideaTasksButton = UIButton(type: .custom) //TDTopRoundButton(imageName: "lamp-charge")
+    let settingsButton = TDTopRoundButton(image: UIImage(named: "setting"))
+    let ideaTasksButton = TDTopRoundButton(image: UIImage(named: "lamp-charge"))
     let helloLabel = UILabel()
     let wreathImageView: UIImageView = {
         let imageView = UIImageView()
@@ -57,9 +55,6 @@ class UserProfileViewController: UIViewController {
     
     //MARK: - Configure UI
     func configureUI() {
-        settingsButton.setImage(UIImage(named: "setting"), for: .normal)
-        ideaTasksButton.setImage(UIImage(named: "lamp-charge"), for: .normal)
-
         view.addSubview(settingsButton)
         settingsButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50, heightConstant: 50)
         

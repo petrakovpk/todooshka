@@ -119,9 +119,6 @@ class UserProfileSettingsViewController: UIViewController {
             default:
                 self.viewModel.itemSelected(indexPath: indexPath)
             }
-            
-           
-            
         }.disposed(by: self.disposeBag)
     }
     
