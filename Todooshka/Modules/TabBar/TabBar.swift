@@ -83,7 +83,6 @@ class TabBar: UITabBar {
         
         backgroundLayer.addSublayer(gradientLayer)
         layer.insertSublayer(backgroundLayer, at: 0)
-        
     }
     
     //MARK: - Core Graph
