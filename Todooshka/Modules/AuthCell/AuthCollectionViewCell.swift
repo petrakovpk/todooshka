@@ -41,11 +41,7 @@ class AuthCollectionViewCell: UICollectionViewCell {
         textField.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 0, rightConstant: 0)
     }
     
-    //MARK: - Colors
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        
-    }
+    
 }
 
 

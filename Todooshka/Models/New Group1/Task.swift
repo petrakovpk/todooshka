@@ -7,7 +7,6 @@
 
 import RxDataSources
 import Firebase
-import UIKit
 import CoreData
 
 enum TaskStatus: String, Codable {

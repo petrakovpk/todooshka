@@ -153,10 +153,10 @@ extension TaskListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
         configure(action: ideaBoxAction, with: .idea)
         configure(action: completeTaskAction, with: .complete)
         
-        deleteAction.backgroundColor = Style.haiti
-        ideaBoxAction.backgroundColor = Style.haiti
-        completeTaskAction.backgroundColor = Style.haiti
-        
+        deleteAction.backgroundColor = UIColor(named: "appBackground")
+        ideaBoxAction.backgroundColor = UIColor(named: "appBackground")
+        completeTaskAction.backgroundColor = UIColor(named: "appBackground")
+      
         return [completeTaskAction, deleteAction, ideaBoxAction]
     }
     

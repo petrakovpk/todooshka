@@ -20,19 +20,19 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
     static var reuseID: String = "OnboardingCollectionViewCell"
     
     //MARK: - UI Elements
-    private var contentImageView = UIView()
-    private var imageView = UIImageView()
-    private var headerLabel: UILabel = {
+    lazy var contentImageView = UIView()
+    lazy var imageView = UIImageView()
+    lazy var headerLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         return label
     }()
     
-    private var descriptionTextView: UITextView = {
+    lazy var descriptionTextView: UITextView = {
         let textView = UITextView()
         textView.font =  UIFont.systemFont(ofSize: 15, weight: .medium)
-        textView.textColor = UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1)
-        textView.backgroundColor = UIColor.clear
+        //textView.textColor = UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1)
+        //textView.backgroundColor = UIColor.clear
         textView.textAlignment = .center
         textView.isEditable = false
         textView.isSelectable = false
@@ -45,6 +45,7 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
         self.viewModel = viewModel
         
         configureUI()
+        setViewColor()
         
         viewModel.imageOutput.bind(to: imageView.rx.image).disposed(by: disposeBag)
         viewModel.headerTextOutput.bind(to: headerLabel.rx.text).disposed(by: disposeBag)
@@ -53,7 +54,6 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
     
     //MARK: - Configure UI
     func configureUI() {
-                
         contentView.addSubview(descriptionTextView)
         descriptionTextView.anchor(left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 16, bottomConstant: 200, rightConstant: 16 , heightConstant: 45)
         descriptionTextView.anchorCenterXToSuperview()
@@ -69,14 +69,8 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
         contentImageView.addSubview(imageView)
         imageView.anchor(top: contentImageView.topAnchor)
         imageView.anchorCenterXToSuperview()
-
     }
     
-//    //MARK: - Colors
-//    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-//        super.traitCollectionDidChange(previousTraitCollection)
-//        contentView.layer.borderColor = TDStyle.Colors.invertedBackgroundColor.cgColor
-//    }
 }
 
 

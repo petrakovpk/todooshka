@@ -35,7 +35,5 @@ class TDTaskCommentTextView: UITextView {
         super.init(coder: aDecoder)
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-    }
+   
 }

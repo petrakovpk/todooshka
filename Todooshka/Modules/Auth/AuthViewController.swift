@@ -23,34 +23,32 @@ class AuthViewController: UIViewController {
     private var currentNonce: String?
     
     //MARK: - UI Elements
-    private let headerLabel: UILabel = {
+    lazy var headerLabel: UILabel = {
         let label = UILabel()
         label.text = "TODOOSHKA"
         label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
         return label
     }()
     
-    private let secondHeaderLabel: UILabel = {
+    lazy var secondHeaderLabel: UILabel = {
         let label = UILabel()
         label.text = "Create an account"
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         return label
     }()
     
-    private let headerDescriptionTextView: UITextView = {
+    lazy var headerDescriptionTextView: UITextView = {
        let textView = UITextView()
         textView.text = "Brief description of onboarding that can be placed in two lines"
         textView.isScrollEnabled = false
         textView.isSelectable = false
         textView.isEditable = false
-        textView.backgroundColor = UIColor.clear
         textView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        textView.textColor = UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1)
         textView.textAlignment = .center
         return textView
     }()
     
-    private lazy var createButton: UIButton = {
+    lazy var createButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .white
         button.setTitleColor(UIColor(red: 0.039, green: 0.047, blue: 0.137, alpha: 1), for: .normal)
@@ -60,7 +58,7 @@ class AuthViewController: UIViewController {
         return button
     }()
     
-    private let appleButton: UIButton = {
+    lazy var appleButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = UIColor(red: 0.128, green: 0.13, blue: 0.154, alpha: 1)
         button.setTitleColor(.white, for: .normal)
@@ -70,7 +68,7 @@ class AuthViewController: UIViewController {
         return button
     }()
     
-    private let googleButton: UIButton = {
+    lazy var googleButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = UIColor(red: 0.937, green: 0.408, blue: 0.322, alpha: 1)
         button.setTitleColor(.white, for: .normal)
@@ -80,7 +78,7 @@ class AuthViewController: UIViewController {
         return button
     }()
     
-    private let skipButton: UIButton = {
+    lazy var skipButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitleColor(UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1), for: .normal)
         
@@ -89,7 +87,7 @@ class AuthViewController: UIViewController {
         return button
     }()
     
-    private let loginButton: UIButton = {
+    lazy var loginButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .white
         button.setTitleColor(UIColor(red: 0.039, green: 0.047, blue: 0.137, alpha: 1), for: .normal)
@@ -99,7 +97,7 @@ class AuthViewController: UIViewController {
         return button
     }()
     
-    private let privacyButton: UIButton = {
+    lazy var privacyButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitleColor(UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1), for: .normal)
         
@@ -111,12 +109,11 @@ class AuthViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         configureUI()
+        setViewColor()
     }
     
     //MARK: - Configure UI
     func configureUI() {
-        view.backgroundColor = UIColor(red: 0.088, green: 0.081, blue: 0.133, alpha: 1)
-        
         view.addSubview(headerLabel)
         headerLabel.anchor(top: view.topAnchor, topConstant: 84)
         headerLabel.anchorCenterXToSuperview()
@@ -266,4 +263,6 @@ extension AuthViewController: ASAuthorizationControllerPresentationContextProvid
         
         return hashString
     }
+  
+ 
 }

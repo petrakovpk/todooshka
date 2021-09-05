@@ -10,29 +10,29 @@ import RxSwift
 import RxCocoa
 
 class TabBarController: UITabBarController, UITabBarControllerDelegate {
+  
+  //MARK: - Properties
+  let customTabBar = TabBar()
+  let disposeBag = DisposeBag()
+  var viewModel: TabBarViewModel!
+  
+  //MARK: - Lifecycle
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    configureUI()
+  }
+  
+  //MARK: - Configure UI
+  func configureUI() {
+    setValue(customTabBar, forKey: "tabBar")
     
-    //MARK: - Properties
-    let customTabBar = TabBar()
-    let disposeBag = DisposeBag()
-    var viewModel: TabBarViewModel!
+  }
+  
+  //MARK: - Bind
+  func bindTo(with viewModel: TabBarViewModel) {
+    self.viewModel = viewModel
     
-    //MARK: - Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureUI()
-    }
+    customTabBar.addTaskButton.rx.tapGesture().bind{_ in viewModel.handleAddTaskClick()}.disposed(by: disposeBag)
     
-    //MARK: - Configure UI
-    func configureUI() {
-        setValue(customTabBar, forKey: "tabBar")
-    }
-    
-    //MARK: - Bind
-    func bindTo(with viewModel: TabBarViewModel) {
-        self.viewModel = viewModel
-        
-        customTabBar.addTaskButton.rx.tapGesture().bind{_ in viewModel.handleAddTaskClick()}.disposed(by: disposeBag)
-
-    }
-
+  }
 }

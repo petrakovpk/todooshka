@@ -13,8 +13,6 @@ class TDAuthTextField: UITextField {
         super.init(frame: .zero)
 
         borderWidth = 1.0
-        borderColor = UIColor(red: 0.177, green: 0.188, blue: 0.312, alpha: 1)
-        backgroundColor = UIColor(red: 0.041, green: 0.048, blue: 0.138, alpha: 1)
         cornerRadius = 13
 
         let spacer = UIView()
@@ -37,10 +35,6 @@ class TDAuthTextField: UITextField {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        /// Border color is not automatically catched by trait collection changes. Therefore, update it here.
-       // layer.borderColor = TDStyle.Colors.invertedBackgroundColor.cgColor
-    }
+    
     
 }

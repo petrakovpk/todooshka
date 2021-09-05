@@ -17,8 +17,6 @@ extension UIViewController {
         view.endEditing(true)
     }
     
-    
-    
     var isModal: Bool {
         
         let presentingIsModal = presentingViewController != nil
