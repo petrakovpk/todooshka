@@ -28,9 +28,9 @@ class OnboardingViewModel: Stepper {
         
         var models: [OnboardingSectionModel] = []
         
-        let onboardingSectionItem1 = OnboardingSectionItem(header: "Onboarding header", description: "Brief description of onboarding that can be placed in two lines", image: UIImage(named: "Onboarding1")!)
-        let onboardingSectionItem2 = OnboardingSectionItem(header: "Onboarding header", description: "Brief description of onboarding that can be placed in two lines", image: UIImage(named: "Onboarding2")!)
-        let onboardingSectionItem3 = OnboardingSectionItem(header: "Onboarding header", description: "Brief description of onboarding that can be placed in two lines", image: UIImage(named: "Onboarding3")!)
+        let onboardingSectionItem1 = OnboardingSectionItem(header: "Добро пожаловать в Тудушку!", description: "Хочешь разложить все дела по полочкам, не рассчитывая на завтра? Мы поможем это сделать сегодня, тебе понравится!", image: UIImage(named: "Onboarding1")!)
+        let onboardingSectionItem2 = OnboardingSectionItem(header: "Календарь", description: "Будь в курсе дел на каждый день, не забывай проверять календарь", image: UIImage(named: "Onboarding2")!)
+        let onboardingSectionItem3 = OnboardingSectionItem(header: "Герой", description: "Награда не заставит себя долго ждать, если ты выполнил поставленные задачи вовремя. Сам себя не похвалишь, зато это сделает Тудушка!", image: UIImage(named: "Onboarding3")!)
         
         models.append(OnboardingSectionModel(items: [onboardingSectionItem1]))
         models.append(OnboardingSectionModel(items: [onboardingSectionItem2]))

@@ -25,29 +25,30 @@ class TaskListViewController: UIViewController {
   //MARK: - UI Elements
   private let overdueTaskButton = TDTopRoundButton(image: UIImage(named: "timer-pause")?.template, blurEffect: true)
   
-  private let headerImageView: UIImageView = {
+  private let ideaTasksButton = TDTopRoundButton(image: UIImage(named: "lamp-charge")?.template, blurEffect: true )
+  
+  fileprivate let headerImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
   
-  private let taskCountLabel: UILabel = {
+  fileprivate let taskCountLabel: UILabel = {
     let label = UILabel()
-    label.text = "6 TASKS TODAY"
     label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
     return label
   }()
   
-  private lazy var animationView = AnimationView(name: "task_animation")
+  fileprivate let animationView = AnimationView(name: "task_animation")
   
-  lazy var sortedByButton: UIButton = {
+  fileprivate let sortedByButton: UIButton = {
     let button = UIButton(type: .custom)
-    button.setTitle("Sort by", for: .normal)
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+    button.setImage(UIImage(named: "sort")?.template, for: .normal)
+    button.imageView?.tintColor = .white
     return button
   }()
   
-  private lazy var expandImageView: UIImageView = {
+  fileprivate let expandImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     imageView.tintColor = .white
@@ -55,13 +56,11 @@ class TaskListViewController: UIViewController {
     return imageView
   }()
   
-  var test = 1
-  
   //MARK: - Lifecycle
   override func viewDidLoad() {
     configureUI()
     configureDataSource()
-    setViewColor()
+    configureColor()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -69,7 +68,7 @@ class TaskListViewController: UIViewController {
   }
   
   //MARK: - ConfigureUI
-  func configureUI() {
+  private func configureUI() {
     animationView.contentMode = .scaleAspectFit
     animationView.loopMode = .repeat(3.0)
     animationView.animationSpeed = 1.0
@@ -83,7 +82,7 @@ class TaskListViewController: UIViewController {
     
     let label = UILabel()
     label.textColor = UIColor(red: 0.424, green: 0.429, blue: 0.496, alpha: 1)
-    label.text = "All tasks for today are done!"
+    label.text = "Все задачи на сегодня сделаны!"
     label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
     
     animationView.addSubview(label)
@@ -101,18 +100,59 @@ class TaskListViewController: UIViewController {
     taskCountLabel.anchor(top: headerImageView.bottomAnchor, left: view.leftAnchor, topConstant: 29, leftConstant: 16)
     
     view.addSubview(sortedByButton)
-    sortedByButton.anchor(top: headerImageView.bottomAnchor, right: view.rightAnchor, topConstant: 21, rightConstant: 16, widthConstant: 81, heightConstant: 36)
+    sortedByButton.anchor(top: headerImageView.bottomAnchor, right: view.rightAnchor, topConstant: 21, rightConstant: 16, widthConstant: 35, heightConstant: 35)
     sortedByButton.cornerRadius = 36 / 2
     
     view.addSubview(collectionView)
     collectionView.anchor(top: taskCountLabel.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 29, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
     
+    view.addSubview(ideaTasksButton)
+    ideaTasksButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50, heightConstant: 50)
+    
     view.addSubview(overdueTaskButton)
-    overdueTaskButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50, heightConstant: 50)
-
+    overdueTaskButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: ideaTasksButton.leftAnchor, topConstant: 8, rightConstant: 8, widthConstant: 50, heightConstant: 50)
   }
   
-  func configureDataSource() {
+  func configureUI(tasksCount: Int, tasksTypeCount: Int) {
+    
+    var image: UIImage?
+    
+    switch tasksCount {
+    case 0:
+      taskCountLabel.text = "Ура, задач нет!"
+      image = UIImage(named: "header1")
+      animationView.isHidden = false
+      animationView.play()
+    case 1 ... 2:
+      taskCountLabel.text = "Надо немного поработать."
+      image = UIImage(named: "header2")
+      animationView.isHidden = true
+    case 3 ... 4:
+      taskCountLabel.text = "Надо серьезно поработать!"
+      image = UIImage(named: "header3")
+      animationView.isHidden = true
+    case 5 ... .max:
+      taskCountLabel.text = "На грани невозможного!"
+      image = UIImage(named: "header4")
+      animationView.isHidden = true
+    default:
+      return
+    }
+    
+    
+    UIView.transition(with:  headerImageView,
+                      duration: 1.0,
+                      options: .transitionCrossDissolve,
+                      animations: {
+                        self.headerImageView.image = image
+                      }, completion: nil)
+    
+    sortedByButton.isHidden = (tasksTypeCount < 2)
+    
+  }
+  
+  //MARK: - Configure Data Source
+  private func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(
       configureCell: { (_, collectionView, indexPath, task) in
@@ -151,6 +191,7 @@ class TaskListViewController: UIViewController {
   func bindTo(with viewModel: TaskListViewModel) {
     self.viewModel = viewModel
     
+    ideaTasksButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.ideaBoxButtonClicked() }.disposed(by: disposeBag)
     overdueTaskButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.navigateToOverdueTaskList()}.disposed(by: disposeBag)
     sortedByButton.rx.tap.bind{ viewModel.sortedByButtonClicked() }.disposed(by: disposeBag)
     
@@ -158,49 +199,26 @@ class TaskListViewController: UIViewController {
     
     viewModel.dataSource.bind{[weak self] models in
       guard let self = self else { return }
-      if let model = models.first,
-         model.items.count > 0 {
-        
-        switch model.items.count {
-        case 1 ... 2:
-          UIView.transition(with:  self.headerImageView,
-                            duration: 1.0,
-                            options: .transitionCrossDissolve,
-                            animations: {
-                              self.headerImageView.image = UIImage(named: "header2")
-                            }, completion: nil)
-        case 3 ... 4:
-          UIView.transition(with:  self.headerImageView,
-                            duration: 1.0,
-                            options: .transitionCrossDissolve,
-                            animations: {
-                              self.headerImageView.image = UIImage(named: "header3")
-                            }, completion: nil)
-        case 5 ... .max :
-          UIView.transition(with:  self.headerImageView,
-                            duration: 1.0,
-                            options: .transitionCrossDissolve,
-                            animations: {
-                              self.headerImageView.image = UIImage(named: "header4")
-                            }, completion: nil)
-        default:
-          self.headerImageView.image = UIImage(named: "header1")
-        }
-        
-        self.animationView.isHidden = true
-      } else {
-        UIView.transition(with:  self.headerImageView,
-                          duration: 1.0,
-                          options: .transitionCrossDissolve,
-                          animations: {
-                            self.headerImageView.image = UIImage(named: "header1")
-                          }, completion: nil)
-        self.animationView.isHidden = false
-        self.animationView.play()
+      guard let model = models.first else {
+        self.configureUI(tasksCount: 0, tasksTypeCount: 0)
+        return
       }
+      
+      let tasksTypeCount = Dictionary(grouping: model.items, by: { $0.type }).count
+      self.configureUI(tasksCount: model.items.count, tasksTypeCount: tasksTypeCount)
+      
     }.disposed(by: disposeBag)
-
   }
-  
 }
 
+
+extension TaskListViewController: ConfigureColorProtocol {
+  
+  func configureColor() {
+    view.backgroundColor = UIColor(named: "appBackground")
+    collectionView.backgroundColor = .clear
+    
+    sortedByButton.backgroundColor = UIColor(named: "taskListSortedByButtonBackground")
+    sortedByButton.setTitleColor(.white, for: .normal)
+  }
+}

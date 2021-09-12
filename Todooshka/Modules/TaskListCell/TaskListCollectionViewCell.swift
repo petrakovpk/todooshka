@@ -43,7 +43,6 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     backgroundLayer.shadowColor = UIColor(red: 0.693, green: 0.702, blue: 0.875, alpha: 0.47).cgColor
     backgroundLayer.backgroundColor = UIColor(red: 244/255, green: 245/255, blue: 1, alpha: 1).cgColor
     
-    
     if let oldLayer = oldLayer {
       contentView.layer.replaceSublayer(oldLayer, with: backgroundLayer)
     } else {
@@ -143,7 +142,7 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
   
   private let taskTimeLeftView: UIView = {
     let view = UIView()
-    view.backgroundColor = UIColor(named: "taskCellTimeLeftViewBackground")
+    view.backgroundColor = UIColor(named: "taskListCellTimeLeftViewBackground")
     return view
   }()
   
@@ -200,7 +199,7 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     repeatButton.backgroundColor = .blueRibbon
     repeatButton.cornerRadius = 15
     
-    let attributedTitle = NSAttributedString(string: "Repeat",
+    let attributedTitle = NSAttributedString(string: "В работу",
                                              attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 11, weight: .semibold)])
     repeatButton.setAttributedTitle(attributedTitle , for: .normal)
     repeatButton.setTitleColor(.white, for: .normal)
@@ -217,7 +216,6 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     self.viewModel = viewModel
     
     configureUI()
-    setViewColor()
     
     delegate = viewModel
     

@@ -8,6 +8,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Foundation
+import SwipeCellKit
 
 class TaskTypeCollectionViewCell: UICollectionViewCell {
   
@@ -91,6 +92,8 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
     
     contentView.cornerRadius = 11
     contentView.clipsToBounds = false
+    contentView.layer.borderWidth = 1
+    contentView.layer.borderColor = UIColor(named: "taskTypeCellBorder")?.cgColor
     
     let stackView = UIStackView(arrangedSubviews: [taskTypeImageView,taskTypeTitle])
     stackView.axis = .vertical
@@ -118,7 +121,7 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
         self.taskTypeTitle.textColor = .white
         self.taskTypeImageView.tintColor = .white
       } else {
-        self.shapeLayer.fillColor = UIColor(named: "typeCellBackgroundColor")?.cgColor
+        self.shapeLayer.fillColor = UIColor(named: "taskTypeCellBackground")?.cgColor
         self.shapeLayer.shadowColor = UIColor.clear.cgColor
         self.taskTypeTitle.textColor = UIColor(named: "appText")
         self.taskTypeImageView.tintColor = self.imageColor

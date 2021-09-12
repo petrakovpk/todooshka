@@ -26,7 +26,7 @@ class TDTaskTextField: UITextField {
         returnKeyType = .done
 
         attributedPlaceholder = NSAttributedString(string: "Enter the title of the Task",
-                                     attributes: [NSAttributedString.Key.foregroundColor: UIColor(red: 0.19, green: 0.2, blue: 0.325, alpha: 1)])
+                                                   attributes: [NSAttributedString.Key.foregroundColor: UIColor(named: "taskPlaceholderText")])
         font = UIFont.systemFont(ofSize: 13, weight: .medium)
     }
     

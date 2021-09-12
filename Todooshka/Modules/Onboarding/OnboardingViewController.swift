@@ -10,38 +10,56 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-class OnboardingViewController: UIViewController {
+enum SelectedOnboardingScreen {
+  case first, second, third
+}
+
+final class OnboardingViewController: UIViewController {
   
   //MARK: - Properties
-  let disposeBag = DisposeBag()
-  var viewModel: OnboardingViewModel!
-  var dataSource: RxCollectionViewSectionedAnimatedDataSource<OnboardingSectionModel>!
+  private let disposeBag = DisposeBag()
+  private var viewModel: OnboardingViewModel!
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<OnboardingSectionModel>!
+  private var selectedOnboardingScreen = BehaviorRelay<SelectedOnboardingScreen>(value: .first)
   
   //MARK: - Constants
   static let collectionViewHeight = CGFloat(575.0)
   
   //MARK: - UI Elements
-  lazy var firstDot = UIView()
-  lazy var secondDot = UIView()
-  lazy var thirdDot = UIView()
-  lazy var headerLabel: UILabel = {
+  private let firstDot = UIView()
+  private let secondDot = UIView()
+  private let thirdDot = UIView()
+  private let headerLabel: UILabel = {
     let label = UILabel()
-    label.text = "TODOOSHKA"
     label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+    label.text = "TODOOSHKA"
     return label
   }()
   
-  lazy var skipButton: UIButton = {
+  private let skipButton: UIButton = {
     let button = UIButton(type: .custom)
-    let attrString = NSAttributedString(string: "SKIP", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
+    let attrString = NSAttributedString(string: "Пропустить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
   
-  lazy var authButton = UIButton(type: .custom)
+  private let authButton: UIButton = {
+    let button = UIButton(type: .custom)
+    let attrString = NSAttributedString(string: "Войти в аккаунт / Зарегестрироваться", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
+    button.setAttributedTitle(attrString, for: .normal)
+    return button
+  }()
   
-  var collectionView: UICollectionView!
-  lazy var collectionViewLayout: UICollectionViewFlowLayout = {
+  private let backgroundImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.image = UIImage(named: "Onboarding1Background")
+    imageView.backgroundColor = .clear
+    imageView.contentMode = .scaleAspectFill
+    return imageView
+  }()
+  
+  private var collectionView: UICollectionView!
+  private let collectionViewLayout: UICollectionViewFlowLayout = {
     let layout = UICollectionViewFlowLayout()
     layout.scrollDirection = .horizontal
     layout.itemSize = CGSize(width: UIScreen.main.bounds.width , height: OnboardingViewController.collectionViewHeight)
@@ -51,14 +69,16 @@ class OnboardingViewController: UIViewController {
   //MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    
     configureUI()
     configureDataSource()
-    setViewColor()
+    configureColor()
   }
   
   //MARK: - Configure UI
   func configureUI() {
+    
+    view.addSubview(backgroundImageView)
+    backgroundImageView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor)
     
     view.addSubview(headerLabel)
     headerLabel.anchor(top: view.topAnchor, topConstant: 84)
@@ -66,7 +86,6 @@ class OnboardingViewController: UIViewController {
     
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: collectionViewLayout)
     collectionView.register(OnboardingCollectionViewCell.self, forCellWithReuseIdentifier: OnboardingCollectionViewCell.reuseID)
-    
     
     collectionView.showsHorizontalScrollIndicator = false
     collectionView.isPagingEnabled = true
@@ -79,8 +98,8 @@ class OnboardingViewController: UIViewController {
     thirdDot.cornerRadius = 3
     
     firstDot.backgroundColor = .blueRibbon
-    secondDot.backgroundColor = UIColor(named: "onboardingDot")
-    thirdDot.backgroundColor = UIColor(named: "onboardingDot")
+    secondDot.backgroundColor = UIColor(named: "onboardingDotBackground")
+    thirdDot.backgroundColor = UIColor(named: "onboardingDotBackground")
     
     view.addSubview(firstDot)
     view.addSubview(secondDot)
@@ -94,9 +113,6 @@ class OnboardingViewController: UIViewController {
     authButton.anchor(left: view.leftAnchor, bottom: skipButton.topAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 26, rightConstant: 16, heightConstant: 50)
     
     authButton.cornerRadius = 25
-    
-    let attrString = NSAttributedString(string: "Create an account or sign in", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
-    authButton.setAttributedTitle(attrString, for: .normal)
     
     secondDot.anchor(bottom: authButton.topAnchor, bottomConstant: 74, widthConstant: 6, heightConstant: 6)
     secondDot.anchorCenterXToSuperview()
@@ -121,25 +137,24 @@ class OnboardingViewController: UIViewController {
     thirdDot.removeAllConstraints()
     thirdDot.anchor(top: secondDot.topAnchor, left: secondDot.rightAnchor, leftConstant: 10.0, widthConstant: CGFloat(6 + 19 * thirdDotPercent / 100), heightConstant: 6)
     
-    if firstDotPercent == 0 { firstDot.backgroundColor = UIColor(named: "onboardingDot") } else { firstDot.backgroundColor = .blueRibbon }
-    if secondDotPercent == 0 { secondDot.backgroundColor = UIColor(named: "onboardingDot") } else { secondDot.backgroundColor = .blueRibbon }
-    if thirdDotPercent == 0 { thirdDot.backgroundColor = UIColor(named: "onboardingDot") } else { thirdDot.backgroundColor = .blueRibbon }
+    if firstDotPercent == 0 { firstDot.backgroundColor = UIColor(named: "onboardingDotBackground") } else { firstDot.backgroundColor = .blueRibbon }
+    if secondDotPercent == 0 { secondDot.backgroundColor = UIColor(named: "onboardingDotBackground") } else { secondDot.backgroundColor = .blueRibbon }
+    if thirdDotPercent == 0 { thirdDot.backgroundColor = UIColor(named: "onboardingDotBackground") } else { thirdDot.backgroundColor = .blueRibbon }
     
     guard let title = skipButton.titleLabel?.text else { return }
     
-    if thirdDotPercent == 100 {
-      if title == "SKIP" {
-        let attrString = NSAttributedString(string: "START", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
-        skipButton.setAttributedTitle(attrString, for: .normal)
-        skipButton.setTitleColor(.burntSienna, for: .normal)
-      }
-    } else {
-      if title == "START" {
-        let attrString = NSAttributedString(string: "SKIP", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
-        skipButton.setAttributedTitle(attrString, for: .normal)
-        skipButton.setTitleColor(.santasGray, for: .normal)
-      }
+    if firstDotPercent == 100  {
+      selectedOnboardingScreen.value == .first ? nil : selectedOnboardingScreen.accept(.first)
     }
+    
+    if  secondDotPercent == 100 {
+      selectedOnboardingScreen.value == .second ? nil : selectedOnboardingScreen.accept(.second)
+    }
+    
+    if thirdDotPercent == 100 {
+      selectedOnboardingScreen.value == .third ? nil : selectedOnboardingScreen.accept(.third)
+    }
+   
     
     self.view.layoutIfNeeded()
   }
@@ -178,10 +193,13 @@ class OnboardingViewController: UIViewController {
           switch indexPath.section {
           case 0:
             firstDotPercent = Int(ratio * 100)
+            
           case 1:
             secondDotPercent = Int(ratio * 100)
+            
           case 2:
             thirdDotPercent = Int(ratio * 100)
+            
           default:
             return
           }
@@ -202,11 +220,11 @@ class OnboardingViewController: UIViewController {
       guard let self = self else { return }
       guard let title = self.skipButton.titleLabel?.text else { return }
       
-      if title == "SKIP" {
+      if title == "Пропустить" {
         self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 2), at: .right, animated: true)
       }
       
-      if title == "START" {
+      if title == "Начать" {
         self.viewModel.skipButtonClick()
       }
     }.disposed(by: disposeBag)
@@ -215,5 +233,64 @@ class OnboardingViewController: UIViewController {
     
     viewModel.authButtonIsHidden.bind(to: authButton.rx.isHidden).disposed(by: disposeBag)
     
+    selectedOnboardingScreen.throttle(.seconds(1), scheduler: MainScheduler.instance).bind{ [weak self] selectedScreen in
+      guard let self = self else { return }
+      switch selectedScreen {
+      case .first:
+        UIView.transition(with:  self.backgroundImageView,
+                          duration: 0.4,
+                          options: .transitionCrossDissolve,
+                          animations: {
+                            self.backgroundImageView.image = UIImage(named: "Onboarding1Background")
+                          }, completion: nil)
+        
+        let attrString = NSAttributedString(string: "Пропустить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
+        self.skipButton.setAttributedTitle(attrString, for: .normal)
+        self.skipButton.setTitleColor(.santasGray, for: .normal)
+      case .second:
+        UIView.transition(with:  self.backgroundImageView,
+                          duration: 0.4,
+                          options: .transitionCrossDissolve,
+                          animations: {
+                            self.backgroundImageView.image = UIImage(named: "Onboarding2Background")
+                          }, completion: nil)
+        
+        let attrString = NSAttributedString(string: "Пропустить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
+        self.skipButton.setAttributedTitle(attrString, for: .normal)
+        self.skipButton.setTitleColor(.santasGray, for: .normal)
+      case .third:
+        UIView.transition(with:  self.backgroundImageView,
+                          duration: 0.4,
+                          options: .transitionCrossDissolve,
+                          animations: {
+                            self.backgroundImageView.image = UIImage(named: "Onboarding3Background")
+                          }, completion: nil)
+        
+          let attrString = NSAttributedString(string: "Начать", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
+        self.skipButton.setAttributedTitle(attrString, for: .normal)
+        self.skipButton.setTitleColor(.burntSienna, for: .normal)
+      }
+    }.disposed(by: disposeBag)
+    
   }
+}
+
+//MARK: - Colors and Texts
+extension OnboardingViewController: ConfigureColorProtocol {
+  func configureColor() {
+    
+    view.backgroundColor = UIColor(named: "appBackground")
+    
+    collectionView.backgroundColor = .clear
+    
+    headerLabel.textColor = UIColor(named: "appText")
+    
+    authButton.backgroundColor = .blueRibbon
+    authButton.setTitleColor(.white, for: .normal)
+    
+    skipButton.backgroundColor = .clear
+    skipButton.setTitleColor(.santasGray, for: .normal)
+  }
+  
+  
 }

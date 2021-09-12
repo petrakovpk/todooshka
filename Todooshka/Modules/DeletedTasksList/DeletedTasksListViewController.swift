@@ -28,7 +28,7 @@ class DeletedTasksListViewController: UIViewController {
   override func viewDidLoad() {
     configureUI()
     configureDataSource()
-    setViewColor()
+    configureColor()
     
   }
   
@@ -43,7 +43,7 @@ class DeletedTasksListViewController: UIViewController {
     let titleLabel = UILabel()
     
     titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-    titleLabel.text = "Deleted tasks"
+    titleLabel.text = "Удаленные задачи"
     
     headerView.addSubview(titleLabel)
     titleLabel.anchorCenterXToSuperview()

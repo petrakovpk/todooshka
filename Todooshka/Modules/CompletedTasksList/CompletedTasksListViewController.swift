@@ -28,8 +28,7 @@ class CompletedTasksListViewController: UIViewController {
   override func viewDidLoad() {
     configureUI()
     configureDataSource()
-    setViewColor()
-    setTextColor()
+    configureColor()
   }
   
   //MARK: - Configure UI
@@ -43,7 +42,7 @@ class CompletedTasksListViewController: UIViewController {
     let titleLabel = UILabel()
     
     titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-    titleLabel.text = "Completed tasks"
+    titleLabel.text = "Выполненные задачи"
     
     headerView.addSubview(titleLabel)
     titleLabel.anchorCenterXToSuperview()

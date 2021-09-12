@@ -50,6 +50,10 @@ class TaskListViewModel: Stepper {
     steps.accept(AppStep.overdueTaskListIsRequired)
   }
   
+  func ideaBoxButtonClicked() {
+    steps.accept(AppStep.ideaBoxTaskListIsRequired)
+  }
+  
   func sortedByButtonClicked() {
     if UserDefaults.standard.bool(forKey: "isSortedByType") {
       UserDefaults.standard.setValue(false, forKey: "isSortedByType")

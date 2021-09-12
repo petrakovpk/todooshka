@@ -38,6 +38,7 @@ class TaskViewModel: Stepper {
   let taskTextOutput = BehaviorRelay<String?>(value: nil)
   let taskDescriptionOutput = BehaviorRelay<String?>(value: nil)
   let taskTypeOutput = BehaviorRelay<TaskType?>(value: nil)
+  let errorLabelOutput = BehaviorRelay<String?>(value: nil)
   
   //MARK: - Init
   init(services: AppServices, taskFlowAction: TaskFlowAction) {
@@ -91,9 +92,9 @@ class TaskViewModel: Stepper {
     taskTypeInput.bind{ [weak self] type in
       guard let self = self else { return }
       guard let type = type else { return }
-      
+      self.errorLabelOutput.accept("")
       if let task = self.task.value {
-        task.type = type.UID
+        task.type = type.identity
         self.services.coreDataService.saveTasksToCoreData(tasks: [task], completion: nil)
       }
       
@@ -158,32 +159,31 @@ class TaskViewModel: Stepper {
   }
   
   func rightBarButtonSaveItemClick() {
-    
-    guard let type = taskTypeOutput.value else { return }
-    
-    let task = task.value ??
-      Task(UID: UUID().uuidString
-           , text: taskTextOutput.value ?? ""
-           , description: taskDescriptionOutput.value ?? ""
-           , type: type.UID
-           , status: status ?? .created
-           , createdTimeIntervalSince1970: closedDate?.timeIntervalSince1970 ?? Date().timeIntervalSince1970 )
-    
-    task.type = type.UID
-    task.closedTimeIntervalSince1970 = closedDate?.timeIntervalSince1970
-
-    services.coreDataService.saveTasksToCoreData(tasks: [task]) {[weak self] error in
-      guard let self = self else { return }
-      if let error = error {
-        print(error)
-        return
+    if let type = taskTypeOutput.value {
+      let task = task.value ??
+        Task(UID: UUID().uuidString
+             , text: taskTextOutput.value ?? ""
+             , description: taskDescriptionOutput.value ?? ""
+             , type: type.identity
+             , status: status ?? .created
+             , createdTimeIntervalSince1970: closedDate?.timeIntervalSince1970 ?? Date().timeIntervalSince1970 )
+      
+      task.type = type.identity
+      task.closedTimeIntervalSince1970 = closedDate?.timeIntervalSince1970
+      
+      services.coreDataService.saveTasksToCoreData(tasks: [task]) {[weak self] error in
+        guard let self = self else { return }
+        if let error = error {
+          print(error)
+          return
+        }
+        
+        self.steps.accept(AppStep.taskProcessingIsCompleted)
       }
-
-      self.steps.accept(AppStep.taskProcessingIsCompleted)
+    } else if taskTextOutput.value == "" {
+      steps.accept(AppStep.taskProcessingIsCompleted)
+    } else {
+      self.errorLabelOutput.accept("Выберите тип")
     }
   }
-  
-  
-  
-  
 }

@@ -22,13 +22,13 @@ class TDTopRoundButton: UIButton {
       addSubview(blurEffectView)
       blurEffectView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor)
     } else {
-      backgroundColor = UIColor(named: "rightTopBarItemBackgroundColor")
+      backgroundColor = UIColor(named: "appTopBarButtonBackground")
     }
     
     let imageView = UIImageView(image: image)
     addSubview(imageView)
     
-    imageView.tintColor = UIColor(named: "rightTopBarItemTintColor")
+    imageView.tintColor = UIColor(named: "appTopBarButtonTint")
     imageView.anchorCenterXToSuperview()
     imageView.anchorCenterYToSuperview()
     

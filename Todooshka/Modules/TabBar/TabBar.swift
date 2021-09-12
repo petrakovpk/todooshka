@@ -24,12 +24,12 @@ class TabBar: UITabBar {
   override var selectedItem: UITabBarItem? {
     didSet {
       if selectedItem?.tag == 1 {
-        tabBarItem1.tintColor = UIColor(named: "tabBarSelectedTint")
-        tabBarItem2.tintColor = UIColor(named: "tabBarUnselectedTint")
+        tabBarItem1.tintColor = UIColor(named: "tabBarItemSelectedTint")
+        tabBarItem2.tintColor = UIColor(named: "tabBarItemUnselectedTint")
       }
       if selectedItem?.tag == 2 {
-        tabBarItem1.tintColor = UIColor(named: "tabBarUnselectedTint")
-        tabBarItem2.tintColor = UIColor(named: "tabBarSelectedTint")
+        tabBarItem1.tintColor = UIColor(named: "tabBarItemUnselectedTint")
+        tabBarItem2.tintColor = UIColor(named: "tabBarItemSelectedTint")
       }
     }
   }

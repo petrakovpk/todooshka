@@ -21,7 +21,7 @@ class UserProfileViewController: UIViewController {
   
   //MARK: - UI Elements
   let settingsButton = TDTopRoundButton(image: UIImage(named: "setting")?.template, blurEffect: false )
-  let ideaTasksButton = TDTopRoundButton(image: UIImage(named: "lamp-charge")?.template, blurEffect: false )
+  
   let helloLabel = UILabel()
   let wreathImageView: UIImageView = {
     let imageView = UIImageView()
@@ -46,7 +46,7 @@ class UserProfileViewController: UIViewController {
   override func viewDidLoad() {
     configureUI()
     configureDataSource()
-    setViewColor()
+    configureColor()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -58,19 +58,19 @@ class UserProfileViewController: UIViewController {
     view.addSubview(settingsButton)
     settingsButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50, heightConstant: 50)
     
-    view.addSubview(ideaTasksButton)
-    ideaTasksButton.anchor(top:  view.safeAreaLayoutGuide.topAnchor, right: settingsButton.leftAnchor, topConstant: 8, rightConstant: 7, widthConstant: 50, heightConstant: 50)
-    ideaTasksButton.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-    
-    helloLabel.text = "Alex, nice to meet you!"
+//    view.addSubview(ideaTasksButton)
+//    ideaTasksButton.anchor(top:  view.safeAreaLayoutGuide.topAnchor, right: settingsButton.leftAnchor, topConstant: 8, rightConstant: 7, widthConstant: 50, heightConstant: 50)
+//    ideaTasksButton.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+//
+    helloLabel.text = "Добро пожаловать!"
     helloLabel.font = UIFont.systemFont(ofSize: 19, weight: .medium)
     
     view.addSubview(helloLabel)
-    helloLabel.anchor( left: view.leftAnchor,  right: ideaTasksButton.leftAnchor, leftConstant: 16, rightConstant: 16)
-    helloLabel.centerYAnchor.constraint(equalTo: ideaTasksButton.centerYAnchor).isActive = true
+    helloLabel.anchor( left: view.leftAnchor,  right: settingsButton.leftAnchor, leftConstant: 16, rightConstant: 16)
+    helloLabel.centerYAnchor.constraint(equalTo: settingsButton.centerYAnchor).isActive = true
     
     view.addSubview(wreathImageView)
-    wreathImageView.anchor(top: ideaTasksButton.bottomAnchor, topConstant: 20, heightConstant: 119)
+    wreathImageView.anchor(top: settingsButton.bottomAnchor, topConstant: 20, heightConstant: 119)
     wreathImageView.anchorCenterXToSuperview()
     
     completedTasksLabel.font = UIFont.systemFont(ofSize: 35, weight: .medium)
@@ -80,7 +80,7 @@ class UserProfileViewController: UIViewController {
     completedTasksLabel.anchor(bottom: wreathImageView.bottomAnchor, bottomConstant: 119 / 2)
     
     let label = UILabel()
-    label.text = "TASKS"
+    label.text = "Задач"
     label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
     
     wreathImageView.addSubview(label)
@@ -138,7 +138,7 @@ class UserProfileViewController: UIViewController {
     textView.anchor(top: typeLabel1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, rightConstant: 16,  heightConstant: 53)
     
     let calendarView = UIView()
-    calendarView.backgroundColor = UIColor(named: "calendarBackgroundColor")
+    calendarView.backgroundColor = UIColor(named: "userProfileCalendarBackground")
     calendarView.cornerRadius = 11
     
     view.addSubview(calendarView)
@@ -153,19 +153,19 @@ class UserProfileViewController: UIViewController {
     monthLabel.anchor(top: calendarView.topAnchor, topConstant: 20.0)
     
     let dividerView = UIView()
-    dividerView.backgroundColor = UIColor(red: 0.13, green: 0.147, blue: 0.271, alpha: 1)
+    dividerView.backgroundColor = UIColor(named: "userProfileCalendarDividerBackground")
     
     calendarView.addSubview(dividerView)
     dividerView.anchor(top: monthLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20, heightConstant: 1.0)
     
     previousMonthButton.setImage(UIImage(named: "arrow-left-custom")?.template, for: .normal)
-    previousMonthButton.imageView?.tintColor = UIColor(named: "calendarArrowColor")
+    previousMonthButton.imageView?.tintColor = UIColor(named: "userProfileCalendarArrow")
     
     calendarView.addSubview(previousMonthButton)
     previousMonthButton.anchor(top: calendarView.topAnchor, left: calendarView.leftAnchor, bottom: dividerView.topAnchor, right: monthLabel.leftAnchor)
     
     nextMonthButton.setImage(UIImage(named: "arrow-right-custom")?.template, for: .normal)
-    nextMonthButton.imageView?.tintColor = UIColor(named: "calendarArrowColor")
+    nextMonthButton.imageView?.tintColor = UIColor(named: "userProfileCalendarArrow")
     
     calendarView.addSubview(nextMonthButton)
     nextMonthButton.anchor(top: calendarView.topAnchor, left: monthLabel.rightAnchor, bottom: dividerView.topAnchor, right: calendarView.rightAnchor)
@@ -208,9 +208,7 @@ class UserProfileViewController: UIViewController {
   func bindTo(with viewModel: UserProfileViewModel) {
     self.viewModel = viewModel
     
-    ideaTasksButton.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.ideaBoxButtonClicked() }.disposed(by: disposeBag)
     settingsButton.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.settingsButtonClicked() }.disposed(by: disposeBag)
-    wreathImageView.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.completedTasksClicked() }.disposed(by: disposeBag)
     
     previousMonthButton.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.previousMonthButtonClicked() }.disposed(by: disposeBag)
     nextMonthButton.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.nextMonthButtonClicked() }.disposed(by: disposeBag)
@@ -248,4 +246,13 @@ class UserProfileViewController: UIViewController {
     }.disposed(by: disposeBag)
   }
   
+}
+
+
+extension UserProfileViewController: ConfigureColorProtocol {
+  
+  func configureColor() {
+    view.backgroundColor = UIColor(named: "appBackground")
+    
+  }
 }

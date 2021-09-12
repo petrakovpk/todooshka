@@ -18,31 +18,30 @@ class LoginViewController: UIViewController {
   private let disposeBag = DisposeBag()
   
   //MARK: - UI Elements
-  lazy var headerLabel: UILabel = {
+  fileprivate let headerLabel: UILabel = {
     let label = UILabel()
     label.text = "TODOOSHKA"
     label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
     return label
   }()
   
-  lazy var secondHeaderLabel: UILabel = {
+  fileprivate let secondHeaderLabel: UILabel = {
     let label = UILabel()
-    label.text = "Create an account"
+    label.text = "Создаем аккаунт"
     label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     return label
   }()
   
-  lazy var errorLabel: UILabel = {
+  fileprivate let errorLabel: UILabel = {
     let label = UILabel()
-    label.text = ""
     label.font = UIFont.systemFont(ofSize: 12, weight: .light)
     label.textColor = UIColor(red: 0.937, green: 0.408, blue: 0.322, alpha: 1)
     return label
   }()
   
-  lazy var headerDescriptionTextView: UITextView = {
+  fileprivate let headerDescriptionTextView: UITextView = {
     let textView = UITextView()
-    textView.text = "Brief description of onboarding that can be placed in two lines"
+    textView.text = "Спасибо, что решили зарегестрировать в приложении! Это поможет вам сохранять онлайн задачи и загружать их на других устройствах!"
     textView.isScrollEnabled = false
     textView.isSelectable = false
     textView.isEditable = false
@@ -51,56 +50,57 @@ class LoginViewController: UIViewController {
     return textView
   }()
   
-  lazy var emailButton: UIButton = {
+  fileprivate let emailButton: UIButton = {
     let button = UIButton(type: .custom)
     let attrString = NSAttributedString(string: "Email", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium) ])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
   
-  lazy var phoneButton: UIButton = {
+  fileprivate let phoneButton: UIButton = {
     let button = UIButton(type: .custom)
-    let attrString = NSAttributedString(string: "Phone", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)])
+    let attrString = NSAttributedString(string: "Телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
   
-  lazy var emailTextField = TDAuthTextField(customPlaceholder: "Email", imageName: "sms")
-  lazy var passwordTextField = TDAuthTextField(customPlaceholder: "Password", imageName: "lock")
-  lazy var repeatPasswordTextField = TDAuthTextField(customPlaceholder: "Repeat Password", imageName: "lock")
+  fileprivate let emailTextField = TDAuthTextField(customPlaceholder: "Email", imageName: "sms")
+  fileprivate let passwordTextField = TDAuthTextField(customPlaceholder: "Password", imageName: "lock")
+  fileprivate let repeatPasswordTextField = TDAuthTextField(customPlaceholder: "Repeat Password", imageName: "lock")
   
-  lazy var phoneTextField = TDAuthTextField(customPlaceholder: "Phone", imageName: "call")
-  lazy var codeTextField = TDAuthTextField(customPlaceholder: "OTP Code", imageName: "lock")
+  fileprivate let phoneTextField = TDAuthTextField(customPlaceholder: "Номер телефона", imageName: "call")
+  fileprivate let codeTextField = TDAuthTextField(customPlaceholder: "SMS код", imageName: "lock")
   
-  lazy var nextButton: UIButton = {
+  fileprivate let nextButton: UIButton = {
     let button = UIButton(type: .custom)
     button.cornerRadius = 48 / 2
-    button.setTitle("Next", for: .normal)
+    button.setTitle("Далее", for: .normal)
     return button
   }()
   
-  lazy var backButton: UIButton = {
+  fileprivate let backButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
     return button
   }()
   
-  lazy var leftDividerView: UIView = {
+  fileprivate let leftDividerView: UIView = {
     let view = UIView()
     return view
   }()
   
-  lazy var rightDividerView: UIView = {
+  fileprivate let rightDividerView: UIView = {
     let view = UIView()
     return view
   }()
   
   //MARK: - Lifecycle
   override func viewDidLoad() {
+    super.viewDidLoad()
     configureUI()
-    setViewColor() 
+    configureColor()
   }
-  
+
   //MARK: - Configure UI
   func configureUI() {
     let headerView = UIView()
@@ -185,8 +185,8 @@ class LoginViewController: UIViewController {
   }
   
   func setDisabledNextButton() {
-    nextButton.backgroundColor = UIColor(named: "authDisablesNextButtonBackground")
-    nextButton.setTitleColor(UIColor(named: "authDisablesNextButtonText")!.withAlphaComponent(0.12) , for: .normal)
+    nextButton.backgroundColor = UIColor(named: "loginNextButtonDisabledBackground")
+    nextButton.setTitleColor(UIColor(named: "appText")?.withAlphaComponent(0.12) , for: .normal)
     nextButton.isEnabled = false
   }
   
@@ -219,10 +219,10 @@ class LoginViewController: UIViewController {
       phoneTextField.clear()
       codeTextField.clear()
       
-      emailButton.setTitleColor(UIColor(named: "authModeButtonTextDisable"), for: .normal)
+      emailButton.setTitleColor(UIColor(named: "loginModeButtonDisabledText"), for: .normal)
       phoneButton.setTitleColor(UIColor(named: "appText"), for: .normal)
       
-      leftDividerView.backgroundColor = UIColor(named: "authDivider")
+      leftDividerView.backgroundColor = UIColor(named: "loginDivider")
       rightDividerView.backgroundColor = UIColor.blueRibbon
       
       phoneTextField.becomeFirstResponder()
@@ -263,10 +263,10 @@ class LoginViewController: UIViewController {
       codeTextField.clear()
       
       emailButton.setTitleColor(UIColor(named: "appText"), for: .normal)
-      phoneButton.setTitleColor(UIColor(named: "authModeButtonTextDisable"), for: .normal)
+      phoneButton.setTitleColor(UIColor(named: "loginModeButtonDisabledText"), for: .normal)
       
       leftDividerView.backgroundColor = UIColor.blueRibbon
-      rightDividerView.backgroundColor = UIColor(named: "authDivider")
+      rightDividerView.backgroundColor = UIColor(named: "loginDivider")
       
       emailTextField.becomeFirstResponder()
     }
@@ -350,8 +350,42 @@ class LoginViewController: UIViewController {
       }
     }.disposed(by: disposeBag)
   }
-  
- 
+}
+
+
+extension LoginViewController: ConfigureColorProtocol {
+  func configureColor() {
+    
+    view.backgroundColor = UIColor(named: "appBackground")
+    headerLabel.textColor = UIColor(named: "appText")
+    secondHeaderLabel.textColor = UIColor(named: "appText")
+    
+    headerDescriptionTextView.backgroundColor = .clear
+    headerDescriptionTextView.textColor = .santasGray
+    
+    backButton.imageView?.tintColor = UIColor(named: "appText")
+    
+    emailTextField.backgroundColor = UIColor(named: "loginTextFieldBackground")
+    emailTextField.borderColor = UIColor(named: "loginTextFieldBorder")
+    
+    passwordTextField.backgroundColor = UIColor(named: "loginTextFieldBackground")
+    passwordTextField.borderColor = UIColor(named: "loginTextFieldBorder")
+    
+    phoneTextField.backgroundColor = UIColor(named: "loginTextFieldBackground")
+    phoneTextField.borderColor = UIColor(named: "loginTextFieldBorder")
+    
+    codeTextField.backgroundColor = UIColor(named: "loginTextFieldBackground")
+    codeTextField.borderColor = UIColor(named: "loginTextFieldBorder")
+    
+    emailButton.setTitleColor(UIColor(named: "appText"), for: .normal)
+    phoneButton.setTitleColor(UIColor(named: "loginModeButtonDisabledText"), for: .normal)
+    
+    leftDividerView.backgroundColor = UIColor.blueRibbon
+    rightDividerView.backgroundColor = UIColor(named: "loginDivider")
+    
+    nextButton.backgroundColor = UIColor(named: "loginNextButtonDisabledBackground")
+    nextButton.setTitleColor(UIColor(named: "appText")?.withAlphaComponent(0.12) , for: .normal)
+  }
 }
 
 

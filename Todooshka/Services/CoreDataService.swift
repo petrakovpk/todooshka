@@ -35,7 +35,10 @@ class CoreDataService {
   
   //MARK: - Init
   init() {
-    setupInitialTaskTypesIsNeeded()
+    
+  //  removeAllTaskTypesFromCoreData()
+    
+    setupInitialTaskTypesIfNeeded()
     
     loadTaskTypesFromCoreData()
     loadTasksFromCoreData()
@@ -50,18 +53,18 @@ class CoreDataService {
   }
   
   //MARK: - Settings
-  func setupInitialTaskTypesIsNeeded() {
-    let fetchRequest = NSFetchRequest<CoreDataTaskType>(entityName: "CoreDataTaskType")
+  func setupInitialTaskTypesIfNeeded() {
+    // let fetchRequest = NSFetchRequest<CoreDataTaskType>(entityName: "CoreDataTaskType")
     do {
-      let coreDataTaskTypes = try managedContext.fetch(fetchRequest)
+      let coreDataTaskTypes = try managedContext.fetch( CoreDataTaskType.fetchRequest() )
       if coreDataTaskTypes.isEmpty {
-        let type0 = TaskType(UID: "work", systemImageName: "hammer", text: "Работа", orderNumber: 0)
-        let type1 = TaskType(UID: "family", systemImageName: "person.3", text: "Семья", orderNumber: 1)
-        let type2 = TaskType(UID: "house", systemImageName: "house", text: "Дом", orderNumber: 2)
-        let type3 = TaskType(UID: "love", systemImageName: "suit.heart", text: "Любимка", orderNumber: 3)
-        let type4 = TaskType(UID: "business", systemImageName: "gift", text: "Бизнес", orderNumber: 4)
-        let type5 = TaskType(UID: "sport", systemImageName: "sun.max", text: "Спорт", orderNumber: 5)
         
+        let type0 = TaskType(UID: UUID().uuidString, imageName: "briefcase", imageColorHex: UIColor(named: "typeColor1")?.hexString, text: "Работа", orderNumber: 0)
+        let type1 = TaskType(UID: UUID().uuidString, imageName: "profile-2user", imageColorHex: UIColor(named: "typeColor2")?.hexString, text: "Семья", orderNumber: 1)
+        let type2 = TaskType(UID: UUID().uuidString, imageName: "home", imageColorHex: UIColor(named: "typeColor3")?.hexString, text: "Дом", orderNumber: 2)
+        let type3 = TaskType(UID: UUID().uuidString, imageName: "lovely", imageColorHex: UIColor(named: "typeColor4")?.hexString, text: "Любимка", orderNumber: 3)
+        let type4 = TaskType(UID: UUID().uuidString, imageName: "monitor", imageColorHex: UIColor(named: "typeColor5")?.hexString, text: "Бизнес", orderNumber: 4)
+        let type5 = TaskType(UID: UUID().uuidString, imageName: "weight", imageColorHex: UIColor(named: "typeColor6")?.hexString, text: "Спорт", orderNumber: 5)
         saveTaskTypesToCoreData(types: [type0,type1,type2,type3,type4,type5], completion: nil)
       }
     }
@@ -160,6 +163,7 @@ class CoreDataService {
         }
       }
     }
+    
     if let updatedObjects = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject>, !updatedObjects.isEmpty {
       for updatedObject in updatedObjects {
         if let coreDataTask = updatedObject as? CoreDataTask {
@@ -173,9 +177,10 @@ class CoreDataService {
           }
         }
         if let coreDataTaskType = updatedObject as? CoreDataTaskType {
-          if let index = self.taskTypes.value.firstIndex(where: {$0.UID == coreDataTaskType.uid}) {
+          if let index = self.taskTypes.value.firstIndex(where: {$0.identity == coreDataTaskType.uid}) {
             if let type = TaskType(coreDataTaskType: coreDataTaskType) {
               var types = self.taskTypes.value
+              print("123", type.text)
               types[index] = type
               types.sort{ return $0.orderNumber < $1.orderNumber }
               self.taskTypes.accept(types)
@@ -194,7 +199,7 @@ class CoreDataService {
           }
         }
         if let coreDataTaskType = deletedObject as? CoreDataTaskType {
-          if let index = self.taskTypes.value.firstIndex(where: {$0.UID == coreDataTaskType.uid}) {
+          if let index = self.taskTypes.value.firstIndex(where: {$0.identity == coreDataTaskType.uid}) {
             var types = self.taskTypes.value
             types.remove(at: index)
             self.taskTypes.accept(types)
@@ -312,23 +317,23 @@ class CoreDataService {
     
     var coreDataTaskType: CoreDataTaskType!
     let fetchRequest = NSFetchRequest<CoreDataTaskType>(entityName: "CoreDataTaskType")
-    fetchRequest.predicate = NSPredicate(format: "%K in %@", argumentArray:["uid", types.map{return $0.UID}])
+    fetchRequest.predicate = NSPredicate(format: "%K in %@", argumentArray:["uid", types.map{ return $0.identity }])
     
     do {
       let coreDataTaskTypes = try managedContext.fetch(fetchRequest)
       
       for type in types {
-        
-        if coreDataTaskTypes.first(where: { $0.uid == type.UID }) == nil {
+        if coreDataTaskTypes.first(where: { $0.uid == type.identity }) == nil {
           coreDataTaskType = CoreDataTaskType(context: managedContext)
         } else {
-          coreDataTaskType = coreDataTaskTypes.first(where: { $0.uid == type.UID })
+          coreDataTaskType = coreDataTaskTypes.first(where: { $0.uid == type.identity })
         }
         
-        coreDataTaskType.uid = type.UID
+        coreDataTaskType.uid = type.identity
         coreDataTaskType.text = type.text
-        coreDataTaskType.systemimagename = type.systemImageName
-        coreDataTaskType.ordernumber = type.orderNumber as NSNumber?
+        coreDataTaskType.imageName = type.imageName
+        coreDataTaskType.imageColorHex = type.imageColorHex
+        coreDataTaskType.ordernumber = Double(type.orderNumber)
         
         try managedContext.save()
       }
@@ -390,7 +395,7 @@ class CoreDataService {
   func removeTaskTypeFromCoreData(type: TaskType, completion: TodooshkaCompletion? ) {
     
     let fetchRequest = NSFetchRequest<CoreDataTaskType>(entityName: "CoreDataTaskType")
-    fetchRequest.predicate = NSPredicate(format: "%K == %@", argumentArray:["uid", type.UID])
+    fetchRequest.predicate = NSPredicate(format: "%K == %@", argumentArray:["uid", type.identity])
     
     do {
       let coreDataTaskTypes = try managedContext.fetch(fetchRequest)
@@ -487,11 +492,12 @@ class CoreDataService {
     completion?(nil)
     guard let user = Auth.auth().currentUser else { return }
     let values = ["text": type.text,
-                  "systemImageName": type.systemImageName,
+                  "imageName": type.imageName,
+                  "imageColorHex": type.imageColorHex,
                   "orderNumber": type.orderNumber
     ] as [String : Any]
     
-    TASK_TYPES_REF.child(user.uid).child(type.UID).updateChildValues(values) { error, ref in
+    TASK_TYPES_REF.child(user.uid).child( type.identity ).updateChildValues(values) { error, ref in
       if let error = error {
         print("Ошибка с этим вашим интернетом",error.localizedDescription)
         completion?(error)
@@ -502,9 +508,10 @@ class CoreDataService {
   func saveTaskTypesToFirebase(types: [TaskType], completion: TodooshkaCompletion? ) {
     completion?(nil)
     guard let user = Auth.auth().currentUser else { return }
-    let dictionary = Dictionary<String, Any?>(uniqueKeysWithValues: types.map{ ($0.UID, [
+    let dictionary = Dictionary<String, Any?>(uniqueKeysWithValues: types.map{ ($0.identity, [
       "text": $0.text,
-      "systemImageName": $0.systemImageName,
+      "imageName": $0.imageName,
+      "imageColorHex": $0.imageColorHex,
       "orderNumber": $0.orderNumber
     ]) })
     
@@ -538,7 +545,7 @@ class CoreDataService {
   
   func removeTaskTypeFromFirebase(type: TaskType, completion: TodooshkaCompletion?) {
     guard let user = Auth.auth().currentUser else { return }
-    TASK_TYPES_REF.child(user.uid).child(type.UID).removeValue { error, ref in
+    TASK_TYPES_REF.child(user.uid).child(type.identity).removeValue { error, ref in
       if let error = error {
         print(error.localizedDescription)
         completion?(error)

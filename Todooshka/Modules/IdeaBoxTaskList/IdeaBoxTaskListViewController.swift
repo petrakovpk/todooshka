@@ -28,8 +28,7 @@ class IdeaBoxTaskListViewController: UIViewController {
   override func viewDidLoad() {
     configureUI()
     configureDataSource()
-    setViewColor()
-    setTextColor()
+    configureColor()
   }
   
   //MARK: - Configure UI
@@ -43,7 +42,7 @@ class IdeaBoxTaskListViewController: UIViewController {
     let titleLabel = UILabel()
     
     titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-    titleLabel.text = "Idea box"
+    titleLabel.text = "Ящик идей"
     
     headerView.addSubview(titleLabel)
     titleLabel.anchorCenterXToSuperview()
@@ -129,4 +128,13 @@ class IdeaBoxTaskListViewController: UIViewController {
     backButton.rx.tap.bind { viewModel.leftBarButtonBackItemClick() }.disposed(by: disposeBag)
   }
   
+}
+
+extension IdeaBoxTaskListViewController: ConfigureColorProtocol {
+  func configureColor() {
+    view.backgroundColor = UIColor(named: "appBackground")
+    
+    //CollectionView
+    collectionView.backgroundColor = .clear
+  }
 }

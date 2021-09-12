@@ -36,7 +36,7 @@ class UserProfileSettingsViewController: UIViewController {
     super.viewDidLoad()
     configureUI()
     configureDataSource()
-    setViewColor()
+    configureColor()
   }
   
   //MARK: - Configure UI
@@ -73,7 +73,6 @@ class UserProfileSettingsViewController: UIViewController {
     
     view.addSubview(tableView)
     tableView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
-    
     
   }
   

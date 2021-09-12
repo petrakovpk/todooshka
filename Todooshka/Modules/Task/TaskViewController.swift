@@ -24,7 +24,6 @@ class TaskViewController: UIViewController {
   private let descriptionTextView = TDTaskCommentTextView()
   private let configureTaskTypesButton = UIButton(type: .custom)
   private let completeTaskButton = UIButton(type: .system)
-  
   private let titleLabel = UILabel()
   private let saveTextButton = UIButton(type: .custom)
   private let saveDescriptionButton = UIButton(type: .custom)
@@ -34,8 +33,13 @@ class TaskViewController: UIViewController {
     button.semanticContentAttribute = .forceRightToLeft
     return button
   }()
-  let backButton = UIButton(type: .custom)
-  
+  private let backButton = UIButton(type: .custom)
+  private let errorLabel: UILabel = {
+    let label = UILabel()
+    label.font = UIFont.systemFont(ofSize: 12, weight: .light)
+    label.textColor = UIColor(red: 0.937, green: 0.408, blue: 0.322, alpha: 1)
+    return label
+  }()
   private var collectionView: UICollectionView!
   
   //MARK: - Lifecycle
@@ -44,7 +48,7 @@ class TaskViewController: UIViewController {
     
     configureUI()
     configureDataSource()
-    setViewColor()
+    configureColor()
   }
   
   override func viewDidDisappear(_ animated: Bool) {
@@ -56,7 +60,7 @@ class TaskViewController: UIViewController {
   func configureUI() {
     
     let headerView = UIView()
-    headerView.backgroundColor = UIColor(named: "navigationHeaderViewBackgroundColor")
+    headerView.backgroundColor = UIColor(named: "navigationBarBackground")
     
     view.addSubview(headerView)
     headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
@@ -77,12 +81,12 @@ class TaskViewController: UIViewController {
     titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0,  bottomConstant: 20, rightConstant: 0)
     
     let dividerView = UIView()
-    dividerView.backgroundColor = UIColor(named: "navigationDividerViewBackgroundColor")
+    dividerView.backgroundColor = UIColor(named: "navigationBarDividerBackground")
     
     headerView.addSubview(dividerView)
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
     
-    let label1 = UILabel(text: "Name")
+    let label1 = UILabel(text: "Задача")
     label1.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     label1.textAlignment = .left
     
@@ -100,17 +104,20 @@ class TaskViewController: UIViewController {
     saveTextButton.anchor(right: taskTextField.rightAnchor, widthConstant: 24, heightConstant: 24)
     saveTextButton.centerYAnchor.constraint(equalTo: taskTextField.centerYAnchor).isActive = true
     
-    let label2 = UILabel(text: "Category")
+    let label2 = UILabel(text: "Тип")
     label2.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     label2.textAlignment = .left
     
     view.addSubview(label2)
     label2.anchor(top: taskTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, rightConstant: 16)
     
-    configureTaskTypesButton.setImage(UIImage(named: "settings"), for: .normal)
+    configureTaskTypesButton.setImage(UIImage(named: "settings")?.template , for: .normal)
     view.addSubview(configureTaskTypesButton)
     configureTaskTypesButton.centerYAnchor.constraint(equalTo: label2.centerYAnchor).isActive = true
     configureTaskTypesButton.anchor(right: view.rightAnchor, rightConstant: 16)
+    
+    view.addSubview(errorLabel)
+    errorLabel.anchor(top: label2.bottomAnchor, left: view.leftAnchor, topConstant: 4, leftConstant: 16)
     
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     collectionView.register(TaskTypeCollectionViewCell.self, forCellWithReuseIdentifier: TaskTypeCollectionViewCell.reuseID)
@@ -121,7 +128,7 @@ class TaskViewController: UIViewController {
     view.addSubview(collectionView)
     collectionView.anchor(top: label2.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20, leftConstant: 16, heightConstant: 100)
     
-    let label3 = UILabel(text: "Comment (optional)")
+    let label3 = UILabel(text: "Комментарий (если требуется)")
     label3.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     label3.textAlignment = .left
     
@@ -136,7 +143,7 @@ class TaskViewController: UIViewController {
     
     view.addSubview(completeTaskButton)
     completeTaskButton.cornerRadius = 48 / 2
-    completeTaskButton.setTitle("Done!", for: .normal)
+    completeTaskButton.setTitle("Выполнено!", for: .normal)
     completeTaskButton.setTitleColor(.black, for: .normal)
     completeTaskButton.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
     completeTaskButton.anchor(left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor,  leftConstant: 16, bottomConstant: 346 + 8, rightConstant: 16, heightConstant: 48)
@@ -209,17 +216,17 @@ class TaskViewController: UIViewController {
     
     descriptionTextView.rx.didBeginEditing.bind{ [weak self] _ in
       guard let self = self else { return }
-      if self.descriptionTextView.textColor == UIColor(red: 0.19, green: 0.2, blue: 0.325, alpha: 1) {
-        self.descriptionTextView.text = ""
-        self.descriptionTextView.textColor = .white
+      if self.descriptionTextView.textColor == UIColor(named: "taskPlaceholderText") {
+        self.descriptionTextView.clear()
+        self.descriptionTextView.textColor = UIColor(named: "appText")
       }
     }.disposed(by: disposeBag)
     
     descriptionTextView.rx.didEndEditing.bind { [weak self] _ in
       guard let self = self else { return }
       if self.descriptionTextView.text.isEmpty {
-        self.descriptionTextView.textColor = UIColor(red: 0.19, green: 0.2, blue: 0.325, alpha: 1)
-        self.descriptionTextView.text = "Enter comments"
+        self.descriptionTextView.textColor = UIColor(named: "taskPlaceholderText")
+        self.descriptionTextView.text = "Напишите комментарий"
       }
     }.disposed(by: disposeBag)
     
@@ -254,6 +261,7 @@ class TaskViewController: UIViewController {
   //From ViewModel To ViewController
   func bindOutputs() {
     viewModel.taskTextOutput.bind(to: taskTextField.rx.text).disposed(by: disposeBag)
+    viewModel.errorLabelOutput.bind(to: errorLabel.rx.text).disposed(by: disposeBag)
     viewModel.taskDescriptionOutput.bind{ [weak self] description in
       guard let self = self else { return }
       guard let description = description else { return }
@@ -282,7 +290,7 @@ class TaskViewController: UIViewController {
         self.saveDescriptionButton.isHidden = true
         self.saveTextButton.isHidden = true
         self.saveButton.isHidden = false
-        self.titleLabel.text = "Create new task"
+        self.titleLabel.text = "Создать задачу"
         self.completeTaskButton.isHidden = true
         self.taskTextField.becomeFirstResponder()
         
@@ -294,6 +302,7 @@ class TaskViewController: UIViewController {
         
       }
     }.disposed(by: disposeBag)
+
     
   }
   
@@ -317,4 +326,16 @@ class TaskViewController: UIViewController {
       self.viewModel.taskTypeInput.accept(types[indexPath.item])
     }.disposed(by: disposeBag)
   }
+}
+
+
+extension TaskViewController: ConfigureColorProtocol {
+  
+  func configureColor() {
+    view.backgroundColor = UIColor(named: "appBackground")
+    backButton.imageView?.tintColor = UIColor(named: "appText")
+    
+    configureTaskTypesButton.imageView?.tintColor = UIColor(named: "taskTypeSettingsButtonTint")
+  }
+
 }

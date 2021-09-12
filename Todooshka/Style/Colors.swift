@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ConfigureColorProtocol {
-    func setViewColor()
+    func configureColor()
 }
 
 
