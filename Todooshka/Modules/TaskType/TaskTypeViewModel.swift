@@ -50,24 +50,32 @@ class TaskTypeViewModel: Stepper {
     colorDataSource.accept(
       [TaskTypeColorSectionModel(
         header: "", items: [
-          TaskTypeColorItem(color: UIColor(named: "typeColor1")), TaskTypeColorItem(color: UIColor(named: "typeColor2")),
-          TaskTypeColorItem(color: UIColor(named: "typeColor3")), TaskTypeColorItem(color: UIColor(named: "typeColor4")),
-          TaskTypeColorItem(color: UIColor(named: "typeColor5")), TaskTypeColorItem(color: UIColor(named: "typeColor6")),
-          TaskTypeColorItem(color: UIColor(named: "typeColor7")), TaskTypeColorItem(color: UIColor(named: "typeColor8")),
-          TaskTypeColorItem(color: UIColor(named: "typeColor9")), TaskTypeColorItem(color: UIColor(named: "typeColor10")),
-          TaskTypeColorItem(color: UIColor(named: "typeColor11")), TaskTypeColorItem(color: UIColor(named: "typeColor12")),
-          TaskTypeColorItem(color: UIColor(named: "typeColor13")), TaskTypeColorItem(color: UIColor(named: "typeColor14"))])])
+          TaskTypeColorItem(color: UIColor(named: "typeColor1")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor2")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor3")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor4")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor5")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor6")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor7")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor8")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor9")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor10")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor11")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor12")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor13")),
+          TaskTypeColorItem(color: UIColor(named: "typeColor14"))
+        ])])
     
-    iconDataSource.accept([TaskTypeIconSectionModel(header: "", items: [
-                                                      TaskTypeIconItem(imageName: "briefcase"),
-                                                      TaskTypeIconItem(imageName: "home"),
-                                                      TaskTypeIconItem(imageName: "lovely"),
-                                                      TaskTypeIconItem(imageName: "monitor"),
-                                                      TaskTypeIconItem(imageName: "weight"),
-                                                      TaskTypeIconItem(imageName: "profile-2user") ]) ])
-    
-    
-    
+    iconDataSource.accept(
+      [TaskTypeIconSectionModel(
+        header: "", items: [
+          TaskTypeIconItem(imageName: "briefcase"),
+          TaskTypeIconItem(imageName: "home"),
+          TaskTypeIconItem(imageName: "lovely"),
+          TaskTypeIconItem(imageName: "monitor"),
+          TaskTypeIconItem(imageName: "weight"),
+          TaskTypeIconItem(imageName: "profile-2user")
+        ])])
   }
   
   //MARK: - Handlers
@@ -78,6 +86,7 @@ class TaskTypeViewModel: Stepper {
   func colorSelected(indexPath: IndexPath) {
     let color = colorDataSource.value[indexPath.section].items[indexPath.item].color
     typeImageHexColorInput.accept(color?.hexString)
+    services.coreDataService.selectedTaskTypeColor.accept(color)
   }
   
   func imageSelected(indexPath: IndexPath) {
@@ -90,6 +99,7 @@ class TaskTypeViewModel: Stepper {
     taskType.imageName = typeImageNameOutput.value
     taskType.imageColorHex = typeImageHexColorOutput.value
     taskType.text = typeTextOutput.value ?? ""
+    taskType.status = .active
     
     services.coreDataService.saveTaskTypesToCoreData(types: [taskType]) {[weak self] error in
       guard let self = self else { return }

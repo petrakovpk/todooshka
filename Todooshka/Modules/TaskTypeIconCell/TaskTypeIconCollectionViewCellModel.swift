@@ -5,7 +5,6 @@
 //  Created by Петраков Павел Константинович on 07.09.2021.
 //
 
-
 import RxFlow
 import RxSwift
 import RxCocoa
@@ -27,6 +26,4 @@ class TaskTypeIconCollectionViewCellModel: Stepper {
     self.services = services
     self.taskTypeIcon.accept(taskTypeIcon)
   }
-  
 }
-

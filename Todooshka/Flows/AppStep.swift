@@ -32,6 +32,10 @@ enum AppStep: Step {
   case taskTypeIsRequired(type: TaskType?)
   case taskTypeIsCompleted
   
+  // Deleted Task List
+  case deletedTaskTypeListIsRequired
+  case deletedTaskTypeListIsCompleted
+  
   // Overdued Task List
   case overdueTaskListIsRequired
   case overdueTaskListIsCompleted
@@ -62,5 +66,9 @@ enum AppStep: Step {
   case userProfileIsRequired
   case userSettingsIsRequired
   case userSettingsIsCompleted
+  
+  // Remove Confirmation
+  case removeTaskConfirmationIsRequired
+  case removeTaskConfirmationisCompleted
   
 }

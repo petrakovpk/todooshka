@@ -68,7 +68,7 @@ class TaskViewModel: Stepper {
   
   //MARK: - Bind
   func bindInputs() {
-    services.coreDataService.taskTypes.bind{[weak self] types in
+    services.coreDataService.taskTypes.map{ $0.filter{ $0.status == .active }}.bind{[weak self] types in
       guard let self = self else { return }
       self.dataSource.accept([TaskTypeListSectionModel(header: "", items: types)])
     }.disposed(by: disposeBag)

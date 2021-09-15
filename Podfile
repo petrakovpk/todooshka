@@ -24,6 +24,7 @@ pod 'ObjectMapper'
 pod 'SwiftyOnboard'
 pod 'lottie-ios'
 pod 'RxTheme'
+pod 'YandexMobileMetrica/Dynamic'
 
   target 'TodooshkaTests' do
     inherit! :search_paths

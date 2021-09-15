@@ -30,15 +30,47 @@ class TaskTypesListViewController: UIViewController {
     return button
   }()
   
+  private let alertBackgroundView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .black.withAlphaComponent(0.5)
+    view.isHidden = true
+    return view
+  }()
+  
+  private let alertLabel = UILabel()
+  
+  private let deleteAlertButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.backgroundColor = UIColor(hexString: "#FF005C")
+    let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    return button
+  }()
+  
+  private let cancelAlertButton: UIButton = {
+    let button = UIButton(type: .custom)
+    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(UIColor(named: "appText")!.withAlphaComponent(0.5) , for: .normal)
+    return button
+  }()
+  
   //MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
+    configureAlert()
     configureDataSource()
     configureColor()
   }
   
-  //MARK: -
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    viewModel.viewWillDisappear()
+  }
+ 
+  //MARK: - Configure UI
   func configureUI() {
     
     let headerView = UIView()
@@ -82,6 +114,8 @@ class TaskTypesListViewController: UIViewController {
     
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
     collectionView.register(TaskTypeListCollectionViewCell.self, forCellWithReuseIdentifier: TaskTypeListCollectionViewCell.reuseID)
+    collectionView.register(TaskTypeListCollectionReusableViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskTypeListCollectionReusableViewCell.reuseID)
+    
     collectionView.backgroundColor = UIColor.clear
     collectionView.dragInteractionEnabled = true
     collectionView.dragDelegate = self
@@ -91,11 +125,55 @@ class TaskTypesListViewController: UIViewController {
     collectionView.anchor(top: descriptionLabel.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
   }
   
+  private func configureAlert() {
+    view.addSubview(alertBackgroundView)
+    alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    
+    let alertWindowView = UIView()
+    alertWindowView.cornerRadius = 27
+    alertWindowView.backgroundColor = UIColor(named: "appBackground")
+    
+    alertBackgroundView.addSubview(alertWindowView)
+    alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
+    alertWindowView.anchorCenterXToSuperview()
+    alertWindowView.anchorCenterYToSuperview()
+    
+   
+    alertLabel.textColor = UIColor(named: "appText")
+    alertLabel.textAlignment = .center
+    alertLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+    
+    alertWindowView.addSubview(alertLabel)
+    alertLabel.anchorCenterXToSuperview()
+    alertLabel.anchorCenterYToSuperview(constant: -1 * 171 / 4)
+    
+    alertWindowView.addSubview(deleteAlertButton)
+    deleteAlertButton.anchor(widthConstant: 94, heightConstant: 30)
+    deleteAlertButton.cornerRadius = 15
+    deleteAlertButton.anchorCenterXToSuperview()
+    deleteAlertButton.anchorCenterYToSuperview(constant: 15)
+    
+    alertWindowView.addSubview(cancelAlertButton)
+    cancelAlertButton.anchor(top: deleteAlertButton.bottomAnchor, topConstant: 10)
+    cancelAlertButton.anchorCenterXToSuperview()
+  }
+  
   //MARK: - Bind To
   func bindTo(with viewModel: TaskTypesListViewModel) {
     self.viewModel = viewModel
     backButton.rx.tap.bind{ viewModel.leftBarButtonBackItemClick() }.disposed(by: disposeBag)
     addTaskTypeButton.rx.tap.bind{ viewModel.addTaskTypeButtonClick() }.disposed(by: disposeBag)
+    
+    deleteAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertDeleteButtonClicked() }.disposed(by: disposeBag)
+    cancelAlertButton.rx.tapGesture().when(.recognized).bind{ _ in
+      viewModel.alertCancelButtonClicked() }.disposed(by: disposeBag)
+    
+    viewModel.alertLabelOutput.bind(to: alertLabel.rx.text).disposed(by: disposeBag)
+    
+    viewModel.showAlert.bind{ [weak self] showAlert in
+      guard let self = self else { return }
+      self.alertBackgroundView.isHidden = !showAlert
+    }.disposed(by: disposeBag)
   }
   
   //MARK: - Setup CollectionView
@@ -113,6 +191,12 @@ class TaskTypesListViewController: UIViewController {
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50.0))
+    let header = NSCollectionLayoutBoundarySupplementaryItem(
+      layoutSize: headerSize,
+      elementKind: UICollectionView.elementKindSectionHeader,
+      alignment: .top)
+    section.boundarySupplementaryItems = [header]
     return section
   }
   
@@ -126,6 +210,10 @@ class TaskTypesListViewController: UIViewController {
         let cellViewModel = TaskTypeListCollectionViewCellModel(services: self.viewModel.services, type: type)
         cell.bindTo(viewModel: cellViewModel)
         return cell
+      }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
+        let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskTypeListCollectionReusableViewCell.reuseID, for: indexPath) as! TaskTypeListCollectionReusableViewCell
+        section.configure(text: dataSource[indexPath.section].header)
+        return section
       })
     
     viewModel.dataSource.asDriver()

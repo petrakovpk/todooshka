@@ -20,27 +20,36 @@ class TaskListViewModel: Stepper {
   let disposeBag = DisposeBag()
   let services: AppServices
   let statusBarStyleRelay = BehaviorRelay<UIStatusBarStyle>(value: .darkContent)
+  
+  let showAlert = BehaviorRelay<Bool>(value: false)
 
   //MARK: - Init
   init(services: AppServices) {
     self.services = services
     
-    services.coreDataService.tasks.map({$0.filter{$0.isCurrent == true}}).bind { [weak self] tasks in
+    services.coreDataService.tasks.map({$0.filter{ $0.isCurrent == true }}).bind { [weak self] tasks in
       guard let self = self else { return }
-      
       self.dataSource.accept([TaskListSectionModel(header: "", items: tasks) ])
-      
-    }.disposed(by: self.disposeBag)
+    }.disposed(by: disposeBag)
     
     services.coreDataService.tasks
       .map({$0.filter{$0.isOverdued == true}})
       .bind { [weak self] tasks in
         guard let self = self else { return }
         self.overdueButtonIsHidden.accept(tasks.count == 0)
-      }.disposed(by: self.disposeBag)
+      }.disposed(by: disposeBag)
     
+    services.coreDataService.taskRemovingIsRequired.bind{ [weak self] task in
+      guard let self = self else { return }
+      if let task = task, task.status == .created {
+        self.showAlert.accept(true)
+      } else {
+        self.showAlert.accept(false)
+      }
+    }.disposed(by: disposeBag)
   }
   
+  //MARK: - Handlers
   func openTask(indexPath: IndexPath) {
     let task = dataSource.value[indexPath.section].items[indexPath.item]
     steps.accept(AppStep.showTaskIsRequired(task: task))
@@ -52,6 +61,23 @@ class TaskListViewModel: Stepper {
   
   func ideaBoxButtonClicked() {
     steps.accept(AppStep.ideaBoxTaskListIsRequired)
+  }
+  
+  func alertCancelButtonClicked() {
+    services.coreDataService.taskRemovingIsRequired.accept(nil)
+  }
+  
+  func alertDeleteButtonClicked() {
+    if let task = services.coreDataService.taskRemovingIsRequired.value {
+      task.status = .deleted
+      services.coreDataService.saveTasksToCoreData(tasks: [task]) { error in
+        if let error = error  {
+          print(error.localizedDescription)
+          return
+        }
+        self.services.coreDataService.taskRemovingIsRequired.accept(nil)
+      }
+    }
   }
   
   func sortedByButtonClicked() {

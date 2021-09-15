@@ -37,8 +37,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let scene = (scene as? UIWindowScene) else { return }
     window = UIWindow.init(windowScene: scene)
     
-    
-    
     coordinator.rx.willNavigate.subscribe { (flow, step) in
       print("will navigate to flow=\(flow) and step=\(step)")
     }.disposed(by: disposeBag)
@@ -57,7 +55,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
         
     UNUserNotificationCenter.current().delegate = self
-    
 
   }
   

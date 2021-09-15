@@ -21,24 +21,33 @@ class TaskTypeListCollectionViewCellModel: Stepper {
   let formatter = DateFormatter()
   let type = BehaviorRelay<TaskType?>(value: nil)
   
-  //MARK: - Из модели во Вью Контроллер
+  //MARK: - Outputs
   
+
   //MARK: - Init
   init(services: AppServices, type: TaskType) {
     self.services = services
     self.type.accept(type)
+    
+  }
+  
+  //MARK: - Handlers
+  func repeatButtonClicked() {
+    if let type = type.value {
+      type.status = .active
+      services.coreDataService.saveTaskTypesToCoreData(types: [type]) { error in
+        if let error = error  {
+          print(error.localizedDescription)
+          return
+        }
+      }
+    }
   }
 }
 
-
+//MARK: - SwipeCollectionViewCellDelegate
 extension TaskTypeListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
-  
-  func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
-  }
-  
-  func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
-  }
-  
+    
   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
     
     guard orientation == .right else { return nil }
@@ -46,19 +55,11 @@ extension TaskTypeListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
     let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      if let type = self.type.value {
-        self.services.coreDataService.removeTaskTypeFromCoreData(type: type, completion: { error in
-          if let error = error {
-            print(error.localizedDescription)
-            return
-          }
-        })
-      }
+      self.services.coreDataService.taskTypeRemovingIsRequired.accept(self.type.value)
     }
     
     configure(action: deleteAction, with: .trash)
     deleteAction.backgroundColor = UIColor(named: "appBackground")
-        
     return [deleteAction]
   }
   

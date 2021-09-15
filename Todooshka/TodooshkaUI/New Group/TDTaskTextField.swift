@@ -25,7 +25,7 @@ class TDTaskTextField: UITextField {
         leftViewMode = .always
         returnKeyType = .done
 
-        attributedPlaceholder = NSAttributedString(string: "Enter the title of the Task",
+        attributedPlaceholder = NSAttributedString(string: "Введите название задачи",
                                                    attributes: [NSAttributedString.Key.foregroundColor: UIColor(named: "taskPlaceholderText")])
         font = UIFont.systemFont(ofSize: 13, weight: .medium)
     }

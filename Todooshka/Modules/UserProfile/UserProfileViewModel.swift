@@ -31,12 +31,6 @@ class UserProfileViewModel: Stepper {
   init(services: AppServices) {
     self.services = services
     
-    services.networkAuthService.currentUser.bind{ [weak self] user in
-      guard let self = self else { return }
-      guard let user = user else { return }
-      
-    }.disposed(by: disposeBag)
-    
     deltaMonth.bind { [weak self] deltaMonth in
       guard let self = self else { return }
       

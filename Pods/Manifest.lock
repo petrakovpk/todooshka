@@ -548,6 +548,12 @@ PODS:
   - SwifterSwift/UIKit (5.2.0)
   - SwiftyOnboard (1.3.8)
   - SwipeCellKit (2.7.1)
+  - YandexMobileMetrica/Dynamic (3.17.0):
+    - YandexMobileMetrica/Dynamic/Core (= 3.17.0)
+    - YandexMobileMetrica/Dynamic/Crashes (= 3.17.0)
+  - YandexMobileMetrica/Dynamic/Core (3.17.0)
+  - YandexMobileMetrica/Dynamic/Crashes (3.17.0):
+    - YandexMobileMetrica/Dynamic/Core
 
 DEPENDENCIES:
   - Firebase/Analytics
@@ -567,6 +573,7 @@ DEPENDENCIES:
   - SwifterSwift
   - SwiftyOnboard
   - SwipeCellKit
+  - YandexMobileMetrica/Dynamic
 
 SPEC REPOS:
   trunk:
@@ -606,6 +613,7 @@ SPEC REPOS:
     - SwifterSwift
     - SwiftyOnboard
     - SwipeCellKit
+    - YandexMobileMetrica
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
@@ -644,7 +652,8 @@ SPEC CHECKSUMS:
   SwifterSwift: 334181863c416882d97b7a60c05054d9e4d799e2
   SwiftyOnboard: de60e90c2af23dd61b01ec0c6a8d0be3370f857b
   SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
+  YandexMobileMetrica: 9e713c16bb6aca0ba63b84c8d7b8b86d32f4ecc4
 
-PODFILE CHECKSUM: c576591ea9e6a3d4c4c0d11ff1c32e27e93442b9
+PODFILE CHECKSUM: 4db70c66389109b9675ecff96650043f701b298f
 
 COCOAPODS: 1.10.1

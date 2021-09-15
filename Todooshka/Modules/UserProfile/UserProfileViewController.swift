@@ -215,8 +215,14 @@ class UserProfileViewController: UIViewController {
     
     viewModel.deltaMonth.bind{ [weak self] deltaMonth in
       guard let self = self else { return }
-      let month = Date().adding(.month, value: deltaMonth).monthName()
-      self.monthLabel.text = month
+      let date = Date().adding(.month, value: deltaMonth)
+      
+      let dateFormatter = DateFormatter()
+      dateFormatter.locale = Locale(identifier: "ru_RU")
+      dateFormatter.dateFormat = "LLLL"
+      let stringDate = dateFormatter.string(from: date)
+      
+      self.monthLabel.text = stringDate
     }.disposed(by: disposeBag)
     
     viewModel.completedTasksLabelOutput.bind(to: completedTasksLabel.rx.text).disposed(by: disposeBag)

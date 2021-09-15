@@ -28,8 +28,7 @@ class TaskListCollectionViewCellModel: Stepper {
   
   let taskTimeLeftTextOutput = BehaviorRelay<String>(value: "")
   let task = BehaviorRelay<Task?>(value: nil)
-  
-  var isEnabled = true
+  let hideCell = BehaviorRelay<Bool>(value: false)
   
   //MARK: - Init
   init(services: AppServices, task: Task) {
@@ -76,6 +75,12 @@ class TaskListCollectionViewCellModel: Stepper {
       
       self.taskTimeLeftTextOutput.accept(self.formatter.string(from: time))
     }.disposed(by: disposeBag)
+    
+    services.coreDataService.taskRemovingIsRequired.bind{ [weak self] task in
+      guard let self = self else { return }
+      if task == nil { self.hideCell.accept(true) }
+    }.disposed(by: disposeBag)
+    
   }
   
   //MARK: - Handlers
@@ -91,15 +96,7 @@ class TaskListCollectionViewCellModel: Stepper {
 
 
 extension TaskListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
-  
-  func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
-    isEnabled = false
-  }
-  
-  func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
-    isEnabled = true
-  }
-  
+
   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
     
     guard orientation == .right else { return nil }
@@ -107,15 +104,11 @@ extension TaskListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
     let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      if let task = self.task.value {
-        task.status = .deleted
-        self.services.coreDataService.saveTasksToCoreData(tasks: [task]) { error in
-          if let error = error {
-            print(error.localizedDescription)
-            return
-          }
-        }
-      }
+      if let task = self.task.value, task.status == .deleted {
+        self.services.coreDataService.removeTasksFromCoreData(tasks: [task], completion: nil)
+      } else {
+        self.services.coreDataService.taskRemovingIsRequired.accept(self.task.value)
+      }      
     }
     
     let ideaBoxAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in

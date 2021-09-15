@@ -51,8 +51,8 @@ class TaskListFlow: Flow {
     case .taskTypeIsCompleted:
       return navigateBack()
       
-    case .createTaskIsRequired:
-      return navigateToTask(taskFlowAction: .createTask(status: .created, closedDate: nil) )
+    case .createTaskIsRequired(let status, let date):
+      return navigateToTask(taskFlowAction: .createTask(status: status, closedDate: date))
     case .showTaskIsRequired(let task):
       return navigateToTask(taskFlowAction: .showTask(task: task))
     case .taskProcessingIsCompleted:
@@ -62,6 +62,10 @@ class TaskListFlow: Flow {
       return navigateToTaskTypesList()
     case .taskTypesListIsCompleted:
       return navigateBack()
+      
+    case .removeTaskConfirmationIsRequired:
+      return navigateToRemoveConfirmation()
+      
     default:
       return .none
     }
@@ -77,7 +81,19 @@ class TaskListFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-
+  private func navigateToRemoveConfirmation() -> FlowContributors {
+    let alertFlow = AlertFlow(withServices: services)
+    
+    Flows.use(alertFlow, when: .created) { [unowned self] root in
+        DispatchQueue.main.async {
+          root.modalPresentationStyle = .fullScreen
+            rootViewController.present(root, animated: true)
+        }
+    }
+    
+    return .one(flowContributor: .contribute(withNextPresentable: alertFlow,
+                                             withNextStepper: OneStepper(withSingleStep: AppStep.removeTaskConfirmationIsRequired)))
+  }
   
   private func navigateToOverdueTaskFlow() -> FlowContributors {
     let viewController = OverdueTasksListViewController()

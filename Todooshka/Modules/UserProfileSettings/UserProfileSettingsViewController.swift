@@ -21,20 +21,38 @@ class UserProfileSettingsViewController: UIViewController {
   var viewModel: UserProfileSettingsViewModel!
   var dataSource: RxTableViewSectionedReloadDataSource<UserProfileSettingsSectionModel>!
   
-  //MARK: - UI Elements
-  let logOffAlertController: UIAlertController = {
-    let alert = UIAlertController(title: nil, message: "Вы уверены?", preferredStyle: .actionSheet)
-    // alert.addAction(UIAlertAction(title: "Выйти",style: .destructive, handler: nil))
-    //  alert.addAction(UIAlertAction(title: "Отмена", style: .cancel, handler: nil))
-    return alert
+  //MARK: - UI Elements  
+  private let backButton = UIButton(type: .custom)
+  
+  private let alertBackgroundView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .black.withAlphaComponent(0.5)
+    view.isHidden = true
+    return view
   }()
   
-  private let backButton = UIButton(type: .custom)
+  private let logoutAlertButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.backgroundColor = UIColor(hexString: "#FF005C")
+    let attrString = NSAttributedString(string: "Выйти", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    return button
+  }()
+  
+  private let cancelAlertButton: UIButton = {
+    let button = UIButton(type: .custom)
+    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(UIColor(named: "appText")!.withAlphaComponent(0.5) , for: .normal)
+    return button
+  }()
   
   //MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
+    configureAlert()
     configureDataSource()
     configureColor()
   }
@@ -73,14 +91,53 @@ class UserProfileSettingsViewController: UIViewController {
     
     view.addSubview(tableView)
     tableView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
-    
   }
   
+  private func configureAlert() {
+    view.addSubview(alertBackgroundView)
+    alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    
+    let alertWindowView = UIView()
+    alertWindowView.cornerRadius = 27
+    alertWindowView.backgroundColor = UIColor(named: "appBackground")
+    
+    alertBackgroundView.addSubview(alertWindowView)
+    alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
+    alertWindowView.anchorCenterXToSuperview()
+    alertWindowView.anchorCenterYToSuperview()
+    
+    let alertLabel = UILabel(text: "Выйти из системы?")
+    alertLabel.textColor = UIColor(named: "appText")
+    alertLabel.textAlignment = .center
+    alertLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+    
+    alertWindowView.addSubview(alertLabel)
+    alertLabel.anchorCenterXToSuperview()
+    alertLabel.anchorCenterYToSuperview(constant: -1 * 171 / 4)
+    
+    alertWindowView.addSubview(logoutAlertButton)
+    logoutAlertButton.anchor(widthConstant: 94, heightConstant: 30)
+    logoutAlertButton.cornerRadius = 15
+    logoutAlertButton.anchorCenterXToSuperview()
+    logoutAlertButton.anchorCenterYToSuperview(constant: 15)
+    
+    alertWindowView.addSubview(cancelAlertButton)
+    cancelAlertButton.anchor(top: logoutAlertButton.bottomAnchor, topConstant: 10)
+    cancelAlertButton.anchorCenterXToSuperview()
+  }
   //MARK: - Bind To
   func bindTo(with viewModel: UserProfileSettingsViewModel) {
     self.viewModel = viewModel
     
     backButton.rx.tap.bind { viewModel.leftBarButtonBackItemClick() }.disposed(by: disposeBag)
+    logoutAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertLogoutButtonClicked() }.disposed(by: disposeBag)
+    cancelAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertCancelButtonClicked() }.disposed(by: disposeBag)
+    
+    viewModel.showAlert.bind{ [weak self] showAlert in
+      guard let self = self else { return }
+      self.alertBackgroundView.isHidden = !showAlert
+    }.disposed(by: disposeBag)
+    
   }
   
   func configureDataSource() {
@@ -95,31 +152,10 @@ class UserProfileSettingsViewController: UIViewController {
       .drive(tableView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
     
-    
-    tableView.rx.itemSelected.bind { [weak self] indexPath in
+    tableView.rx.itemSelected.bind{ [weak self] indexPath in
       guard let self = self else  { return }
-      
-      switch indexPath.item {
-      case 1:
-        if Auth.auth().currentUser != nil {
-          let actions: [UIAlertController.AlertAction] = [
-            .action(title: "Выйти", style: .destructive),
-            .action(title: "Отмена", style: .cancel)
-          ]
-          
-          UIAlertController
-            .present(in: self, title: nil, message: "Вы уверены?", style: .actionSheet, actions: actions)
-            .subscribe(onNext: { buttonIndex in
-              self.viewModel.alertButtonClick(buttonIndex: buttonIndex)
-            })
-            .disposed(by: self.disposeBag)
-        } else {
-          self.viewModel.logUserIn()
-        }
-      default:
-        self.viewModel.itemSelected(indexPath: indexPath)
-      }
-    }.disposed(by: self.disposeBag)
+      self.viewModel.itemSelected(indexPath: indexPath)
+    }.disposed(by: disposeBag)
   }
   
 }

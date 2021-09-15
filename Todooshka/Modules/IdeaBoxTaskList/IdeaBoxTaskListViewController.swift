@@ -24,9 +24,34 @@ class IdeaBoxTaskListViewController: UIViewController {
   private let backButton = UIButton(type: .custom)
   private let addTaskButton = UIButton(type: .custom)
   
+  private let alertBackgroundView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .black.withAlphaComponent(0.5)
+    view.isHidden = true
+    return view
+  }()
+  
+  private let deleteAlertButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.backgroundColor = UIColor(hexString: "#FF005C")
+    let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    return button
+  }()
+  
+  private let cancelAlertButton: UIButton = {
+    let button = UIButton(type: .custom)
+    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(UIColor(named: "appText")!.withAlphaComponent(0.5) , for: .normal)
+    return button
+  }()
+  
   //MARK: - Lifecycle
   override func viewDidLoad() {
     configureUI()
+    configureAlert()
     configureDataSource()
     configureColor()
   }
@@ -34,7 +59,7 @@ class IdeaBoxTaskListViewController: UIViewController {
   //MARK: - Configure UI
   func configureUI() {
     let headerView = UIView()
-    headerView.backgroundColor = UIColor(named: "navigationHeaderViewBackgroundColor")
+    headerView.backgroundColor = UIColor(named: "navigationBarBackground")
     
     view.addSubview(headerView)
     headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
@@ -61,7 +86,7 @@ class IdeaBoxTaskListViewController: UIViewController {
     addTaskButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
     let dividerView = UIView()
-    dividerView.backgroundColor = UIColor(named: "navigationDividerViewBackgroundColor")
+    dividerView.backgroundColor = UIColor(named: "navigationBarDividerBackground")
     
     headerView.addSubview(dividerView)
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
@@ -73,7 +98,6 @@ class IdeaBoxTaskListViewController: UIViewController {
     
     view.addSubview(collectionView)
     collectionView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
-    
   }
   
   func configureDataSource() {
@@ -96,6 +120,39 @@ class IdeaBoxTaskListViewController: UIViewController {
     collectionView.rx.itemSelected.bind { self.viewModel.openTask(indexPath: $0) }.disposed(by: disposeBag)
   }
   
+  private func configureAlert() {
+    view.addSubview(alertBackgroundView)
+    alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    
+    let alertWindowView = UIView()
+    alertWindowView.cornerRadius = 27
+    alertWindowView.backgroundColor = UIColor(named: "appBackground")
+    
+    alertBackgroundView.addSubview(alertWindowView)
+    alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
+    alertWindowView.anchorCenterXToSuperview()
+    alertWindowView.anchorCenterYToSuperview()
+    
+    let alertLabel = UILabel(text: "Удалить задачу?")
+    alertLabel.textColor = UIColor(named: "appText")
+    alertLabel.textAlignment = .center
+    alertLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+    
+    alertWindowView.addSubview(alertLabel)
+    alertLabel.anchorCenterXToSuperview()
+    alertLabel.anchorCenterYToSuperview(constant: -1 * 171 / 4)
+    
+    alertWindowView.addSubview(deleteAlertButton)
+    deleteAlertButton.anchor(widthConstant: 94, heightConstant: 30)
+    deleteAlertButton.cornerRadius = 15
+    deleteAlertButton.anchorCenterXToSuperview()
+    deleteAlertButton.anchorCenterYToSuperview(constant: 15)
+    
+    alertWindowView.addSubview(cancelAlertButton)
+    cancelAlertButton.anchor(top: deleteAlertButton.bottomAnchor, topConstant: 10)
+    cancelAlertButton.anchorCenterXToSuperview()
+  }
+  
   //MARK: - Colelction View
   private func createCompositionalLayout() -> UICollectionViewLayout {
     return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
@@ -104,14 +161,14 @@ class IdeaBoxTaskListViewController: UIViewController {
   }
   
   private func section() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
+    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62.0))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     item.contentInsets =  NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50.0))
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(62.0))
     let header = NSCollectionLayoutBoundarySupplementaryItem(
       layoutSize: headerSize,
       elementKind: UICollectionView.elementKindSectionHeader,
@@ -126,8 +183,15 @@ class IdeaBoxTaskListViewController: UIViewController {
     
     addTaskButton.rx.tap.bind { viewModel.rightBarButtonAddItemClick() }.disposed(by: disposeBag)
     backButton.rx.tap.bind { viewModel.leftBarButtonBackItemClick() }.disposed(by: disposeBag)
+    
+    deleteAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertDeleteButtonClicked() }.disposed(by: disposeBag)
+    cancelAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertCancelButtonClicked() }.disposed(by: disposeBag)
+    
+    viewModel.showAlert.bind{ [weak self] showAlert in
+      guard let self = self else { return }
+      self.alertBackgroundView.isHidden = !showAlert
+    }.disposed(by: disposeBag)
   }
-  
 }
 
 extension IdeaBoxTaskListViewController: ConfigureColorProtocol {

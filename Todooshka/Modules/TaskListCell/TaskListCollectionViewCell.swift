@@ -135,7 +135,6 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     let label = UILabel()
     label.textAlignment = .left
     label.tintColor = .white
-    //label.font = UIFont(name: "EuclidCircularA-Medium", size: 13)
     label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
     return label
   }()
@@ -209,6 +208,7 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     contentView.addSubview(repeatButton)
     repeatButton.anchorCenterYToSuperview()
     repeatButton.anchor(right: contentView.rightAnchor, rightConstant: 15, widthConstant: 86, heightConstant: 30)
+    
   }
   
   //MARK: - Bind to ViewModel
@@ -218,6 +218,8 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     configureUI()
     
     delegate = viewModel
+    
+    repeatButton.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.repeatButtonClick() }.disposed(by: disposeBag)
     
     viewModel.taskTextOutput.bind(to: taskTextLabel.rx.text).disposed(by: disposeBag)
     viewModel.taskTimeLeftTextOutput.bind(to: taskTimeLeftLabel.rx.text).disposed(by: disposeBag)
@@ -242,11 +244,15 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
       self.taskTypeImageView.tintColor = type?.imageColor
     }.disposed(by: disposeBag)
     
-    repeatButton.rx.tapGesture().when(.recognized).bind{ _ in
-      self.viewModel.repeatButtonClick() }.disposed(by: disposeBag)
+    viewModel.hideCell.bind{ [weak self] hide in
+      if hide {
+        self?.hideSwipe(animated: true)
+        self?.viewModel.hideCell.accept(false)
+      }
+    }.disposed(by: disposeBag)
+    
+    
   }
-  
-  
 }
 
 

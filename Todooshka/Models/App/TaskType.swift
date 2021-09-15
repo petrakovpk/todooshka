@@ -12,7 +12,6 @@ import RxDataSources
 
 enum TaskTypeStatus: String, Codable {
   case active = "active"
-  case archived = "archived" // если у типа есть привязанные задачи
   case deleted = "deleted" // удален и можно посмотреть в спсике удаленных типов
   case hardDeleted = "hardDeleted" // полностью удален и ждет удаления в Firebase
 }
@@ -25,6 +24,7 @@ class TaskType: IdentifiableType, Equatable  {
   var imageColorHex: String?
   var text: String = ""
   var orderNumber: Int
+  var status: TaskTypeStatus = .active
   
   //MARK: - GET Properties
   var image: UIImage? {
@@ -46,13 +46,15 @@ class TaskType: IdentifiableType, Equatable  {
     self.orderNumber = orderNumber
   }
   
+  //MARK: - Optional Init
   init?(snapshot: DataSnapshot) {
     guard let snapshotDict = snapshot.value as? [String: Any] else { return nil }
     guard
       let imageName = snapshotDict["imageName"] as? String,
       let imageColorHex = snapshotDict["imageColorHex"] as? String,
       let text = snapshotDict["text"] as? String,
-      let orderNumber = snapshotDict["orderNumber"] as? Int
+      let orderNumber = snapshotDict["orderNumber"] as? Int,
+      let status = snapshotDict["status"] as? String
     else { return nil }
     
     self.identity = snapshot.key
@@ -60,6 +62,7 @@ class TaskType: IdentifiableType, Equatable  {
     self.imageColorHex = imageColorHex
     self.text = text
     self.orderNumber = orderNumber
+    self.status = TaskTypeStatus(rawValue: status) ?? .active
   }
   
   init?(coreDataTaskType: CoreDataTaskType) {
@@ -75,6 +78,7 @@ class TaskType: IdentifiableType, Equatable  {
     self.imageColorHex = imageColorHex
     self.text = text
     self.orderNumber = Int(coreDataTaskType.ordernumber)
+    self.status = TaskTypeStatus(rawValue: coreDataTaskType.status ?? "active")!
   }
   
   //MARK: - Equatable

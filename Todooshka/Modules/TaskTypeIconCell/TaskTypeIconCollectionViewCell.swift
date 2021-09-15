@@ -9,7 +9,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-
 class TaskTypeIconCollectionViewCell: UICollectionViewCell {
   
   //MARK: - Properties
@@ -30,7 +29,7 @@ class TaskTypeIconCollectionViewCell: UICollectionViewCell {
   }
   
   //MARK: - Bind to ViewModel
-  func bindToViewModel(viewModel: TaskTypeIconCollectionViewCellModel){
+  func bindTo(viewModel: TaskTypeIconCollectionViewCellModel){
     self.viewModel = viewModel
     
     configureUI()
@@ -38,8 +37,5 @@ class TaskTypeIconCollectionViewCell: UICollectionViewCell {
     viewModel.taskTypeIcon.bind{ self.imageView.image = $0?.image }.disposed(by: disposeBag)
     
   }
-  
-  
 }
-
 

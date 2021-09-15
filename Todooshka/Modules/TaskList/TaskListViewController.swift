@@ -27,28 +27,28 @@ class TaskListViewController: UIViewController {
   
   private let ideaTasksButton = TDTopRoundButton(image: UIImage(named: "lamp-charge")?.template, blurEffect: true )
   
-  fileprivate let headerImageView: UIImageView = {
+  private let headerImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
   
-  fileprivate let taskCountLabel: UILabel = {
+  private let taskCountLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
     return label
   }()
   
-  fileprivate let animationView = AnimationView(name: "task_animation")
+  private let animationView = AnimationView(name: "task_animation")
   
-  fileprivate let sortedByButton: UIButton = {
+  private let sortedByButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setImage(UIImage(named: "sort")?.template, for: .normal)
     button.imageView?.tintColor = .white
     return button
   }()
   
-  fileprivate let expandImageView: UIImageView = {
+  private let expandImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     imageView.tintColor = .white
@@ -56,9 +56,34 @@ class TaskListViewController: UIViewController {
     return imageView
   }()
   
+  private let alertBackgroundView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .black.withAlphaComponent(0.5)
+    view.isHidden = true
+    return view
+  }()
+  
+  private let deleteAlertButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.backgroundColor = UIColor(hexString: "#FF005C")
+    let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    return button
+  }()
+  
+  private let cancelAlertButton: UIButton = {
+    let button = UIButton(type: .custom)
+    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(UIColor(named: "appText")!.withAlphaComponent(0.5) , for: .normal)
+    return button
+  }()
+  
   //MARK: - Lifecycle
   override func viewDidLoad() {
     configureUI()
+    configureAlert()
     configureDataSource()
     configureColor()
   }
@@ -148,7 +173,39 @@ class TaskListViewController: UIViewController {
                       }, completion: nil)
     
     sortedByButton.isHidden = (tasksTypeCount < 2)
+  }
+
+  private func configureAlert() {
+    view.addSubview(alertBackgroundView)
+    alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
     
+    let alertWindowView = UIView()
+    alertWindowView.cornerRadius = 27
+    alertWindowView.backgroundColor = UIColor(named: "appBackground")
+    
+    alertBackgroundView.addSubview(alertWindowView)
+    alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
+    alertWindowView.anchorCenterXToSuperview()
+    alertWindowView.anchorCenterYToSuperview()
+    
+    let alertLabel = UILabel(text: "Удалить задачу?")
+    alertLabel.textColor = UIColor(named: "appText")
+    alertLabel.textAlignment = .center
+    alertLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+    
+    alertWindowView.addSubview(alertLabel)
+    alertLabel.anchorCenterXToSuperview()
+    alertLabel.anchorCenterYToSuperview(constant: -1 * 171 / 4)
+    
+    alertWindowView.addSubview(deleteAlertButton)
+    deleteAlertButton.anchor(widthConstant: 94, heightConstant: 30)
+    deleteAlertButton.cornerRadius = 15
+    deleteAlertButton.anchorCenterXToSuperview()
+    deleteAlertButton.anchorCenterYToSuperview(constant: 15)
+    
+    alertWindowView.addSubview(cancelAlertButton)
+    cancelAlertButton.anchor(top: deleteAlertButton.bottomAnchor, topConstant: 10)
+    cancelAlertButton.anchorCenterXToSuperview()
   }
   
   //MARK: - Configure Data Source
@@ -195,6 +252,9 @@ class TaskListViewController: UIViewController {
     overdueTaskButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.navigateToOverdueTaskList()}.disposed(by: disposeBag)
     sortedByButton.rx.tap.bind{ viewModel.sortedByButtonClicked() }.disposed(by: disposeBag)
     
+    deleteAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertDeleteButtonClicked() }.disposed(by: disposeBag)
+    cancelAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertCancelButtonClicked() }.disposed(by: disposeBag)
+    
     viewModel.overdueButtonIsHidden.bind(to: overdueTaskButton.rx.isHidden).disposed(by: disposeBag)
     
     viewModel.dataSource.bind{[weak self] models in
@@ -207,6 +267,11 @@ class TaskListViewController: UIViewController {
       let tasksTypeCount = Dictionary(grouping: model.items, by: { $0.type }).count
       self.configureUI(tasksCount: model.items.count, tasksTypeCount: tasksTypeCount)
       
+    }.disposed(by: disposeBag)
+    
+    viewModel.showAlert.bind{ [weak self] showAlert in
+      guard let self = self else { return }
+      self.alertBackgroundView.isHidden = !showAlert
     }.disposed(by: disposeBag)
   }
 }

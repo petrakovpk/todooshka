@@ -26,12 +26,20 @@ class CoreDataService {
   
   let disposeBag = DisposeBag()
   
-  let calendarSelectedDate = BehaviorRelay<Date>(value: Date())
+  var handleAuth: AuthStateDidChangeListenerHandle!
   
   let tasks = BehaviorRelay<[Task]>(value: [])
   let taskTypes = BehaviorRelay<[TaskType]>(value: [])
+  
+  let calendarSelectedDate = BehaviorRelay<Date>(value: Date())
   let selectedTaskType = BehaviorRelay<TaskType?>(value: nil)
-  var handleAuth: AuthStateDidChangeListenerHandle!
+  let selectedTaskTypeColor =  BehaviorRelay<UIColor?>(value: nil)
+  
+  let taskRemovingIsRequired = BehaviorRelay<Task?>(value: nil)
+  let taskTypeRemovingIsRequired = BehaviorRelay<TaskType?>(value: nil)
+  
+  let allTaskRemovingIsRequired = BehaviorRelay<Bool>(value: false)
+  let allTaskTypesRemovingIsRequired = BehaviorRelay<Bool>(value: false)
   
   //MARK: - Init
   init() {
@@ -45,7 +53,7 @@ class CoreDataService {
     
     startObserveCoreData()
     
-    startOnlineWorking()
+  //  startOnlineWorking()
   }
   
   deinit {
@@ -180,7 +188,6 @@ class CoreDataService {
           if let index = self.taskTypes.value.firstIndex(where: {$0.identity == coreDataTaskType.uid}) {
             if let type = TaskType(coreDataTaskType: coreDataTaskType) {
               var types = self.taskTypes.value
-              print("123", type.text)
               types[index] = type
               types.sort{ return $0.orderNumber < $1.orderNumber }
               self.taskTypes.accept(types)
@@ -215,7 +222,7 @@ class CoreDataService {
     TASKS_REF.child(user.uid).observe(.childAdded) { taskSnapshot in
       if let task = Task(snapshot: taskSnapshot) {
         if task.status == .hardDeleted {
-          self.removeTaskFromCoreData(task: task, completion: nil)
+          self.removeTasksFromCoreData(tasks: [task], completion: nil)
         } else {
           self.saveTasksToCoreData(tasks: [task], completion: nil)
         }
@@ -224,14 +231,14 @@ class CoreDataService {
     
     TASKS_REF.child(user.uid).observe(.childRemoved) { taskSnapshot in
       if let task = Task(snapshot: taskSnapshot) {
-        self.removeTaskFromCoreData(task: task, completion: nil)
+        self.removeTasksFromCoreData(tasks: [task], completion: nil)
       }
     }
     
     TASKS_REF.child(user.uid).observe(.childChanged) { taskSnapshot in
       if let task = Task(snapshot: taskSnapshot) {
         if task.status == .hardDeleted {
-          self.removeTaskFromCoreData(task: task, completion: nil)
+          self.removeTasksFromCoreData(tasks: [task], completion: nil)
         } else {
           self.saveTasksToCoreData(tasks: [task], completion: nil)
         }
@@ -246,7 +253,7 @@ class CoreDataService {
     
     TASK_TYPES_REF.child(user.uid).observe(.childRemoved) { taskTypeSnapshot in
       if let taskType = TaskType(snapshot: taskTypeSnapshot) {
-        self.removeTaskTypeFromCoreData(type: taskType, completion: nil)
+        self.removeTaskTypesFromCoreData(types: [taskType], completion: nil)
       }
     }
     
@@ -334,6 +341,7 @@ class CoreDataService {
         coreDataTaskType.imageName = type.imageName
         coreDataTaskType.imageColorHex = type.imageColorHex
         coreDataTaskType.ordernumber = Double(type.orderNumber)
+        coreDataTaskType.status = type.status.rawValue
         
         try managedContext.save()
       }
@@ -347,32 +355,31 @@ class CoreDataService {
       completion?(error)
       return
     }
-    
   }
   
   //MARK: - Core Data - Remove
-  func removeTaskFromCoreData(task: Task, completion: TodooshkaCompletion? ) {
-    
-    let fetchRequest = NSFetchRequest<CoreDataTask>(entityName: "CoreDataTask")
-    fetchRequest.predicate = NSPredicate(format: "%K == %@", argumentArray:["uid", task.UID])
-    
-    do {
-      let coreDataTasks = try managedContext.fetch(fetchRequest)
-      for coreDataTask in coreDataTasks {
-        managedContext.delete(coreDataTask)
-      }
-      try managedContext.save()
-      completion?(nil)
-      return
-    }
-    catch {
-      print(error.localizedDescription)
-      completion?(error)
-      return
-    }
-  }
-  
-  func removeTasksFromCoreData(tasks: [Task], completion: @escaping TodooshkaCompletion ) {
+//  func removeTaskFromCoreData(task: Task, completion: TodooshkaCompletion? ) {
+//
+//    let fetchRequest = NSFetchRequest<CoreDataTask>(entityName: "CoreDataTask")
+//    fetchRequest.predicate = NSPredicate(format: "%K == %@", argumentArray:["uid", task.UID])
+//
+//    do {
+//      let coreDataTasks = try managedContext.fetch(fetchRequest)
+//      for coreDataTask in coreDataTasks {
+//        managedContext.delete(coreDataTask)
+//      }
+//      try managedContext.save()
+//      completion?(nil)
+//      return
+//    }
+//    catch {
+//      print(error.localizedDescription)
+//      completion?(error)
+//      return
+//    }
+//  }
+//
+  func removeTasksFromCoreData(tasks: [Task], completion: TodooshkaCompletion? ) {
     let fetchRequest = NSFetchRequest<CoreDataTask>(entityName: "CoreDataTask")
     fetchRequest.predicate = NSPredicate(format: "%K in %@", argumentArray:["uid", tasks.map{return $0.UID} ])
     
@@ -382,20 +389,18 @@ class CoreDataService {
         managedContext.delete(coreDataTask)
       }
       try managedContext.save()
-      completion(nil)
-      return
+      completion?(nil)
     }
     catch {
       print(error.localizedDescription)
-      completion(error)
-      return
+      completion?(error)
     }
   }
   
-  func removeTaskTypeFromCoreData(type: TaskType, completion: TodooshkaCompletion? ) {
+  func removeTaskTypesFromCoreData(types: [TaskType], completion: TodooshkaCompletion? ) {
     
     let fetchRequest = NSFetchRequest<CoreDataTaskType>(entityName: "CoreDataTaskType")
-    fetchRequest.predicate = NSPredicate(format: "%K == %@", argumentArray:["uid", type.identity])
+    fetchRequest.predicate = NSPredicate(format: "%K in %@", argumentArray:["uid", types.map{return $0.identity} ])
     
     do {
       let coreDataTaskTypes = try managedContext.fetch(fetchRequest)

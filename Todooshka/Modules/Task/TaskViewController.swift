@@ -195,7 +195,7 @@ class TaskViewController: UIViewController {
     taskTextField.rx.text.orEmpty.bind(to: self.viewModel.taskTextInput).disposed(by: disposeBag)
     descriptionTextView.rx.text.orEmpty.bind{ [weak self] description in
       guard let self = self else { return }
-      if self.descriptionTextView.textColor?.cgColor == UIColor.white.cgColor {
+      if self.descriptionTextView.textColor == UIColor(named: "appText") {
         self.viewModel.taskDescriptionInput.accept(description)
       }
     }.disposed(by: disposeBag)
@@ -266,7 +266,7 @@ class TaskViewController: UIViewController {
       guard let self = self else { return }
       guard let description = description else { return }
       if description != "" {
-        self.descriptionTextView.textColor = .white
+        self.descriptionTextView.textColor = UIColor(named: "appText")
         self.descriptionTextView.text = description
       }
     }.disposed(by: disposeBag)
