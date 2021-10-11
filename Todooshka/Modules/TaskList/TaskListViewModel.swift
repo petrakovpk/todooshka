@@ -41,11 +41,7 @@ class TaskListViewModel: Stepper {
     
     services.coreDataService.taskRemovingIsRequired.bind{ [weak self] task in
       guard let self = self else { return }
-      if let task = task, task.status == .created {
-        self.showAlert.accept(true)
-      } else {
-        self.showAlert.accept(false)
-      }
+      self.showAlert.accept( task == nil ? false : true )
     }.disposed(by: disposeBag)
   }
   
@@ -89,7 +85,7 @@ class TaskListViewModel: Stepper {
     } else {
       UserDefaults.standard.setValue(true, forKey: "isSortedByType")
       var tasks = services.coreDataService.tasks.value
-      tasks.sort{ ($0.taskType!.orderNumber, $0.createdTimeIntervalSince1970) < ($1.taskType!.orderNumber, $1.createdTimeIntervalSince1970) }
+      tasks.sort{ ($0.type!.orderNumber, $0.createdTimeIntervalSince1970) < ($1.type!.orderNumber, $1.createdTimeIntervalSince1970) }
       services.coreDataService.tasks.accept(tasks)
     }
   }

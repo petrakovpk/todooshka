@@ -50,6 +50,7 @@
 		607F157626D6D53D00AB91B3 /* AuthSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607F157526D6D53D00AB91B3 /* AuthSectionModel.swift */; };
 		607F157926D6D5EC00AB91B3 /* AuthCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607F157826D6D5EC00AB91B3 /* AuthCollectionViewCell.swift */; };
 		607F157B26D6D5F700AB91B3 /* AuthCollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607F157A26D6D5F700AB91B3 /* AuthCollectionViewCellModel.swift */; };
+		60819A172705A49F0067AF05 /* TDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60819A162705A49F0067AF05 /* TDViewController.swift */; };
 		60855BDA2659061200079D75 /* TaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60855BD92659061100079D75 /* TaskViewController.swift */; };
 		60855BDC2659064200079D75 /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60855BDB2659064200079D75 /* TaskViewModel.swift */; };
 		60855BE02659221C00079D75 /* TDTaskTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60855BDF2659221C00079D75 /* TDTaskTextField.swift */; };
@@ -57,6 +58,8 @@
 		608A248026F0BAF500E7FD1D /* DeletedTaskTypeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608A247F26F0BAF500E7FD1D /* DeletedTaskTypeListViewController.swift */; };
 		608A248226F0BB0900E7FD1D /* DeletedTaskTypeListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608A248126F0BB0900E7FD1D /* DeletedTaskTypeListViewModel.swift */; };
 		608FD86B2688827200819D68 /* TaskType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608FD86A2688827200819D68 /* TaskType.swift */; };
+		6090C96126F398CF00B0EC73 /* taskDone1.json in Resources */ = {isa = PBXBuildFile; fileRef = 6090C96026F398CF00B0EC73 /* taskDone1.json */; };
+		6090C96526F3A58F00B0EC73 /* taskDone2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6090C96426F3A58F00B0EC73 /* taskDone2.json */; };
 		6096ABA82683E9E100285AA7 /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6096ABA72683E9E100285AA7 /* UITextView.swift */; };
 		6096ABAB268463CD00285AA7 /* CompletedTasksListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6096ABAA268463CD00285AA7 /* CompletedTasksListViewController.swift */; };
 		6096ABAD268463D900285AA7 /* CompletedTasksListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6096ABAC268463D900285AA7 /* CompletedTasksListViewModel.swift */; };
@@ -192,6 +195,7 @@
 		607F157526D6D53D00AB91B3 /* AuthSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthSectionModel.swift; sourceTree = "<group>"; };
 		607F157826D6D5EC00AB91B3 /* AuthCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCollectionViewCell.swift; sourceTree = "<group>"; };
 		607F157A26D6D5F700AB91B3 /* AuthCollectionViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCollectionViewCellModel.swift; sourceTree = "<group>"; };
+		60819A162705A49F0067AF05 /* TDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDViewController.swift; sourceTree = "<group>"; };
 		60855BD92659061100079D75 /* TaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewController.swift; sourceTree = "<group>"; };
 		60855BDB2659064200079D75 /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
 		60855BDF2659221C00079D75 /* TDTaskTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDTaskTextField.swift; sourceTree = "<group>"; };
@@ -199,6 +203,8 @@
 		608A247F26F0BAF500E7FD1D /* DeletedTaskTypeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTaskTypeListViewController.swift; sourceTree = "<group>"; };
 		608A248126F0BB0900E7FD1D /* DeletedTaskTypeListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTaskTypeListViewModel.swift; sourceTree = "<group>"; };
 		608FD86A2688827200819D68 /* TaskType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskType.swift; sourceTree = "<group>"; };
+		6090C96026F398CF00B0EC73 /* taskDone1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taskDone1.json; sourceTree = "<group>"; };
+		6090C96426F3A58F00B0EC73 /* taskDone2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taskDone2.json; sourceTree = "<group>"; };
 		6096ABA72683E9E100285AA7 /* UITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextView.swift; sourceTree = "<group>"; };
 		6096ABAA268463CD00285AA7 /* CompletedTasksListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTasksListViewController.swift; sourceTree = "<group>"; };
 		6096ABAC268463D900285AA7 /* CompletedTasksListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTasksListViewModel.swift; sourceTree = "<group>"; };
@@ -464,6 +470,14 @@
 			path = AuthCell;
 			sourceTree = "<group>";
 		};
+		60819A152705A4610067AF05 /* TDViewController */ = {
+			isa = PBXGroup;
+			children = (
+				60819A162705A49F0067AF05 /* TDViewController.swift */,
+			);
+			path = TDViewController;
+			sourceTree = "<group>";
+		};
 		60855BD8265905F700079D75 /* Task */ = {
 			isa = PBXGroup;
 			children = (
@@ -514,6 +528,8 @@
 			children = (
 				60ABAE1626C0729F000B07C0 /* Assets.xcassets */,
 				60ABAE1726C072A0000B07C0 /* task_animation.json */,
+				6090C96026F398CF00B0EC73 /* taskDone1.json */,
+				6090C96426F3A58F00B0EC73 /* taskDone2.json */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -700,6 +716,7 @@
 		60AE9DE1265300AB00E51531 /* TodooshkaUI */ = {
 			isa = PBXGroup;
 			children = (
+				60819A152705A4610067AF05 /* TDViewController */,
 				60F0719A26DA77990048AB71 /* TDButtons */,
 				602D1B3C26C1BBB300DAA711 /* TDTextViews */,
 				60EE76A726B69C1300A76C33 /* TDTextFields */,
@@ -932,6 +949,8 @@
 				60ABAE1926C072A0000B07C0 /* task_animation.json in Resources */,
 				60AE9DC12652FB9C00E51531 /* GoogleService-Info.plist in Resources */,
 				60ABAE1826C072A0000B07C0 /* Assets.xcassets in Resources */,
+				6090C96126F398CF00B0EC73 /* taskDone1.json in Resources */,
+				6090C96526F3A58F00B0EC73 /* taskDone2.json in Resources */,
 				60AE9D6F2652E5AD00E51531 /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1069,6 +1088,7 @@
 				60A2F49926EE55BF00C328C1 /* AlertFlow.swift in Sources */,
 				60BE45AA26D40854004B67E5 /* AuthViewController.swift in Sources */,
 				60FA514126D806CC007B3B36 /* ConfirmRemoveTaskViewModel.swift in Sources */,
+				60819A172705A49F0067AF05 /* TDViewController.swift in Sources */,
 				60CA046926A1CA990052CECF /* CoreDataTask+CoreDataProperties.swift in Sources */,
 				60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */,
 				60BABA40269B48FF00D5E40B /* Cell.swift in Sources */,
@@ -1338,7 +1358,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
@@ -1363,7 +1383,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;

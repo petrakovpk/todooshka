@@ -36,7 +36,7 @@ class CompletedTasksListViewModel: Stepper {
     }}).bind { [weak self] tasks in
       guard let self = self else { return }
       
-      let tasksDict = Dictionary(grouping: tasks, by: {$0.taskType?.text ?? "" }).sorted{ $0.key > $1.key }
+      let tasksDict = Dictionary(grouping: tasks, by: {$0.type?.text ?? "" }).sorted{ $0.key > $1.key }
       
       var models: [TaskListSectionModel] = []
       

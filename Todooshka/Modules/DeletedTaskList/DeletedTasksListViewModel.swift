@@ -63,14 +63,15 @@ class DeletedTasksListViewModel: Stepper {
   }
   
   func alertDeleteButtonClicked() {
-    if let tasks = dataSource.value.first?.items {
-      services.coreDataService.removeTasksFromCoreData(tasks: tasks) {[weak self] error in
-        guard let self = self else { return }
-        if let error = error {
-          print(error.localizedDescription)
-        }
-        self.services.coreDataService.allTaskRemovingIsRequired.accept(false)
+    
+    let tasks = dataSource.value.flatMap{ $0.items }
+    
+    services.coreDataService.removeTasksFromCoreData(tasks: tasks) {[weak self] error in
+      guard let self = self else { return }
+      if let error = error {
+        print(error.localizedDescription)
       }
+      self.services.coreDataService.allTaskRemovingIsRequired.accept(false)
     }
   }
   

@@ -25,7 +25,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
   //MARK: - Configure UI
   func configureUI() {
     setValue(customTabBar, forKey: "tabBar")
-    
   }
   
   //MARK: - Bind
@@ -33,6 +32,5 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     self.viewModel = viewModel
     
     customTabBar.addTaskButton.rx.tapGesture().bind{_ in viewModel.handleAddTaskClick()}.disposed(by: disposeBag)
-    
   }
 }

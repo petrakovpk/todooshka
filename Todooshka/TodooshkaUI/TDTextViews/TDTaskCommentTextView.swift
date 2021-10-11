@@ -12,14 +12,6 @@ class TDTaskCommentTextView: UITextView {
   //MARK: - Properties
   var isEmpty = true
   
-  //MARK: - Draw
-  //    override func draw(_ rect: CGRect) {
-  //        let bottomBorderLine = CALayer()
-  //        bottomBorderLine.frame = CGRect(x: 0, y: bounds.height.int, width: bounds.width.int, height: 1)
-  //        bottomBorderLine.backgroundColor = UIColor(red: 0.094, green: 0.105, blue: 0.233, alpha: 1).cgColor
-  //        layer.addSublayer(bottomBorderLine)
-  //    }
-  
   //MARK: - Init
   override init(frame: CGRect, textContainer: NSTextContainer?) {
     super.init(frame: frame, textContainer: textContainer)

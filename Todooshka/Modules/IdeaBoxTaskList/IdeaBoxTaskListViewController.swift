@@ -53,11 +53,13 @@ class IdeaBoxTaskListViewController: UIViewController {
     configureUI()
     configureAlert()
     configureDataSource()
-    configureColor()
+//    configureGestures()
   }
   
   //MARK: - Configure UI
   func configureUI() {
+    view.backgroundColor = UIColor(named: "appBackground")
+    
     let headerView = UIView()
     headerView.backgroundColor = UIColor(named: "navigationBarBackground")
     
@@ -95,6 +97,11 @@ class IdeaBoxTaskListViewController: UIViewController {
     collectionView.register(TaskListCollectionViewCell.self, forCellWithReuseIdentifier: TaskListCollectionViewCell.reuseID)
     collectionView.register(TaskListCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskListCollectionReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
+    collectionView.backgroundColor = .clear
+    collectionView.dragInteractionEnabled = true
+    collectionView.dragDelegate = self
+    collectionView.dropDelegate = self
+    collectionView.layer.masksToBounds = false
     
     view.addSubview(collectionView)
     collectionView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
@@ -194,11 +201,33 @@ class IdeaBoxTaskListViewController: UIViewController {
   }
 }
 
-extension IdeaBoxTaskListViewController: ConfigureColorProtocol {
-  func configureColor() {
-    view.backgroundColor = UIColor(named: "appBackground")
+
+//MARK: - UICollectionViewDragDelegate
+extension IdeaBoxTaskListViewController: UICollectionViewDragDelegate {
+  func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+    let item = dataSource[indexPath.section].items[indexPath.item]
+    let itemProvider = NSItemProvider(object: "\(indexPath)" as NSString)
+    let dragItem = UIDragItem(itemProvider: itemProvider)
+    dragItem.localObject = item
+    return [dragItem]
+  }
+}
+
+//MARK: - UICollectionViewDropDelegate
+extension IdeaBoxTaskListViewController: UICollectionViewDropDelegate {
+  
+  func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+    if collectionView.hasActiveDrag {
+      return UICollectionViewDropProposal(operation: .move,intent: .insertAtDestinationIndexPath )
+    }
+    return UICollectionViewDropProposal(operation: .forbidden)
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
     
-    //CollectionView
-    collectionView.backgroundColor = .clear
+    if let destinationIndexPath = coordinator.destinationIndexPath,
+       let sourceIndexPath = coordinator.items[0].sourceIndexPath {
+      viewModel.collectionViewItemMoved(sourceIndex: sourceIndexPath, destinationIndex: destinationIndexPath)
+    }
   }
 }

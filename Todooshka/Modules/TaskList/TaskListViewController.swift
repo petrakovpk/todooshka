@@ -45,6 +45,7 @@ class TaskListViewController: UIViewController {
     let button = UIButton(type: .custom)
     button.setImage(UIImage(named: "sort")?.template, for: .normal)
     button.imageView?.tintColor = .white
+    button.isHidden = true
     return button
   }()
   
@@ -117,6 +118,7 @@ class TaskListViewController: UIViewController {
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
     collectionView.register(TaskListCollectionViewCell.self, forCellWithReuseIdentifier: TaskListCollectionViewCell.reuseID)
     collectionView.alwaysBounceVertical = true
+    collectionView.layer.masksToBounds = false
     
     view.addSubview(headerImageView)
     headerImageView.anchor(top: view.topAnchor, left: view.leftAnchor,  right: view.rightAnchor, heightConstant: 207)
@@ -164,17 +166,15 @@ class TaskListViewController: UIViewController {
       return
     }
     
-    
     UIView.transition(with:  headerImageView,
                       duration: 1.0,
                       options: .transitionCrossDissolve,
                       animations: {
-                        self.headerImageView.image = image
-                      }, completion: nil)
+      self.headerImageView.image = image
+    }, completion: nil)
     
-    sortedByButton.isHidden = (tasksTypeCount < 2)
   }
-
+  
   private func configureAlert() {
     view.addSubview(alertBackgroundView)
     alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
@@ -264,7 +264,7 @@ class TaskListViewController: UIViewController {
         return
       }
       
-      let tasksTypeCount = Dictionary(grouping: model.items, by: { $0.type }).count
+      let tasksTypeCount = Dictionary(grouping: model.items, by: { $0.typeUID }).count
       self.configureUI(tasksCount: model.items.count, tasksTypeCount: tasksTypeCount)
       
     }.disposed(by: disposeBag)

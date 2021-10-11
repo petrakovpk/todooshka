@@ -14,7 +14,7 @@ class TDAddTaskButton: UIButton {
     layer.shadowOffset = CGSize(width: 0, height: 4.0)
     layer.shadowOpacity = 1.0
     layer.shadowRadius = 18.0
-    layer.shadowPath = UIBezierPath(rect: bounds).cgPath
+    layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: bounds.height / 2).cgPath
 
     layer.shadowColor = UIColor.blueRibbon.cgColor
     layer.backgroundColor = UIColor.blueRibbon.cgColor
@@ -25,6 +25,8 @@ class TDAddTaskButton: UIButton {
     imageView.anchorCenterYToSuperview()
     
     cornerRadius = bounds.width / 2
+
+    //layer.masksToBounds = false
   }
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

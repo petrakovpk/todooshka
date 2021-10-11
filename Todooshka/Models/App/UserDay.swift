@@ -79,13 +79,13 @@ class UserDay: IdentifiableType, Equatable {
     }
     
     func getTypeNameByIndex(index: Int) -> String? {
-        let closedTasksDictionary = Dictionary(grouping: closedTasks, by: { $0.type }).sorted{ $0.value.count > $1.value.count }
+      let closedTasksDictionary = Dictionary(grouping: closedTasks, by: { $0.typeUID }).sorted{ $0.value.count > $1.value.count }
         if index >= Array(closedTasksDictionary).count { return nil }
         return Array(closedTasksDictionary)[index].key
     }
     
     func getTypeCountByIndex(index: Int) -> String? {
-        let closedTasksDictionary = Dictionary(grouping: closedTasks, by: { $0.type }).sorted{ $0.value.count > $1.value.count }
+        let closedTasksDictionary = Dictionary(grouping: closedTasks, by: { $0.typeUID }).sorted{ $0.value.count > $1.value.count }
         if index >= Array(closedTasksDictionary).count { return nil }
         return Array(closedTasksDictionary)[index].value.count.string
     }

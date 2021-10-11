@@ -68,7 +68,7 @@ class UserProfileSettingsViewController: UIViewController {
     let titleLabel = UILabel()
     
     titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-    titleLabel.text = "Settings and privacy"
+    titleLabel.text = "Настройки и конфеденциальность"
     
     headerView.addSubview(titleLabel)
     titleLabel.anchorCenterXToSuperview()

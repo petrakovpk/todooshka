@@ -57,7 +57,6 @@ class TaskTypesListViewModel: Stepper {
   }
   
   func alertDeleteButtonClicked() {
-    
     if let type = services.coreDataService.taskTypeRemovingIsRequired.value {
       type.status = .deleted
       services.coreDataService.saveTaskTypesToCoreData(types: [type]) { error in

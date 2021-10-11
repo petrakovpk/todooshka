@@ -19,12 +19,15 @@ class TaskListCollectionViewCellModel: Stepper {
   let steps = PublishRelay<Step>()
   
   let formatter = DateFormatter()
+  var isEnabledOutput: Bool = true
   
   //MARK: - Из модели во Вью Контроллер
   let taskTextOutput = BehaviorRelay<String?>(value: nil)
   let taskTypeOutput = BehaviorRelay<TaskType?>(value: nil)
   let timeLeftOutput = BehaviorRelay<Date?>(value: nil)
   let timeLeftPercentOutput = BehaviorRelay<Double?>(value: nil)
+  let timeSecondsLeftPercentOutput = BehaviorRelay<Double?>(value: nil)
+  
   
   let taskTimeLeftTextOutput = BehaviorRelay<String>(value: "")
   let task = BehaviorRelay<Task?>(value: nil)
@@ -37,7 +40,7 @@ class TaskListCollectionViewCellModel: Stepper {
     
     services.coreDataService.taskTypes.bind{ [weak self] types in
       guard let self = self else { return }
-      if let type = types.first(where: {$0.identity == task.type}) {
+      if let type = types.first(where: {$0.identity == task.typeUID}) {
         self.taskTypeOutput.accept(type)
       }
     }.disposed(by: disposeBag)
@@ -47,34 +50,38 @@ class TaskListCollectionViewCellModel: Stepper {
       guard let task = task else { return }
       self.taskTextOutput.accept(task.text)
       
-      let secondsLeftTimeIntervalSince1970 = task.createdTimeIntervalSince1970 - Date().timeIntervalSince1970 + 24 * 60 * 60
-      self.timeLeftOutput.accept(Date(timeIntervalSince1970: secondsLeftTimeIntervalSince1970))
-      self.timeLeftPercentOutput.accept(secondsLeftTimeIntervalSince1970 / (24 * 60 * 60))
-    }.disposed(by: disposeBag)
-    
-    Observable<Int>.timer(RxTimeInterval.seconds(0), period: RxTimeInterval.seconds(1), scheduler: MainScheduler.instance).subscribe { [weak self] _ in
-      guard let self = self else { return }
-      guard let task = self.task.value else { return }
-      guard let timeLeftOutput = self.timeLeftOutput.value else { return }
-      
-      let secondsLeftTimeIntervalSince1970 = task.createdTimeIntervalSince1970 - Date().timeIntervalSince1970 + 24 * 60 * 60
-      let timeLeft = Date(timeIntervalSince1970: secondsLeftTimeIntervalSince1970)
-      
-      if timeLeft.hour != timeLeftOutput.hour || timeLeft.minute != timeLeftOutput.minute {
-        self.timeLeftOutput.accept(timeLeft)
+      if task.isCurrent {
+        let secondsLeftTimeIntervalSince1970 = task.createdTimeIntervalSince1970 - Date().timeIntervalSince1970 + 24 * 60 * 60
+        self.timeLeftOutput.accept(Date(timeIntervalSince1970: secondsLeftTimeIntervalSince1970))
         self.timeLeftPercentOutput.accept(secondsLeftTimeIntervalSince1970 / (24 * 60 * 60))
       }
     }.disposed(by: disposeBag)
     
-    formatter.dateFormat = "HH'h' mm'm'"
-    formatter.timeZone = TimeZone(secondsFromGMT: 0)
-    
-    self.timeLeftOutput.bind{[weak self] time in
-      guard let self = self else { return }
-      guard let time = time else { return }
+    if task.isCurrent {
+      Observable<Int>.timer(RxTimeInterval.microseconds(1000000 - Int(CACurrentMediaTime().truncatingRemainder(dividingBy: 1) * 1000000)), period: RxTimeInterval.seconds(1), scheduler: MainScheduler.instance).subscribe { [weak self] _ in
+        guard let self = self else { return }
+        guard let task = self.task.value else { return }
+
+        let secondsLeftTimeIntervalSince1970 = task.createdTimeIntervalSince1970 - Date().timeIntervalSince1970 + 24 * 60 * 60
+        let timeLeft = Date(timeIntervalSince1970: secondsLeftTimeIntervalSince1970)
+              
+        if self.isEnabledOutput {
+          self.timeLeftOutput.accept(timeLeft)
+          self.timeLeftPercentOutput.accept(secondsLeftTimeIntervalSince1970 / (24 * 60 * 60))
+          self.timeSecondsLeftPercentOutput.accept(Double(timeLeft.second) / 60)
+        }
+      }.disposed(by: disposeBag)
       
-      self.taskTimeLeftTextOutput.accept(self.formatter.string(from: time))
-    }.disposed(by: disposeBag)
+      formatter.dateFormat = "HH'h' mm'm' ss's'"
+      formatter.timeZone = TimeZone(secondsFromGMT: 0)
+      
+      self.timeLeftOutput.bind{[weak self] time in
+        guard let self = self else { return }
+        guard let time = time else { return }
+        
+        self.taskTimeLeftTextOutput.accept(self.formatter.string(from: time))
+      }.disposed(by: disposeBag)
+    }
     
     services.coreDataService.taskRemovingIsRequired.bind{ [weak self] task in
       guard let self = self else { return }
@@ -96,7 +103,15 @@ class TaskListCollectionViewCellModel: Stepper {
 
 
 extension TaskListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
-
+  
+  func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
+    isEnabledOutput = false
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
+    isEnabledOutput = true
+  }
+  
   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
     
     guard orientation == .right else { return nil }

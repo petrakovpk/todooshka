@@ -20,9 +20,18 @@ class UserProfileViewController: UIViewController {
   let disposeBag = DisposeBag()
   
   //MARK: - UI Elements
-  let settingsButton = TDTopRoundButton(image: UIImage(named: "setting")?.template, blurEffect: false )
-  
   let helloLabel = UILabel()
+  let typeLabel1 = UILabel()
+  let typeLabel2 = UILabel()
+  let typeLabel3 = UILabel()
+  let typeLabel4 = UILabel()
+  let monthLabel = UILabel()
+  let completedTasksLabel = UILabel()
+  
+  let settingsButton = TDTopRoundButton(image: UIImage(named: "setting")?.template, blurEffect: false )
+  let previousMonthButton = UIButton(type: .custom)
+  let nextMonthButton = UIButton(type: .custom)
+ 
   let wreathImageView: UIImageView = {
     let imageView = UIImageView()
     let image = UIImage(named: "wreath")
@@ -31,16 +40,19 @@ class UserProfileViewController: UIViewController {
     return imageView
   }()
   
-  let typeLabel1 = UILabel()
-  let typeLabel2 = UILabel()
-  let typeLabel3 = UILabel()
-  let typeLabel4 = UILabel()
+  let dayStatusBackgroundView: UIView = {
+    let view = UIView()
+    view.layer.cornerRadius = 53 / 2
+    view.backgroundColor = UIColor(red: 0, green: 0.34, blue: 1, alpha: 1)
+    return view
+  }()
   
-  let completedTasksLabel = UILabel()
-  
-  let monthLabel = UILabel()
-  let previousMonthButton = UIButton(type: .custom)
-  let nextMonthButton = UIButton(type: .custom)
+  let dayStatusLabel: UILabel = {
+    let label = UILabel()
+    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+    label.textColor = .white
+    return label
+  }()
   
   //MARK: - Lifecycle
   override func viewDidLoad() {
@@ -52,16 +64,12 @@ class UserProfileViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     navigationController?.tabBarController?.tabBar.isHidden = false
   }
-  
+    
   //MARK: - Configure UI
   func configureUI() {
     view.addSubview(settingsButton)
     settingsButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50, heightConstant: 50)
     
-//    view.addSubview(ideaTasksButton)
-//    ideaTasksButton.anchor(top:  view.safeAreaLayoutGuide.topAnchor, right: settingsButton.leftAnchor, topConstant: 8, rightConstant: 7, widthConstant: 50, heightConstant: 50)
-//    ideaTasksButton.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-//
     helloLabel.text = "Добро пожаловать!"
     helloLabel.font = UIFont.systemFont(ofSize: 19, weight: .medium)
     
@@ -122,27 +130,21 @@ class UserProfileViewController: UIViewController {
     
     view.addSubview(stackView)
     stackView.anchor(top: wreathImageView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 19, leftConstant: 32, rightConstant: 32,  heightConstant: 15)
+  
+    view.addSubview(dayStatusBackgroundView)
+    dayStatusBackgroundView.anchorCenterXToSuperview()
+    dayStatusBackgroundView.anchor(top: typeLabel1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, rightConstant: 16,  heightConstant: 53)
     
-    let textView = UITextView()
-    textView.isScrollEnabled = false
-    textView.textAlignment = .center
-    textView.textColor = .white
-    textView.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-    textView.backgroundColor = UIColor(red: 0, green: 0.34, blue: 1, alpha: 1)
-    textView.text = "You are a peasant! Plow your field better if you want to climb higher!"
-    textView.cornerRadius = 53 / 2
-    textView.isEditable = false
-    
-    view.addSubview(textView)
-    textView.anchorCenterXToSuperview()
-    textView.anchor(top: typeLabel1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, rightConstant: 16,  heightConstant: 53)
+    dayStatusBackgroundView.addSubview(dayStatusLabel)
+    dayStatusLabel.anchorCenterXToSuperview()
+    dayStatusLabel.anchorCenterYToSuperview()
     
     let calendarView = UIView()
     calendarView.backgroundColor = UIColor(named: "userProfileCalendarBackground")
     calendarView.cornerRadius = 11
     
     view.addSubview(calendarView)
-    calendarView.anchor(top: textView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, bottomConstant: 32, rightConstant: 16)
+    calendarView.anchor(top: dayStatusBackgroundView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, bottomConstant: 32, rightConstant: 16)
     
     monthLabel.textAlignment = .center
     monthLabel.textColor = UIColor(named: "appText")
@@ -220,7 +222,8 @@ class UserProfileViewController: UIViewController {
       let dateFormatter = DateFormatter()
       dateFormatter.locale = Locale(identifier: "ru_RU")
       dateFormatter.dateFormat = "LLLL"
-      let stringDate = dateFormatter.string(from: date)
+      var stringDate = dateFormatter.string(from: date)
+      stringDate.firstCharacterUppercased()
       
       self.monthLabel.text = stringDate
     }.disposed(by: disposeBag)
@@ -230,6 +233,7 @@ class UserProfileViewController: UIViewController {
     viewModel.typeLabel2TextOutput.bind(to: typeLabel2.rx.text).disposed(by: disposeBag)
     viewModel.typeLabel3TextOutput.bind(to: typeLabel3.rx.text).disposed(by: disposeBag)
     viewModel.typeLabel4TextOutput.bind(to: typeLabel4.rx.text).disposed(by: disposeBag)
+    viewModel.dayStatusTextOutput.bind(to: dayStatusLabel.rx.text).disposed(by: disposeBag)
   }
   
   //MARK: - Configure Data Source

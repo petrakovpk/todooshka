@@ -161,7 +161,7 @@ class UserProfileFlow: Flow {
   private func navigateToTask(taskFlowAction: TaskFlowAction) -> FlowContributors {
     let viewController = TaskViewController()
     let viewModel = TaskViewModel(services: services, taskFlowAction: taskFlowAction)
-    viewController.bindTo(with: viewModel)
+    viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }

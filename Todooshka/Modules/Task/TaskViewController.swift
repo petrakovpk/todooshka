@@ -9,31 +9,33 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxDataSources
+import Lottie
 
-
-class TaskViewController: UIViewController {
+class TaskViewController: TDViewController {
   
   //MARK: - Propertie
-  private let disposeBag = DisposeBag()
+  var viewModel: TaskViewModel!
   
-  private var viewModel: TaskViewModel!
+  private let disposeBag = DisposeBag()
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskTypeListSectionModel>!
   
   //MARK: - UI Elements
-  private let taskTextField = TDTaskTextField()
-  private let descriptionTextView = TDTaskCommentTextView()
+  private let textField = TDTaskTextField()
+  
+  private let descriptionTextView: UITextView = {
+    let textView = UITextView()
+    textView.borderWidth = 0
+    textView.backgroundColor = .clear
+    textView.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+    return textView
+  }()
+  
   private let configureTaskTypesButton = UIButton(type: .custom)
   private let completeTaskButton = UIButton(type: .system)
-  private let titleLabel = UILabel()
+  
   private let saveTextButton = UIButton(type: .custom)
   private let saveDescriptionButton = UIButton(type: .custom)
-  private let saveButton: UIButton = {
-    let button = UIButton(type: .custom)
-    button.setImage(UIImage(named: "tick-round")?.original, for: .normal)
-    button.semanticContentAttribute = .forceRightToLeft
-    return button
-  }()
-  private let backButton = UIButton(type: .custom)
+  
   private let errorLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 12, weight: .light)
@@ -42,13 +44,33 @@ class TaskViewController: UIViewController {
   }()
   private var collectionView: UICollectionView!
   
+  private let alertBackgroundView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .black.withAlphaComponent(0.5)
+    view.isHidden = true
+    return view
+  }()
+  
+  private let okAlertButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.cornerRadius = 48 / 2
+    button.setTitle("Да, я молодец :)", for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    button.backgroundColor = UIColor(hexString: "#FF005C")
+    return button
+  }()
+  
+  private var animationView = AnimationView(name: "taskDone2")
+  
   //MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    
     configureUI()
+    configureAlert()
     configureDataSource()
+    bindViewModel()
     configureColor()
+    configureGestures()
   }
   
   override func viewDidDisappear(_ animated: Bool) {
@@ -58,34 +80,6 @@ class TaskViewController: UIViewController {
   
   //MARK: - Configure UI
   func configureUI() {
-    
-    let headerView = UIView()
-    headerView.backgroundColor = UIColor(named: "navigationBarBackground")
-    
-    view.addSubview(headerView)
-    headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
-    
-    backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
-    
-    headerView.addSubview(backButton)
-    backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
-    headerView.addSubview(saveButton)
-    saveButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
-    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-    titleLabel.textAlignment = .center
-    
-    headerView.addSubview(titleLabel)
-    titleLabel.anchorCenterXToSuperview()
-    titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0,  bottomConstant: 20, rightConstant: 0)
-    
-    let dividerView = UIView()
-    dividerView.backgroundColor = UIColor(named: "navigationBarDividerBackground")
-    
-    headerView.addSubview(dividerView)
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
-    
     let label1 = UILabel(text: "Задача")
     label1.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     label1.textAlignment = .left
@@ -95,21 +89,21 @@ class TaskViewController: UIViewController {
     
     saveDescriptionButton.setImage(UIImage(named: "tick-round")?.original, for: .normal)
     
-    view.addSubview(taskTextField)
-    taskTextField.anchor(top: label1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 5, leftConstant: 16, rightConstant: 16, heightConstant: 40)
+    view.addSubview(textField)
+    textField.anchor(top: label1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 5, leftConstant: 16, rightConstant: 16, heightConstant: 40)
     
     saveTextButton.setImage(UIImage(named: "tick-round")?.original, for: .normal)
     
     view.addSubview(saveTextButton)
-    saveTextButton.anchor(right: taskTextField.rightAnchor, widthConstant: 24, heightConstant: 24)
-    saveTextButton.centerYAnchor.constraint(equalTo: taskTextField.centerYAnchor).isActive = true
+    saveTextButton.anchor(right: textField.rightAnchor, widthConstant: 24, heightConstant: 24)
+    saveTextButton.centerYAnchor.constraint(equalTo: textField.centerYAnchor).isActive = true
     
     let label2 = UILabel(text: "Тип")
     label2.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     label2.textAlignment = .left
     
     view.addSubview(label2)
-    label2.anchor(top: taskTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, rightConstant: 16)
+    label2.anchor(top: textField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, rightConstant: 16)
     
     configureTaskTypesButton.setImage(UIImage(named: "settings")?.template , for: .normal)
     view.addSubview(configureTaskTypesButton)
@@ -156,6 +150,55 @@ class TaskViewController: UIViewController {
     
     view.addSubview(dividerView1)
     dividerView1.anchor(left: descriptionTextView.leftAnchor, bottom: descriptionTextView.bottomAnchor, right: descriptionTextView.rightAnchor,  heightConstant: 1.0)
+    
+    saveButton.isHidden = false
+    saveTextButton.isHidden = true
+    saveDescriptionButton.isHidden = true
+  }
+  
+  private func configureAlert() {
+    view.addSubview(alertBackgroundView)
+    alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    animationView.isHidden = true
+    
+    animationView.contentMode = .scaleAspectFill
+    animationView.loopMode = .repeat(3.0)
+    animationView.animationSpeed = 1.0
+    
+    view.addSubview(animationView)
+    animationView.anchorCenterXToSuperview()
+    animationView.anchorCenterYToSuperview()
+    
+    animationView.addSubview(okAlertButton)
+    okAlertButton.anchor(top: completeTaskButton.topAnchor, left: completeTaskButton.leftAnchor, bottom: completeTaskButton.bottomAnchor, right: completeTaskButton.rightAnchor)
+    
+  }
+  
+  
+  private func configureGestures() {
+    let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
+    swipeRight.direction = .right
+    self.view.addGestureRecognizer(swipeRight)
+  }
+  
+  @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
+    
+    if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+      
+      switch swipeGesture.direction {
+      case .right:
+        //viewModel.leftBarButtonBackItemClick()
+        return
+      case .down:
+        print("Swiped down")
+      case .left:
+        print("Swiped left")
+      case .up:
+        print("Swiped up")
+      default:
+        break
+      }
+    }
   }
   
   //MARK: - CollectionView
@@ -178,133 +221,78 @@ class TaskViewController: UIViewController {
   }
   
   //MARK: - Bind
-  func bindTo(with viewModel: TaskViewModel) {
-    self.viewModel = viewModel
+  func bindViewModel() {
     
-    bindOutputs()
-    bindInputs()
+    if let task = viewModel.task {
+      textField.text = task.text
+      descriptionTextView.text = task.description
+      completeTaskButton.isHidden = false
+    } else {
+      textField.becomeFirstResponder()
+      completeTaskButton.isHidden = true
+    }
+ 
+    let input = TaskViewModel.Input(
+      text: textField.rx.text.orEmpty.asDriver(),
+      description: descriptionTextView.rx.text.orEmpty.asDriver(),
+      selection: collectionView.rx.itemSelected.asDriver(),
+      descriptionTextViewDidBeginEditing: descriptionTextView.rx.didBeginEditing.asDriver(),
+      descriptionTextViewDidEndEditing: descriptionTextView.rx.didEndEditing.asDriver(),
+      backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      configureTaskTypesButtonClickTrigger: configureTaskTypesButton.rx.tap.asDriver(),
+      saveTaskButtonClickTrigger: saveButton.rx.tap.asDriver(),
+      saveDescriptionButtonClickTrigger: saveDescriptionButton.rx.tap.asDriver(),
+      completeButtonClickTrigger: completeTaskButton.rx.tap.asDriver(),
+      okAlertButtonClickTrigger: okAlertButton.rx.tap.asDriver(),
+      textFieldEditingDidEndOnExit: textField.rx.controlEvent([.editingDidEndOnExit]).asDriver()
+    )
+    
+    let output = viewModel.transform(input: input)
+    
+    output.placeholderIsOn.drive(placeholderBinder).disposed(by: disposeBag)
+    output.errorTextLabel.bind(to: self.errorLabel.rx.text).disposed(by: disposeBag)
+    output.showAlertTrigger.drive(alertBinder).disposed(by: disposeBag)
   }
   
-  //From ViewController To ViewModel
-  func bindInputs() {
-    backButton.rx.tap.bind{ self.viewModel.leftBarButtonBackItemClick()}.disposed(by: disposeBag)
-    saveButton.rx.tap.bind{ self.viewModel.rightBarButtonSaveItemClick() }.disposed(by: disposeBag)
-    configureTaskTypesButton.rx.tap.bind{ self.viewModel.configureTaskTypesButtonClick() }.disposed(by: disposeBag)
-    completeTaskButton.rx.tap.bind{ self.viewModel.completeButtonClick() }.disposed(by: disposeBag)
-    
-    taskTextField.rx.text.orEmpty.bind(to: self.viewModel.taskTextInput).disposed(by: disposeBag)
-    descriptionTextView.rx.text.orEmpty.bind{ [weak self] description in
-      guard let self = self else { return }
-      if self.descriptionTextView.textColor == UIColor(named: "appText") {
-        self.viewModel.taskDescriptionInput.accept(description)
-      }
-    }.disposed(by: disposeBag)
-    
-    saveTextButton.rx.tap.bind{ [weak self] _ in
-      guard let self = self else { return }
-      self.saveTextButton.isHidden = true
-      self.taskTextField.resignFirstResponder()
-      self.viewModel.saveTextButtonClick()
-    }.disposed(by: disposeBag)
-    
-    saveDescriptionButton.rx.tap.bind{ [weak self] _ in
-      guard let self = self else { return }
-      self.saveDescriptionButton.isHidden = true
-      self.descriptionTextView.resignFirstResponder()
-      self.viewModel.saveDescriptionButtonClick()
-    }.disposed(by: disposeBag)
-    
-    descriptionTextView.rx.didBeginEditing.bind{ [weak self] _ in
-      guard let self = self else { return }
-      if self.descriptionTextView.textColor == UIColor(named: "taskPlaceholderText") {
-        self.descriptionTextView.clear()
-        self.descriptionTextView.textColor = UIColor(named: "appText")
-      }
-    }.disposed(by: disposeBag)
-    
-    descriptionTextView.rx.didEndEditing.bind { [weak self] _ in
-      guard let self = self else { return }
-      if self.descriptionTextView.text.isEmpty {
-        self.descriptionTextView.textColor = UIColor(named: "taskPlaceholderText")
-        self.descriptionTextView.text = "Напишите комментарий"
-      }
-    }.disposed(by: disposeBag)
-    
-    descriptionTextView.rx.didChange.bind{ [weak self] _ in
-      guard let self = self else { return }
-      if self.viewModel.task.value != nil {
-        self.saveDescriptionButton.isHidden = false
-      }
-    }.disposed(by: disposeBag)
-    
-    taskTextField.rx.controlEvent([.editingChanged]).bind{[weak self] _ in
-      guard let self = self else { return }
-      if self.viewModel.task.value != nil {
-        self.saveTextButton.isHidden = false
-      }
-    }.disposed(by: disposeBag)
-    
-    taskTextField.rx.controlEvent([.editingDidEndOnExit]).bind{[weak self] _ in
-      guard let self = self else { return }
+  //MARK: - Binders
+  var placeholderBinder: Binder<Bool> {
+    return Binder(self, binding: { (vc, placeholderIsOn) in
       
-      if self.viewModel.task.value == nil {
-        self.viewModel.rightBarButtonSaveItemClick()
+      if placeholderIsOn {
+        vc.descriptionTextView.textColor = UIColor(named: "taskPlaceholderText")
+        vc.descriptionTextView.text = "Напишите комментарий"
       } else {
-        self.saveTextButton.isHidden = true
-        self.viewModel.saveTextButtonClick()
-      }
-      
-    }.disposed(by: disposeBag)
-    
-  }
-  
-  //From ViewModel To ViewController
-  func bindOutputs() {
-    viewModel.taskTextOutput.bind(to: taskTextField.rx.text).disposed(by: disposeBag)
-    viewModel.errorLabelOutput.bind(to: errorLabel.rx.text).disposed(by: disposeBag)
-    viewModel.taskDescriptionOutput.bind{ [weak self] description in
-      guard let self = self else { return }
-      guard let description = description else { return }
-      if description != "" {
-        self.descriptionTextView.textColor = UIColor(named: "appText")
-        self.descriptionTextView.text = description
-      }
-    }.disposed(by: disposeBag)
-    
-    viewModel.taskTypeOutput.bind{ [weak self] type in
-      guard let self = self else { return }
-      guard let type = type else { return }
-      self.viewModel.services.coreDataService.selectedTaskType.accept(type)
-    }.disposed(by: disposeBag)
-    
-    viewModel.task.bind{ [weak self] task in
-      guard let self = self else { return }
-      if let task = task {
-        self.saveDescriptionButton.isHidden = true
-        self.saveTextButton.isHidden = true
-        self.saveButton.isHidden = true
-        self.backButton.isHidden = false
-        self.titleLabel.text = task.text
-        self.completeTaskButton.isHidden = false
-      } else {
-        self.saveDescriptionButton.isHidden = true
-        self.saveTextButton.isHidden = true
-        self.saveButton.isHidden = false
-        self.titleLabel.text = "Создать задачу"
-        self.completeTaskButton.isHidden = true
-        self.taskTextField.becomeFirstResponder()
         
-        if self.viewModel.status == .created {
-          self.backButton.isHidden = true
-        } else {
-          self.backButton.isHidden = false
+        if vc.descriptionTextView.textColor == UIColor(named: "taskPlaceholderText") {
+          vc.descriptionTextView.text = ""
         }
         
+        vc.descriptionTextView.textColor = UIColor(named: "appText")
       }
-    }.disposed(by: disposeBag)
-
-    
+      
+    })
   }
+  
+  var alertBinder: Binder<Bool> {
+    return Binder(self, binding: { (vc, showAlert) in
+      if showAlert {
+        self.animationView.animation = Animation.named("taskDone1")
+        self.animationView.removeAllConstraints()
+        self.animationView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor)
+        self.animationView.play()
+        
+        let okButtonTexts = ["Да, я молодец!","Просто герой :)","Красавчик же","Светлое будущее приближается :)"]
+        self.okAlertButton.setTitle(okButtonTexts.randomElement(), for: .normal)
+        self.alertBackgroundView.isHidden = false
+        self.animationView.isHidden = false
+        
+      } else {
+        self.alertBackgroundView.isHidden = true
+        self.animationView.isHidden = true
+      }
+    })
+  }
+  
   
   func configureDataSource() {
     collectionView.dataSource = nil
@@ -319,12 +307,6 @@ class TaskViewController: UIViewController {
     viewModel.dataSource.asDriver()
       .drive(collectionView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
-    
-    collectionView.rx.itemSelected.bind{[weak self] indexPath in
-      guard let self = self else { return }
-      guard let types = self.viewModel.dataSource.value.first?.items else { return }
-      self.viewModel.taskTypeInput.accept(types[indexPath.item])
-    }.disposed(by: disposeBag)
   }
 }
 
@@ -332,10 +314,7 @@ class TaskViewController: UIViewController {
 extension TaskViewController: ConfigureColorProtocol {
   
   func configureColor() {
-    view.backgroundColor = UIColor(named: "appBackground")
-    backButton.imageView?.tintColor = UIColor(named: "appText")
-    
     configureTaskTypesButton.imageView?.tintColor = UIColor(named: "taskTypeSettingsButtonTint")
   }
-
+  
 }

@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-class TaskTypeViewController: UIViewController {
+class TaskTypeViewController: TDViewController {
   
   //MARK: - Properties
   var viewModel: TaskTypeViewModel!
@@ -21,8 +21,6 @@ class TaskTypeViewController: UIViewController {
   private var iconDataSource: RxCollectionViewSectionedAnimatedDataSource<TaskTypeIconSectionModel>!
   
   //MARK: - UI Elements
-  private let backButton = UIButton(type: .custom)
-  private let titleLabel = UILabel()
   private let nameLabel = UILabel()
   private let taskTypeImageView: UIImageView = {
     let imageView = UIImageView()
@@ -38,18 +36,19 @@ class TaskTypeViewController: UIViewController {
     return field
   }()
   
+  private let nameSymbolsCountLabel: UILabel = {
+    let label = UILabel()
+    label.text = ""
+    label.textColor = UIColor(red: 0, green: 0.34, blue: 1, alpha: 1)
+    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+    return label
+  }()
+  
   private let colorLabel: UILabel = {
     let label = UILabel()
     label.text = "Цвет:"
     label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     return label
-  }()
-  
-  private let saveButton: UIButton = {
-    let button = UIButton(type: .custom)
-    button.setImage(UIImage(named: "tick-round")?.original, for: .normal)
-    button.semanticContentAttribute = .forceRightToLeft
-    return button
   }()
   
   private var colorCollectionView: UICollectionView!
@@ -76,38 +75,10 @@ class TaskTypeViewController: UIViewController {
     configureColor()
   }
   
- 
   //MARK: - Configure UI
   func configureUI() {
-    let headerView = UIView()
-    headerView.backgroundColor = UIColor(named: "navigationHeaderViewBackgroundColor")
-    
-    view.addSubview(headerView)
-    headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
-    
-    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-    
-    headerView.addSubview(titleLabel)
-    titleLabel.anchorCenterXToSuperview()
-    titleLabel.anchor(bottom: headerView.bottomAnchor, bottomConstant: 20)
-    
-    backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
-    backButton.imageView?.tintColor = UIColor(named: "appText")
-    
-    headerView.addSubview(backButton)
-    backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
-    headerView.addSubview(saveButton)
-    saveButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
-    let dividerView = UIView()
-    dividerView.backgroundColor = UIColor(named: "navigationBarDividerBackground")
-    
-    headerView.addSubview(dividerView)
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
-    
     view.addSubview(taskTypeImageView)
-    taskTypeImageView.anchor(top: dividerView.bottomAnchor, topConstant: 16, widthConstant: 75, heightConstant: 75)
+    taskTypeImageView.anchor(top: headerView.bottomAnchor, topConstant: 16, widthConstant: 75, heightConstant: 75)
     taskTypeImageView.anchorCenterXToSuperview()
     
     nameLabel.text = "Название типа задач"
@@ -119,6 +90,10 @@ class TaskTypeViewController: UIViewController {
     
     view.addSubview(nameTextField)
     nameTextField.anchor(top: nameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16)
+    
+    nameTextField.addSubview(nameSymbolsCountLabel)
+    nameSymbolsCountLabel.anchorCenterYToSuperview()
+    nameSymbolsCountLabel.anchor(right: nameTextField.rightAnchor, rightConstant: 8)
     
     view.addSubview(colorLabel)
     colorLabel.anchor(top: nameTextField.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
@@ -205,6 +180,7 @@ class TaskTypeViewController: UIViewController {
     
     viewModel.titleOutput.bind(to: titleLabel.rx.text).disposed(by: disposeBag)
     viewModel.typeTextOutput.bind(to: nameTextField.rx.text).disposed(by: disposeBag)
+    viewModel.typeTextCountOutput.bind(to: nameSymbolsCountLabel.rx.text).disposed(by: disposeBag)
     viewModel.typeImageNameOutput.bind{ [weak self] imageName in
       guard let self = self else { return }
       guard let imageName = imageName else { return }

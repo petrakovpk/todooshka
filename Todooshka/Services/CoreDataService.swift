@@ -67,12 +67,12 @@ class CoreDataService {
       let coreDataTaskTypes = try managedContext.fetch( CoreDataTaskType.fetchRequest() )
       if coreDataTaskTypes.isEmpty {
         
-        let type0 = TaskType(UID: UUID().uuidString, imageName: "briefcase", imageColorHex: UIColor(named: "typeColor1")?.hexString, text: "Работа", orderNumber: 0)
-        let type1 = TaskType(UID: UUID().uuidString, imageName: "profile-2user", imageColorHex: UIColor(named: "typeColor2")?.hexString, text: "Семья", orderNumber: 1)
-        let type2 = TaskType(UID: UUID().uuidString, imageName: "home", imageColorHex: UIColor(named: "typeColor3")?.hexString, text: "Дом", orderNumber: 2)
-        let type3 = TaskType(UID: UUID().uuidString, imageName: "lovely", imageColorHex: UIColor(named: "typeColor4")?.hexString, text: "Любимка", orderNumber: 3)
-        let type4 = TaskType(UID: UUID().uuidString, imageName: "monitor", imageColorHex: UIColor(named: "typeColor5")?.hexString, text: "Бизнес", orderNumber: 4)
-        let type5 = TaskType(UID: UUID().uuidString, imageName: "weight", imageColorHex: UIColor(named: "typeColor6")?.hexString, text: "Спорт", orderNumber: 5)
+        let type0 = TaskType(UID: UUID().uuidString, imageName: "briefcase", imageColorHex: UIColor(named: "typeColor7")?.hexString, text: "Работа", orderNumber: 0)
+        let type1 = TaskType(UID: UUID().uuidString, imageName: "profile-2user", imageColorHex: UIColor(named: "typeColor8")?.hexString, text: "Семья", orderNumber: 1)
+        let type2 = TaskType(UID: UUID().uuidString, imageName: "home", imageColorHex: UIColor(named: "typeColor9")?.hexString, text: "Дом", orderNumber: 2)
+        let type3 = TaskType(UID: UUID().uuidString, imageName: "lovely", imageColorHex: UIColor(named: "typeColor10")?.hexString, text: "Любимка", orderNumber: 3)
+        let type4 = TaskType(UID: UUID().uuidString, imageName: "monitor", imageColorHex: UIColor(named: "typeColor11")?.hexString, text: "Бизнес", orderNumber: 4)
+        let type5 = TaskType(UID: UUID().uuidString, imageName: "weight", imageColorHex: UIColor(named: "typeColor12")?.hexString, text: "Спорт", orderNumber: 5)
         saveTaskTypesToCoreData(types: [type0,type1,type2,type3,type4,type5], completion: nil)
       }
     }
@@ -277,7 +277,6 @@ class CoreDataService {
   
   //MARK: - Core Data - Save
   func saveTasksToCoreData(tasks: [Task], completion: TodooshkaCompletion? ) {
-    
     var coreDataTask: CoreDataTask!
     let fetchRequest = NSFetchRequest<CoreDataTask>(entityName: "CoreDataTask")
     fetchRequest.predicate = NSPredicate(format: "%K in %@", argumentArray:["uid", tasks.map{return $0.UID}])
@@ -293,19 +292,19 @@ class CoreDataService {
           coreDataTask = coreDataTasks.first(where: { $0.uid == task.UID })
         }
         
-        if task.lastUpdateDateTime <=
-            coreDataTask.lastmodifiedtimeintervalsince1970 as? TimeInterval ?? 0.0 { return }
+       // if task.lastUpdateDateTime <=
+           // coreDataTask.lastmodifiedtimeintervalsince1970 as? TimeInterval ?? 0.0 { return }
         
         coreDataTask.uid = task.UID
         coreDataTask.text = task.text
         coreDataTask.longText = task.description
         coreDataTask.status = task.status.rawValue
-        coreDataTask.type = task.type
+        coreDataTask.type = task.typeUID
         coreDataTask.createdTimeIntervalSince1970 = task.createdTimeIntervalSince1970 as NSNumber
         coreDataTask.closedTimeIntervalSince1970 = task.closedTimeIntervalSince1970 as NSNumber?
         coreDataTask.lastmodifiedtimeintervalsince1970 = task.lastUpdateDateTime as NSNumber?
         coreDataTask.userUID = Auth.auth().currentUser?.uid
-        
+        coreDataTask.orderNumber = task.orderNumber as NSNumber?
         try managedContext.save()
       }
       

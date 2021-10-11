@@ -28,6 +28,7 @@ class TaskTypeViewModel: Stepper {
   
   //MARK: - Output
   let typeTextOutput = BehaviorRelay<String?>(value: nil)
+  let typeTextCountOutput = BehaviorRelay<String?>(value: nil)
   let typeImageNameOutput = BehaviorRelay<String?>(value: nil)
   let typeImageHexColorOutput = BehaviorRelay<String?>(value: nil)
   
@@ -40,7 +41,16 @@ class TaskTypeViewModel: Stepper {
     
     typeImageNameInput.bind(to: typeImageNameOutput).disposed(by: disposeBag)
     typeImageHexColorInput.bind(to: typeImageHexColorOutput).disposed(by: disposeBag)
-    typeTextInput.bind(to: typeTextOutput).disposed(by: disposeBag)
+    typeTextInput.bind{ [weak self] text in
+      guard let self = self else { return }
+      if text.count > 18 {
+        self.typeTextOutput.accept(String(text.prefix(18)))
+        self.typeTextCountOutput.accept("18\\18")
+      } else {
+        self.typeTextOutput.accept(text)
+        self.typeTextCountOutput.accept(text.count.string + "\\18")
+      }
+    }.disposed(by: disposeBag)
     
     taskTypeOutput.accept(taskType)
     typeTextOutput.accept(taskType?.text)

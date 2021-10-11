@@ -63,6 +63,7 @@ class TaskTypesListViewController: UIViewController {
     configureAlert()
     configureDataSource()
     configureColor()
+    configureGestures()
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -157,6 +158,32 @@ class TaskTypesListViewController: UIViewController {
     cancelAlertButton.anchor(top: deleteAlertButton.bottomAnchor, topConstant: 10)
     cancelAlertButton.anchorCenterXToSuperview()
   }
+  
+  private func configureGestures() {
+    let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
+    swipeRight.direction = .right
+    self.view.addGestureRecognizer(swipeRight)
+  }
+  
+  @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
+    
+    if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+
+      switch swipeGesture.direction {
+      case .right:
+        viewModel.leftBarButtonBackItemClick()
+      case .down:
+        print("Swiped down")
+      case .left:
+        print("Swiped left")
+      case .up:
+        print("Swiped up")
+      default:
+        break
+      }
+    }
+  }
+  
   
   //MARK: - Bind To
   func bindTo(with viewModel: TaskTypesListViewModel) {

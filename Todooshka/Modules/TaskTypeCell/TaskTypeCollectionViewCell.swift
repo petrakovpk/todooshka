@@ -21,14 +21,6 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
   var oldShapeLayer: CAShapeLayer?
   
   override func draw(_ rect: CGRect) {
-    if traitCollection.userInterfaceStyle == .dark {
-      drawDarkMode()
-    } else {
-      drawLightMode()
-    }
-  }
-  
-  func drawLightMode() {
     shapeLayer.frame = bounds
     shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 11).cgPath
     
@@ -37,27 +29,18 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
     shapeLayer.shadowOpacity = 1
     shapeLayer.shadowRadius = 18
     shapeLayer.shadowOffset = CGSize(width: 0, height: 4)
-    shapeLayer.shadowColor = UIColor.clear.cgColor
     
-    if let oldShapeLayer = oldShapeLayer {
-      contentView.layer.replaceSublayer(oldShapeLayer, with: shapeLayer)
+    if viewModel.isSelected.value ?? false {
+      shapeLayer.fillColor = UIColor.blueRibbon.cgColor
+      shapeLayer.strokeColor = UIColor(named: "taskTypeCellBorder")?.cgColor
+      shapeLayer.shadowColor = UIColor.blueRibbon.cgColor
     } else {
-      contentView.layer.insertSublayer(shapeLayer, at: 0)
+      shapeLayer.fillColor = UIColor(named: "taskTypeCellBackground")?.cgColor
+      shapeLayer.strokeColor = UIColor(named: "taskTypeCellBorder")?.cgColor
+      shapeLayer.shadowColor = UIColor.clear.cgColor
     }
-    
-    oldShapeLayer = shapeLayer
-  }
-  
-  func drawDarkMode() {
-    shapeLayer.frame = bounds
-    shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 11).cgPath
-    
-    shapeLayer.lineWidth = 1
-    shapeLayer.shadowPath = shapeLayer.path
-    shapeLayer.shadowOpacity = 1
-    shapeLayer.shadowRadius = 18
-    shapeLayer.shadowOffset = CGSize(width: 0, height: 4)
-    shapeLayer.shadowColor = UIColor.clear.cgColor
+   
+    shapeLayer.cornerRadius = 11
     
     if let oldShapeLayer = oldShapeLayer {
       contentView.layer.replaceSublayer(oldShapeLayer, with: shapeLayer)
@@ -76,12 +59,14 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
     return imageView
   }()
   
-  private let taskTypeTitle: UILabel = {
-    let label = UILabel()
-    label.textAlignment = .left
-    label.tintColor = .white
-    label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
-    return label
+  private let taskTypeTextView: UITextView = {
+    let textView = UITextView()
+    textView.textAlignment = .center
+    textView.backgroundColor = .clear
+    textView.textContainer.lineBreakMode = .byWordWrapping
+    textView.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+    textView.isUserInteractionEnabled = false
+    return textView
   }()
   
   private var imageColor: UIColor?
@@ -92,16 +77,13 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
     
     contentView.cornerRadius = 11
     contentView.clipsToBounds = false
-    contentView.layer.borderWidth = 1
-    contentView.layer.borderColor = UIColor(named: "taskTypeCellBorder")?.cgColor
     
-    let stackView = UIStackView(arrangedSubviews: [taskTypeImageView,taskTypeTitle])
-    stackView.axis = .vertical
-    stackView.spacing = 8
+    contentView.addSubview(taskTypeImageView)
+    taskTypeImageView.anchorCenterXToSuperview()
+    taskTypeImageView.anchorCenterYToSuperview(constant: -1 * contentView.bounds.height / 6)
     
-    contentView.addSubview(stackView)
-    stackView.anchorCenterXToSuperview()
-    stackView.anchorCenterYToSuperview()
+    contentView.addSubview(taskTypeTextView)
+    taskTypeTextView.anchor(top: taskTypeImageView.bottomAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
     
     viewModel.type.bind{ [weak self] type in
       guard let self = self else { return }
@@ -109,7 +91,7 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
       self.taskTypeImageView.image = type.image
       self.taskTypeImageView.tintColor = type.imageColor
       self.imageColor = type.imageColor
-      self.taskTypeTitle.text = type.text
+      self.taskTypeTextView.text = type.text
     }.disposed(by: disposeBag)
     
     viewModel.isSelected.bind{ [weak self] isSelected in
@@ -118,17 +100,19 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
       if isSelected {
         self.shapeLayer.fillColor = UIColor.blueRibbon.cgColor
         self.shapeLayer.shadowColor = UIColor.blueRibbon.cgColor
-        self.taskTypeTitle.textColor = .white
+        self.taskTypeTextView.textColor = .white
         self.taskTypeImageView.tintColor = .white
       } else {
         self.shapeLayer.fillColor = UIColor(named: "taskTypeCellBackground")?.cgColor
         self.shapeLayer.shadowColor = UIColor.clear.cgColor
-        self.taskTypeTitle.textColor = UIColor(named: "appText")
+        self.taskTypeTextView.textColor = UIColor(named: "appText")
         self.taskTypeImageView.tintColor = self.imageColor
       }
       self.layoutIfNeeded()
     }.disposed(by: disposeBag)
   }
+  
+  
 }
 
 

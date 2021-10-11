@@ -20,7 +20,49 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
   
   var oldLayer: CALayer?
   var oldLineGradientLayer: CAGradientLayer?
+  var oldTimeLayer: CAGradientLayer?
   
+  //MARK: - UI Elements
+  private let taskTypeImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.contentMode = .scaleAspectFit
+    return imageView
+  }()
+  
+  private let taskTextLabel: UILabel = {
+    let label = UILabel()
+    label.textAlignment = .left
+    label.tintColor = .white
+    label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+    return label
+  }()
+  
+  private let taskTimeLeftView: UIView = {
+    let view = UIView()
+    view.backgroundColor = UIColor(named: "taskListCellTimeLeftViewBackground")
+    return view
+  }()
+  
+  private let taskTimeLeftImageView = UIImageView(image: UIImage(named: "timer"))
+  
+  private let taskTimeLeftLabel: UILabel = {
+    let label = UILabel()
+    label.textAlignment = .center
+    label.font = UIFont.systemFont(ofSize: 11, weight: .semibold)
+    label.text = ""
+    label.textColor = .white
+    return label
+  }()
+  
+  private let taskTimeLeftLineView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .systemBlue
+    return view
+  }()
+  
+  private let repeatButton = UIButton(type: .custom)
+  
+  //MARK: - Draw
   override func draw(_ rect: CGRect) {
     if traitCollection.userInterfaceStyle == .dark {
       drawDarkMode()
@@ -38,9 +80,9 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     
     backgroundLayer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: 11).cgPath
     backgroundLayer.shadowOpacity = 1
-    backgroundLayer.shadowRadius = 17
-    backgroundLayer.shadowOffset = CGSize(width: 0, height: 7)
-    backgroundLayer.shadowColor = UIColor(red: 0.693, green: 0.702, blue: 0.875, alpha: 0.47).cgColor
+    backgroundLayer.shadowRadius = 5
+    backgroundLayer.shadowOffset = CGSize(width: 5, height: 5)
+    backgroundLayer.shadowColor = UIColor(red: 0.693, green: 0.702, blue: 0.875, alpha: 0.6).cgColor
     backgroundLayer.backgroundColor = UIColor(red: 244/255, green: 245/255, blue: 1, alpha: 1).cgColor
     
     if let oldLayer = oldLayer {
@@ -86,6 +128,102 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     oldLayer = shapeLayer
   }
   
+  func configureTimerRound() {
+    
+    let size = CGSize(width: contentView.bounds.width, height: contentView.bounds.height)
+    let cornerRadius = CGFloat(11)
+    
+    let path = UIBezierPath()
+    path.move(to: CGPoint(x: size.width / 2, y: 0))
+    path.addLine(to: CGPoint(x: size.width - cornerRadius, y: 0))
+    path.addArc(withCenter: CGPoint(x: size.width - cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: -.pi / 2 , endAngle: 0, clockwise: true)
+    path.addLine(to: CGPoint(x: size.width, y: size.height - cornerRadius))
+    path.addArc(withCenter: CGPoint(x: size.width - cornerRadius, y: size.height - cornerRadius), radius: cornerRadius, startAngle: 0, endAngle: .pi / 2, clockwise: true)
+    path.addLine(to: CGPoint(x: cornerRadius, y: size.height))
+    path.addArc(withCenter: CGPoint(x: cornerRadius, y: size.height - cornerRadius), radius: cornerRadius, startAngle: .pi / 2, endAngle: .pi, clockwise: true)
+    path.addLine(to: CGPoint(x: 0, y: cornerRadius))
+    path.addArc(withCenter: CGPoint(x: cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: .pi, endAngle: -.pi / 2, clockwise: true)
+    path.addLine(to: CGPoint(x: size.width / 2, y: 0))
+    
+    let animation = CAKeyframeAnimation(keyPath: "position")
+    animation.path = path.cgPath
+    animation.duration = 60
+    animation.repeatCount = .infinity
+    
+    let roundGradintLayer = CAGradientLayer()
+    roundGradintLayer.type = .radial
+    
+    roundGradintLayer.colors = [
+      UIColor(hexString: "#fc3e08")!.withAlphaComponent(1).cgColor,
+      UIColor(hexString: "#fc3e08")!.withAlphaComponent(0).cgColor,
+    ]
+    
+    roundGradintLayer.locations = [0,1]
+    roundGradintLayer.startPoint = CGPoint(x: 0.5, y: 0.5)
+    roundGradintLayer.endPoint = CGPoint(x: 1, y: 1)
+    roundGradintLayer.frame = CGRect(x: -5, y: -5, width: 10, height: 10)
+    roundGradintLayer.position = CGPoint(x: size.width / 2, y: 0)
+    
+    roundGradintLayer.add(animation, forKey: "animateBall")
+    
+    if let oldTimeLayer = oldTimeLayer {
+      contentView.layer.replaceSublayer(oldTimeLayer, with: roundGradintLayer)
+    } else {
+      contentView.layer.insertSublayer(roundGradintLayer, at: 0)
+    }
+    
+    oldTimeLayer = roundGradintLayer
+  }
+
+  //MARK: - Configure UI
+  func configureUI() {
+    contentView.cornerRadius = 11
+    contentView.layer.borderWidth = 0
+    contentView.layer.borderColor = UIColor(hexString: "#15183C")?.cgColor
+    contentView.layer.masksToBounds = false
+    contentView.tintColor = .white
+    
+    contentView.addSubview(taskTypeImageView)
+    taskTypeImageView.anchorCenterYToSuperview()
+    taskTypeImageView.anchor(left: contentView.leftAnchor, leftConstant: 8, widthConstant: 20, heightConstant: 20)
+    
+    contentView.addSubview(taskTimeLeftView)
+    taskTimeLeftView.anchorCenterYToSuperview()
+    taskTimeLeftView.anchor(right: contentView.rightAnchor, rightConstant: 8, widthConstant: 110, heightConstant: 30)
+    taskTimeLeftView.cornerRadius = 15
+    
+    taskTimeLeftView.layer.masksToBounds = false
+    
+    taskTimeLeftView.addSubview(taskTimeLeftImageView)
+    taskTimeLeftImageView.anchorCenterYToSuperview()
+    taskTimeLeftImageView.anchor(left: taskTimeLeftView.leftAnchor, leftConstant: 10, widthConstant: 13, heightConstant: 13)
+    
+    taskTimeLeftView.addSubview(taskTimeLeftLabel)
+    taskTimeLeftLabel.anchorCenterYToSuperview()
+    taskTimeLeftLabel.anchor(left: taskTimeLeftImageView.rightAnchor, right: taskTimeLeftView.rightAnchor, leftConstant: 3, rightConstant: 10, widthConstant: 40)
+    
+    contentView.addSubview(taskTextLabel)
+    taskTextLabel.anchorCenterYToSuperview()
+    taskTextLabel.anchor(left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, leftConstant: 8, rightConstant: 8)
+    
+    repeatButton.setImage(UIImage(named: "refresh-circle")?.original, for: .normal)
+    repeatButton.backgroundColor = .blueRibbon
+    repeatButton.cornerRadius = 15
+    
+    let attributedTitle = NSAttributedString(string: "В работу",
+                                             attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 11, weight: .semibold)])
+    repeatButton.setAttributedTitle(attributedTitle , for: .normal)
+    repeatButton.setTitleColor(.white, for: .normal)
+    repeatButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4);
+    repeatButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0);
+    
+    contentView.addSubview(repeatButton)
+    repeatButton.anchorCenterYToSuperview()
+    repeatButton.anchor(right: contentView.rightAnchor, rightConstant: 8, widthConstant: 110, heightConstant: 30)
+  }
+
+  
+  //MARK - Configure UI
   private func configurelineLayout(widthConstant: Double) {
     
     if widthConstant == 0 { return }
@@ -124,93 +262,6 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     oldLineGradientLayer = lineGradientLayer
   }
   
-  //MARK: - UI Elements
-  private let taskTypeImageView: UIImageView = {
-    let imageView = UIImageView()
-    imageView.contentMode = .scaleAspectFit
-    return imageView
-  }()
-  
-  private let taskTextLabel: UILabel = {
-    let label = UILabel()
-    label.textAlignment = .left
-    label.tintColor = .white
-    label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
-    return label
-  }()
-  
-  private let taskTimeLeftView: UIView = {
-    let view = UIView()
-    view.backgroundColor = UIColor(named: "taskListCellTimeLeftViewBackground")
-    return view
-  }()
-  
-  private let taskTimeLeftImageView = UIImageView(image: UIImage(named: "timer"))
-  
-  private let taskTimeLeftLabel: UILabel = {
-    let label = UILabel()
-    label.textAlignment = .center
-    label.font = UIFont.systemFont(ofSize: 11, weight: .semibold)
-    label.text = ""
-    label.textColor = .white
-    return label
-  }()
-  
-  private let taskTimeLeftLineView: UIView = {
-    let view = UIView()
-    view.backgroundColor = .systemBlue
-    return view
-  }()
-  
-  private let repeatButton = UIButton(type: .custom)
-  
-  //MARK: - Configure UI
-  func configureUI() {
-    contentView.cornerRadius = 11
-    contentView.layer.borderWidth = 0
-    contentView.layer.borderColor = UIColor(hexString: "#15183C")?.cgColor
-    contentView.layer.masksToBounds = false
-    contentView.tintColor = .white
-    
-    contentView.addSubview(taskTypeImageView)
-    taskTypeImageView.anchorCenterYToSuperview()
-    taskTypeImageView.anchor(left: contentView.leftAnchor, leftConstant: 8, widthConstant: 20, heightConstant: 20)
-    
-    contentView.addSubview(taskTimeLeftView)
-    taskTimeLeftView.anchorCenterYToSuperview()
-    taskTimeLeftView.anchor(right: contentView.rightAnchor, rightConstant: 15, widthConstant: 86, heightConstant: 30)
-    taskTimeLeftView.cornerRadius = 15
-    
-    taskTimeLeftView.addSubview(taskTimeLeftImageView)
-    taskTimeLeftImageView.anchorCenterYToSuperview()
-    taskTimeLeftImageView.anchor(left: taskTimeLeftView.leftAnchor, leftConstant: 10, widthConstant: 13, heightConstant: 13)
-    
-    taskTimeLeftView.addSubview(taskTimeLeftLabel)
-    taskTimeLeftLabel.anchorCenterYToSuperview()
-    taskTimeLeftLabel.anchor(left: taskTimeLeftImageView.rightAnchor, right: taskTimeLeftView.rightAnchor, leftConstant: 3, rightConstant: 10, widthConstant: 40)
-    
-    contentView.addSubview(taskTextLabel)
-    taskTextLabel.anchorCenterYToSuperview()
-    taskTextLabel.anchor(left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, leftConstant: 8, rightConstant: 8)
-    
-    
-    repeatButton.setImage(UIImage(named: "refresh-circle")?.original, for: .normal)
-    repeatButton.backgroundColor = .blueRibbon
-    repeatButton.cornerRadius = 15
-    
-    let attributedTitle = NSAttributedString(string: "В работу",
-                                             attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 11, weight: .semibold)])
-    repeatButton.setAttributedTitle(attributedTitle , for: .normal)
-    repeatButton.setTitleColor(.white, for: .normal)
-    repeatButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4);
-    repeatButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0);
-    
-    contentView.addSubview(repeatButton)
-    repeatButton.anchorCenterYToSuperview()
-    repeatButton.anchor(right: contentView.rightAnchor, rightConstant: 15, widthConstant: 86, heightConstant: 30)
-    
-  }
-  
   //MARK: - Bind to ViewModel
   func bindToViewModel(viewModel: TaskListCollectionViewCellModel){
     self.viewModel = viewModel
@@ -228,7 +279,6 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
       guard let self = self else { return }
       guard let percent = percent else { return }
       let widthConstant = max(percent * (self.contentView.frame.width.double - 22),0)
-      
       if self.viewModel.task.value?.status == .created {
         self.configurelineLayout(widthConstant: widthConstant)
         self.repeatButton.isHidden = percent > 0
@@ -237,7 +287,7 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
         self.repeatButton.isHidden = false
       }
     }.disposed(by: disposeBag)
-    
+   
     viewModel.taskTypeOutput.bind { [weak self] type in
       guard let self = self else { return }
       self.taskTypeImageView.image = type?.image
@@ -250,8 +300,6 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
         self?.viewModel.hideCell.accept(false)
       }
     }.disposed(by: disposeBag)
-    
-    
   }
 }
 

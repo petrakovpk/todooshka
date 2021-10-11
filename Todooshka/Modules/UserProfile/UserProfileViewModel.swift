@@ -23,6 +23,7 @@ class UserProfileViewModel: Stepper {
   
   //MARK: - Outputs
   let completedTasksLabelOutput = BehaviorRelay<String>(value: "")
+  let dayStatusTextOutput = BehaviorRelay<String>(value: "")
   let typeLabel1TextOutput = BehaviorRelay<String>(value: "")
   let typeLabel2TextOutput = BehaviorRelay<String>(value: "")
   let typeLabel3TextOutput = BehaviorRelay<String>(value: "")
@@ -79,10 +80,11 @@ class UserProfileViewModel: Stepper {
           }
           return tasks
         }
-        .bind{ completedTasks in
-          let completedTasksDict = Dictionary(grouping: completedTasks, by: { $0.taskType?.text ?? "" }).sorted{ $0.value.count > $1.value.count }
+        .bind { completedTasks in
+          let completedTasksDict = Dictionary(grouping: completedTasks, by: { $0.type?.text ?? "" }).sorted{ $0.value.count > $1.value.count }
           
-          self.completedTasksLabelOutput.accept(completedTasks.count.string)
+          self.completedTasksLabelOutput.accept( completedTasksDict.flatMap{ $0.value }.count.string )
+          self.dayStatusTextOutput.accept( self.getDayText( tasksCount: completedTasksDict.flatMap{ $0.value }.count  ))
           
           if let firstType = completedTasksDict[safe: 0] {
             self.typeLabel1TextOutput.accept("\(firstType.key): \(firstType.value.count)")
@@ -112,10 +114,25 @@ class UserProfileViewModel: Stepper {
     }.disposed(by: self.disposeBag)
   }
   
-  func updateDataSource(deltaMonth: Int, tasks: [Task]) {
-    
+  
+  func getDayText(tasksCount: Int) -> String {
+    switch tasksCount {
+    case 0:
+      return "Нужно взять себя в руки! Давай-ка поднажмём?"
+    case 1...3:
+      return "Уже неплохо, у тебя все получится!"
+    case 4...6:
+      return "Ты просто герой, горжусь тобой!"
+    case 7...10:
+      return "Нереально, просто пушка!"
+    case 11... .max():
+      return "Человеку это вообще под силу?"
+    default:
+      return ""
+    }
   }
   
+  //MARK: - Handlers
   func daySelected(indexPath: IndexPath) {
     if let calendarDate = dataSource.value.first?.items[indexPath.item],
        calendarDate.isSelectedMonth == true {
@@ -124,7 +141,6 @@ class UserProfileViewModel: Stepper {
       } else {
         services.coreDataService.calendarSelectedDate.accept(calendarDate.date)
       }
-      
     }
   }
   

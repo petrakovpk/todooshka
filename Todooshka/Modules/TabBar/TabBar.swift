@@ -116,9 +116,6 @@ class TabBar: UITabBar {
       layer.insertSublayer(backgroundLayer, at: 0)
     }
     
-    shapeLayer
-    layer.masksToBounds = false
-    
     oldLayer = backgroundLayer
   }
   
