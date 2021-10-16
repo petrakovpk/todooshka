@@ -16,8 +16,8 @@ enum TaskFlowAction {
 }
 
 struct TaskAttr {
-  let text: String
   let type: TaskType?
+  let text: String
   let description: String?
 }
 
@@ -29,14 +29,9 @@ class TaskViewModel: Stepper {
   var status: TaskStatus?
   var closedDate: Date?
   
-  let disposeBag = DisposeBag()
   let steps = PublishRelay<Step>()
   let services: AppServices
-  
-  // let task = BehaviorRelay<Task?>(value: nil)
-  let dataSource = BehaviorRelay<[TaskTypeListSectionModel]>(value: [])
-  
-  //MARK: - Input - From ViewController to ViewModel
+
   struct Input {
     let text: Driver<String>
     let description: Driver<String>
@@ -55,11 +50,17 @@ class TaskViewModel: Stepper {
   }
   
   struct Output {
-    let errorTextLabel: BehaviorRelay<String>
+    let errorTextLabel: Driver<String>
     let placeholderIsOn: Driver<Bool>
-    let showAlertTrigger: Driver<Bool>
+    
+    let backButtonClick: Driver<Void>
+    let configureTaskTypeButtonClick: Driver<Void>
+    let completeButtonClick: Driver<Void>
+    let okAlertButtonClick: Driver<Void>
+    let saveButtonClick: Driver<Void>
+    
+    let dataSource: Driver<[TaskTypeListSectionModel]>
   }
-
   
   //MARK: - Init
   init(services: AppServices, taskFlowAction: TaskFlowAction) {
@@ -74,10 +75,6 @@ class TaskViewModel: Stepper {
       services.coreDataService.selectedTaskType.accept(task.type)
     }
     
-    services.coreDataService.taskTypes.map{ $0.filter{ $0.status == .active }}.bind{ [weak self] types in
-      self?.dataSource.accept([TaskTypeListSectionModel(header: "", items: types)])
-    }.disposed(by: disposeBag)
-    
   }
   
   //MARK: - Lifecycle
@@ -88,14 +85,7 @@ class TaskViewModel: Stepper {
   //MARK: - Transform
   func transform(input: Input) -> Output {
     
-    //MARK: - BehaviorRelay
-    let taskText = BehaviorRelay<String>(value: "")
-    let taskDescription = BehaviorRelay<String>(value: "")
-    let errorTextLabel = BehaviorRelay<String>(value: "")
-    let taskType = BehaviorRelay<TaskType?>(value: task?.type)
-    let showAlert = BehaviorRelay<Bool>(value: false)
-
-    //MARK: - Outputs
+    // MARK: - Task Description
     let placeholderIsOn = Driver.of(input.descriptionTextViewDidBeginEditing, input.descriptionTextViewDidEndEditing)
       .merge()
       .withLatestFrom(input.description)
@@ -103,50 +93,56 @@ class TaskViewModel: Stepper {
       .distinctUntilChanged()
       .startWith((task?.description ?? "") == "")
       .asDriver()
-  
-    //MARK: - Inputs
-    input.text.drive(taskText).disposed(by: disposeBag)
-    input.description.withLatestFrom(placeholderIsOn) { (description, placeholderIsOn) -> String in
-      return placeholderIsOn ? "" : description
-    }.drive(taskDescription).disposed(by: disposeBag)
     
-    input.selection.map { indexPath -> TaskType? in
-      errorTextLabel.accept("")
-      let type = self.dataSource.value[indexPath.section].items[indexPath.item]
-      self.services.coreDataService.selectedTaskType.accept(type)
-      
+    let description = input.description.withLatestFrom(placeholderIsOn) { description, placeholderIsOn -> String in
+      return placeholderIsOn ? "" : description
+    }.asDriver().startWith(task?.description ?? "")
+    
+    //MARK: - DataSource
+    let dataSource = services.coreDataService.taskTypes
+      .map { $0.filter { $0.status == .active }}
+      .map { types -> [TaskTypeListSectionModel] in
+        return [TaskTypeListSectionModel(header: "", items: types)]
+      }.asDriver(onErrorJustReturn: [])
+    
+    // MARK: - Task Type
+    let typeCellClicked = input.selection.withLatestFrom(dataSource)
+      { (indexPath, dataSource) -> TaskType? in
+      let type = dataSource[indexPath.section].items[indexPath.item]
+
       if let task = self.task {
         task.typeUID = type.identity
         self.services.coreDataService.saveTasksToCoreData(tasks: [task], completion: nil)
       }
+
+      self.services.coreDataService.selectedTaskType.accept(type)
       
       return type
-    }.drive(taskType).disposed(by: disposeBag)
+    }.startWith(task?.type)
     
-    input.configureTaskTypesButtonClickTrigger.do { _ in
-      self.steps.accept(AppStep.taskTypesListIsRequired)
-    }.drive().disposed(by: disposeBag)
-    
-    input.backButtonClickTrigger.do { _ in
+    // MARK: - Task Attr
+    let taskAttr = Driver<TaskAttr>.combineLatest(
+      typeCellClicked,
+      input.text.startWith(task?.text ?? ""),
+      description
+    )
+    { type, text, description -> TaskAttr in
+      return TaskAttr(type: type, text: text, description: description)
+    }.asDriver()
+  
+    // MARK: - Hanlders
+    let backButtonClick = input.backButtonClickTrigger.map { () in
       self.steps.accept(AppStep.taskProcessingIsCompleted)
-    }.drive().disposed(by: disposeBag)
+    }
     
-    input.saveDescriptionButtonClickTrigger.withLatestFrom(input.description).do { [weak self] description in
-      guard let self = self else { return }
-      
-      if let task = self.task {
-        task.description = description
-        self.services.coreDataService.saveTasksToCoreData(tasks: [task], completion: nil)
-        self.task = task
-      }
-    }.drive().disposed(by: disposeBag)
+    let completeButtonClick = input.completeButtonClickTrigger
     
-    input.completeButtonClickTrigger.do { [weak self] _ in
-      guard let self = self else { return }
+    let configureTaskTypeButtonClick = input.configureTaskTypesButtonClickTrigger.map { _ in
+      self.steps.accept(AppStep.taskTypesListIsRequired)
+    }
+    
+    let okAlertButtonClick = input.okAlertButtonClickTrigger.map { () in
       guard let task = self.task else { return }
-      
-      let taskStatusBeforeClosing = task.status
-      
       task.status = .completed
       task.closedTimeIntervalSince1970 = Date().timeIntervalSince1970
       
@@ -155,55 +151,61 @@ class TaskViewModel: Stepper {
           print(error.localizedDescription)
           return
         }
-        
-        taskStatusBeforeClosing == .created ? showAlert.accept(true) : self.steps.accept(AppStep.taskProcessingIsCompleted)
-      }
-    }.drive().disposed(by: disposeBag)
-    
-    input.okAlertButtonClickTrigger.do { [weak self] _ in
-      guard let self = self else { return }
-      showAlert.accept(false)
-      self.steps.accept(AppStep.taskProcessingIsCompleted)
-    }.drive().disposed(by: disposeBag)
-    
-    Driver.of(input.saveTaskButtonClickTrigger, input.textFieldEditingDidEndOnExit)
-      .merge()
-      .do { [weak self] _ in
-      guard let self = self else { return }
-      
-      guard let type = taskType.value else {
-        errorTextLabel.accept("Выберите тип")
-        return
-      }
-      
-      if self.task == nil {
-        self.task = Task(UID: UUID().uuidString, text: "", description: "", typeUID: "", status: .created, createdTimeIntervalSince1970: Date().timeIntervalSince1970 )
-      }
-
-      guard let task = self.task else { return }
-
-      task.text = taskText.value
-      task.typeUID = type.identity
-      task.description = taskDescription.value
-      task.closedTimeIntervalSince1970 = self.closedDate?.timeIntervalSince1970
-
-      if let status = self.status {
-        task.status = status
-      }
-
-      self.services.coreDataService.saveTasksToCoreData(tasks: [task], completion: { error in
-        if let error = error {
-          print(error.localizedDescription)
-          return
-        }
         self.steps.accept(AppStep.taskProcessingIsCompleted)
-      })
-    }.drive().disposed(by: disposeBag)
+      }
+    }
     
+    let saveButtonClick = Driver.of(input.saveTaskButtonClickTrigger, input.textFieldEditingDidEndOnExit)
+      .merge()
+      .withLatestFrom(taskAttr) { [weak self] _, attr in
+        guard let self = self else { return }
+        guard let type = attr.type else { return }
+        
+        if self.task == nil {
+          self.task = Task(UID: UUID().uuidString, text: "", description: "", typeUID: "", status: .created, createdTimeIntervalSince1970: Date().timeIntervalSince1970 )
+        }
+        
+        guard let task = self.task else { return }
+        
+        task.text = attr.text
+        task.typeUID = type.identity
+        task.description = attr.description
+        task.closedTimeIntervalSince1970 = self.closedDate?.timeIntervalSince1970
+        
+        if let status = self.status {
+          task.status = status
+        }
+        
+        self.services.coreDataService.saveTasksToCoreData(tasks: [task], completion: { error in
+          if let error = error {
+            print(error.localizedDescription)
+            return
+          }
+          self.steps.accept(AppStep.taskProcessingIsCompleted)
+        })
+      }
+    
+    // MARK: - Errors
+    let errorCreated = input.saveTaskButtonClickTrigger.withLatestFrom(typeCellClicked) { (_, type) -> String in
+      return type == nil ? "Выберите тип" : ""
+    }.asDriver()
+    
+    let errorRemoved = typeCellClicked.map { type -> String in
+      return ""
+    }.asDriver()
+    
+    let errorTextLabel = Driver.of(errorCreated, errorRemoved).merge()
+    
+    //MARK: - Output
     return Output(
       errorTextLabel: errorTextLabel,
       placeholderIsOn: placeholderIsOn,
-      showAlertTrigger: showAlert.asDriver()
+      backButtonClick: backButtonClick,
+      configureTaskTypeButtonClick: configureTaskTypeButtonClick,
+      completeButtonClick: completeButtonClick,
+      okAlertButtonClick: okAlertButtonClick,
+      saveButtonClick: saveButtonClick,
+      dataSource: dataSource
     )
   }
 }

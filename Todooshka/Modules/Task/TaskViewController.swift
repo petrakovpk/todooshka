@@ -226,7 +226,7 @@ class TaskViewController: TDViewController {
     if let task = viewModel.task {
       textField.text = task.text
       descriptionTextView.text = task.description
-      completeTaskButton.isHidden = false
+      completeTaskButton.isHidden = task.status == .completed
     } else {
       textField.becomeFirstResponder()
       completeTaskButton.isHidden = true
@@ -250,14 +250,20 @@ class TaskViewController: TDViewController {
     let output = viewModel.transform(input: input)
     
     output.placeholderIsOn.drive(placeholderBinder).disposed(by: disposeBag)
-    output.errorTextLabel.bind(to: self.errorLabel.rx.text).disposed(by: disposeBag)
-    output.showAlertTrigger.drive(alertBinder).disposed(by: disposeBag)
+    output.errorTextLabel.drive(errorLabel.rx.text).disposed(by: disposeBag)
+    output.completeButtonClick.drive(showAlertBinder).disposed(by: disposeBag)
+    output.okAlertButtonClick.drive(hideAlertBinder).disposed(by: disposeBag)
+    output.backButtonClick.drive().disposed(by: disposeBag)
+    output.saveButtonClick.drive().disposed(by: disposeBag)
+    output.configureTaskTypeButtonClick.drive().disposed(by: disposeBag)
+    output.dataSource.drive(collectionView.rx.items(dataSource: dataSource))
+      .disposed(by: disposeBag)
+      
   }
   
   //MARK: - Binders
   var placeholderBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, placeholderIsOn) in
-      
       if placeholderIsOn {
         vc.descriptionTextView.textColor = UIColor(named: "taskPlaceholderText")
         vc.descriptionTextView.text = "Напишите комментарий"
@@ -273,25 +279,27 @@ class TaskViewController: TDViewController {
     })
   }
   
-  var alertBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, showAlert) in
-      if showAlert {
-        self.animationView.animation = Animation.named("taskDone1")
-        self.animationView.removeAllConstraints()
-        self.animationView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor)
-        self.animationView.play()
-        
-        let okButtonTexts = ["Да, я молодец!","Просто герой :)","Красавчик же","Светлое будущее приближается :)"]
-        self.okAlertButton.setTitle(okButtonTexts.randomElement(), for: .normal)
-        self.alertBackgroundView.isHidden = false
-        self.animationView.isHidden = false
-        
-      } else {
-        self.alertBackgroundView.isHidden = true
-        self.animationView.isHidden = true
-      }
+  var showAlertBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      self.animationView.animation = Animation.named("taskDone1")
+      self.animationView.removeAllConstraints()
+      self.animationView.anchor(top: self.view.topAnchor, left: self.view.leftAnchor, bottom: self.view.bottomAnchor, right: self.view.rightAnchor)
+      self.animationView.play()
+      
+      let okButtonTexts = ["Да, я молодец!","Просто герой :)","Красавчик же","Светлое будущее приближается :)"]
+      self.okAlertButton.setTitle(okButtonTexts.randomElement(), for: .normal)
+      self.alertBackgroundView.isHidden = false
+      self.animationView.isHidden = false
     })
   }
+  
+  var hideAlertBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+    self.alertBackgroundView.isHidden = true
+    self.animationView.isHidden = true
+    })
+  }
+  
   
   
   func configureDataSource() {
@@ -304,9 +312,7 @@ class TaskViewController: TDViewController {
         return cell
       })
     
-    viewModel.dataSource.asDriver()
-      .drive(collectionView.rx.items(dataSource: dataSource))
-      .disposed(by: disposeBag)
+  
   }
 }
 

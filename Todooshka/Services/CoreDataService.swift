@@ -11,6 +11,7 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import CoreData
+import YandexMobileMetrica
 
 protocol HasCoreDataService {
   var coreDataService: CoreDataService { get }
@@ -160,6 +161,13 @@ class CoreDataService {
             var tasks = self.tasks.value + [task]
             tasks.sort{ return $0.createdTimeIntervalSince1970 < $1.createdTimeIntervalSince1970 }
             self.tasks.accept(tasks)
+            
+            let params : [String : Any] = ["text": task.text, "description" : task.description as Any, "type": task.type?.text]
+            YMMYandexMetrica.reportEvent("Create Task", parameters: params, onFailure: { (error) in
+                print("DID FAIL REPORT EVENT: %@", "Create task")
+              print("REPORT ERROR: %@", error.localizedDescription)
+            })
+            
           }
         }
         if let coreDataTaskType = insertedObject as? CoreDataTaskType {
@@ -167,6 +175,12 @@ class CoreDataService {
             var types = self.taskTypes.value + [type]
             types.sort{ return $0.orderNumber < $1.orderNumber }
             self.taskTypes.accept(types)
+            
+            let params : [String : Any] = ["text": type.text, "createdDate" : type.identity]
+            YMMYandexMetrica.reportEvent("Create Type", parameters: params, onFailure: { (error) in
+                print("DID FAIL REPORT EVENT: %@", "Create type")
+              print("REPORT ERROR: %@", error.localizedDescription)
+            })
           }
         }
       }
@@ -196,6 +210,7 @@ class CoreDataService {
         }
       }
     }
+    
     if let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? Set<NSManagedObject>, !deletedObjects.isEmpty {
       for deletedObject in deletedObjects {
         if let coreDataTask = deletedObject as? CoreDataTask {

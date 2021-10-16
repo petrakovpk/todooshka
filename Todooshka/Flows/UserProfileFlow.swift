@@ -102,7 +102,7 @@ class UserProfileFlow: Flow {
   private func navigateToUserProfile() -> FlowContributors {
     let viewController = UserProfileViewController()
     let viewModel = UserProfileViewModel(services: services)
-    viewController.bindTo(with: viewModel)
+    viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: false)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }

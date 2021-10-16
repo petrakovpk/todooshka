@@ -58,6 +58,7 @@ class UserProfileViewController: UIViewController {
   override func viewDidLoad() {
     configureUI()
     configureDataSource()
+    bindViewModel()
     configureColor()
   }
   
@@ -207,34 +208,37 @@ class UserProfileViewController: UIViewController {
   }
   
   //MARK: - Bind To
-  func bindTo(with viewModel: UserProfileViewModel) {
-    self.viewModel = viewModel
+  func bindViewModel() {
     
-    settingsButton.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.settingsButtonClicked() }.disposed(by: disposeBag)
+    let input = UserProfileViewModel.Input(
+      leftButtonClickTrigger: previousMonthButton.rx.tap.asDriver() ,
+      rightButtonClickTrigger: nextMonthButton.rx.tap.asDriver() ,
+      settingsButtonClickTrigger: settingsButton.rx.tap.asDriver() ,
+      selection: collectionView.rx.itemSelected.asDriver(),
+      settingsButtonClickedTrigger: settingsButton.rx.tap.asDriver()
+    )
     
-    previousMonthButton.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.previousMonthButtonClicked() }.disposed(by: disposeBag)
-    nextMonthButton.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.nextMonthButtonClicked() }.disposed(by: disposeBag)
+    let output = viewModel.transform(input: input)
     
-    viewModel.deltaMonth.bind{ [weak self] deltaMonth in
-      guard let self = self else { return }
-      let date = Date().adding(.month, value: deltaMonth)
-      
-      let dateFormatter = DateFormatter()
-      dateFormatter.locale = Locale(identifier: "ru_RU")
-      dateFormatter.dateFormat = "LLLL"
-      var stringDate = dateFormatter.string(from: date)
-      stringDate.firstCharacterUppercased()
-      
-      self.monthLabel.text = stringDate
-    }.disposed(by: disposeBag)
+    output.completedTaskCount.drive(completedTasksLabel.rx.text).disposed(by: disposeBag)
+    output.completedTaskStatus.drive(dayStatusLabel.rx.text).disposed(by: disposeBag)
+    output.monthText.drive(monthLabel.rx.text).disposed(by: disposeBag)
+    output.selectedCalendarDay.drive().disposed(by: disposeBag)
+    output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
+    output.settingsButtonClicked.drive().disposed(by: disposeBag)
+    output.completedTasksGroupedByType.drive(typeLabelsBinder).disposed(by: disposeBag)
     
-    viewModel.completedTasksLabelOutput.bind(to: completedTasksLabel.rx.text).disposed(by: disposeBag)
-    viewModel.typeLabel1TextOutput.bind(to: typeLabel1.rx.text).disposed(by: disposeBag)
-    viewModel.typeLabel2TextOutput.bind(to: typeLabel2.rx.text).disposed(by: disposeBag)
-    viewModel.typeLabel3TextOutput.bind(to: typeLabel3.rx.text).disposed(by: disposeBag)
-    viewModel.typeLabel4TextOutput.bind(to: typeLabel4.rx.text).disposed(by: disposeBag)
-    viewModel.dayStatusTextOutput.bind(to: dayStatusLabel.rx.text).disposed(by: disposeBag)
   }
+  
+  var typeLabelsBinder: Binder<[String]> {
+    return Binder(self, binding: { (vc, typeTexts) in
+      vc.typeLabel1.text = typeTexts[safe: 0] ?? ""
+      vc.typeLabel2.text = typeTexts[safe: 2] ?? ""
+      vc.typeLabel3.text = typeTexts[safe: 3] ?? ""
+      vc.typeLabel4.text = typeTexts[safe: 4] ?? ""
+    })
+  }
+
   
   //MARK: - Configure Data Source
   func configureDataSource() {
@@ -246,14 +250,14 @@ class UserProfileViewController: UIViewController {
       return cell
     })
     
-    viewModel.dataSource.asDriver()
-      .drive(collectionView.rx.items(dataSource: dataSource))
-      .disposed(by: disposeBag)
+//    viewModel.dataSource.asDriver()
+//      .drive(collectionView.rx.items(dataSource: dataSource))
+//      .disposed(by: disposeBag)
     
-    collectionView.rx.itemSelected.bind{ [weak self] indexPath in
-      guard let self = self else { return }
-      self.viewModel.daySelected(indexPath: indexPath)
-    }.disposed(by: disposeBag)
+//    collectionView.rx.itemSelected.bind{ [weak self] indexPath in
+//      guard let self = self else { return }
+//      self.viewModel.daySelected(indexPath: indexPath)
+//    }.disposed(by: disposeBag)
   }
   
 }
