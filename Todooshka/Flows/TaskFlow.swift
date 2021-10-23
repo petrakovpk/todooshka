@@ -62,7 +62,7 @@ class TaskFlow: Flow {
   private func navigateToTaskTypesList() -> FlowContributors {
     let viewController = TaskTypesListViewController()
     let viewModel = TaskTypesListViewModel(services: services)
-    viewController.bindTo(with: viewModel)
+    viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
@@ -70,7 +70,7 @@ class TaskFlow: Flow {
   private func navigateToTaskType(taskType: TaskType?) -> FlowContributors {
     let viewController = TaskTypeViewController()
     let viewModel = TaskTypeViewModel(services: services, taskType: taskType)
-    viewController.bindTo(with: viewModel)
+    viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

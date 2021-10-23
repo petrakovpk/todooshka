@@ -125,12 +125,11 @@ class TaskViewModel: Stepper {
       typeCellClicked,
       input.text.startWith(task?.text ?? ""),
       description
-    )
-    { type, text, description -> TaskAttr in
+    ) { type, text, description -> TaskAttr in
       return TaskAttr(type: type, text: text, description: description)
     }.asDriver()
   
-    // MARK: - Hanlders
+    // MARK: - Handlers
     let backButtonClick = input.backButtonClickTrigger.map { () in
       self.steps.accept(AppStep.taskProcessingIsCompleted)
     }
@@ -141,8 +140,11 @@ class TaskViewModel: Stepper {
       self.steps.accept(AppStep.taskTypesListIsRequired)
     }
     
-    let okAlertButtonClick = input.okAlertButtonClickTrigger.map { () in
+    let okAlertButtonClick = input.okAlertButtonClickTrigger.withLatestFrom(taskAttr) { _, attr in
       guard let task = self.task else { return }
+      
+      task.text = attr.text
+      task.description = attr.description
       task.status = .completed
       task.closedTimeIntervalSince1970 = Date().timeIntervalSince1970
       
@@ -170,7 +172,7 @@ class TaskViewModel: Stepper {
         task.text = attr.text
         task.typeUID = type.identity
         task.description = attr.description
-        task.closedTimeIntervalSince1970 = self.closedDate?.timeIntervalSince1970
+        task.closedTimeIntervalSince1970 == nil ? task.closedTimeIntervalSince1970  = self.closedDate?.timeIntervalSince1970 : nil
         
         if let status = self.status {
           task.status = status
@@ -186,7 +188,7 @@ class TaskViewModel: Stepper {
       }
     
     // MARK: - Errors
-    let errorCreated = input.saveTaskButtonClickTrigger.withLatestFrom(typeCellClicked) { (_, type) -> String in
+    let errorCreated = saveButtonClick.withLatestFrom(typeCellClicked) { (_, type) -> String in
       return type == nil ? "Выберите тип" : ""
     }.asDriver()
     

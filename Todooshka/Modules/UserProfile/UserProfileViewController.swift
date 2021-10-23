@@ -233,9 +233,9 @@ class UserProfileViewController: UIViewController {
   var typeLabelsBinder: Binder<[String]> {
     return Binder(self, binding: { (vc, typeTexts) in
       vc.typeLabel1.text = typeTexts[safe: 0] ?? ""
-      vc.typeLabel2.text = typeTexts[safe: 2] ?? ""
-      vc.typeLabel3.text = typeTexts[safe: 3] ?? ""
-      vc.typeLabel4.text = typeTexts[safe: 4] ?? ""
+      vc.typeLabel2.text = typeTexts[safe: 1] ?? ""
+      vc.typeLabel3.text = typeTexts[safe: 2] ?? ""
+      vc.typeLabel4.text = typeTexts[safe: 3] ?? ""
     })
   }
 

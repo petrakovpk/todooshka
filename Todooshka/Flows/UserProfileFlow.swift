@@ -110,7 +110,7 @@ class UserProfileFlow: Flow {
   private func navigateToSettings() -> FlowContributors {
     let viewController = UserProfileSettingsViewController()
     let viewModel = UserProfileSettingsViewModel(services: services)
-    viewController.bindTo(with: viewModel)
+    viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
@@ -144,7 +144,7 @@ class UserProfileFlow: Flow {
   private func navigateToTaskTypesList() -> FlowContributors {
     let viewController = TaskTypesListViewController()
     let viewModel = TaskTypesListViewModel(services: services)
-    viewController.bindTo(with: viewModel)
+    viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
@@ -152,7 +152,7 @@ class UserProfileFlow: Flow {
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
     let viewController = IdeaBoxTaskListViewController()
     let viewModel = IdeaBoxTaskListViewModel(services: services)
-    viewController.bindTo(with: viewModel)
+    viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

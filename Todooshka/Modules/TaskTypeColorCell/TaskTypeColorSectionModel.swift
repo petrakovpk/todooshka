@@ -11,7 +11,7 @@ import UIKit
 struct TaskTypeColorItem: IdentifiableType, Equatable {
     
     //MARK: - Properties
-    var color: UIColor?
+    var color: UIColor
     
     //MARK: - Identity
     var identity: String { return UUID().uuidString }

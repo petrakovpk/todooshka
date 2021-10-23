@@ -10,39 +10,66 @@ import RxSwift
 import RxCocoa
 import Foundation
 import SwipeCellKit
+import UIKit
 
 class TaskTypeListCollectionViewCellModel: Stepper {
   
   private let services: AppServices
   
-  let disposeBag = DisposeBag()
+ // let disposeBag = DisposeBag()
   let steps = PublishRelay<Step>()
   
   let formatter = DateFormatter()
-  let type = BehaviorRelay<TaskType?>(value: nil)
+  let type: TaskType
   
-  //MARK: - Outputs
+  
+  struct Input {
+    let repeatButtonClickTrigger: Driver<Void>
+  }
+  
+  struct Output {
+    let icon: Driver<UIImage>
+    let color: Driver<UIColor>
+    let text: Driver<String>
+    let repeatButtonClicked: Driver<Void>
+    let repeatButtonIsHidden: Driver<Bool>
+  }
   
 
   //MARK: - Init
   init(services: AppServices, type: TaskType) {
     self.services = services
-    self.type.accept(type)
-    
+    self.type = type
   }
   
-  //MARK: - Handlers
-  func repeatButtonClicked() {
-    if let type = type.value {
-      type.status = .active
-      services.coreDataService.saveTaskTypesToCoreData(types: [type]) { error in
+  func transform(input: Input) -> Output {
+    
+    let icon = Driver<UIImage>.just(type.image!)
+    let color = Driver<UIColor>.just(type.imageColor!)
+    let text = Driver<String>.just(type.text)
+    
+    let repeatButtonClick = input.repeatButtonClickTrigger.map {
+      self.type.status = .active
+      self.services.coreDataService.saveTaskTypesToCoreData(types: [self.type]) { error in
         if let error = error  {
           print(error.localizedDescription)
           return
         }
       }
     }
+    
+    let repeatButtonIsHidden = Driver.just(type.status == .active)
+    
+    
+    return Output(
+      icon: icon,
+      color: color,
+      text: text,
+      repeatButtonClicked: repeatButtonClick,
+      repeatButtonIsHidden: repeatButtonIsHidden
+    )
   }
+
 }
 
 //MARK: - SwipeCollectionViewCellDelegate
@@ -55,7 +82,7 @@ extension TaskTypeListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
     let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      self.services.coreDataService.taskTypeRemovingIsRequired.accept(self.type.value)
+      self.services.coreDataService.taskTypeRemovingIsRequired.accept(self.type)
     }
     
     configure(action: deleteAction, with: .trash)

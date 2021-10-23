@@ -26,7 +26,6 @@ class TDAddTaskButton: UIButton {
     
     cornerRadius = bounds.width / 2
 
-    //layer.masksToBounds = false
   }
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

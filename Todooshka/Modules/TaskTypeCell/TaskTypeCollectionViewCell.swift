@@ -21,6 +21,18 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
   var oldShapeLayer: CAShapeLayer?
   
   override func draw(_ rect: CGRect) {
+    bindViewModel()
+    
+    contentView.cornerRadius = 11
+    contentView.clipsToBounds = false
+    
+    contentView.addSubview(taskTypeImageView)
+    taskTypeImageView.anchorCenterXToSuperview()
+    taskTypeImageView.anchorCenterYToSuperview(constant: -1 * contentView.bounds.height / 6)
+    
+    contentView.addSubview(taskTypeTextView)
+    taskTypeTextView.anchor(top: taskTypeImageView.bottomAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
+    
     shapeLayer.frame = bounds
     shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 11).cgPath
     
@@ -29,17 +41,6 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
     shapeLayer.shadowOpacity = 1
     shapeLayer.shadowRadius = 18
     shapeLayer.shadowOffset = CGSize(width: 0, height: 4)
-    
-    if viewModel.isSelected.value ?? false {
-      shapeLayer.fillColor = UIColor.blueRibbon.cgColor
-      shapeLayer.strokeColor = UIColor(named: "taskTypeCellBorder")?.cgColor
-      shapeLayer.shadowColor = UIColor.blueRibbon.cgColor
-    } else {
-      shapeLayer.fillColor = UIColor(named: "taskTypeCellBackground")?.cgColor
-      shapeLayer.strokeColor = UIColor(named: "taskTypeCellBorder")?.cgColor
-      shapeLayer.shadowColor = UIColor.clear.cgColor
-    }
-   
     shapeLayer.cornerRadius = 11
     
     if let oldShapeLayer = oldShapeLayer {
@@ -72,46 +73,24 @@ class TaskTypeCollectionViewCell: UICollectionViewCell {
   private var imageColor: UIColor?
   
   //MARK: - Bind
-  func bindToViewModel(viewModel: TaskTypeCollectionViewCellModel){
-    self.viewModel = viewModel
-    
-    contentView.cornerRadius = 11
-    contentView.clipsToBounds = false
-    
-    contentView.addSubview(taskTypeImageView)
-    taskTypeImageView.anchorCenterXToSuperview()
-    taskTypeImageView.anchorCenterYToSuperview(constant: -1 * contentView.bounds.height / 6)
-    
-    contentView.addSubview(taskTypeTextView)
-    taskTypeTextView.anchor(top: taskTypeImageView.bottomAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
-    
-    viewModel.type.bind{ [weak self] type in
-      guard let self = self else { return }
-      guard let type = type else { return }
-      self.taskTypeImageView.image = type.image
-      self.taskTypeImageView.tintColor = type.imageColor
-      self.imageColor = type.imageColor
-      self.taskTypeTextView.text = type.text
-    }.disposed(by: disposeBag)
-    
-    viewModel.isSelected.bind{ [weak self] isSelected in
-      guard let self = self else { return }
-      guard let isSelected = isSelected else { return }
-      if isSelected {
-        self.shapeLayer.fillColor = UIColor.blueRibbon.cgColor
-        self.shapeLayer.shadowColor = UIColor.blueRibbon.cgColor
-        self.taskTypeTextView.textColor = .white
-        self.taskTypeImageView.tintColor = .white
-      } else {
-        self.shapeLayer.fillColor = UIColor(named: "taskTypeCellBackground")?.cgColor
-        self.shapeLayer.shadowColor = UIColor.clear.cgColor
-        self.taskTypeTextView.textColor = UIColor(named: "appText")
-        self.taskTypeImageView.tintColor = self.imageColor
-      }
-      self.layoutIfNeeded()
-    }.disposed(by: disposeBag)
+  func bindViewModel() {
+    let output = viewModel.transform()
+    output.typeImageColor.drive { self.imageColor = $0 }.disposed(by: disposeBag)
+    output.typeImage.drive(taskTypeImageView.rx.image).disposed(by: disposeBag)
+    output.typeText.drive(taskTypeTextView.rx.text).disposed(by: disposeBag)
+    output.isSelected.drive(isSelectedBinder).disposed(by: disposeBag)
   }
   
+  var isSelectedBinder: Binder<Bool> {
+    return Binder(self, binding: { (cell, isSelected) in
+      cell.shapeLayer.fillColor        = isSelected ? UIColor.blueRibbon.cgColor  : UIColor(named: "taskTypeCellBackground")?.cgColor
+      cell.shapeLayer.strokeColor      = isSelected ? nil                         : UIColor(named: "taskTypeCellBorder")?.cgColor
+      cell.shapeLayer.shadowColor      = isSelected ? UIColor.blueRibbon.cgColor  : UIColor.clear.cgColor
+      cell.taskTypeImageView.tintColor = isSelected ? UIColor.white               : cell.imageColor
+      cell.taskTypeTextView.textColor  = isSelected ? UIColor.white               : UIColor(named: "appText")
+    })
+  }
+    
   
 }
 

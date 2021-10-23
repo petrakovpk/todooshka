@@ -16,16 +16,14 @@ class TDTaskTextField: UITextField {
         layer.insertSublayer(bottomBorderLine, at: 0)
     }
     
-    init(){
+  init(placeholder: String){
         super.init(frame: .zero)
         
         let spacer = UIView()
         spacer.anchor(widthConstant: 12, heightConstant: 40)
         leftView = spacer
         leftViewMode = .always
-        returnKeyType = .done
-
-        attributedPlaceholder = NSAttributedString(string: "Введите название задачи",
+        attributedPlaceholder = NSAttributedString(string: placeholder,
                                                    attributes: [NSAttributedString.Key.foregroundColor: UIColor(named: "taskPlaceholderText")])
         font = UIFont.systemFont(ofSize: 13, weight: .medium)
     }

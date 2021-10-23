@@ -67,7 +67,7 @@ class AppFlow: Flow {
     private func navigateToOnboardingFlow() -> FlowContributors {
         let viewController = OnboardingViewController()
         let viewModel = OnboardingViewModel(services: services)
-        viewController.bindTo(with: viewModel)
+        viewController.viewModel = viewModel
         rootViewController.navigationBar.isHidden = true
         rootViewController.setViewControllers([viewController], animated: false)
         return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

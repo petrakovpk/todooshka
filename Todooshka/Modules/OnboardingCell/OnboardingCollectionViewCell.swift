@@ -20,15 +20,20 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
   static var reuseID: String = "OnboardingCollectionViewCell"
   
   //MARK: - UI Elements
-  lazy var contentImageView = UIView()
-  lazy var imageView = UIImageView()
-  lazy var headerLabel: UILabel = {
+  private let containerView = UIView()
+  private let imageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.contentMode = .scaleAspectFit
+    return imageView
+  }()
+  
+  private let headerLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
     return label
   }()
   
-  lazy var descriptionTextView: UITextView = {
+  private let descriptionTextView: UITextView = {
     let textView = UITextView()
     textView.font =  UIFont.systemFont(ofSize: 15, weight: .medium)
     textView.textAlignment = .center
@@ -37,36 +42,34 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
     return textView
   }()
   
-  
-  //MARK: - Bind to ViewModel
-  func bindToViewModel(viewModel: OnboardingCollectionViewCellModel){
-    self.viewModel = viewModel
-    
+  //MARK: - Draw
+  override func draw(_ rect: CGRect) {
     configureUI()
     configureColor()
-    
-    viewModel.imageOutput.bind(to: imageView.rx.image).disposed(by: disposeBag)
-    viewModel.headerTextOutput.bind(to: headerLabel.rx.text).disposed(by: disposeBag)
-    viewModel.descriptionTextOutput.bind(to: descriptionTextView.rx.text).disposed(by: disposeBag)
+    bindToViewModel()
+  }
+
+  //MARK: - Bind to ViewModel
+  func bindToViewModel() {
+    let output = viewModel.transform()
+    output.image.drive(imageView.rx.image).disposed(by: disposeBag)
+    output.headerText.drive(headerLabel.rx.text).disposed(by: disposeBag)
+    output.descriptionText.drive(descriptionTextView.rx.text).disposed(by: disposeBag)
   }
   
   //MARK: - Configure UI
   func configureUI() {
     contentView.addSubview(descriptionTextView)
-    descriptionTextView.anchor(left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 16, bottomConstant: 200, rightConstant: 16 , heightConstant: 90)
+    descriptionTextView.anchor(left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 32, bottomConstant: 100, rightConstant: 32 , heightConstant: 90)
     descriptionTextView.anchorCenterXToSuperview()
     
     contentView.addSubview(headerLabel)
     headerLabel.anchor(bottom: descriptionTextView.topAnchor, bottomConstant: 26, heightConstant: 25)
     headerLabel.anchorCenterXToSuperview()
-    
-    contentView.addSubview(contentImageView)
-    contentImageView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: headerLabel.topAnchor, right: contentView.rightAnchor, bottomConstant: 40)
-    contentImageView.anchorCenterXToSuperview()
-    
-    contentImageView.addSubview(imageView)
-    imageView.anchor(top: contentImageView.topAnchor)
-    imageView.anchorCenterXToSuperview()
+
+    contentView.addSubview(imageView)
+    imageView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: headerLabel.topAnchor, right: contentView.rightAnchor, leftConstant: 16, bottomConstant: 20, rightConstant: 16 )
+    containerView.anchorCenterXToSuperview()
   }
   
 }

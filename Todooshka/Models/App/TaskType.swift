@@ -79,6 +79,7 @@ class TaskType: IdentifiableType, Equatable  {
     self.text = text
     self.orderNumber = Int(coreDataTaskType.ordernumber)
     self.status = TaskTypeStatus(rawValue: coreDataTaskType.status ?? "active")!
+   // print(self.orderNumber, coreDataTaskType.ordernumber, Int(coreDataTaskType.ordernumber))
   }
   
   //MARK: - Equatable

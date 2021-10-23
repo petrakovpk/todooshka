@@ -13,83 +13,64 @@ class IdeaBoxTaskListViewModel: Stepper {
   
   //MARK: - Properties
   let steps = PublishRelay<Step>()
-  let dataSource = BehaviorRelay<[TaskListSectionModel]>(value: [])
-  let disposeBag = DisposeBag()
+  //let dataSource = BehaviorRelay<[TaskListSectionModel]>(value: [])
+  //let disposeBag = DisposeBag()
   let services: AppServices
-  let formatter = DateFormatter()
-  let showAlert = BehaviorRelay<Bool>(value: false)
-
+  let formatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "d MMMM yyyy"
+    formatter.timeZone =  TimeZone(abbreviation: "UTC")
+    formatter.locale = Locale(identifier: "ru")
+    return formatter
+  }()
+  //let showAlert = BehaviorRelay<Bool>(value: false)
+  
+  struct Input {
+    let backButtonClickTrigger: Driver<Void>
+    let addButtonClickTrigger: Driver<Void>
+    let alertDeleteButtonClickTrigger: Driver<Void>
+    let alertCancelButtonClickTrigger: Driver<Void>
+    let selection: Driver<IndexPath>
+  }
+  
+  struct Output {
+    let dataSource: Driver<[TaskListSectionModel]>
+    let alertIsHidden: Driver<Bool>
+    let backButtonClicked: Driver<Void>
+    let addButtonClicked: Driver<Void>
+    let alertDeleteButtonClicked: Driver<Void>
+    let alertCancelButtonClicked: Driver<Void>
+    let taskSelected: Driver<Void>
+  }
   
   //MARK: - Init
   init(services: AppServices) {
     self.services = services
+  }
+  
+  func transform(input: Input) -> Output {
     
-    formatter.dateFormat = "d MMMM yyyy"
-    formatter.timeZone =  TimeZone(abbreviation: "UTC")
-    formatter.locale = Locale(identifier: "ru")
-    
-    services.coreDataService.tasks
-      .map({$0.filter{ $0.status == .idea }})
-      .bind { [weak self] tasks in
-        guard let self = self else { return }
-        
-        let tasksDict = Dictionary(grouping: tasks , by: { $0.type?.text ?? "" }).sorted{ $0.key > $1.key }
+    let dataSource = services.coreDataService.tasks
+      .map { tasks -> [TaskListSectionModel] in
+        let tasks = tasks.filter{ $0.status == .idea }
+        let tasksDict = Dictionary(grouping: tasks, by: { $0.type?.text ?? "Нет типа" }).sorted{ $0.key > $1.key }
         var models: [TaskListSectionModel] = []
-        
         for taskDict in tasksDict {
-          models.append(TaskListSectionModel(header: taskDict.key, items: taskDict.value.sorted{ $0.orderNumber < $1.orderNumber }))
+          models.append(TaskListSectionModel(header: taskDict.key, items: taskDict.value.sorted{ $0.text < $1.text }))
         }
-        
-        self.dataSource.accept(models)
-      }.disposed(by: disposeBag)
+        return models
+      }.asDriver(onErrorJustReturn: [])
     
-    services.coreDataService.taskRemovingIsRequired.bind{ [weak self] task in
-      guard let self = self else { return }
-      self.showAlert.accept(task?.status == .idea)
-    }.disposed(by: disposeBag)
+    let alertIsHidden = services.coreDataService.taskRemovingIsRequired.map{ return $0 == nil }.asDriver(onErrorJustReturn: false)
     
-  }
-  
-  func openTask(indexPath: IndexPath) {
-    let task = dataSource.value[indexPath.section].items[indexPath.item]
-    steps.accept(AppStep.showTaskIsRequired(task: task))
-  }
-  
-  //MARK: Collectionview Moved
-  func collectionViewItemMoved(sourceIndex: IndexPath, destinationIndex: IndexPath) {
-      
-    guard sourceIndex != destinationIndex else { return }
-    guard sourceIndex.section == destinationIndex.section else { return }
+    let backButtonClicked = input.backButtonClickTrigger.map{ self.steps.accept(AppStep.ideaBoxTaskListIsCompleted) }
+    let addButtonClicked = input.addButtonClickTrigger.map{ self.steps.accept(AppStep.createTaskIsRequired(status: .idea, createdDate: nil)) }
+    let alertCancelButtonClicked = input.alertCancelButtonClickTrigger.map{ self.services.coreDataService.taskRemovingIsRequired.accept(nil) }
     
-    var tasks = dataSource.value[sourceIndex.section].items
-    
-    let element = tasks.remove(at: sourceIndex.row)
-    tasks.insert(element, at: destinationIndex.row)
-   
-    for (index, _) in tasks.enumerated() {
-      tasks[index].orderNumber = index
-    }
-  
-    services.coreDataService.saveTasksToCoreData(tasks: tasks, completion: nil)
-  }
-  
-  //MARK: - Handlers
-  func leftBarButtonBackItemClick() {
-    steps.accept(AppStep.ideaBoxTaskListIsCompleted)
-  }
-  
-  func rightBarButtonAddItemClick() {
-    steps.accept(AppStep.createTaskIsRequired(status: .idea, createdDate: nil) )
-  }
-  
-  func alertCancelButtonClicked() {
-    services.coreDataService.taskRemovingIsRequired.accept(nil)
-  }
-  
-  func alertDeleteButtonClicked() {
-    if let task = services.coreDataService.taskRemovingIsRequired.value {
+    let alertDeleteButtonClicked = input.alertDeleteButtonClickTrigger.map {
+      guard let task = self.services.coreDataService.taskRemovingIsRequired.value else { return }
       task.status = .deleted
-      services.coreDataService.saveTasksToCoreData(tasks: [task]) { error in
+      self.services.coreDataService.saveTasksToCoreData(tasks: [task]) { error in
         if let error = error  {
           print(error.localizedDescription)
           return
@@ -97,5 +78,21 @@ class IdeaBoxTaskListViewModel: Stepper {
         self.services.coreDataService.taskRemovingIsRequired.accept(nil)
       }
     }
+    
+    let taskSelected = input.selection.withLatestFrom(dataSource) { indexPath, dataSource in
+      let task = dataSource[indexPath.section].items[indexPath.item]
+      self.steps.accept(AppStep.showTaskIsRequired(task: task))
+    }
+    
+    return Output(
+      dataSource: dataSource,
+      alertIsHidden: alertIsHidden,
+      backButtonClicked: backButtonClicked,
+      addButtonClicked: addButtonClicked,
+      alertDeleteButtonClicked: alertDeleteButtonClicked,
+      alertCancelButtonClicked: alertCancelButtonClicked,
+      taskSelected: taskSelected
+    )
   }
 }
+

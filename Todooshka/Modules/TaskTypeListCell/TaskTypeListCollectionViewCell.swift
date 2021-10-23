@@ -25,16 +25,13 @@ class TaskTypeListCollectionViewCell: SwipeCollectionViewCell {
   
   private let repeatButton = UIButton(type: .custom)
   
-  //MARK: - Draw
-  override init(frame: CGRect) {
-    super.init(frame: frame)
+  override func draw(_ rect: CGRect) {
+    super.draw(rect)
     configureUI()
+    bindViewModel()
+    delegate = viewModel
   }
-  
-  required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
+
   //MARK: - Configure
   func configureUI() {
     contentView.cornerRadius = height / 2
@@ -71,27 +68,17 @@ class TaskTypeListCollectionViewCell: SwipeCollectionViewCell {
     label.anchorCenterYToSuperview()
   }
   
-  func bindTo(viewModel: TaskTypeListCollectionViewCellModel) {
-    self.viewModel = viewModel
-  
-    delegate = viewModel
+  func bindViewModel() {
     
-    disposeBag = DisposeBag()
+    let input = TaskTypeListCollectionViewCellModel.Input(
+      repeatButtonClickTrigger: repeatButton.rx.tap.asDriver()
+    )
     
-    repeatButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.repeatButtonClicked()}.disposed(by: disposeBag)
-    
-    viewModel.type.bind{ [weak self] type in
-      guard let self = self else { return }
-      guard let type = type else { return }
-          
-      self.imageView.image = type.image
-      self.imageView.tintColor = type.imageColor
-      
-      self.label.text = type.text
-      
-      self.repeatButton.isHidden = (type.status == .active)
-    }.disposed(by: disposeBag)
-
-
+    let output = viewModel.transform(input: input)
+    output.icon.drive(imageView.rx.image).disposed(by: disposeBag)
+    output.color.drive(imageView.rx.tintColor).disposed(by: disposeBag)
+    output.text.drive(label.rx.text).disposed(by: disposeBag)
+    output.repeatButtonIsHidden.drive(repeatButton.rx.isHidden).disposed(by: disposeBag)
+    output.repeatButtonClicked.drive().disposed(by: disposeBag)
   }
 }

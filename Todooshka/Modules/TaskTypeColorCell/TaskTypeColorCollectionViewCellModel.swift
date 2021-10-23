@@ -15,21 +15,31 @@ class TaskTypeColorCollectionViewCellModel: Stepper {
   
   private let services: AppServices
   
-  let disposeBag = DisposeBag()
   let steps = PublishRelay<Step>()
-  
-  //MARK: - Из модели во Вью Контроллер
-  let taskTypeColorItem = BehaviorRelay<TaskTypeColorItem?>(value: nil)
-  let isSelected = BehaviorRelay<Bool>(value: false)
+  let color: Driver<UIColor>
+
+  struct Output {
+    let isSelected: Driver<Bool>
+    let color: Driver<UIColor>
+  }
 
   //MARK: - Init
   init(services: AppServices, taskTypeColorItem: TaskTypeColorItem) {
     self.services = services
-    self.taskTypeColorItem.accept(taskTypeColorItem)
-    
-    services.coreDataService.selectedTaskTypeColor.bind{ [weak self] color in
-      guard let self = self else { return }
-      self.isSelected.accept( color == taskTypeColorItem.color )
-    }.disposed(by: disposeBag)
+    self.color = Driver<UIColor>.just(taskTypeColorItem.color)
   }
+  
+  func transform() -> Output {
+    
+    let isSelected = services.coreDataService.selectedTaskTypeColor
+      .withLatestFrom(color) { color1, color2 -> Bool in
+        return color1?.hexString == color2.hexString }
+      .asDriver(onErrorJustReturn: false)
+    
+    return Output (
+      isSelected: isSelected,
+      color: color
+    )
+  }
+  
 }

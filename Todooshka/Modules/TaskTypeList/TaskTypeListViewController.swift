@@ -20,6 +20,8 @@ class TaskTypesListViewController: UIViewController {
   var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskTypeListSectionModel>!
   var viewModel: TaskTypesListViewModel!
   
+  let itemMoved = BehaviorRelay<ItemMovedEvent?>(value: nil)
+  
   //MARK: - UI Elements
   private let titleLabel = UILabel()
   private let descriptionLabel = UILabel()
@@ -62,8 +64,9 @@ class TaskTypesListViewController: UIViewController {
     configureUI()
     configureAlert()
     configureDataSource()
+    bindViewModel()
     configureColor()
-    configureGestures()
+//    configureGestures()
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -139,7 +142,7 @@ class TaskTypesListViewController: UIViewController {
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
     
-   
+    alertLabel.text = "Удалить тип?"
     alertLabel.textColor = UIColor(named: "appText")
     alertLabel.textAlignment = .center
     alertLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
@@ -159,48 +162,36 @@ class TaskTypesListViewController: UIViewController {
     cancelAlertButton.anchorCenterXToSuperview()
   }
   
-  private func configureGestures() {
-    let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
-    swipeRight.direction = .right
-    self.view.addGestureRecognizer(swipeRight)
-  }
-  
-  @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
-    
-    if let swipeGesture = gesture as? UISwipeGestureRecognizer {
-
-      switch swipeGesture.direction {
-      case .right:
-        viewModel.leftBarButtonBackItemClick()
-      case .down:
-        print("Swiped down")
-      case .left:
-        print("Swiped left")
-      case .up:
-        print("Swiped up")
-      default:
-        break
-      }
-    }
-  }
   
   
   //MARK: - Bind To
-  func bindTo(with viewModel: TaskTypesListViewModel) {
-    self.viewModel = viewModel
-    backButton.rx.tap.bind{ viewModel.leftBarButtonBackItemClick() }.disposed(by: disposeBag)
-    addTaskTypeButton.rx.tap.bind{ viewModel.addTaskTypeButtonClick() }.disposed(by: disposeBag)
+  func bindViewModel() {
     
-    deleteAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertDeleteButtonClicked() }.disposed(by: disposeBag)
-    cancelAlertButton.rx.tapGesture().when(.recognized).bind{ _ in
-      viewModel.alertCancelButtonClicked() }.disposed(by: disposeBag)
+    let input = TaskTypesListViewModel.Input(
+      addButtonClickTrigger: addTaskTypeButton.rx.tap.asDriver(),
+      backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      deleteAlertButtonClickTrigger: deleteAlertButton.rx.tap.asDriver(),
+      cancelAlertButtonClickTrigger: cancelAlertButton.rx.tap.asDriver(),
+      itemSelected: collectionView.rx.itemSelected.asDriver(),
+      itemMoved: itemMoved.asDriver()
+    )
     
-    viewModel.alertLabelOutput.bind(to: alertLabel.rx.text).disposed(by: disposeBag)
+    let output = viewModel.transform(input: input)
+    output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
+    output.typeSelected.drive().disposed(by: disposeBag)
+    output.addTypeButtonClick.drive().disposed(by: disposeBag)
+    output.backButtonClick.drive().disposed(by: disposeBag)
+    output.showAlert.drive(showAlertBinder).disposed(by: disposeBag)
+    output.cancelAlertButtonClick.drive().disposed(by: disposeBag)
+    output.deleteAelrtButtonClick.drive().disposed(by: disposeBag)
+    output.itemMoved.drive().disposed(by: disposeBag)
     
-    viewModel.showAlert.bind{ [weak self] showAlert in
-      guard let self = self else { return }
-      self.alertBackgroundView.isHidden = !showAlert
-    }.disposed(by: disposeBag)
+  }
+  
+  var showAlertBinder: Binder<Bool> {
+    return Binder(self, binding: { (vc, showAlert) in
+      vc.alertBackgroundView.isHidden = !showAlert
+    })
   }
   
   //MARK: - Setup CollectionView
@@ -235,19 +226,13 @@ class TaskTypesListViewController: UIViewController {
       configureCell: {(_, collectionView, indexPath, type) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskTypeListCollectionViewCell.reuseID, for: indexPath) as! TaskTypeListCollectionViewCell
         let cellViewModel = TaskTypeListCollectionViewCellModel(services: self.viewModel.services, type: type)
-        cell.bindTo(viewModel: cellViewModel)
+        cell.viewModel = cellViewModel
         return cell
       }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
         let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskTypeListCollectionReusableViewCell.reuseID, for: indexPath) as! TaskTypeListCollectionReusableViewCell
         section.configure(text: dataSource[indexPath.section].header)
         return section
       })
-    
-    viewModel.dataSource.asDriver()
-      .drive(collectionView.rx.items(dataSource: dataSource))
-      .disposed(by: disposeBag)
-    
-    collectionView.rx.itemSelected.bind{ self.viewModel.collectionViewItemSelected(indexPath: $0) }.disposed(by: disposeBag)
   }
 }
 
@@ -284,7 +269,7 @@ extension TaskTypesListViewController: UICollectionViewDropDelegate {
     
     if let destinationIndexPath = coordinator.destinationIndexPath,
        let sourceIndexPath = coordinator.items[0].sourceIndexPath {
-      viewModel.collectionViewItemMoved(sourceIndex: sourceIndexPath, destinationIndex: destinationIndexPath)
+      self.itemMoved.accept((sourceIndex: sourceIndexPath, destinationIndex: destinationIndexPath))
     }
   }
 }

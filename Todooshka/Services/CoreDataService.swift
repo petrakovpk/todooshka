@@ -35,6 +35,7 @@ class CoreDataService {
   let calendarSelectedDate = BehaviorRelay<Date>(value: Date())
   let selectedTaskType = BehaviorRelay<TaskType?>(value: nil)
   let selectedTaskTypeColor =  BehaviorRelay<UIColor?>(value: nil)
+  let selectedTaskTypeIconName =  BehaviorRelay<String?>(value: nil)
   
   let taskRemovingIsRequired = BehaviorRelay<Task?>(value: nil)
   let taskTypeRemovingIsRequired = BehaviorRelay<TaskType?>(value: nil)
@@ -44,9 +45,7 @@ class CoreDataService {
   
   //MARK: - Init
   init() {
-    
-  //  removeAllTaskTypesFromCoreData()
-    
+
     setupInitialTaskTypesIfNeeded()
     
     loadTaskTypesFromCoreData()
@@ -54,7 +53,6 @@ class CoreDataService {
     
     startObserveCoreData()
     
-  //  startOnlineWorking()
   }
   
   deinit {

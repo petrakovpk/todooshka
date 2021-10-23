@@ -21,7 +21,7 @@ class UserProfileSettingsViewController: UIViewController {
   var viewModel: UserProfileSettingsViewModel!
   var dataSource: RxTableViewSectionedReloadDataSource<UserProfileSettingsSectionModel>!
   
-  //MARK: - UI Elements  
+  //MARK: - UI Elements
   private let backButton = UIButton(type: .custom)
   
   private let alertBackgroundView: UIView = {
@@ -54,6 +54,7 @@ class UserProfileSettingsViewController: UIViewController {
     configureUI()
     configureAlert()
     configureDataSource()
+    bindViewModel()
     configureColor()
   }
   
@@ -126,36 +127,33 @@ class UserProfileSettingsViewController: UIViewController {
     cancelAlertButton.anchorCenterXToSuperview()
   }
   //MARK: - Bind To
-  func bindTo(with viewModel: UserProfileSettingsViewModel) {
-    self.viewModel = viewModel
+  func bindViewModel() {
     
-    backButton.rx.tap.bind { viewModel.leftBarButtonBackItemClick() }.disposed(by: disposeBag)
-    logoutAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertLogoutButtonClicked() }.disposed(by: disposeBag)
-    cancelAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertCancelButtonClicked() }.disposed(by: disposeBag)
+    let input = UserProfileSettingsViewModel.Input(
+      backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      selection: tableView.rx.itemSelected.asDriver()
+    )
     
-    viewModel.showAlert.bind{ [weak self] showAlert in
-      guard let self = self else { return }
-      self.alertBackgroundView.isHidden = !showAlert
-    }.disposed(by: disposeBag)
+    let output = viewModel.transform(input: input)
+    
+    output.backButtonClick.drive().disposed(by: disposeBag)
+    output.itemSelected.drive().disposed(by: disposeBag)
+    output.dataSource.drive(tableView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
+    
     
   }
   
   func configureDataSource() {
     tableView.dataSource = nil
-    dataSource = RxTableViewSectionedReloadDataSource<UserProfileSettingsSectionModel> { _, tableView, indexPath, item in
+    dataSource = RxTableViewSectionedReloadDataSource<UserProfileSettingsSectionModel> (configureCell: { _, tableView, indexPath, item in
       let cell = tableView.dequeueReusableCell(withIdentifier: UserProfileSettingsCell.reuseID, for: indexPath) as! UserProfileSettingsCell
       cell.configure(imageName: item.imageName, text: item.text)
       return cell
-    }
+    },  titleForHeaderInSection: { dataSource, index in
+      return dataSource.sectionModels[index].header
+    })
     
-    viewModel.dataSource.asDriver()
-      .drive(tableView.rx.items(dataSource: dataSource))
-      .disposed(by: disposeBag)
     
-    tableView.rx.itemSelected.bind{ [weak self] indexPath in
-      guard let self = self else  { return }
-      self.viewModel.itemSelected(indexPath: indexPath)
-    }.disposed(by: disposeBag)
   }
   
 }

@@ -22,6 +22,15 @@ class TaskTypeViewController: TDViewController {
   
   //MARK: - UI Elements
   private let nameLabel = UILabel()
+  private let taskTypeImageContainerView: UIView = {
+    let view = UIView()
+    view.cornerRadius = 16
+    view.layer.borderWidth = 1
+    view.layer.borderColor = UIColor(named: "taskTypeCellBorder")?.cgColor
+    view.backgroundColor = UIColor(named: "taskTypeCellBackground")
+    return view
+  }()
+  
   private let taskTypeImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.backgroundColor = .clear
@@ -29,17 +38,12 @@ class TaskTypeViewController: TDViewController {
     return imageView
   }()
   
-  private let nameTextField: UITextField = {
-    let field = UITextField()
-    field.placeholder = "Введите название типа"
-    field.returnKeyType = .done
-    return field
-  }()
+  private let nameTextField = TDTaskTextField(placeholder: "Введите название типа")
   
   private let nameSymbolsCountLabel: UILabel = {
     let label = UILabel()
     label.text = ""
-    label.textColor = UIColor(red: 0, green: 0.34, blue: 1, alpha: 1)
+    label.textColor = UIColor(red: 0.188, green: 0.2, blue: 0.325, alpha: 1)
     label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
     return label
   }()
@@ -54,7 +58,8 @@ class TaskTypeViewController: TDViewController {
   private var colorCollectionView: UICollectionView!
   private let colorCollectionViewLayout: UICollectionViewFlowLayout = {
     let layout = UICollectionViewFlowLayout()
-    layout.itemSize = CGSize(width: 40, height: 40)
+    layout.itemSize = CGSize(width: 48, height: 48)
+    layout.minimumLineSpacing = 11
     return layout
   }()
   
@@ -66,59 +71,76 @@ class TaskTypeViewController: TDViewController {
   }()
   
   private var imageCollectionView: UICollectionView!
+  private let imageCollectionViewLayout: UICollectionViewFlowLayout = {
+    let layout = UICollectionViewFlowLayout()
+    layout.itemSize = CGSize(width: 62, height: 62)
+    layout.minimumLineSpacing = 8
+    return layout
+  }()
   
   //MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
     configureDataSource()
+    bindViewModel()
     configureColor()
+  }
+  
+  override func viewDidDisappear(_ animated: Bool) {
+    viewModel.services.coreDataService.selectedTaskTypeColor.accept(nil)
+    viewModel.services.coreDataService.selectedTaskTypeIconName.accept(nil)
   }
   
   //MARK: - Configure UI
   func configureUI() {
-    view.addSubview(taskTypeImageView)
-    taskTypeImageView.anchor(top: headerView.bottomAnchor, topConstant: 16, widthConstant: 75, heightConstant: 75)
+    view.addSubview(taskTypeImageContainerView)
+    taskTypeImageContainerView.anchor(top: headerView.bottomAnchor, topConstant: 16, widthConstant: 68, heightConstant: 68)
+    taskTypeImageContainerView.anchorCenterXToSuperview()
+    
+    taskTypeImageContainerView.addSubview(taskTypeImageView)
     taskTypeImageView.anchorCenterXToSuperview()
+    taskTypeImageView.anchorCenterYToSuperview()
     
     nameLabel.text = "Название типа задач"
     nameLabel.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     nameLabel.textAlignment = .left
     
     view.addSubview(nameLabel)
-    nameLabel.anchor(top: taskTypeImageView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21, leftConstant: 16, rightConstant: 16)
+    nameLabel.anchor(top: taskTypeImageContainerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21, leftConstant: 16, rightConstant: 16)
     
+    nameTextField.returnKeyType = .done
     view.addSubview(nameTextField)
-    nameTextField.anchor(top: nameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16)
+    nameTextField.anchor(top: nameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40)
     
-    nameTextField.addSubview(nameSymbolsCountLabel)
-    nameSymbolsCountLabel.anchorCenterYToSuperview()
-    nameSymbolsCountLabel.anchor(right: nameTextField.rightAnchor, rightConstant: 8)
+    view.addSubview(nameSymbolsCountLabel)
+    nameSymbolsCountLabel.anchor(top: nameLabel.topAnchor, bottom: nameLabel.bottomAnchor, right: view.rightAnchor, rightConstant: 16)
     
     view.addSubview(colorLabel)
     colorLabel.anchor(top: nameTextField.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
     
     colorCollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorCollectionViewLayout)
     colorCollectionView.register(TaskTypeColorCollectionViewCell.self, forCellWithReuseIdentifier: TaskTypeColorCollectionViewCell.reuseID)
+    colorCollectionView.clipsToBounds = false
     colorCollectionView.isScrollEnabled = false
     colorCollectionView.backgroundColor = UIColor.clear
-    colorCollectionView.clipsToBounds = false
     
     view.addSubview(colorCollectionView)
-    colorCollectionView.anchor(top: colorLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 80)
+    colorCollectionView.anchor(top: colorLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 14, leftConstant: 16, rightConstant: 16, heightConstant: 48 + 48 + 10)
    
     view.addSubview(imageLabel)
     imageLabel.anchor(top: colorCollectionView.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
     
-    imageCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
+    imageCollectionView = UICollectionView(frame: .zero, collectionViewLayout: imageCollectionViewLayout)
     imageCollectionView.register(TaskTypeIconCollectionViewCell.self, forCellWithReuseIdentifier: TaskTypeIconCollectionViewCell.reuseID)
-    imageCollectionView.backgroundColor = UIColor.clear
     imageCollectionView.clipsToBounds = false
+    imageCollectionView.isScrollEnabled = false
+    imageCollectionView.backgroundColor = UIColor.clear
     
     view.addSubview(imageCollectionView)
-    imageCollectionView.anchor(top: imageLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 100)
-    
-    nameTextField.becomeFirstResponder()
+    imageCollectionView.anchor(top: imageLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 62 * 4 + 8 * 3)
+        
+    hideKeyboardWhenTappedAround()
   }
   
   //MARK: - Color CollectionView
@@ -128,80 +150,47 @@ class TaskTypeViewController: TDViewController {
       configureCell: {(_, collectionView, indexPath, taskTypeColorItem) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskTypeColorCollectionViewCell.reuseID, for: indexPath) as! TaskTypeColorCollectionViewCell
         let cellViewModel = TaskTypeColorCollectionViewCellModel(services: self.viewModel.services, taskTypeColorItem: taskTypeColorItem)
-        cell.bindTo(viewModel: cellViewModel)
+        cell.viewModel = cellViewModel
         return cell
       })
-    
-    colorCollectionView.rx.itemSelected.bind{ self.viewModel.colorSelected(indexPath: $0) }.disposed(by: disposeBag)
-    
-    viewModel.colorDataSource.asDriver()
-      .drive(colorCollectionView.rx.items(dataSource: colorDataSource))
-      .disposed(by: disposeBag)
     
     imageCollectionView.dataSource = nil
     iconDataSource = RxCollectionViewSectionedAnimatedDataSource<TaskTypeIconSectionModel>(
       configureCell: {(_, collectionView, indexPath, taskTypeIcon) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskTypeIconCollectionViewCell.reuseID, for: indexPath) as! TaskTypeIconCollectionViewCell
         let cellViewModel = TaskTypeIconCollectionViewCellModel(services: self.viewModel.services, taskTypeIcon: taskTypeIcon)
-        cell.bindTo(viewModel: cellViewModel)
+        cell.viewModel = cellViewModel
         return cell
       })
     
-    viewModel.iconDataSource.asDriver()
-      .drive(imageCollectionView.rx.items(dataSource: iconDataSource))
-      .disposed(by: disposeBag)
-    
-    imageCollectionView.rx.itemSelected.bind{ self.viewModel.imageSelected(indexPath: $0) }.disposed(by: disposeBag)
-  }
-  
-  //MARK: - CollectionView
-  private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-      return self.section()
-    }
-  }
-  
-  private func section() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(40), heightDimension: .absolute(40))
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-    let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(40), heightDimension: .estimated(40))
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    let section = NSCollectionLayoutSection(group: group)
-    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-    section.orthogonalScrollingBehavior = .continuous
-    section.interGroupSpacing = 10.0
-    return section
   }
   
   //MARK: - Bind TO
-  func bindTo(with viewModel: TaskTypeViewModel) {
-    self.viewModel = viewModel
+  func bindViewModel() {
     
-    viewModel.titleOutput.bind(to: titleLabel.rx.text).disposed(by: disposeBag)
-    viewModel.typeTextOutput.bind(to: nameTextField.rx.text).disposed(by: disposeBag)
-    viewModel.typeTextCountOutput.bind(to: nameSymbolsCountLabel.rx.text).disposed(by: disposeBag)
-    viewModel.typeImageNameOutput.bind{ [weak self] imageName in
-      guard let self = self else { return }
-      guard let imageName = imageName else { return }
-      guard let image = UIImage(named: imageName)?.template else { return }
-      self.taskTypeImageView.image = image
-    }.disposed(by: disposeBag)
-    viewModel.typeImageHexColorOutput.bind{ [weak self] hexColor in
-      guard let self = self else { return }
-      guard let hexColor = hexColor else { return }
-      guard let color = UIColor(hexString: hexColor) else { return }
-      self.taskTypeImageView.tintColor = color
-    }.disposed(by: disposeBag)
+    saveButton.isHidden = false
     
-    backButton.rx.tap.bind{ viewModel.backButtonClicked() }.disposed(by: disposeBag)
-    saveButton.rx.tap.bind{ viewModel.saveButtonClicked() }.disposed(by: disposeBag)
-    nameTextField.rx.text.orEmpty.bind(to: viewModel.typeTextInput).disposed(by: disposeBag)
-    nameTextField.rx.controlEvent(.editingDidEndOnExit).bind{ _ in viewModel.saveButtonClicked() }.disposed(by: disposeBag)
+    nameTextField.text = viewModel.taskType?.text
+    
+    let input = TaskTypeViewModel.Input(
+      text: nameTextField.rx.text.orEmpty.asDriver(),
+      colorSelection: colorCollectionView.rx.itemSelected.asDriver(),
+      iconSelection: imageCollectionView.rx.itemSelected.asDriver(),
+      backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      saveButtonClickTrigger: saveButton.rx.tap.asDriver()
+    )
+    
+    let output = viewModel.transform(input: input)
+    output.colorSelected.drive(taskTypeImageView.rx.tintColor).disposed(by: disposeBag)
+    output.iconSelected.drive(taskTypeImageView.rx.image).disposed(by: disposeBag)
+    output.backButtonClick.drive().disposed(by: disposeBag)
+    output.colorDataSource.drive(colorCollectionView.rx.items(dataSource: colorDataSource)).disposed(by: disposeBag)
+    output.iconDataSource.drive(imageCollectionView.rx.items(dataSource: iconDataSource)).disposed(by: disposeBag)
+    output.limitedTextLength.drive(nameSymbolsCountLabel.rx.text).disposed(by: disposeBag)
+    output.limitedText.drive(nameTextField.rx.text).disposed(by: disposeBag)
+    output.saveType.drive().disposed(by: disposeBag)
   }
 }
-
-
 
 extension TaskTypeViewController: ConfigureColorProtocol {
   func configureColor() {

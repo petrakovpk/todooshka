@@ -20,7 +20,7 @@ class TaskViewController: TDViewController {
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskTypeListSectionModel>!
   
   //MARK: - UI Elements
-  private let textField = TDTaskTextField()
+  private let textField = TDTaskTextField(placeholder: "Введите название задачи")
   
   private let descriptionTextView: UITextView = {
     let textView = UITextView()
@@ -89,6 +89,7 @@ class TaskViewController: TDViewController {
     
     saveDescriptionButton.setImage(UIImage(named: "tick-round")?.original, for: .normal)
     
+    textField.returnKeyType = .done
     view.addSubview(textField)
     textField.anchor(top: label1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 5, leftConstant: 16, rightConstant: 16, heightConstant: 40)
     
@@ -275,7 +276,6 @@ class TaskViewController: TDViewController {
         
         vc.descriptionTextView.textColor = UIColor(named: "appText")
       }
-      
     })
   }
   
@@ -299,16 +299,14 @@ class TaskViewController: TDViewController {
     self.animationView.isHidden = true
     })
   }
-  
-  
-  
+
   func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskTypeListSectionModel>(
       configureCell: {(_, collectionView, indexPath, type) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskTypeCollectionViewCell.reuseID, for: indexPath) as! TaskTypeCollectionViewCell
         let cellViewModel = TaskTypeCollectionViewCellModel(services: self.viewModel.services, type: type)
-        cell.bindToViewModel(viewModel: cellViewModel)
+        cell.viewModel = cellViewModel
         return cell
       })
     

@@ -13,17 +13,33 @@ import SwipeCellKit
 
 class TaskTypeIconCollectionViewCellModel: Stepper {
   
-  private let services: AppServices
-  
-  let disposeBag = DisposeBag()
   let steps = PublishRelay<Step>()
   
-  //MARK: - Из модели во Вью Контроллер
-  let taskTypeIcon = BehaviorRelay<TaskTypeIconItem?>(value: nil)
+  private let services: AppServices
+  private let taskTypeIcon: TaskTypeIconItem
+
+  struct Output {
+    let isSelected: Driver<Bool>
+    let icon: Driver<UIImage?>
+  }
 
   //MARK: - Init
   init(services: AppServices, taskTypeIcon: TaskTypeIconItem) {
     self.services = services
-    self.taskTypeIcon.accept(taskTypeIcon)
+    self.taskTypeIcon = taskTypeIcon
+  }
+  
+  func transform() -> Output {
+    
+    let isSelected = services.coreDataService.selectedTaskTypeIconName
+      .map { return self.taskTypeIcon.imageName == $0 }
+      .asDriver(onErrorJustReturn: false)
+    
+    let icon = Driver.just(self.taskTypeIcon.image)
+    
+    return Output(
+      isSelected: isSelected,
+      icon: icon
+    )
   }
 }

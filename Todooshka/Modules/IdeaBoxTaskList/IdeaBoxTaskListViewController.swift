@@ -53,7 +53,7 @@ class IdeaBoxTaskListViewController: UIViewController {
     configureUI()
     configureAlert()
     configureDataSource()
-//    configureGestures()
+    bindViewModel()
   }
   
   //MARK: - Configure UI
@@ -98,9 +98,9 @@ class IdeaBoxTaskListViewController: UIViewController {
     collectionView.register(TaskListCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskListCollectionReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
-    collectionView.dragInteractionEnabled = true
-    collectionView.dragDelegate = self
-    collectionView.dropDelegate = self
+    //    collectionView.dragInteractionEnabled = true
+    //    collectionView.dragDelegate = self
+    //    collectionView.dropDelegate = self
     collectionView.layer.masksToBounds = false
     
     view.addSubview(collectionView)
@@ -119,12 +119,6 @@ class IdeaBoxTaskListViewController: UIViewController {
       section.configure(text: dataSource[indexPath.section].header)
       return section
     })
-    
-    viewModel.dataSource.asDriver()
-      .drive(collectionView.rx.items(dataSource: dataSource))
-      .disposed(by: disposeBag)
-    
-    collectionView.rx.itemSelected.bind { self.viewModel.openTask(indexPath: $0) }.disposed(by: disposeBag)
   }
   
   private func configureAlert() {
@@ -185,49 +179,54 @@ class IdeaBoxTaskListViewController: UIViewController {
   }
   
   //MARK: - Bind To
-  func bindTo(with viewModel: IdeaBoxTaskListViewModel) {
-    self.viewModel = viewModel
+  func bindViewModel() {
     
-    addTaskButton.rx.tap.bind { viewModel.rightBarButtonAddItemClick() }.disposed(by: disposeBag)
-    backButton.rx.tap.bind { viewModel.leftBarButtonBackItemClick() }.disposed(by: disposeBag)
+    let input = IdeaBoxTaskListViewModel.Input(
+      backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      addButtonClickTrigger: addTaskButton.rx.tap.asDriver(),
+      alertDeleteButtonClickTrigger: deleteAlertButton.rx.tap.asDriver(),
+      alertCancelButtonClickTrigger: cancelAlertButton.rx.tap.asDriver(),
+      selection: collectionView.rx.itemSelected.asDriver() )
     
-    deleteAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertDeleteButtonClicked() }.disposed(by: disposeBag)
-    cancelAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertCancelButtonClicked() }.disposed(by: disposeBag)
-    
-    viewModel.showAlert.bind{ [weak self] showAlert in
-      guard let self = self else { return }
-      self.alertBackgroundView.isHidden = !showAlert
-    }.disposed(by: disposeBag)
+    let output = viewModel.transform(input: input)
+    output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
+    output.addButtonClicked.drive().disposed(by: disposeBag)
+    output.backButtonClicked.drive().disposed(by: disposeBag)
+    output.alertDeleteButtonClicked.drive().disposed(by: disposeBag)
+    output.alertCancelButtonClicked.drive().disposed(by: disposeBag)
+    output.taskSelected.drive().disposed(by: disposeBag)
+    output.alertIsHidden.drive(alertBackgroundView.rx.isHidden).disposed(by: disposeBag)
+
   }
 }
 
-
-//MARK: - UICollectionViewDragDelegate
-extension IdeaBoxTaskListViewController: UICollectionViewDragDelegate {
-  func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-    let item = dataSource[indexPath.section].items[indexPath.item]
-    let itemProvider = NSItemProvider(object: "\(indexPath)" as NSString)
-    let dragItem = UIDragItem(itemProvider: itemProvider)
-    dragItem.localObject = item
-    return [dragItem]
-  }
-}
-
-//MARK: - UICollectionViewDropDelegate
-extension IdeaBoxTaskListViewController: UICollectionViewDropDelegate {
-  
-  func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
-    if collectionView.hasActiveDrag {
-      return UICollectionViewDropProposal(operation: .move,intent: .insertAtDestinationIndexPath )
-    }
-    return UICollectionViewDropProposal(operation: .forbidden)
-  }
-  
-  func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-    
-    if let destinationIndexPath = coordinator.destinationIndexPath,
-       let sourceIndexPath = coordinator.items[0].sourceIndexPath {
-      viewModel.collectionViewItemMoved(sourceIndex: sourceIndexPath, destinationIndex: destinationIndexPath)
-    }
-  }
-}
+//
+////MARK: - UICollectionViewDragDelegate
+//extension IdeaBoxTaskListViewController: UICollectionViewDragDelegate {
+//  func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+//    let item = dataSource[indexPath.section].items[indexPath.item]
+//    let itemProvider = NSItemProvider(object: "\(indexPath)" as NSString)
+//    let dragItem = UIDragItem(itemProvider: itemProvider)
+//    dragItem.localObject = item
+//    return [dragItem]
+//  }
+//}
+//
+////MARK: - UICollectionViewDropDelegate
+//extension IdeaBoxTaskListViewController: UICollectionViewDropDelegate {
+//
+//  func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+//    if collectionView.hasActiveDrag {
+//      return UICollectionViewDropProposal(operation: .move,intent: .insertAtDestinationIndexPath )
+//    }
+//    return UICollectionViewDropProposal(operation: .forbidden)
+//  }
+//
+//  func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+//
+//    if let destinationIndexPath = coordinator.destinationIndexPath,
+//       let sourceIndexPath = coordinator.items[0].sourceIndexPath {
+//      viewModel.collectionViewItemMoved(sourceIndex: sourceIndexPath, destinationIndex: destinationIndexPath)
+//    }
+//  }
+//}

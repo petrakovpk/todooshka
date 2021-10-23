@@ -1359,7 +1359,7 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
@@ -1386,7 +1386,7 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
