@@ -14,88 +14,101 @@ class TaskListViewModel: Stepper {
   
   //MARK: - Properties
   let steps = PublishRelay<Step>()
-  let dataSource = BehaviorRelay<[TaskListSectionModel]>(value: [])
-  let overdueButtonIsHidden = BehaviorRelay<Bool>(value: true)
-  let headerText = BehaviorRelay<String>(value: "")
-  let disposeBag = DisposeBag()
   let services: AppServices
-  let statusBarStyleRelay = BehaviorRelay<UIStatusBarStyle>(value: .darkContent)
   
-  let showAlert = BehaviorRelay<Bool>(value: false)
-
+  let disposeBag = DisposeBag()
+  
+  struct Input {
+    let ideaButtonClickTrigger: Driver<Void>
+    let overdueButtonClickTrigger: Driver<Void>
+    let sortedByButtoncLickTrigger: Driver<Void>
+    let deleteAlertButtonClickTrigger: Driver<Void>
+    let cancelAlerrtButtonClickTrigger: Driver<Void>
+    let selection: Driver<IndexPath>
+  }
+  
+  struct Output {
+    let ideaButtonClick: Driver<Void>
+    let overdueButtonClick: Driver<Void>
+    let sortedByButtoncLick: Driver<Void>
+    let deleteAlertButtonClick: Driver<Void>
+    let cancelAlerrtButtonClick: Driver<Void>
+    
+    let openTask: Driver<Void>
+    let dataSource: Driver<[TaskListSectionModel]>
+    let tasksCount: Driver<Int>
+    let overdueButtonIsHidden: Driver<Bool>
+    let alertIsHidden: Driver<Bool>
+  }
+  
   //MARK: - Init
   init(services: AppServices) {
     self.services = services
+  }
+  
+  func transform(input: Input) -> Output {
     
-    services.coreDataService.tasks.map({$0.filter{ $0.isCurrent == true }}).bind { [weak self] tasks in
-      guard let self = self else { return }
-      self.dataSource.accept([TaskListSectionModel(header: "", items: tasks) ])
-    }.disposed(by: disposeBag)
+    let ideaButtonClick = input.ideaButtonClickTrigger
+      .map{ self.steps.accept(AppStep.ideaBoxTaskListIsRequired) }
     
-    services.coreDataService.tasks
-      .map({$0.filter{$0.isOverdued == true}})
-      .bind { [weak self] tasks in
-        guard let self = self else { return }
-        self.overdueButtonIsHidden.accept(tasks.count == 0)
-      }.disposed(by: disposeBag)
+    let overdueButtonClick = input.overdueButtonClickTrigger
+      .map{ self.steps.accept(AppStep.overdueTaskListIsRequired) }
     
-    services.coreDataService.taskRemovingIsRequired.bind{ [weak self] task in
-      guard let self = self else { return }
-      self.showAlert.accept( task == nil ? false : true )
-    }.disposed(by: disposeBag)
-  }
-  
-  //MARK: - Handlers
-  func openTask(indexPath: IndexPath) {
-    let task = dataSource.value[indexPath.section].items[indexPath.item]
-    steps.accept(AppStep.showTaskIsRequired(task: task))
-  }
-  
-  func navigateToOverdueTaskList() {
-    steps.accept(AppStep.overdueTaskListIsRequired)
-  }
-  
-  func ideaBoxButtonClicked() {
-    steps.accept(AppStep.ideaBoxTaskListIsRequired)
-  }
-  
-  func alertCancelButtonClicked() {
-    services.coreDataService.taskRemovingIsRequired.accept(nil)
-  }
-  
-  func alertDeleteButtonClicked() {
-    if let task = services.coreDataService.taskRemovingIsRequired.value {
-      task.status = .deleted
-      services.coreDataService.saveTasksToCoreData(tasks: [task]) { error in
-        if let error = error  {
-          print(error.localizedDescription)
-          return
+    let sortedByButtoncLick = input.sortedByButtoncLickTrigger
+    
+    let deleteAlertButtonClick = input.deleteAlertButtonClickTrigger
+      .map { _ in
+        if let task = self.services.coreDataService.taskRemovingIsRequired.value {
+        task.status = .deleted
+        self.services.coreDataService.saveTasksToCoreData(tasks: [task]) { error in
+          if let error = error  {
+            print(error.localizedDescription)
+            return
+          }
+          self.services.coreDataService.taskRemovingIsRequired.accept(nil)
         }
-        self.services.coreDataService.taskRemovingIsRequired.accept(nil)
       }
     }
+    
+    let cancelAlertButtonClick = input.cancelAlerrtButtonClickTrigger
+      .map{ self.services.coreDataService.taskRemovingIsRequired.accept(nil) }
+    
+    let dataSource = services.coreDataService.tasks
+      .withLatestFrom(services.coreDataService.reloadTasksDataSorce) { (tasks, _) -> [TaskListSectionModel] in
+        let tasks = tasks.filter{ $0.isCurrent == true }
+        return [TaskListSectionModel(header: "", items: tasks)] }
+      .asDriver(onErrorJustReturn: [])
+    
+    let tasksCount = dataSource
+      .map{ return $0.first?.items.count ?? 0 }
+    
+    let overdueButtonIsHidden = services.coreDataService.tasks
+      .map{ tasks -> Bool in
+        let tasks = tasks.filter{ $0.isOverdued == true }
+        return tasks.count == 0 }
+      .asDriver(onErrorJustReturn: false)
+    
+    let alertIsHidden = services.coreDataService.taskRemovingIsRequired
+      .map{ return $0 == nil }
+      .asDriver(onErrorJustReturn: false)
+    
+    let openTask = input.selection
+      .withLatestFrom(dataSource) { indexPath, dataSource in
+      let task = dataSource[indexPath.section].items[indexPath.item]
+      self.steps.accept(AppStep.showTaskIsRequired(task: task)) }
+    
+    return Output(
+      ideaButtonClick: ideaButtonClick,
+      overdueButtonClick: overdueButtonClick,
+      sortedByButtoncLick: sortedByButtoncLick,
+      deleteAlertButtonClick: deleteAlertButtonClick,
+      cancelAlerrtButtonClick: cancelAlertButtonClick,
+      openTask: openTask,
+      dataSource: dataSource,
+      tasksCount: tasksCount,
+      overdueButtonIsHidden: overdueButtonIsHidden,
+      alertIsHidden: alertIsHidden
+    )
   }
   
-  func sortedByButtonClicked() {
-    if UserDefaults.standard.bool(forKey: "isSortedByType") {
-      UserDefaults.standard.setValue(false, forKey: "isSortedByType")
-      var tasks = services.coreDataService.tasks.value
-      tasks.sort{ $0.createdTimeIntervalSince1970 < $1.createdTimeIntervalSince1970 }
-      services.coreDataService.tasks.accept(tasks)
-    } else {
-      UserDefaults.standard.setValue(true, forKey: "isSortedByType")
-      var tasks = services.coreDataService.tasks.value
-      tasks.sort{ ($0.type!.orderNumber, $0.createdTimeIntervalSince1970) < ($1.type!.orderNumber, $1.createdTimeIntervalSince1970) }
-      services.coreDataService.tasks.accept(tasks)
-    }
-  }
-  
-  func removeTask(task: Task) {
-    services.networkDatabaseService.removeTaskFromDatabase(task: task) { error, ref in
-      if let error = error {
-        print(error.localizedDescription)
-        return
-      }
-    }
-  }
 }

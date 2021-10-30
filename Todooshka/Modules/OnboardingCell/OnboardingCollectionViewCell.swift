@@ -60,15 +60,15 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
   //MARK: - Configure UI
   func configureUI() {
     contentView.addSubview(descriptionTextView)
-    descriptionTextView.anchor(left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 32, bottomConstant: 100, rightConstant: 32 , heightConstant: 90)
+    descriptionTextView.anchor(left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 32, bottomConstant: 100.adjusted, rightConstant: 32, heightConstant: 90.adjusted)
     descriptionTextView.anchorCenterXToSuperview()
     
     contentView.addSubview(headerLabel)
-    headerLabel.anchor(bottom: descriptionTextView.topAnchor, bottomConstant: 26, heightConstant: 25)
+    headerLabel.anchor(bottom: descriptionTextView.topAnchor, bottomConstant: 26.adjusted, heightConstant: 25.adjusted)
     headerLabel.anchorCenterXToSuperview()
 
     contentView.addSubview(imageView)
-    imageView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: headerLabel.topAnchor, right: contentView.rightAnchor, leftConstant: 16, bottomConstant: 20, rightConstant: 16 )
+    imageView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: headerLabel.topAnchor, right: contentView.rightAnchor, leftConstant: 16, bottomConstant: 20.adjusted, rightConstant: 16)
     containerView.anchorCenterXToSuperview()
   }
   

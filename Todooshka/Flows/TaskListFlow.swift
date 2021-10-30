@@ -74,7 +74,7 @@ class TaskListFlow: Flow {
   private func navigateToTaskList() -> FlowContributors {
     let viewController = TaskListViewController()
     let viewModel = TaskListViewModel(services: services)
-    viewController.bindTo(with: viewModel)
+    viewController.viewModel = viewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.pushViewController(viewController, animated: false)

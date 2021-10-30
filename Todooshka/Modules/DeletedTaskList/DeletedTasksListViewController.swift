@@ -176,7 +176,7 @@ class DeletedTasksListViewController: UIViewController {
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { (_, collectionView, indexPath, task) in
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskListCollectionViewCell.reuseID, for: indexPath) as! TaskListCollectionViewCell
       let cellViewModel = TaskListCollectionViewCellModel(services: self.viewModel.services, task: task)
-      cell.bindToViewModel(viewModel: cellViewModel)
+      cell.viewModel = cellViewModel
       return cell
     }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
       let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskListCollectionReusableView.reuseID, for: indexPath) as! TaskListCollectionReusableView

@@ -25,7 +25,7 @@ class OnboardingViewModel: Stepper {
   
   struct Output {
     let dataSource: Driver<[OnboardingSectionModel]>
-    let scrollToLastCell: Driver<Bool>
+    let skipButtonClick: Driver<Int?>
     let skipButtonTitle: Driver<String>
     let cellScrolled: Driver<Int>
     let backgroundImage: Driver<UIImage?>
@@ -48,29 +48,38 @@ class OnboardingViewModel: Stepper {
       OnboardingSectionModel(items: [onboardingSectionItem3])
     ])
     
-    let scrollToLastCell = input.skipButtonClickTrigger.withLatestFrom(input.cellScrolled) { _, cellIndex -> Bool in
-      
-      if cellIndex == 2 {
-        UserDefaults.standard.setValue(true, forKey: "isOnboardingCompleted")
-        self.steps.accept(AppStep.onboardingIsCompleted)
-        return false
+    let skipButtonClick = input.skipButtonClickTrigger
+      .withLatestFrom(input.cellScrolled) { _, cellIndex -> Int? in
+        if cellIndex == 0 { return 1 }
+        if cellIndex == 1 { return 2 }
+        if cellIndex == 2 {
+          UserDefaults.standard.setValue(true, forKey: "isOnboardingCompleted")
+          self.steps.accept(AppStep.onboardingIsCompleted)
+        }
+        return nil
       }
-      
-      return true
-    }
     
-    let skipButtonTitle = input.cellScrolled.map { return $0 == 2 ? "НАЧНЕМ!" : "Пропустить" }
+    let skipButtonTitle = input.cellScrolled
+      .map { cellIndex -> String in
+        if cellIndex == 0 { return "Далее"}
+        if cellIndex == 1 { return "Далее"}
+        if cellIndex == 2 { return "НАЧНЕМ!"}
+        return ""
+      }
+      .distinctUntilChanged()
+    
     let cellScrolled = input.cellScrolled
     
-    let backgroundImage = input.cellScrolled.map { cellIndex -> UIImage? in
-      let imageName  = "Onboarding" + String(cellIndex + 1) + "Background"
-      guard let image = UIImage(named: imageName) else { return nil }
-      return image
-    }
+    let backgroundImage = input.cellScrolled
+      .map { cellIndex -> UIImage? in
+        let imageName  = "Onboarding" + String(cellIndex + 1) + "Background"
+        guard let image = UIImage(named: imageName) else { return nil }
+        return image
+      }
     
     return Output(
       dataSource: dataSource,
-      scrollToLastCell: scrollToLastCell,
+      skipButtonClick: skipButtonClick,
       skipButtonTitle: skipButtonTitle,
       cellScrolled: cellScrolled,
       backgroundImage: backgroundImage

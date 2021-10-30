@@ -28,7 +28,7 @@ class UserProfileViewController: UIViewController {
   let monthLabel = UILabel()
   let completedTasksLabel = UILabel()
   
-  let settingsButton = TDTopRoundButton(image: UIImage(named: "setting")?.template, blurEffect: false )
+  let settingsButton =  TDTopRoundButton(type: .system) 
   let previousMonthButton = UIButton(type: .custom)
   let nextMonthButton = UIButton(type: .custom)
  
@@ -42,7 +42,7 @@ class UserProfileViewController: UIViewController {
   
   let dayStatusBackgroundView: UIView = {
     let view = UIView()
-    view.layer.cornerRadius = 53 / 2
+    view.layer.cornerRadius = 53.superAdjusted / 2
     view.backgroundColor = UIColor(red: 0, green: 0.34, blue: 1, alpha: 1)
     return view
   }()
@@ -69,24 +69,24 @@ class UserProfileViewController: UIViewController {
   //MARK: - Configure UI
   func configureUI() {
     view.addSubview(settingsButton)
-    settingsButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50, heightConstant: 50)
+    settingsButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50.adjusted, heightConstant: 50.adjusted)
     
     helloLabel.text = "Добро пожаловать!"
-    helloLabel.font = UIFont.systemFont(ofSize: 19, weight: .medium)
+    helloLabel.font = UIFont.systemFont(ofSize: 19.superAdjusted, weight: .medium)
     
     view.addSubview(helloLabel)
     helloLabel.anchor( left: view.leftAnchor,  right: settingsButton.leftAnchor, leftConstant: 16, rightConstant: 16)
     helloLabel.centerYAnchor.constraint(equalTo: settingsButton.centerYAnchor).isActive = true
     
     view.addSubview(wreathImageView)
-    wreathImageView.anchor(top: settingsButton.bottomAnchor, topConstant: 20, heightConstant: 119)
+    wreathImageView.anchor(top: settingsButton.bottomAnchor, topConstant: 20.superAdjusted, heightConstant: 119.superAdjusted)
     wreathImageView.anchorCenterXToSuperview()
     
     completedTasksLabel.font = UIFont.systemFont(ofSize: 35, weight: .medium)
     
     wreathImageView.addSubview(completedTasksLabel)
     completedTasksLabel.anchorCenterXToSuperview()
-    completedTasksLabel.anchor(bottom: wreathImageView.bottomAnchor, bottomConstant: 119 / 2)
+    completedTasksLabel.anchor(bottom: wreathImageView.bottomAnchor, bottomConstant: (119 / 2).superAdjusted)
     
     let label = UILabel()
     label.text = "Задач"
@@ -130,11 +130,11 @@ class UserProfileViewController: UIViewController {
     stackView.distribution = .equalSpacing
     
     view.addSubview(stackView)
-    stackView.anchor(top: wreathImageView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 19, leftConstant: 32, rightConstant: 32,  heightConstant: 15)
+    stackView.anchor(top: wreathImageView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 19.superAdjusted, leftConstant: 32, rightConstant: 32,  heightConstant: 15.superAdjusted)
   
     view.addSubview(dayStatusBackgroundView)
     dayStatusBackgroundView.anchorCenterXToSuperview()
-    dayStatusBackgroundView.anchor(top: typeLabel1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, rightConstant: 16,  heightConstant: 53)
+    dayStatusBackgroundView.anchor(top: typeLabel1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30.superAdjusted, leftConstant: 16, rightConstant: 16,  heightConstant: 53.superAdjusted)
     
     dayStatusBackgroundView.addSubview(dayStatusLabel)
     dayStatusLabel.anchorCenterXToSuperview()
@@ -145,21 +145,21 @@ class UserProfileViewController: UIViewController {
     calendarView.cornerRadius = 11
     
     view.addSubview(calendarView)
-    calendarView.anchor(top: dayStatusBackgroundView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, bottomConstant: 32, rightConstant: 16)
+    calendarView.anchor(top: dayStatusBackgroundView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 30.superAdjusted, leftConstant: 16, bottomConstant: 32.superAdjusted, rightConstant: 16)
     
     monthLabel.textAlignment = .center
     monthLabel.textColor = UIColor(named: "appText")
-    monthLabel.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+    monthLabel.font = UIFont.systemFont(ofSize: 17.superAdjusted, weight: .semibold)
     
     calendarView.addSubview(monthLabel)
     monthLabel.anchorCenterXToSuperview()
-    monthLabel.anchor(top: calendarView.topAnchor, topConstant: 20.0)
+    monthLabel.anchor(top: calendarView.topAnchor, topConstant: 20.superAdjusted)
     
     let dividerView = UIView()
     dividerView.backgroundColor = UIColor(named: "userProfileCalendarDividerBackground")
     
     calendarView.addSubview(dividerView)
-    dividerView.anchor(top: monthLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20, heightConstant: 1.0)
+    dividerView.anchor(top: monthLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20.superAdjusted, heightConstant: 1.0)
     
     previousMonthButton.setImage(UIImage(named: "arrow-left-custom")?.template, for: .normal)
     previousMonthButton.imageView?.tintColor = UIColor(named: "userProfileCalendarArrow")
@@ -181,8 +181,9 @@ class UserProfileViewController: UIViewController {
     collectionView.alwaysBounceHorizontal = false
     
     calendarView.addSubview(collectionView)
-    collectionView.anchor(top: dividerView.topAnchor, left: calendarView.leftAnchor, bottom: calendarView.bottomAnchor, right: calendarView.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16 )
+    collectionView.anchor(top: dividerView.topAnchor, left: calendarView.leftAnchor, bottom: calendarView.bottomAnchor, right: calendarView.rightAnchor, topConstant: 16.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted )
     
+    settingsButton.configure(image: UIImage(named: "setting")?.template, blurEffect: false)
   }
   
   private func createCompositionalLayout() -> UICollectionViewLayout {
@@ -193,16 +194,16 @@ class UserProfileViewController: UIViewController {
   
   private func section() -> NSCollectionLayoutSection{
     
-    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(45), heightDimension: .absolute(45))
+    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(45.adjusted), heightDimension: .absolute(45.adjusted))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(45))
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(45.adjusted))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    group.interItemSpacing = .fixed(5)
+    group.interItemSpacing = .fixed(5.adjusted)
     
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-    section.interGroupSpacing = 5
+    section.interGroupSpacing = 5.adjusted
     
     return section
   }
@@ -211,11 +212,11 @@ class UserProfileViewController: UIViewController {
   func bindViewModel() {
     
     let input = UserProfileViewModel.Input(
+      wreathImageViewTrigger: wreathImageView.rx.tapGesture().when(.recognized).map{ _ in return }.asDriver(onErrorJustReturn: ()) ,
       leftButtonClickTrigger: previousMonthButton.rx.tap.asDriver() ,
       rightButtonClickTrigger: nextMonthButton.rx.tap.asDriver() ,
       settingsButtonClickTrigger: settingsButton.rx.tap.asDriver() ,
-      selection: collectionView.rx.itemSelected.asDriver(),
-      settingsButtonClickedTrigger: settingsButton.rx.tap.asDriver()
+      selection: collectionView.rx.itemSelected.asDriver()
     )
     
     let output = viewModel.transform(input: input)
@@ -227,7 +228,7 @@ class UserProfileViewController: UIViewController {
     output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
     output.settingsButtonClicked.drive().disposed(by: disposeBag)
     output.completedTasksGroupedByType.drive(typeLabelsBinder).disposed(by: disposeBag)
-    
+    output.wreathImageViewClick.drive().disposed(by: disposeBag)
   }
   
   var typeLabelsBinder: Binder<[String]> {
@@ -246,18 +247,10 @@ class UserProfileViewController: UIViewController {
       guard let self = self else { return UICollectionViewCell() }
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserProfileDayCollectionViewCell.reuseID, for: indexPath) as! UserProfileDayCollectionViewCell
       let cellViewModel = UserProfileDayCollectionViewCellModel(services: self.viewModel.services, calendarDay: calendarDay)
-      cell.bindToViewModel(viewModel: cellViewModel)
+      cell.viewModel = cellViewModel
+      cell.bindViewModel()
       return cell
     })
-    
-//    viewModel.dataSource.asDriver()
-//      .drive(collectionView.rx.items(dataSource: dataSource))
-//      .disposed(by: disposeBag)
-    
-//    collectionView.rx.itemSelected.bind{ [weak self] indexPath in
-//      guard let self = self else { return }
-//      self.viewModel.daySelected(indexPath: indexPath)
-//    }.disposed(by: disposeBag)
   }
   
 }

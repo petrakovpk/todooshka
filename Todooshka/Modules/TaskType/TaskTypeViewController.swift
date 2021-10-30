@@ -44,36 +44,36 @@ class TaskTypeViewController: TDViewController {
     let label = UILabel()
     label.text = ""
     label.textColor = UIColor(red: 0.188, green: 0.2, blue: 0.325, alpha: 1)
-    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 12.adjusted, weight: .medium)
     return label
   }()
   
   private let colorLabel: UILabel = {
     let label = UILabel()
     label.text = "Цвет:"
-    label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 15.adjusted, weight: .medium)
     return label
   }()
   
   private var colorCollectionView: UICollectionView!
   private let colorCollectionViewLayout: UICollectionViewFlowLayout = {
     let layout = UICollectionViewFlowLayout()
-    layout.itemSize = CGSize(width: 48, height: 48)
-    layout.minimumLineSpacing = 11
+    layout.itemSize = CGSize(width: 48.adjusted, height: 48.adjusted)
+    layout.minimumLineSpacing = 11.adjusted
     return layout
   }()
   
   private let imageLabel: UILabel = {
     let label = UILabel()
     label.text = "Значок:"
-    label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 15.adjusted, weight: .medium)
     return label
   }()
   
   private var imageCollectionView: UICollectionView!
   private let imageCollectionViewLayout: UICollectionViewFlowLayout = {
     let layout = UICollectionViewFlowLayout()
-    layout.itemSize = CGSize(width: 62, height: 62)
+    layout.itemSize = CGSize(width: 62.adjusted, height: 62.adjusted)
     layout.minimumLineSpacing = 8
     return layout
   }()
@@ -95,7 +95,7 @@ class TaskTypeViewController: TDViewController {
   //MARK: - Configure UI
   func configureUI() {
     view.addSubview(taskTypeImageContainerView)
-    taskTypeImageContainerView.anchor(top: headerView.bottomAnchor, topConstant: 16, widthConstant: 68, heightConstant: 68)
+    taskTypeImageContainerView.anchor(top: headerView.bottomAnchor, topConstant: 16, widthConstant: 68.adjusted, heightConstant: 68.adjusted)
     taskTypeImageContainerView.anchorCenterXToSuperview()
     
     taskTypeImageContainerView.addSubview(taskTypeImageView)
@@ -103,21 +103,21 @@ class TaskTypeViewController: TDViewController {
     taskTypeImageView.anchorCenterYToSuperview()
     
     nameLabel.text = "Название типа задач"
-    nameLabel.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+    nameLabel.font = UIFont.systemFont(ofSize: 15.adjusted, weight: .medium)
     nameLabel.textAlignment = .left
     
     view.addSubview(nameLabel)
-    nameLabel.anchor(top: taskTypeImageContainerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21, leftConstant: 16, rightConstant: 16)
+    nameLabel.anchor(top: taskTypeImageContainerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21.adjusted, leftConstant: 16, rightConstant: 16)
     
     nameTextField.returnKeyType = .done
     view.addSubview(nameTextField)
-    nameTextField.anchor(top: nameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40)
+    nameTextField.anchor(top: nameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40.adjusted)
     
     view.addSubview(nameSymbolsCountLabel)
     nameSymbolsCountLabel.anchor(top: nameLabel.topAnchor, bottom: nameLabel.bottomAnchor, right: view.rightAnchor, rightConstant: 16)
     
     view.addSubview(colorLabel)
-    colorLabel.anchor(top: nameTextField.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
+    colorLabel.anchor(top: nameTextField.bottomAnchor, left: view.leftAnchor, topConstant: 16.adjusted, leftConstant: 16)
     
     colorCollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorCollectionViewLayout)
     colorCollectionView.register(TaskTypeColorCollectionViewCell.self, forCellWithReuseIdentifier: TaskTypeColorCollectionViewCell.reuseID)
@@ -126,7 +126,7 @@ class TaskTypeViewController: TDViewController {
     colorCollectionView.backgroundColor = UIColor.clear
     
     view.addSubview(colorCollectionView)
-    colorCollectionView.anchor(top: colorLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 14, leftConstant: 16, rightConstant: 16, heightConstant: 48 + 48 + 10)
+    colorCollectionView.anchor(top: colorLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 14.adjusted, leftConstant: 16, rightConstant: 16, heightConstant: (48 + 48 + 10).adjusted)
    
     view.addSubview(imageLabel)
     imageLabel.anchor(top: colorCollectionView.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
@@ -138,7 +138,7 @@ class TaskTypeViewController: TDViewController {
     imageCollectionView.backgroundColor = UIColor.clear
     
     view.addSubview(imageCollectionView)
-    imageCollectionView.anchor(top: imageLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 62 * 4 + 8 * 3)
+    imageCollectionView.anchor(top: imageLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16.adjusted, leftConstant: 16, rightConstant: 16, heightConstant: (62 * 4 + 8 * 3).adjusted)
         
     hideKeyboardWhenTappedAround()
   }

@@ -25,14 +25,34 @@ class UserProfileDayCollectionViewCell: UICollectionViewCell {
   private let roundView2 = UIView()
   private let roundView3 = UIView()
   
+  override func draw(_ rect: CGRect) {
+    super.draw(rect)
+    configureUI()
+    //bindViewModel()
+  }
+  
   //MARK: - Configure UI
   func configureUI() {
     contentView.cornerRadius = bounds.width / 2
-    contentView.backgroundColor = UIColor.clear
+    contentView.layer.borderColor = UIColor.blueRibbon.cgColor
     
     contentView.addSubview(dateLabel)
     dateLabel.anchorCenterXToSuperview()
     dateLabel.anchorCenterYToSuperview()
+  }
+  
+  func configureNoRound() {
+    if self.roundView1.superview != nil {
+      self.roundView1.removeFromSuperview()
+    }
+    
+    if self.roundView2.superview != nil {
+      self.roundView2.removeFromSuperview()
+    }
+    
+    if self.roundView3.superview != nil {
+      self.roundView3.removeFromSuperview()
+    }
   }
   
   func configureOneRound() {
@@ -56,7 +76,6 @@ class UserProfileDayCollectionViewCell: UICollectionViewCell {
     
     roundView1.backgroundColor = UIColor(red: 0.169, green: 0.718, blue: 0.486, alpha: 1)
     roundView2.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
-    
   }
   
   func configureThreeRounds() {
@@ -79,71 +98,27 @@ class UserProfileDayCollectionViewCell: UICollectionViewCell {
   }
   
   //MARK: - Bind
-  func bindToViewModel(viewModel: UserProfileDayCollectionViewCellModel) {
-    self.viewModel = viewModel
-    
-    configureUI()
+  func bindViewModel() {
     
     disposeBag = DisposeBag()
-    viewModel.calendarDay.bind{ [weak self] calendarDay in
-      guard let self = self else { return }
-      guard let calendarDay = calendarDay else { return }
-      self.dateLabel.text = calendarDay.date.day.string
-      
-      if calendarDay.isSelectedMonth {
-        self.dateLabel.alpha = 1
-      } else {
-        self.dateLabel.alpha = 0.4
-      }
-    }.disposed(by: disposeBag)
     
-    viewModel.isSelectedDay.bind{ [weak self] isSelectedDay in
-      guard let self = self else { return }
-      if isSelectedDay {
-        self.contentView.backgroundColor = .blueRibbon
-        self.dateLabel.textColor = .white
-      } else {
-        self.contentView.backgroundColor = UIColor.clear
-        self.dateLabel.textColor = UIColor(named: "appText")
-      }
-    }.disposed(by: disposeBag)
-    
-    viewModel.isToday.bind{ [weak self] isToday in
-      guard let self = self else { return }
-      if isToday {
-        self.contentView.borderWidth = 1
-        self.contentView.borderColor = .blueRibbon
-      } else {
-        self.contentView.borderWidth = 0
-      }
-    }.disposed(by: disposeBag)
-    
-    viewModel.roundViewCount.bind{ [weak self] count in
-      guard let self = self else { return }
-      
-      if self.roundView1.superview != nil {
-        self.roundView1.removeFromSuperview()
-      }
-      
-      if self.roundView2.superview != nil {
-        self.roundView2.removeFromSuperview()
-      }
-      
-      if self.roundView3.superview != nil {
-        self.roundView3.removeFromSuperview()
-      }
-      
-      switch count {
-      case 1:
-        self.configureOneRound()
-      case 2:
-        self.configureTwoRounds()
-      case 3:
-        self.configureThreeRounds()
-      default:
-        return
-      }
-    }.disposed(by: disposeBag)
+    let output = viewModel.transform()
+    output.text.drive(dateLabel.rx.text).disposed(by: disposeBag)
+    output.alpha.drive(dateLabel.rx.alpha).disposed(by: disposeBag)
+    output.backgroundColor.drive(contentView.rx.backgroundColor).disposed(by: disposeBag)
+    output.textColor.drive(dateLabel.rx.textColor).disposed(by: disposeBag)
+    output.borderWidth.drive(contentView.rx.borderWidth).disposed(by: disposeBag)
+    output.roundsCount.drive(roundsCountBinder).disposed(by: disposeBag)
   }
+  
+  var roundsCountBinder: Binder<Int> {
+    return Binder(self, binding: { (cell, count) in
+      cell.configureNoRound()
+      if count == 1 { cell.configureOneRound() }
+      if count == 2 { cell.configureTwoRounds() }
+      if count == 3 { cell.configureThreeRounds() }
+    })
+  }
+  
 }
 

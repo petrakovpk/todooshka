@@ -32,7 +32,10 @@ class CoreDataService {
   let tasks = BehaviorRelay<[Task]>(value: [])
   let taskTypes = BehaviorRelay<[TaskType]>(value: [])
   
+  let reloadTasksDataSorce = Driver<Void>.just(())
+  
   let calendarSelectedDate = BehaviorRelay<Date>(value: Date())
+  let calendarSelectedMonth = BehaviorRelay<Date>(value: Date())
   let selectedTaskType = BehaviorRelay<TaskType?>(value: nil)
   let selectedTaskTypeColor =  BehaviorRelay<UIColor?>(value: nil)
   let selectedTaskTypeIconName =  BehaviorRelay<String?>(value: nil)
@@ -61,17 +64,16 @@ class CoreDataService {
   
   //MARK: - Settings
   func setupInitialTaskTypesIfNeeded() {
-    // let fetchRequest = NSFetchRequest<CoreDataTaskType>(entityName: "CoreDataTaskType")
     do {
       let coreDataTaskTypes = try managedContext.fetch( CoreDataTaskType.fetchRequest() )
       if coreDataTaskTypes.isEmpty {
         
         let type0 = TaskType(UID: UUID().uuidString, imageName: "briefcase", imageColorHex: UIColor(named: "typeColor7")?.hexString, text: "Работа", orderNumber: 0)
         let type1 = TaskType(UID: UUID().uuidString, imageName: "profile-2user", imageColorHex: UIColor(named: "typeColor8")?.hexString, text: "Семья", orderNumber: 1)
-        let type2 = TaskType(UID: UUID().uuidString, imageName: "home", imageColorHex: UIColor(named: "typeColor9")?.hexString, text: "Дом", orderNumber: 2)
-        let type3 = TaskType(UID: UUID().uuidString, imageName: "lovely", imageColorHex: UIColor(named: "typeColor10")?.hexString, text: "Любимка", orderNumber: 3)
-        let type4 = TaskType(UID: UUID().uuidString, imageName: "monitor", imageColorHex: UIColor(named: "typeColor11")?.hexString, text: "Бизнес", orderNumber: 4)
-        let type5 = TaskType(UID: UUID().uuidString, imageName: "weight", imageColorHex: UIColor(named: "typeColor12")?.hexString, text: "Спорт", orderNumber: 5)
+        let type2 = TaskType(UID: UUID().uuidString, imageName: "house", imageColorHex: UIColor(named: "typeColor9")?.hexString, text: "Дом", orderNumber: 2)
+        let type3 = TaskType(UID: UUID().uuidString, imageName: "lovely", imageColorHex: UIColor(named: "typeColor10")?.hexString, text: "Вторая половинка", orderNumber: 3)
+        let type4 = TaskType(UID: UUID().uuidString, imageName: "pet", imageColorHex: UIColor(named: "typeColor11")?.hexString, text: "Домашнее животное", orderNumber: 4)
+        let type5 = TaskType(UID: UUID().uuidString, imageName: "dumbbell", imageColorHex: UIColor(named: "typeColor12")?.hexString, text: "Спорт", orderNumber: 5)
         saveTaskTypesToCoreData(types: [type0,type1,type2,type3,type4,type5], completion: nil)
       }
     }

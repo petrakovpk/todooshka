@@ -28,9 +28,15 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
   }
   
   //MARK: - Bind
-  func bindTo(with viewModel: TabBarViewModel) {
-    self.viewModel = viewModel
+  func bindViewModel() {
     
-    customTabBar.addTaskButton.rx.tapGesture().bind{_ in viewModel.handleAddTaskClick()}.disposed(by: disposeBag)
+    let input = TabBarViewModel.Input(
+      createTaskButtonClickTrigger: customTabBar.addTaskButton.rx.tap.asDriver() 
+    )
+    
+    let output = viewModel.transform(input: input)
+    output.createTask.drive().disposed(by: disposeBag)
+    
+  //  customTabBar.addTaskButton.rx.tapGesture().bind{_ in viewModel.handleAddTaskClick()}.disposed(by: disposeBag)
   }
 }

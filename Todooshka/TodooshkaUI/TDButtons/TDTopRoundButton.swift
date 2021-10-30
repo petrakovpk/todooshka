@@ -13,9 +13,7 @@ class TDTopRoundButton: UIButton {
     cornerRadius = bounds.width / 2
   }
   
-  init(image: UIImage?, blurEffect: Bool) {
-    super.init(frame: .zero)
-    
+  func configure(image: UIImage?, blurEffect: Bool) {
     if blurEffect {
       let blurEffect = UIBlurEffect(style: .systemUltraThinMaterial)
       let blurEffectView = UIVisualEffectView(effect: blurEffect)
@@ -31,13 +29,7 @@ class TDTopRoundButton: UIButton {
     imageView.tintColor = UIColor(named: "appTopBarButtonTint")
     imageView.anchorCenterXToSuperview()
     imageView.anchorCenterYToSuperview()
-    
   }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
   
 }
 

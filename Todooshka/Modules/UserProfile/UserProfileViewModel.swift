@@ -14,31 +14,26 @@ import CoreData
 class UserProfileViewModel: Stepper {
   
   let steps = PublishRelay<Step>()
-  // let dataSource = BehaviorRelay<[UserProfileSectionModel]>(value: [])
-  let disposeBag = DisposeBag()
-  
-  // let deltaMonth = BehaviorRelay<Int>(value: 0)
   
   let services: AppServices
   
   struct Input {
+    let wreathImageViewTrigger: Driver<Void>
     let leftButtonClickTrigger: Driver<Void>
     let rightButtonClickTrigger: Driver<Void>
     let settingsButtonClickTrigger: Driver<Void>
     let selection: Driver<IndexPath>
-    let settingsButtonClickedTrigger: Driver<Void>
   }
   
   struct Output {
     let completedTaskCount: Driver<String>
     let completedTaskStatus: Driver<String>
     let monthText: Driver<String>
-    
     let dataSource: Driver<[UserProfileSectionModel]>
-    
     let selectedCalendarDay: Driver<CalendarDay>
     let settingsButtonClicked: Driver<Void>
     let completedTasksGroupedByType: Driver<[String]>
+    let wreathImageViewClick: Driver<Void>
   }
   
   
@@ -59,8 +54,9 @@ class UserProfileViewModel: Stepper {
       .merge()
       .startWith(0)
       .scan(Date()) { selectedDate, deltaMonth in
-        return selectedDate.adding(.month, value: deltaMonth)
-      }
+        let date = selectedDate.adding(.month, value: deltaMonth)
+        self.services.coreDataService.calendarSelectedMonth.accept(date)
+        return date }
       .asDriver()
     
     let selectedMonthText = selectedMonth.map { date -> String in
@@ -118,8 +114,8 @@ class UserProfileViewModel: Stepper {
           }
         }
         
+       // items.sort{ return $0.date <= $1.date }
         return [UserProfileSectionModel(header: "", items: items)]
-        
       }.asDriver()
     
     let calendarDaySelected = input.selection.withLatestFrom(dataSource) { indexPath, dataSource -> CalendarDay in
@@ -130,6 +126,11 @@ class UserProfileViewModel: Stepper {
       }
       return calendarDate
     }.asDriver()
+    
+    let wreathImageViewClick = input.wreathImageViewTrigger.map { _ in
+      let day = self.services.coreDataService.calendarSelectedDate.value
+      self.steps.accept(AppStep.completedTaskListIsRequired(date: day))
+    }
 
     let completedTasksGroupedByType = selectedDayCompletedTasks.map { tasks -> [String] in
       let tasksGroupByTypeDict = Dictionary(grouping: tasks, by: { $0.type?.text ?? "" }).sorted{ $0.value.count > $1.value.count }
@@ -141,7 +142,7 @@ class UserProfileViewModel: Stepper {
       return result
     }
     
-    let settingsButtonClicked = input.settingsButtonClickedTrigger
+    let settingsButtonClicked = input.settingsButtonClickTrigger
       .map{ self.steps.accept(AppStep.userSettingsIsRequired) }
   
     return Output(
@@ -151,7 +152,8 @@ class UserProfileViewModel: Stepper {
       dataSource: dataSource,
       selectedCalendarDay: calendarDaySelected,
       settingsButtonClicked: settingsButtonClicked,
-      completedTasksGroupedByType: completedTasksGroupedByType
+      completedTasksGroupedByType: completedTasksGroupedByType,
+      wreathImageViewClick: wreathImageViewClick
     )
     
   }

@@ -114,6 +114,7 @@
 		60D5662D26CC2CBB00D865DD /* OnboardingCollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662C26CC2CBB00D865DD /* OnboardingCollectionViewCellModel.swift */; };
 		60D6645A269362550032908E /* DeletedTasksListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D66459269362550032908E /* DeletedTasksListViewController.swift */; };
 		60D6645C269362670032908E /* DeletedTasksListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D6645B269362670032908E /* DeletedTasksListViewModel.swift */; };
+		60E44687272742D300C514FC /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E44686272742D300C514FC /* Device.swift */; };
 		60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */; };
 		60E4CE6F26DBE29C00319730 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4CE6E26DBE29C00319730 /* Theme.swift */; };
 		60E4CE7126DBE34800319730 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4CE7026DBE34800319730 /* UIColor.swift */; };
@@ -265,6 +266,7 @@
 		60D5662C26CC2CBB00D865DD /* OnboardingCollectionViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCollectionViewCellModel.swift; sourceTree = "<group>"; };
 		60D66459269362550032908E /* DeletedTasksListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTasksListViewController.swift; sourceTree = "<group>"; };
 		60D6645B269362670032908E /* DeletedTasksListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTasksListViewModel.swift; sourceTree = "<group>"; };
+		60E44686272742D300C514FC /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDTopRoundButton.swift; sourceTree = "<group>"; };
 		60E4CE6E26DBE29C00319730 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		60E4CE7026DBE34800319730 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -393,15 +395,16 @@
 			path = TaskTypeListCell;
 			sourceTree = "<group>";
 		};
-		603EC53C26E8F2C100B39FB7 /* App */ = {
+		603EC53C26E8F2C100B39FB7 /* Standart */ = {
 			isa = PBXGroup;
 			children = (
 				60BABA3F269B48FF00D5E40B /* Cell.swift */,
+				60E44686272742D300C514FC /* Device.swift */,
 				60EB113E2656A32400992BF8 /* Task.swift */,
 				608FD86A2688827200819D68 /* TaskType.swift */,
 				6055D198267200B700316BB4 /* UserDay.swift */,
 			);
-			path = App;
+			path = Standart;
 			sourceTree = "<group>";
 		};
 		60454DA1269884850042686E /* IdeaBoxTaskList */ = {
@@ -787,7 +790,7 @@
 		60EB113D2656A30000992BF8 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				603EC53C26E8F2C100B39FB7 /* App */,
+				603EC53C26E8F2C100B39FB7 /* Standart */,
 				60C8343B26D7FCF6006E4FBE /* CoreData */,
 			);
 			path = Models;
@@ -1178,6 +1181,7 @@
 				6042576B2677AB0D005A518C /* UserProfileSettingsCell.swift in Sources */,
 				60AE9DBC2652F7FE00E51531 /* LoginViewModel.swift in Sources */,
 				60F0719326DA70600048AB71 /* Colors.swift in Sources */,
+				60E44687272742D300C514FC /* Device.swift in Sources */,
 				607F157626D6D53D00AB91B3 /* AuthSectionModel.swift in Sources */,
 				60454DA5269884D40042686E /* IdeaBoxTaskListViewModel.swift in Sources */,
 				6096ABAD268463D900285AA7 /* CompletedTasksListViewModel.swift in Sources */,
@@ -1359,7 +1363,7 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
@@ -1368,7 +1372,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Piu.Todooshka;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1386,7 +1390,7 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
@@ -1395,7 +1399,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Piu.Todooshka;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

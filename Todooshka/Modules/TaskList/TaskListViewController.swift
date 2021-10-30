@@ -23,9 +23,8 @@ class TaskListViewController: UIViewController {
   var viewModel: TaskListViewModel!
   
   //MARK: - UI Elements
-  private let overdueTaskButton = TDTopRoundButton(image: UIImage(named: "timer-pause")?.template, blurEffect: true)
-  
-  private let ideaTasksButton = TDTopRoundButton(image: UIImage(named: "lamp-charge")?.template, blurEffect: true )
+  let overdueTaskButton = TDTopRoundButton(type: .system) //TDTopRoundButton(image: UIImage(named: "timer-pause")?.template, blurEffect: true)
+  let ideaTasksButton = TDTopRoundButton(type: .system) //TDTopRoundButton(image: UIImage(named: "lamp-charge")?.template, blurEffect: true )
   
   private let headerImageView: UIImageView = {
     let imageView = UIImageView()
@@ -35,7 +34,7 @@ class TaskListViewController: UIViewController {
   
   private let taskCountLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+    label.font = UIFont.systemFont(ofSize: 18.adjusted, weight: .semibold)
     return label
   }()
   
@@ -67,7 +66,7 @@ class TaskListViewController: UIViewController {
   private let deleteAlertButton: UIButton = {
     let button = UIButton(type: .custom)
     button.backgroundColor = UIColor(hexString: "#FF005C")
-    let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button
@@ -75,7 +74,7 @@ class TaskListViewController: UIViewController {
   
   private let cancelAlertButton: UIButton = {
     let button = UIButton(type: .custom)
-    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(UIColor(named: "appText")!.withAlphaComponent(0.5) , for: .normal)
     return button
@@ -86,6 +85,7 @@ class TaskListViewController: UIViewController {
     configureUI()
     configureAlert()
     configureDataSource()
+    bindViewModel()
     configureColor()
   }
   
@@ -102,17 +102,16 @@ class TaskListViewController: UIViewController {
     view.addSubview(animationView)
     animationView.anchorCenterXToSuperview()
     animationView.anchorCenterYToSuperview()
-    animationView.anchor(heightConstant: 222.0)
+    animationView.anchor(heightConstant: 222.0.adjusted)
     
     animationView.play(toProgress: 1.0)
     
     let label = UILabel()
     label.textColor = UIColor(red: 0.424, green: 0.429, blue: 0.496, alpha: 1)
-    label.text = "Все задачи на сегодня сделаны!"
-    label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+    label.font = UIFont.systemFont(ofSize: 15.adjusted, weight: .regular)
     
     animationView.addSubview(label)
-    label.anchor(bottom: animationView.bottomAnchor, bottomConstant: 10)
+    label.anchor(bottom: animationView.bottomAnchor, bottomConstant: 10.adjusted)
     label.anchorCenterXToSuperview()
     
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
@@ -124,23 +123,27 @@ class TaskListViewController: UIViewController {
     headerImageView.anchor(top: view.topAnchor, left: view.leftAnchor,  right: view.rightAnchor, heightConstant: 207)
     
     view.addSubview(taskCountLabel)
-    taskCountLabel.anchor(top: headerImageView.bottomAnchor, left: view.leftAnchor, topConstant: 29, leftConstant: 16)
+    taskCountLabel.anchor(top: headerImageView.bottomAnchor, left: view.leftAnchor, topConstant: 29.adjusted, leftConstant: 16)
     
     view.addSubview(sortedByButton)
-    sortedByButton.anchor(top: headerImageView.bottomAnchor, right: view.rightAnchor, topConstant: 21, rightConstant: 16, widthConstant: 35, heightConstant: 35)
-    sortedByButton.cornerRadius = 36 / 2
+    sortedByButton.anchor(top: headerImageView.bottomAnchor, right: view.rightAnchor, topConstant: 21.adjusted, rightConstant: 16, widthConstant: 35.adjusted, heightConstant: 35.adjusted)
+    sortedByButton.cornerRadius = 36.adjusted / 2
     
     view.addSubview(collectionView)
-    collectionView.anchor(top: taskCountLabel.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 29, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
-    
+    collectionView.anchor(top: taskCountLabel.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 29.adjusted, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
+        
     view.addSubview(ideaTasksButton)
-    ideaTasksButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50, heightConstant: 50)
-    
+    ideaTasksButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor, topConstant: 8, rightConstant: 16, widthConstant: 50.adjusted, heightConstant: 50.adjusted)
+
     view.addSubview(overdueTaskButton)
-    overdueTaskButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: ideaTasksButton.leftAnchor, topConstant: 8, rightConstant: 8, widthConstant: 50, heightConstant: 50)
+    overdueTaskButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, right: ideaTasksButton.leftAnchor, topConstant: 8, rightConstant: 8, widthConstant: 50.adjusted, heightConstant: 50.adjusted)
+    
+    ideaTasksButton.configure(image: UIImage(named: "lamp-charge")?.template, blurEffect: true)
+    overdueTaskButton.configure(image: UIImage(named: "timer-pause")?.template, blurEffect: true)
+    
   }
   
-  func configureUI(tasksCount: Int, tasksTypeCount: Int) {
+  func configureUI(tasksCount: Int) {
     
     var image: UIImage?
     
@@ -184,27 +187,27 @@ class TaskListViewController: UIViewController {
     alertWindowView.backgroundColor = UIColor(named: "appBackground")
     
     alertBackgroundView.addSubview(alertWindowView)
-    alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
+    alertWindowView.anchor(widthConstant: 287.adjusted, heightConstant: 171.adjusted)
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
     
     let alertLabel = UILabel(text: "Удалить задачу?")
     alertLabel.textColor = UIColor(named: "appText")
     alertLabel.textAlignment = .center
-    alertLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+    alertLabel.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
     
     alertWindowView.addSubview(alertLabel)
     alertLabel.anchorCenterXToSuperview()
-    alertLabel.anchorCenterYToSuperview(constant: -1 * 171 / 4)
+    alertLabel.anchorCenterYToSuperview(constant: -1 * 171.adjusted / 4)
     
     alertWindowView.addSubview(deleteAlertButton)
-    deleteAlertButton.anchor(widthConstant: 94, heightConstant: 30)
-    deleteAlertButton.cornerRadius = 15
+    deleteAlertButton.anchor(widthConstant: 94.adjusted, heightConstant: 30.adjusted)
+    deleteAlertButton.cornerRadius = 15.adjusted
     deleteAlertButton.anchorCenterXToSuperview()
-    deleteAlertButton.anchorCenterYToSuperview(constant: 15)
+    deleteAlertButton.anchorCenterYToSuperview(constant: 15.adjusted)
     
     alertWindowView.addSubview(cancelAlertButton)
-    cancelAlertButton.anchor(top: deleteAlertButton.bottomAnchor, topConstant: 10)
+    cancelAlertButton.anchor(top: deleteAlertButton.bottomAnchor, topConstant: 10.adjusted)
     cancelAlertButton.anchorCenterXToSuperview()
   }
   
@@ -215,15 +218,9 @@ class TaskListViewController: UIViewController {
       configureCell: { (_, collectionView, indexPath, task) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskListCollectionViewCell.reuseID, for: indexPath) as! TaskListCollectionViewCell
         let cellViewModel = TaskListCollectionViewCellModel(services: self.viewModel.services, task: task)
-        cell.bindToViewModel(viewModel: cellViewModel)
+        cell.viewModel = cellViewModel
         return cell
       })
-    
-    viewModel.dataSource.asDriver()
-      .drive(collectionView.rx.items(dataSource: dataSource))
-      .disposed(by: disposeBag)
-    
-    collectionView.rx.itemSelected.bind { self.viewModel.openTask(indexPath: $0) }.disposed(by: disposeBag)
   }
   
   //MARK: - Setup CollectionView
@@ -245,34 +242,28 @@ class TaskListViewController: UIViewController {
   }
   
   //MARK: - Bind To
-  func bindTo(with viewModel: TaskListViewModel) {
-    self.viewModel = viewModel
+  func bindViewModel() {
+
+    let input = TaskListViewModel.Input(
+      ideaButtonClickTrigger: ideaTasksButton.rx.tapGesture().when(.recognized).map{ _ in return }.asDriver(onErrorJustReturn: ()),
+      overdueButtonClickTrigger: overdueTaskButton.rx.tapGesture().when(.recognized).map{ _ in return }.asDriver(onErrorJustReturn: ()),
+      sortedByButtoncLickTrigger: sortedByButton.rx.tap.asDriver(),
+      deleteAlertButtonClickTrigger: deleteAlertButton.rx.tap.asDriver(),
+      cancelAlerrtButtonClickTrigger: cancelAlertButton.rx.tap.asDriver(),
+      selection: collectionView.rx.itemSelected.asDriver()
+    )
     
-    ideaTasksButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.ideaBoxButtonClicked() }.disposed(by: disposeBag)
-    overdueTaskButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.navigateToOverdueTaskList()}.disposed(by: disposeBag)
-    sortedByButton.rx.tap.bind{ viewModel.sortedByButtonClicked() }.disposed(by: disposeBag)
-    
-    deleteAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertDeleteButtonClicked() }.disposed(by: disposeBag)
-    cancelAlertButton.rx.tapGesture().when(.recognized).bind{ _ in viewModel.alertCancelButtonClicked() }.disposed(by: disposeBag)
-    
-    viewModel.overdueButtonIsHidden.bind(to: overdueTaskButton.rx.isHidden).disposed(by: disposeBag)
-    
-    viewModel.dataSource.bind{[weak self] models in
-      guard let self = self else { return }
-      guard let model = models.first else {
-        self.configureUI(tasksCount: 0, tasksTypeCount: 0)
-        return
-      }
-      
-      let tasksTypeCount = Dictionary(grouping: model.items, by: { $0.typeUID }).count
-      self.configureUI(tasksCount: model.items.count, tasksTypeCount: tasksTypeCount)
-      
-    }.disposed(by: disposeBag)
-    
-    viewModel.showAlert.bind{ [weak self] showAlert in
-      guard let self = self else { return }
-      self.alertBackgroundView.isHidden = !showAlert
-    }.disposed(by: disposeBag)
+    let output = viewModel.transform(input: input)
+    output.ideaButtonClick.drive().disposed(by: disposeBag)
+    output.overdueButtonClick.drive().disposed(by: disposeBag)
+    output.sortedByButtoncLick.drive().disposed(by: disposeBag)
+    output.deleteAlertButtonClick.drive().disposed(by: disposeBag)
+    output.cancelAlerrtButtonClick.drive().disposed(by: disposeBag)
+    output.openTask.drive().disposed(by: disposeBag)
+    output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
+    output.overdueButtonIsHidden.drive(overdueTaskButton.rx.isHidden).disposed(by: disposeBag)
+    output.tasksCount.drive{self.configureUI(tasksCount: $0)}.disposed(by: disposeBag)
+    output.alertIsHidden.drive(alertBackgroundView.rx.isHidden).disposed(by: disposeBag)
   }
 }
 

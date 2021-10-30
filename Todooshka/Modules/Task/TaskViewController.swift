@@ -26,7 +26,7 @@ class TaskViewController: TDViewController {
     let textView = UITextView()
     textView.borderWidth = 0
     textView.backgroundColor = .clear
-    textView.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+    textView.font = UIFont.systemFont(ofSize: 13.adjusted, weight: .medium)
     return textView
   }()
   
@@ -38,7 +38,7 @@ class TaskViewController: TDViewController {
   
   private let errorLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.systemFont(ofSize: 12, weight: .light)
+    label.font = UIFont.systemFont(ofSize: 12.adjusted, weight: .light)
     label.textColor = UIColor(red: 0.937, green: 0.408, blue: 0.322, alpha: 1)
     return label
   }()
@@ -53,7 +53,7 @@ class TaskViewController: TDViewController {
   
   private let okAlertButton: UIButton = {
     let button = UIButton(type: .custom)
-    button.cornerRadius = 48 / 2
+    button.cornerRadius = 48.superAdjusted / 2
     button.setTitle("Да, я молодец :)", for: .normal)
     button.setTitleColor(.white, for: .normal)
     button.backgroundColor = UIColor(hexString: "#FF005C")
@@ -70,7 +70,6 @@ class TaskViewController: TDViewController {
     configureDataSource()
     bindViewModel()
     configureColor()
-    configureGestures()
   }
   
   override func viewDidDisappear(_ animated: Bool) {
@@ -81,30 +80,30 @@ class TaskViewController: TDViewController {
   //MARK: - Configure UI
   func configureUI() {
     let label1 = UILabel(text: "Задача")
-    label1.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+    label1.font = UIFont.systemFont(ofSize: 15.adjusted , weight: .medium)
     label1.textAlignment = .left
     
     view.addSubview(label1)
-    label1.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21, leftConstant: 16, rightConstant: 16)
+    label1.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21.superAdjusted, leftConstant: 16, rightConstant: 16)
     
     saveDescriptionButton.setImage(UIImage(named: "tick-round")?.original, for: .normal)
     
     textField.returnKeyType = .done
     view.addSubview(textField)
-    textField.anchor(top: label1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 5, leftConstant: 16, rightConstant: 16, heightConstant: 40)
+    textField.anchor(top: label1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 5.superAdjusted, leftConstant: 16, rightConstant: 16, heightConstant: 40.superAdjusted)
     
     saveTextButton.setImage(UIImage(named: "tick-round")?.original, for: .normal)
     
     view.addSubview(saveTextButton)
-    saveTextButton.anchor(right: textField.rightAnchor, widthConstant: 24, heightConstant: 24)
+    saveTextButton.anchor(right: textField.rightAnchor, widthConstant: 24.adjusted, heightConstant: 24.superAdjusted )
     saveTextButton.centerYAnchor.constraint(equalTo: textField.centerYAnchor).isActive = true
     
     let label2 = UILabel(text: "Тип")
-    label2.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+    label2.font = UIFont.systemFont(ofSize: 15.adjusted, weight: .medium)
     label2.textAlignment = .left
     
     view.addSubview(label2)
-    label2.anchor(top: textField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30, leftConstant: 16, rightConstant: 16)
+    label2.anchor(top: textField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 30.superAdjusted, leftConstant: 16, rightConstant: 16)
     
     configureTaskTypesButton.setImage(UIImage(named: "settings")?.template , for: .normal)
     view.addSubview(configureTaskTypesButton)
@@ -121,14 +120,14 @@ class TaskViewController: TDViewController {
     collectionView.clipsToBounds = false
     
     view.addSubview(collectionView)
-    collectionView.anchor(top: label2.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20, leftConstant: 16, heightConstant: 100)
+    collectionView.anchor(top: label2.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20.superAdjusted, leftConstant: 16, heightConstant: 100.superAdjusted )
     
     let label3 = UILabel(text: "Комментарий (если требуется)")
-    label3.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+    label3.font = UIFont.systemFont(ofSize: 15.adjusted, weight: .medium)
     label3.textAlignment = .left
     
     view.addSubview(label3)
-    label3.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20, leftConstant: 16, rightConstant: 16)
+    label3.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20.superAdjusted, leftConstant: 16, rightConstant: 16)
     
     saveDescriptionButton.setImage(UIImage(named: "tick-round")?.original, for: .normal)
     
@@ -137,14 +136,14 @@ class TaskViewController: TDViewController {
     saveDescriptionButton.anchor(right: view.rightAnchor, rightConstant: 16)
     
     view.addSubview(completeTaskButton)
-    completeTaskButton.cornerRadius = 48 / 2
+    completeTaskButton.cornerRadius = 48.superAdjusted / 2
     completeTaskButton.setTitle("Выполнено!", for: .normal)
     completeTaskButton.setTitleColor(.black, for: .normal)
     completeTaskButton.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
-    completeTaskButton.anchor(left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor,  leftConstant: 16, bottomConstant: 346 + 8, rightConstant: 16, heightConstant: 48)
+    completeTaskButton.anchor(left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor,  leftConstant: 16, bottomConstant: (346 + 8).superAdjusted, rightConstant: 16, heightConstant: 48.superAdjusted)
     
     view.addSubview(descriptionTextView)
-    descriptionTextView.anchor(top: label3.bottomAnchor, left: view.leftAnchor, bottom: completeTaskButton.topAnchor,  right: view.rightAnchor, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
+    descriptionTextView.anchor(top: label3.bottomAnchor, left: view.leftAnchor, bottom: completeTaskButton.topAnchor,  right: view.rightAnchor, leftConstant: 16, bottomConstant: 16.superAdjusted, rightConstant: 16)
     
     let dividerView1 = UIView()
     dividerView1.backgroundColor = UIColor(red: 0.094, green: 0.105, blue: 0.233, alpha: 1)
@@ -175,33 +174,6 @@ class TaskViewController: TDViewController {
     
   }
   
-  
-  private func configureGestures() {
-    let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(respondToSwipeGesture))
-    swipeRight.direction = .right
-    self.view.addGestureRecognizer(swipeRight)
-  }
-  
-  @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
-    
-    if let swipeGesture = gesture as? UISwipeGestureRecognizer {
-      
-      switch swipeGesture.direction {
-      case .right:
-        //viewModel.leftBarButtonBackItemClick()
-        return
-      case .down:
-        print("Swiped down")
-      case .left:
-        print("Swiped left")
-      case .up:
-        print("Swiped up")
-      default:
-        break
-      }
-    }
-  }
-  
   //MARK: - CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
     return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
@@ -210,10 +182,10 @@ class TaskViewController: TDViewController {
   }
   
   private func section() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(90), heightDimension: .absolute(91))
+    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(90.superAdjusted), heightDimension: .absolute(91.superAdjusted ))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     item.contentInsets =  NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 10)
-    let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(90), heightDimension: .estimated(91))
+    let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(90.superAdjusted), heightDimension: .estimated(91.superAdjusted))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)

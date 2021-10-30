@@ -20,12 +20,12 @@ class TDTaskTextField: UITextField {
         super.init(frame: .zero)
         
         let spacer = UIView()
-        spacer.anchor(widthConstant: 12, heightConstant: 40)
+    spacer.anchor(widthConstant: 12.adjusted, heightConstant: 40.adjusted)
         leftView = spacer
         leftViewMode = .always
         attributedPlaceholder = NSAttributedString(string: placeholder,
                                                    attributes: [NSAttributedString.Key.foregroundColor: UIColor(named: "taskPlaceholderText")])
-        font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        font = UIFont.systemFont(ofSize: 13.adjusted, weight: .medium)
     }
     
     required init?(coder: NSCoder) {

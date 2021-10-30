@@ -17,9 +17,9 @@ class TabBar: UITabBar {
   private let tabBarItem2 = UIImageView(image: UIImage(named: "user-square")?.template)
   
   private var oldLayer: CALayer?
-  public let addTaskButton = TDAddTaskButton(type: .custom)
+  public let addTaskButton = TDAddTaskButton(type: .system)
   
-  let disposeBag = DisposeBag()
+ // let disposeBag = DisposeBag()
   
   override var selectedItem: UITabBarItem? {
     didSet {
@@ -33,7 +33,7 @@ class TabBar: UITabBar {
       }
     }
   }
-  
+  //ipad - 49, 83
   //MARK: - Lifecycle
   override func layoutSubviews() {
     super.layoutSubviews()
@@ -43,13 +43,13 @@ class TabBar: UITabBar {
     addSubview(tabBarItem1)
     tabBarItem1.anchor(widthConstant: 24, heightConstant: 24)
     tabBarItem1.anchorCenterXToSuperview(constant: -1 * bounds.width / 4 - 15 )
-    tabBarItem1.anchorCenterYToSuperview(constant: -16)
+    tabBarItem1.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
     
     addSubview(tabBarItem2)
     tabBarItem2.anchor(widthConstant: 24, heightConstant: 24)
     tabBarItem2.anchorCenterXToSuperview(constant: bounds.width / 4 + 15 )
-    tabBarItem2.anchorCenterYToSuperview(constant: -16)
-    
+    tabBarItem2.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
+
     addSubview(addTaskButton)
     addTaskButton.anchor(bottom: topAnchor, bottomConstant: -45, widthConstant: 60.0, heightConstant: 60.0)
     addTaskButton.anchorCenterXToSuperview()

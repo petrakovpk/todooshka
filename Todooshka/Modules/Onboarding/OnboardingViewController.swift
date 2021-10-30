@@ -20,11 +20,7 @@ final class OnboardingViewController: UIViewController {
   private let disposeBag = DisposeBag()
   var viewModel: OnboardingViewModel!
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<OnboardingSectionModel>!
-  //private var selectedOnboardingScreen = BehaviorRelay<SelectedOnboardingScreen>(value: .first)
-  
-  //MARK: - Constants
-  static let collectionViewHeight = CGFloat(575.0)
-  
+
   //MARK: - UI Elements
   private let firstDot = UIView()
   private let secondDot = UIView()
@@ -36,12 +32,7 @@ final class OnboardingViewController: UIViewController {
     return label
   }()
   
-  private let skipButton: UIButton = {
-    let button = UIButton(type: .custom)
-    //    let attrString = NSAttributedString(string: "Пропустить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
-    //    button.setAttributedTitle(attrString, for: .normal)
-    return button
-  }()
+  private let skipButton = UIButton(type: .system)
   
   private let authButton: UIButton = {
     let button = UIButton(type: .custom)
@@ -63,7 +54,7 @@ final class OnboardingViewController: UIViewController {
   private let collectionViewLayout: UICollectionViewFlowLayout = {
     let layout = UICollectionViewFlowLayout()
     layout.scrollDirection = .horizontal
-    layout.itemSize = CGSize(width: UIScreen.main.bounds.width , height: UIScreen.main.bounds.height * 2 / 3 )
+    layout.itemSize = CGSize(width: UIScreen.main.bounds.width , height: UIScreen.main.bounds.height * 0.57)
     return layout
   }()
   
@@ -82,12 +73,8 @@ final class OnboardingViewController: UIViewController {
     view.addSubview(backgroundImageView)
     backgroundImageView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor)
     
-    view.addSubview(headerLabel)
-    headerLabel.anchor(top: view.topAnchor, topConstant: 84)
-    headerLabel.anchorCenterXToSuperview()
-    
     view.addSubview(skipButton)
-    skipButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor , right: view.rightAnchor, leftConstant: 16, bottomConstant: 26 + 50, rightConstant: 16, heightConstant: 50)
+    skipButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor , right: view.rightAnchor, leftConstant: 16, bottomConstant: (26 + 50).adjusted, rightConstant: 16, heightConstant: 50.adjusted)
     skipButton.cornerRadius = 25
     
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: collectionViewLayout)
@@ -97,7 +84,11 @@ final class OnboardingViewController: UIViewController {
     collectionView.isPagingEnabled = true
     
     view.addSubview(collectionView)
-    collectionView.anchor(top: headerLabel.bottomAnchor, left: view.leftAnchor, bottom: skipButton.topAnchor, right: view.rightAnchor, topConstant: 0, bottomConstant: 0)
+    collectionView.anchor(left: view.leftAnchor, bottom: skipButton.topAnchor, right: view.rightAnchor, topConstant: 0, bottomConstant: 0, heightConstant: UIScreen.main.bounds.height * 0.57)
+    
+    view.addSubview(headerLabel)
+    headerLabel.anchor(bottom: collectionView.topAnchor, bottomConstant: 80.adjusted)
+    headerLabel.anchorCenterXToSuperview()
     
     firstDot.cornerRadius = 3
     secondDot.cornerRadius = 3
@@ -111,7 +102,7 @@ final class OnboardingViewController: UIViewController {
     view.addSubview(secondDot)
     view.addSubview(thirdDot)
     
-    secondDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74, widthConstant: 6, heightConstant: 6)
+    secondDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: 6, heightConstant: 6)
     secondDot.anchorCenterXToSuperview()
     
     firstDot.removeAllConstraints()
@@ -124,14 +115,14 @@ final class OnboardingViewController: UIViewController {
   
   func setDotWidth(firstDotPercent: Int, secondDotPercent: Int, thirdDotPercent: Int) {
     secondDot.removeAllConstraints()
-    secondDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74, widthConstant: CGFloat(6 + 19 * secondDotPercent / 100), heightConstant: 6)
+    secondDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: CGFloat(6 + 19 * secondDotPercent / 100).adjusted, heightConstant: 6)
     secondDot.anchorCenterXToSuperview()
     
     firstDot.removeAllConstraints()
-    firstDot.anchor(top: secondDot.topAnchor, right: secondDot.leftAnchor, rightConstant: 10.0, widthConstant: CGFloat(6 + 19 * firstDotPercent / 100), heightConstant: 6)
+    firstDot.anchor(top: secondDot.topAnchor, right: secondDot.leftAnchor, rightConstant: 10.0, widthConstant: CGFloat(6 + 19 * firstDotPercent / 100).adjusted, heightConstant: 6)
     
     thirdDot.removeAllConstraints()
-    thirdDot.anchor(top: secondDot.topAnchor, left: secondDot.rightAnchor, leftConstant: 10.0, widthConstant: CGFloat(6 + 19 * thirdDotPercent / 100), heightConstant: 6)
+    thirdDot.anchor(top: secondDot.topAnchor, left: secondDot.rightAnchor, leftConstant: 10.0, widthConstant: CGFloat(6 + 19 * thirdDotPercent / 100).adjusted, heightConstant: 6)
     
     if firstDotPercent == 0 { firstDot.backgroundColor = UIColor(named: "onboardingDotBackground") } else { firstDot.backgroundColor = .blueRibbon }
     if secondDotPercent == 0 { secondDot.backgroundColor = UIColor(named: "onboardingDotBackground") } else { secondDot.backgroundColor = .blueRibbon }
@@ -155,6 +146,7 @@ final class OnboardingViewController: UIViewController {
   
   //MARK: - Bind To
   func bindViewModel() {
+    
     let cellScrolled = collectionView.rx.didScroll.map { _ -> Int in
       var firstDotPercent = 0
       var secondDotPercent = 0
@@ -163,7 +155,7 @@ final class OnboardingViewController: UIViewController {
       let cells = self.collectionView.visibleCells
       for cell in cells {
         let f = cell.frame
-        let w = self.view.window!
+        guard let w = self.view.window else { return 0 }
         let rect = w.convert(f, from: cell.superview!)
         let inter = rect.intersection(w.bounds)
         let ratio = (inter.width * inter.height) / (f.width * f.height)
@@ -178,6 +170,7 @@ final class OnboardingViewController: UIViewController {
       
       let array = [firstDotPercent, secondDotPercent, thirdDotPercent]
       return array.firstIndex(of: array.max() ?? 0) ?? 0 }
+    
       .distinctUntilChanged()
       .asDriver(onErrorJustReturn: 0)
       .startWith(0)
@@ -189,23 +182,28 @@ final class OnboardingViewController: UIViewController {
     
     let output = viewModel.transform(input: input)
     output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
-    output.scrollToLastCell.drive(scrollToLastCellBinder).disposed(by: disposeBag)
+    output.skipButtonClick.drive(skipButtonClickBinder).disposed(by: disposeBag)
     output.skipButtonTitle.drive(skipButtonTitleBinder).disposed(by: disposeBag)
     output.cellScrolled.drive().disposed(by: disposeBag)
     output.backgroundImage.drive(backgroundImageViewBinder).disposed(by: disposeBag)
-    
   }
   
-  var scrollToLastCellBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, scrollToLast) in
-      if scrollToLast { vc.collectionView.scrollToItem(at: IndexPath(item: 0, section: 2), at: .right, animated: true) }
+  var skipButtonClickBinder: Binder<Int?> {
+    return Binder(self, binding: { (vc, section) in
+      guard let section = section else { return }
+      vc.collectionView.isPagingEnabled = false
+      vc.collectionView.scrollToItem(at: IndexPath(item: 0, section: section), at: .right, animated: true)
+      vc.collectionView.isPagingEnabled = true
     })
   }
   
   var skipButtonTitleBinder: Binder<String> {
     return Binder(self, binding: { (vc, title) in
-      let attrString = NSAttributedString(string: title, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
-      vc.skipButton.setAttributedTitle(attrString, for: .normal)
+      UIView.performWithoutAnimation {
+        let attrString = NSAttributedString(string: title, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
+        vc.skipButton.setAttributedTitle(attrString, for: .normal)
+        vc.skipButton.layoutIfNeeded()
+      }
     })
   }
   
@@ -237,6 +235,5 @@ extension OnboardingViewController: ConfigureColorProtocol {
     skipButton.backgroundColor = .blueRibbon
     skipButton.setTitleColor(.white, for: .normal)
   }
-  
   
 }

@@ -13,103 +13,110 @@ import SwipeCellKit
 
 class TaskListCollectionViewCellModel: Stepper {
   
-  private let services: AppServices
+  let services: AppServices
   
-  let disposeBag = DisposeBag()
   let steps = PublishRelay<Step>()
+  let task: Task
   
-  let formatter = DateFormatter()
-  var isEnabledOutput: Bool = true
+  let formatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "HH'h' mm'm' ss's'"
+    formatter.timeZone = TimeZone(secondsFromGMT: 0)
+    return formatter
+  }()
   
-  //MARK: - Из модели во Вью Контроллер
-  let taskTextOutput = BehaviorRelay<String?>(value: nil)
-  let taskTypeOutput = BehaviorRelay<TaskType?>(value: nil)
-  let timeLeftOutput = BehaviorRelay<Date?>(value: nil)
-  let timeLeftPercentOutput = BehaviorRelay<Double?>(value: nil)
-  let timeSecondsLeftPercentOutput = BehaviorRelay<Double?>(value: nil)
+  var isEnabled: Bool = true
   
+  struct Input {
+    let repeatButtonClickTrigger: Driver<Void>
+  }
   
-  let taskTimeLeftTextOutput = BehaviorRelay<String>(value: "")
-  let task = BehaviorRelay<Task?>(value: nil)
-  let hideCell = BehaviorRelay<Bool>(value: false)
+  struct Output {
+    let text: Driver<String>
+    let timeText: Driver<String>
+    let typeImage: Driver<UIImage?>
+    let typeColor: Driver<UIColor?>
+    let timeLeftPercent: Driver<Double>
+    let repeatButtonClick: Driver<Void>
+    let repeatButtonIsHidden: Driver<Bool>
+    let hideCell: Driver<Bool>
+    let reloadDataSource: Driver<Void>
+  }
   
   //MARK: - Init
   init(services: AppServices, task: Task) {
     self.services = services
-    self.task.accept(task)
-    
-    services.coreDataService.taskTypes.bind{ [weak self] types in
-      guard let self = self else { return }
-      if let type = types.first(where: {$0.identity == task.typeUID}) {
-        self.taskTypeOutput.accept(type)
-      }
-    }.disposed(by: disposeBag)
-    
-    self.task.bind{ [weak self] task in
-      guard let self = self else { return }
-      guard let task = task else { return }
-      self.taskTextOutput.accept(task.text)
-      
-      if task.isCurrent {
-        let secondsLeftTimeIntervalSince1970 = task.createdTimeIntervalSince1970 - Date().timeIntervalSince1970 + 24 * 60 * 60
-        self.timeLeftOutput.accept(Date(timeIntervalSince1970: secondsLeftTimeIntervalSince1970))
-        self.timeLeftPercentOutput.accept(secondsLeftTimeIntervalSince1970 / (24 * 60 * 60))
-      }
-    }.disposed(by: disposeBag)
-    
-    if task.isCurrent {
-      Observable<Int>.timer(RxTimeInterval.microseconds(1000000 - Int(CACurrentMediaTime().truncatingRemainder(dividingBy: 1) * 1000000)), period: RxTimeInterval.seconds(1), scheduler: MainScheduler.instance).subscribe { [weak self] _ in
-        guard let self = self else { return }
-        guard let task = self.task.value else { return }
-
-        let secondsLeftTimeIntervalSince1970 = task.createdTimeIntervalSince1970 - Date().timeIntervalSince1970 + 24 * 60 * 60
-        let timeLeft = Date(timeIntervalSince1970: secondsLeftTimeIntervalSince1970)
-              
-        if self.isEnabledOutput {
-          self.timeLeftOutput.accept(timeLeft)
-          self.timeLeftPercentOutput.accept(secondsLeftTimeIntervalSince1970 / (24 * 60 * 60))
-          self.timeSecondsLeftPercentOutput.accept(Double(timeLeft.second) / 60)
-        }
-      }.disposed(by: disposeBag)
-      
-      formatter.dateFormat = "HH'h' mm'm' ss's'"
-      formatter.timeZone = TimeZone(secondsFromGMT: 0)
-      
-      self.timeLeftOutput.bind{[weak self] time in
-        guard let self = self else { return }
-        guard let time = time else { return }
-        
-        self.taskTimeLeftTextOutput.accept(self.formatter.string(from: time))
-      }.disposed(by: disposeBag)
-    }
-    
-    services.coreDataService.taskRemovingIsRequired.bind{ [weak self] task in
-      guard let self = self else { return }
-      if task == nil { self.hideCell.accept(true) }
-    }.disposed(by: disposeBag)
-    
+    self.task = task
   }
   
-  //MARK: - Handlers
-  func repeatButtonClick() {
-    if let task = self.task.value {
-      task.status = .created
-      task.createdTimeIntervalSince1970 = Date().timeIntervalSince1970
-      task.closedTimeIntervalSince1970 = nil
-      services.coreDataService.saveTasksToCoreData(tasks: [task], completion: nil)
-    }
+  func transform(input: Input) -> Output {
+    
+    let text = Driver<String>.just(self.task.text)
+    let typeImage = Driver<UIImage?>.just(self.task.type?.image)
+    let typeColor = Driver<UIColor?>.just(self.task.type?.imageColor)
+    
+    let timer = Observable<Int>.timer(RxTimeInterval.microseconds(1000000 - Int(CACurrentMediaTime().truncatingRemainder(dividingBy: 1) * 1000000)), period: RxTimeInterval.seconds(1), scheduler: MainScheduler.instance)
+    
+    let secondsLeftTimeIntervalSince1970 = timer
+      .filter{ _ in self.isEnabled }
+      .map { _ in
+        return max(self.task.createdTimeIntervalSince1970 - Date().timeIntervalSince1970 + 24 * 60 * 60 , 0) }
+      .startWith( max(self.task.createdTimeIntervalSince1970 - Date().timeIntervalSince1970 + 24 * 60 * 60, 0) )
+    
+    let reloadDataSource = secondsLeftTimeIntervalSince1970.map{ secondsLeft -> () in
+      if secondsLeft == 0 { return }
+    }.asDriver(onErrorJustReturn: ())
+    
+    let timeText = secondsLeftTimeIntervalSince1970
+      .map{ secondsLeftTimeIntervalSince1970 -> String in
+      let time = Date(timeIntervalSince1970: secondsLeftTimeIntervalSince1970)
+      return self.formatter.string(from: time)
+    }.asDriver(onErrorJustReturn: "")
+    
+    let timeLeftPercent = secondsLeftTimeIntervalSince1970
+      .map{ seconds in
+        return self.task.status == .created ? seconds / (24 * 60 * 60) : 0 }
+      .asDriver(onErrorJustReturn: 0)
+    
+    let repeatButtonIsHidden = timeLeftPercent
+      .map{ return $0 > 0 }
+    
+    let repeatButton = input.repeatButtonClickTrigger
+      .map {
+        self.task.status = .created
+        self.task.createdTimeIntervalSince1970 = Date().timeIntervalSince1970
+        self.task.closedTimeIntervalSince1970 = nil
+        self.services.coreDataService.saveTasksToCoreData(tasks: [self.task], completion: nil)
+      }
+      
+    let hideCell = services.coreDataService.taskRemovingIsRequired
+      .map{ task -> Bool in
+        return task == nil }
+      .distinctUntilChanged()
+      .asDriver(onErrorJustReturn: false)
+
+    return Output (
+      text: text,
+      timeText: timeText,
+      typeImage: typeImage,
+      typeColor: typeColor,
+      timeLeftPercent: timeLeftPercent,
+      repeatButtonClick: repeatButton,
+      repeatButtonIsHidden: repeatButtonIsHidden,
+      hideCell: hideCell,
+      reloadDataSource: reloadDataSource
+    )
   }
 }
-
 
 extension TaskListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
   
   func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
-    isEnabledOutput = false
+    isEnabled = false
   }
   
   func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
-    isEnabledOutput = true
+    isEnabled = true
   }
   
   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
@@ -119,23 +126,22 @@ extension TaskListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
     let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      if let task = self.task.value, task.status == .deleted {
-        self.services.coreDataService.removeTasksFromCoreData(tasks: [task], completion: nil)
+      
+      if self.task.status == .deleted {
+        self.services.coreDataService.removeTasksFromCoreData(tasks: [self.task], completion: nil)
       } else {
-        self.services.coreDataService.taskRemovingIsRequired.accept(self.task.value)
-      }      
+        self.services.coreDataService.taskRemovingIsRequired.accept(self.task)
+      }
     }
     
     let ideaBoxAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      if let task = self.task.value {
-        task.status = .idea
-        self.services.coreDataService.saveTasksToCoreData(tasks: [task]) { error in
-          if let error = error {
-            print(error.localizedDescription)
-            return
-          }
+      self.task.status = .idea
+      self.services.coreDataService.saveTasksToCoreData(tasks: [self.task]) { error in
+        if let error = error {
+          print(error.localizedDescription)
+          return
         }
       }
     }
@@ -143,15 +149,13 @@ extension TaskListCollectionViewCellModel: SwipeCollectionViewCellDelegate {
     let completeTaskAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      if let task = self.task.value {
-        task.status = .completed
-        task.closedTimeIntervalSince1970 = Date().timeIntervalSince1970
-        self.services.coreDataService.saveTasksToCoreData(tasks: [task]) { error in
+      self.task.status = .completed
+      self.task.closedTimeIntervalSince1970 = Date().timeIntervalSince1970
+      self.services.coreDataService.saveTasksToCoreData(tasks: [self.task]) { error in
           if let error = error {
             print(error.localizedDescription)
             return
           }
-        }
       }
     }
     

@@ -31,8 +31,14 @@ class TDViewController: UIViewController {
   private func configureViewController() {
     headerView.backgroundColor = UIColor(named: "navigationBarBackground")
     
+    let safeAreaHeaderView = UIView()
+    safeAreaHeaderView.backgroundColor = UIColor(named: "navigationBarBackground")
+    
+    view.addSubview(safeAreaHeaderView)
+    safeAreaHeaderView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor)
+    
     view.addSubview(headerView)
-    headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
+    headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: 55.adjusted)
     
     backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
     
@@ -42,12 +48,12 @@ class TDViewController: UIViewController {
     headerView.addSubview(saveButton)
     saveButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
-    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+    titleLabel.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
     titleLabel.textAlignment = .center
     
     headerView.addSubview(titleLabel)
     titleLabel.anchorCenterXToSuperview()
-    titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0,  bottomConstant: 20, rightConstant: 0)
+    titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0, bottomConstant: 20.adjusted, rightConstant: 0)
     
     let dividerView = UIView()
     dividerView.backgroundColor = UIColor(named: "navigationBarDividerBackground")

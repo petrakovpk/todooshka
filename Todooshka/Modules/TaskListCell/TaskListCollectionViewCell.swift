@@ -64,11 +64,10 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
   
   //MARK: - Draw
   override func draw(_ rect: CGRect) {
-    if traitCollection.userInterfaceStyle == .dark {
-      drawDarkMode()
-    } else {
-      drawLightMode()
-    }
+    delegate = viewModel
+    
+    configureUI()
+    bindViewModel()
   }
   
   func drawLightMode() {
@@ -163,7 +162,6 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     roundGradintLayer.endPoint = CGPoint(x: 1, y: 1)
     roundGradintLayer.frame = CGRect(x: -5, y: -5, width: 10, height: 10)
     roundGradintLayer.position = CGPoint(x: size.width / 2, y: 0)
-    
     roundGradintLayer.add(animation, forKey: "animateBall")
     
     if let oldTimeLayer = oldTimeLayer {
@@ -177,6 +175,8 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
 
   //MARK: - Configure UI
   func configureUI() {
+    traitCollection.userInterfaceStyle == .dark ? drawDarkMode() : drawLightMode()
+    
     contentView.cornerRadius = 11
     contentView.layer.borderWidth = 0
     contentView.layer.borderColor = UIColor(hexString: "#15183C")?.cgColor
@@ -226,8 +226,6 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
   //MARK - Configure UI
   private func configurelineLayout(widthConstant: Double) {
     
-    if widthConstant == 0 { return }
-    
     let roundGradintLayer = CAGradientLayer()
     roundGradintLayer.type = .radial
     roundGradintLayer.colors = [
@@ -253,6 +251,9 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     lineGradientLayer.frame = CGRect(x: 11, y: contentView.height.double, width: widthConstant, height: 1.0)
     lineGradientLayer.insertSublayer(roundGradintLayer, at: 0)
     
+    roundGradintLayer.isHidden = widthConstant == 0
+    lineGradientLayer.isHidden = widthConstant == 0
+    
     if let oldLineGradientLayer = oldLineGradientLayer {
       contentView.layer.replaceSublayer(oldLineGradientLayer, with: lineGradientLayer)
     } else {
@@ -262,45 +263,41 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     oldLineGradientLayer = lineGradientLayer
   }
   
-  //MARK: - Bind to ViewModel
-  func bindToViewModel(viewModel: TaskListCollectionViewCellModel){
-    self.viewModel = viewModel
+  //MARK: - Bind
+  func bindViewModel(){
     
-    configureUI()
+    disposeBag = DisposeBag()
     
-    delegate = viewModel
+    let input = TaskListCollectionViewCellModel.Input(
+      repeatButtonClickTrigger: repeatButton.rx.tap.asDriver()
+    )
     
-    repeatButton.rx.tapGesture().when(.recognized).bind{ _ in self.viewModel.repeatButtonClick() }.disposed(by: disposeBag)
-    
-    viewModel.taskTextOutput.bind(to: taskTextLabel.rx.text).disposed(by: disposeBag)
-    viewModel.taskTimeLeftTextOutput.bind(to: taskTimeLeftLabel.rx.text).disposed(by: disposeBag)
-    
-    viewModel.timeLeftPercentOutput.bind{ [weak self] percent in
-      guard let self = self else { return }
-      guard let percent = percent else { return }
-      let widthConstant = max(percent * (self.contentView.frame.width.double - 22),0)
-      if self.viewModel.task.value?.status == .created {
-        self.configurelineLayout(widthConstant: widthConstant)
-        self.repeatButton.isHidden = percent > 0
-      } else {
-        self.configurelineLayout(widthConstant: 0)
-        self.repeatButton.isHidden = false
-      }
-    }.disposed(by: disposeBag)
-   
-    viewModel.taskTypeOutput.bind { [weak self] type in
-      guard let self = self else { return }
-      self.taskTypeImageView.image = type?.image
-      self.taskTypeImageView.tintColor = type?.imageColor
-    }.disposed(by: disposeBag)
-    
-    viewModel.hideCell.bind{ [weak self] hide in
-      if hide {
-        self?.hideSwipe(animated: true)
-        self?.viewModel.hideCell.accept(false)
-      }
-    }.disposed(by: disposeBag)
+    let output = viewModel.transform(input: input)
+    output.repeatButtonClick.drive().disposed(by: disposeBag)
+    output.text.drive(taskTextLabel.rx.text).disposed(by: disposeBag)
+    output.timeText.drive(taskTimeLeftLabel.rx.text).disposed(by: disposeBag)
+    output.typeImage.drive(taskTypeImageView.rx.image).disposed(by: disposeBag)
+    output.typeColor.drive(taskTypeImageView.rx.tintColor).disposed(by: disposeBag)
+    output.repeatButtonIsHidden.drive(repeatButton.rx.isHidden).disposed(by: disposeBag)
+    output.hideCell.drive(hideCellBinder).disposed(by: disposeBag)
+    output.timeLeftPercent.drive(timeLeftPercentBinder).disposed(by: disposeBag)
+    output.reloadDataSource.drive().disposed(by: disposeBag)
   }
+  
+  var hideCellBinder: Binder<Bool> {
+    return Binder(self, binding: { (cell, isHide) in
+      if isHide == false  { return }
+      cell.hideSwipe(animated: true)
+    })
+  }
+  
+  var timeLeftPercentBinder: Binder<Double> {
+    return Binder(self, binding: { (cell, percent) in
+      let widthConstant = percent * (cell.contentView.frame.width.double - 22)
+      cell.configurelineLayout(widthConstant: widthConstant)
+    })
+  }
+  
 }
 
 
