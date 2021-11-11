@@ -14,7 +14,6 @@ import Firebase
 class TabBarViewModel: Stepper {
   
   let steps = PublishRelay<Step>()
-  let disposeBag = DisposeBag()
   let services: AppServices
   
   struct Input {

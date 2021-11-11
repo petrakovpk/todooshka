@@ -35,8 +35,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     )
     
     let output = viewModel.transform(input: input)
-    output.createTask.drive().disposed(by: disposeBag)
-    
-  //  customTabBar.addTaskButton.rx.tapGesture().bind{_ in viewModel.handleAddTaskClick()}.disposed(by: disposeBag)
+    output.createTask.drive().disposed(by: disposeBag)    
   }
 }

@@ -24,7 +24,10 @@ class UserProfileDayCollectionViewCellModel: Stepper {
     let backgroundColor: Driver<UIColor>
     let textColor: Driver<UIColor>
     let borderWidth: Driver<CGFloat>
-    let roundsCount: Driver<Int>
+   // let roundsCount: Driver<Int>
+    let firstRoundIsHidden: Driver<Bool>
+    let secondRoundIsHidden: Driver<Bool>
+    let thirdRoundIsHidden: Driver<Bool>
   }
   
   //MARK: - Init
@@ -64,14 +67,14 @@ class UserProfileDayCollectionViewCellModel: Stepper {
         return tasks
       }.asDriver(onErrorJustReturn: [])
     
-    let roundsCount = completedTasks
-      .map{ tasks -> Int in
-        if tasks.count == 1 { return 1 }
-        if 2 ... 3 ~= tasks.count { return 2 }
-        if 4 ... .max  ~= tasks.count { return 3 }
-        return 0
-      }
+    let firstRoundIsHidden = completedTasks
+      .map{ return !($0.count == 1) }
     
+    let secondRoundIsHidden = completedTasks
+      .map{ return !( 2 ... 3 ~= $0.count ) }
+    
+    let thirdRoundIsHidden = completedTasks
+      .map{ return !( $0.count >= 4 )}
     
     return Output(
       text: text,
@@ -79,7 +82,9 @@ class UserProfileDayCollectionViewCellModel: Stepper {
       backgroundColor: backgroundColor,
       textColor: textColor,
       borderWidth: borderWidth,
-      roundsCount: roundsCount
+      firstRoundIsHidden: firstRoundIsHidden,
+      secondRoundIsHidden: secondRoundIsHidden,
+      thirdRoundIsHidden: thirdRoundIsHidden
     )
   }
   

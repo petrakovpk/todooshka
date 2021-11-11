@@ -20,10 +20,7 @@ pod 'Firebase/Firestore'
 pod 'Firebase/Storage'
 pod 'Firebase/Database'
 pod 'SwipeCellKit'
-pod 'ObjectMapper'
-pod 'SwiftyOnboard'
 pod 'lottie-ios'
-pod 'RxTheme'
 pod 'YandexMobileMetrica/Dynamic'
 
   target 'TodooshkaTests' do

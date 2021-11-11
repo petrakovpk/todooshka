@@ -222,7 +222,6 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     repeatButton.anchor(right: contentView.rightAnchor, rightConstant: 8, widthConstant: 110, heightConstant: 30)
   }
 
-  
   //MARK - Configure UI
   private func configurelineLayout(widthConstant: Double) {
     
@@ -253,6 +252,7 @@ class TaskListCollectionViewCell: SwipeCollectionViewCell {
     
     roundGradintLayer.isHidden = widthConstant == 0
     lineGradientLayer.isHidden = widthConstant == 0
+    lineGradientLayer.zPosition = 10
     
     if let oldLineGradientLayer = oldLineGradientLayer {
       contentView.layer.replaceSublayer(oldLineGradientLayer, with: lineGradientLayer)

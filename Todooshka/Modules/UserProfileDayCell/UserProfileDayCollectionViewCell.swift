@@ -21,14 +21,76 @@ class UserProfileDayCollectionViewCell: UICollectionViewCell {
   
   //MARK: - UI Elements
   private let dateLabel = UILabel()
-  private let roundView1 = UIView()
-  private let roundView2 = UIView()
-  private let roundView3 = UIView()
+  private var roundsBackground = UIView()
+  
+  //  private let firstRound = UIView()
+  //  private let secondRound = UIView()
+  //  private let thirdRound = UIView()
+  //
+  private let oneRoundView: UIView = {
+    let view = UIView()
+    let roundView = UIView()
+    roundView.cornerRadius = 2
+    
+    view.addSubview(roundView)
+    roundView.anchor(widthConstant: 4, heightConstant: 4)
+    roundView.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
+    return view
+  }()
+  
+    private let twoRoundsView: UIView = {
+      let view = UIView()
+      let firstRoundView = UIView()
+      firstRoundView.cornerRadius = 2
+  
+      view.addSubview(firstRoundView)
+      firstRoundView.anchor(left: view.leftAnchor, widthConstant: 4, heightConstant: 4)
+      firstRoundView.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
+      
+      let secondRoundView = UIView()
+      secondRoundView.cornerRadius = 2
+      
+      view.addSubview(secondRoundView)
+      secondRoundView.anchor(left: firstRoundView.rightAnchor, widthConstant: 4, heightConstant: 4)
+      secondRoundView.backgroundColor = UIColor(red: 0.169, green: 0.718, blue: 0.486, alpha: 1)
+      
+      return view
+    }()
+  
+    private let threeRoundsView: UIView = {
+      let view = UIView()
+      let firstRoundView = UIView()
+      firstRoundView.cornerRadius = 2
+  
+      view.addSubview(firstRoundView)
+      firstRoundView.anchor(left: view.leftAnchor, widthConstant: 4, heightConstant: 4)
+      firstRoundView.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
+      
+      let secondRoundView = UIView()
+      secondRoundView.cornerRadius = 2
+      
+      view.addSubview(secondRoundView)
+      secondRoundView.anchor(left: firstRoundView.rightAnchor, widthConstant: 4, heightConstant: 4)
+      secondRoundView.backgroundColor = UIColor(red: 0.169, green: 0.718, blue: 0.486, alpha: 1)
+      
+      let thirdRoundView = UIView()
+      thirdRoundView.cornerRadius = 2
+      
+      view.addSubview(thirdRoundView)
+      thirdRoundView.anchor(left: secondRoundView.rightAnchor, widthConstant: 4, heightConstant: 4)
+      thirdRoundView.backgroundColor = UIColor(red: 0.07, green: 0.512, blue: 0.326, alpha: 1)
+      
+      return view
+    }()
   
   override func draw(_ rect: CGRect) {
     super.draw(rect)
     configureUI()
-    //bindViewModel()
+  }
+  
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    
   }
   
   //MARK: - Configure UI
@@ -39,64 +101,20 @@ class UserProfileDayCollectionViewCell: UICollectionViewCell {
     contentView.addSubview(dateLabel)
     dateLabel.anchorCenterXToSuperview()
     dateLabel.anchorCenterYToSuperview()
+    
+    contentView.addSubview(oneRoundView)
+    oneRoundView.anchor(top: dateLabel.bottomAnchor, topConstant: 5, widthConstant: 4, heightConstant: 4)
+    oneRoundView.anchorCenterXToSuperview()
+    
+    contentView.addSubview(twoRoundsView)
+    twoRoundsView.anchor(top: dateLabel.bottomAnchor, topConstant: 5, widthConstant: 2 * 4, heightConstant: 4)
+    twoRoundsView.anchorCenterXToSuperview()
+    
+    contentView.addSubview(threeRoundsView)
+    threeRoundsView.anchor(top: dateLabel.bottomAnchor, topConstant: 5, widthConstant: 3 * 4, heightConstant: 4)
+    threeRoundsView.anchorCenterXToSuperview()
   }
-  
-  func configureNoRound() {
-    if self.roundView1.superview != nil {
-      self.roundView1.removeFromSuperview()
-    }
-    
-    if self.roundView2.superview != nil {
-      self.roundView2.removeFromSuperview()
-    }
-    
-    if self.roundView3.superview != nil {
-      self.roundView3.removeFromSuperview()
-    }
-  }
-  
-  func configureOneRound() {
-    roundView1.cornerRadius = 2
-    contentView.addSubview(roundView1)
-    roundView1.anchor(top: dateLabel.bottomAnchor, topConstant: 5, widthConstant: 4, heightConstant: 4)
-    roundView1.anchorCenterXToSuperview()
-    
-    roundView1.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
-  }
-  
-  func configureTwoRounds() {
-    roundView1.cornerRadius = 2
-    contentView.addSubview(roundView1)
-    roundView1.anchor(top: dateLabel.bottomAnchor, topConstant: 5, widthConstant: 4, heightConstant: 4)
-    roundView1.anchorCenterXToSuperview(constant: 2)
-    
-    roundView2.cornerRadius = 2
-    contentView.addSubview(roundView2)
-    roundView2.anchor(top: roundView1.topAnchor, right: roundView1.leftAnchor, widthConstant: 4, heightConstant: 4)
-    
-    roundView1.backgroundColor = UIColor(red: 0.169, green: 0.718, blue: 0.486, alpha: 1)
-    roundView2.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
-  }
-  
-  func configureThreeRounds() {
-    roundView1.cornerRadius = 2
-    contentView.addSubview(roundView1)
-    roundView1.anchor(top: dateLabel.bottomAnchor, topConstant: 5, widthConstant: 4, heightConstant: 4)
-    roundView1.anchorCenterXToSuperview()
-    
-    roundView2.cornerRadius = 2
-    contentView.addSubview(roundView2)
-    roundView2.anchor(top: roundView1.topAnchor, right: roundView1.leftAnchor, widthConstant: 4, heightConstant: 4)
-    
-    roundView3.cornerRadius = 2
-    contentView.addSubview(roundView3)
-    roundView3.anchor(top: roundView1.topAnchor, left: roundView1.rightAnchor, widthConstant: 4, heightConstant: 4)
-    
-    roundView1.backgroundColor = UIColor(red: 0.169, green: 0.718, blue: 0.486, alpha: 1)
-    roundView2.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
-    roundView3.backgroundColor = UIColor(red: 0.07, green: 0.512, blue: 0.326, alpha: 1)
-  }
-  
+
   //MARK: - Bind
   func bindViewModel() {
     
@@ -108,16 +126,9 @@ class UserProfileDayCollectionViewCell: UICollectionViewCell {
     output.backgroundColor.drive(contentView.rx.backgroundColor).disposed(by: disposeBag)
     output.textColor.drive(dateLabel.rx.textColor).disposed(by: disposeBag)
     output.borderWidth.drive(contentView.rx.borderWidth).disposed(by: disposeBag)
-    output.roundsCount.drive(roundsCountBinder).disposed(by: disposeBag)
-  }
-  
-  var roundsCountBinder: Binder<Int> {
-    return Binder(self, binding: { (cell, count) in
-      cell.configureNoRound()
-      if count == 1 { cell.configureOneRound() }
-      if count == 2 { cell.configureTwoRounds() }
-      if count == 3 { cell.configureThreeRounds() }
-    })
+    output.firstRoundIsHidden.drive(oneRoundView.rx.isHidden).disposed(by: disposeBag)
+    output.secondRoundIsHidden.drive(twoRoundsView.rx.isHidden).disposed(by: disposeBag)
+    output.thirdRoundIsHidden.drive(threeRoundsView.rx.isHidden).disposed(by: disposeBag)
   }
   
 }

@@ -53,7 +53,6 @@
 		60819A172705A49F0067AF05 /* TDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60819A162705A49F0067AF05 /* TDViewController.swift */; };
 		60855BDA2659061200079D75 /* TaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60855BD92659061100079D75 /* TaskViewController.swift */; };
 		60855BDC2659064200079D75 /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60855BDB2659064200079D75 /* TaskViewModel.swift */; };
-		60855BE02659221C00079D75 /* TDTaskTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60855BDF2659221C00079D75 /* TDTaskTextField.swift */; };
 		60855BE22659741000079D75 /* NetworkDatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60855BE12659741000079D75 /* NetworkDatabaseService.swift */; };
 		608A248026F0BAF500E7FD1D /* DeletedTaskTypeListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608A247F26F0BAF500E7FD1D /* DeletedTaskTypeListViewController.swift */; };
 		608A248226F0BB0900E7FD1D /* DeletedTaskTypeListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608A248126F0BB0900E7FD1D /* DeletedTaskTypeListViewModel.swift */; };
@@ -89,7 +88,6 @@
 		60AE9DD62652FD1800E51531 /* TaskListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AE9DD52652FD1800E51531 /* TaskListViewModel.swift */; };
 		60AE9DD82652FF2600E51531 /* AuthFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AE9DD72652FF2500E51531 /* AuthFlow.swift */; };
 		60AE9DDE2652FF4200E51531 /* UserProfileFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AE9DDD2652FF4200E51531 /* UserProfileFlow.swift */; };
-		60AE9DE3265300D200E51531 /* TDAuthTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AE9DE2265300D200E51531 /* TDAuthTextField.swift */; };
 		60B82FEB265457BF00BF5F94 /* NetworkServicesConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B82FEA265457BF00BF5F94 /* NetworkServicesConstants.swift */; };
 		60B82FED2654FCE100BF5F94 /* TaskFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B82FEC2654FCE100BF5F94 /* TaskFlow.swift */; };
 		60B82FEF2655031100BF5F94 /* TaskStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B82FEE2655031100BF5F94 /* TaskStepper.swift */; };
@@ -101,12 +99,13 @@
 		60C00DA026B2F6E600AAD0E1 /* TaskListFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C00D9F26B2F6E600AAD0E1 /* TaskListFlow.swift */; };
 		60C0BC8F26BAD802000A4A79 /* TaskTypeListSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0BC8E26BAD802000A4A79 /* TaskTypeListSectionModel.swift */; };
 		60C0BC9126BAD93C000A4A79 /* TaskTypeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0BC9026BAD93C000A4A79 /* TaskTypeCollectionViewCell.swift */; };
-		60C0BC9326BAD972000A4A79 /* TaskTypeCollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0BC9226BAD972000A4A79 /* TaskTypeCollectionViewCellModel.swift */; };
 		60C1522926BC3A9E00F10284 /* TaskTypeListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1522826BC3A9D00F10284 /* TaskTypeListCollectionViewCell.swift */; };
 		60C614EF268BA89700793922 /* Todooshka.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 60AE9D682652E5AA00E51531 /* Todooshka.xcdatamodeld */; };
 		60C614F1268BAE6C00793922 /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C614F0268BAE6C00793922 /* CoreDataService.swift */; };
 		60CA046826A1CA990052CECF /* CoreDataTask+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CA046726A1CA990052CECF /* CoreDataTask+CoreDataClass.swift */; };
 		60CA046926A1CA990052CECF /* CoreDataTask+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CA046626A1CA990052CECF /* CoreDataTask+CoreDataProperties.swift */; };
+		60CE715A272FDA1A00010CB5 /* TaskTypeCollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CE7159272FDA1A00010CB5 /* TaskTypeCollectionViewCellModel.swift */; };
+		60CE715C272FDA5E00010CB5 /* TDTextFields in Resources */ = {isa = PBXBuildFile; fileRef = 60CE715B272FDA5E00010CB5 /* TDTextFields */; };
 		60D5662426CC1AB600D865DD /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662326CC1AB600D865DD /* OnboardingViewController.swift */; };
 		60D5662626CC201400D865DD /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662526CC201400D865DD /* OnboardingViewModel.swift */; };
 		60D5662826CC202B00D865DD /* OnboardingSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662726CC202B00D865DD /* OnboardingSectionModel.swift */; };
@@ -116,7 +115,6 @@
 		60D6645C269362670032908E /* DeletedTasksListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D6645B269362670032908E /* DeletedTasksListViewModel.swift */; };
 		60E44687272742D300C514FC /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E44686272742D300C514FC /* Device.swift */; };
 		60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */; };
-		60E4CE6F26DBE29C00319730 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4CE6E26DBE29C00319730 /* Theme.swift */; };
 		60E4CE7126DBE34800319730 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4CE7026DBE34800319730 /* UIColor.swift */; };
 		60EB113F2656A32500992BF8 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB113E2656A32400992BF8 /* Task.swift */; };
 		60EB11412656A9B000992BF8 /* TaskListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB11402656A9B000992BF8 /* TaskListCollectionViewCell.swift */; };
@@ -199,7 +197,6 @@
 		60819A162705A49F0067AF05 /* TDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDViewController.swift; sourceTree = "<group>"; };
 		60855BD92659061100079D75 /* TaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewController.swift; sourceTree = "<group>"; };
 		60855BDB2659064200079D75 /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
-		60855BDF2659221C00079D75 /* TDTaskTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDTaskTextField.swift; sourceTree = "<group>"; };
 		60855BE12659741000079D75 /* NetworkDatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDatabaseService.swift; sourceTree = "<group>"; };
 		608A247F26F0BAF500E7FD1D /* DeletedTaskTypeListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTaskTypeListViewController.swift; sourceTree = "<group>"; };
 		608A248126F0BB0900E7FD1D /* DeletedTaskTypeListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTaskTypeListViewModel.swift; sourceTree = "<group>"; };
@@ -242,7 +239,6 @@
 		60AE9DD52652FD1800E51531 /* TaskListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewModel.swift; sourceTree = "<group>"; };
 		60AE9DD72652FF2500E51531 /* AuthFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlow.swift; sourceTree = "<group>"; };
 		60AE9DDD2652FF4200E51531 /* UserProfileFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileFlow.swift; sourceTree = "<group>"; };
-		60AE9DE2265300D200E51531 /* TDAuthTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDAuthTextField.swift; sourceTree = "<group>"; };
 		60B82FEA265457BF00BF5F94 /* NetworkServicesConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServicesConstants.swift; sourceTree = "<group>"; };
 		60B82FEC2654FCE100BF5F94 /* TaskFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskFlow.swift; sourceTree = "<group>"; };
 		60B82FEE2655031100BF5F94 /* TaskStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStepper.swift; sourceTree = "<group>"; };
@@ -254,11 +250,12 @@
 		60C00D9F26B2F6E600AAD0E1 /* TaskListFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListFlow.swift; sourceTree = "<group>"; };
 		60C0BC8E26BAD802000A4A79 /* TaskTypeListSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TaskTypeListSectionModel.swift; path = Todooshka/Modules/TaskTypeListCell/TaskTypeListSectionModel.swift; sourceTree = SOURCE_ROOT; };
 		60C0BC9026BAD93C000A4A79 /* TaskTypeCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeCollectionViewCell.swift; sourceTree = "<group>"; };
-		60C0BC9226BAD972000A4A79 /* TaskTypeCollectionViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TaskTypeCollectionViewCellModel.swift; path = "../New Group/TaskTypeCollectionViewCellModel.swift"; sourceTree = "<group>"; };
 		60C1522826BC3A9D00F10284 /* TaskTypeListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeListCollectionViewCell.swift; sourceTree = "<group>"; };
 		60C614F0268BAE6C00793922 /* CoreDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataService.swift; sourceTree = "<group>"; };
 		60CA046626A1CA990052CECF /* CoreDataTask+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CoreDataTask+CoreDataProperties.swift"; path = "/Users/16679432/Documents/Проекты-Swift/Todooshka/Todooshka/Models/CoreDataTask+CoreDataProperties.swift"; sourceTree = "<absolute>"; };
 		60CA046726A1CA990052CECF /* CoreDataTask+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CoreDataTask+CoreDataClass.swift"; path = "/Users/16679432/Documents/Проекты-Swift/Todooshka/Todooshka/Models/CoreDataTask+CoreDataClass.swift"; sourceTree = "<absolute>"; };
+		60CE7159272FDA1A00010CB5 /* TaskTypeCollectionViewCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskTypeCollectionViewCellModel.swift; sourceTree = "<group>"; };
+		60CE715B272FDA5E00010CB5 /* TDTextFields */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TDTextFields; sourceTree = "<group>"; };
 		60D5662326CC1AB600D865DD /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		60D5662526CC201400D865DD /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		60D5662726CC202B00D865DD /* OnboardingSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSectionModel.swift; sourceTree = "<group>"; };
@@ -268,7 +265,6 @@
 		60D6645B269362670032908E /* DeletedTasksListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTasksListViewModel.swift; sourceTree = "<group>"; };
 		60E44686272742D300C514FC /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDTopRoundButton.swift; sourceTree = "<group>"; };
-		60E4CE6E26DBE29C00319730 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		60E4CE7026DBE34800319730 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		60EB113C2656850C00992BF8 /* Todooshka.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Todooshka.entitlements; sourceTree = "<group>"; };
 		60EB113E2656A32400992BF8 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
@@ -449,8 +445,8 @@
 		60709A8B26DE1B87002FBB55 /* TaskTypeCell */ = {
 			isa = PBXGroup;
 			children = (
+				60CE7159272FDA1A00010CB5 /* TaskTypeCollectionViewCellModel.swift */,
 				60C0BC9026BAD93C000A4A79 /* TaskTypeCollectionViewCell.swift */,
-				60C0BC9226BAD972000A4A79 /* TaskTypeCollectionViewCellModel.swift */,
 			);
 			path = TaskTypeCell;
 			sourceTree = "<group>";
@@ -719,10 +715,10 @@
 		60AE9DE1265300AB00E51531 /* TodooshkaUI */ = {
 			isa = PBXGroup;
 			children = (
+				60CE715B272FDA5E00010CB5 /* TDTextFields */,
 				60819A152705A4610067AF05 /* TDViewController */,
 				60F0719A26DA77990048AB71 /* TDButtons */,
 				602D1B3C26C1BBB300DAA711 /* TDTextViews */,
-				60EE76A726B69C1300A76C33 /* TDTextFields */,
 			);
 			path = TodooshkaUI;
 			sourceTree = "<group>";
@@ -796,21 +792,10 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		60EE76A726B69C1300A76C33 /* TDTextFields */ = {
-			isa = PBXGroup;
-			children = (
-				60855BDF2659221C00079D75 /* TDTaskTextField.swift */,
-				60AE9DE2265300D200E51531 /* TDAuthTextField.swift */,
-			);
-			name = TDTextFields;
-			path = "New Group";
-			sourceTree = "<group>";
-		};
 		60F0719126DA70440048AB71 /* Style */ = {
 			isa = PBXGroup;
 			children = (
 				60F0719226DA70600048AB71 /* Colors.swift */,
-				60E4CE6E26DBE29C00319730 /* Theme.swift */,
 				60F0719626DA70820048AB71 /* UIButtons.swift */,
 				60F0719826DA70970048AB71 /* UITextFields.swift */,
 				60F0719426DA70740048AB71 /* UIViewControllers.swift */,
@@ -948,6 +933,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60CE715C272FDA5E00010CB5 /* TDTextFields in Resources */,
 				60AE9D722652E5AD00E51531 /* LaunchScreen.storyboard in Resources */,
 				60ABAE1926C072A0000B07C0 /* task_animation.json in Resources */,
 				60AE9DC12652FB9C00E51531 /* GoogleService-Info.plist in Resources */,
@@ -1103,7 +1089,6 @@
 				603EC53F26E900A300B39FB7 /* CoreDataTaskType+CoreDataProperties.swift in Sources */,
 				6022899E267B6F2C00E9429A /* UserProfileDayCollectionViewCell.swift in Sources */,
 				603C5CF826F21A1A0056729B /* TaskTypeColorCollectionViewCellModel.swift in Sources */,
-				60855BE02659221C00079D75 /* TDTaskTextField.swift in Sources */,
 				60AE9DBD2652F81C00E51531 /* LoginViewController.swift in Sources */,
 				60C00DA026B2F6E600AAD0E1 /* TaskListFlow.swift in Sources */,
 				60BE45AC26D40863004B67E5 /* AuthViewModel.swift in Sources */,
@@ -1121,7 +1106,6 @@
 				60E4CE7126DBE34800319730 /* UIColor.swift in Sources */,
 				60AE9DB22652F5C300E51531 /* AppStep.swift in Sources */,
 				60AE9D632652E5AA00E51531 /* AppDelegate.swift in Sources */,
-				60C0BC9326BAD972000A4A79 /* TaskTypeCollectionViewCellModel.swift in Sources */,
 				6069AE4126E7E5890098B25E /* TaskTypeIconCollectionViewCell.swift in Sources */,
 				607BCB6026E62E48000A8248 /* TaskTypeViewController.swift in Sources */,
 				6008CFB42684C5B1006DBF1F /* TaskTypeListViewController.swift in Sources */,
@@ -1145,6 +1129,7 @@
 				607BCB6226E62E59000A8248 /* TaskTypeViewModel.swift in Sources */,
 				60AE9DB52652F6C800E51531 /* AppServices.swift in Sources */,
 				6055D193267104E800316BB4 /* UIViewController.swift in Sources */,
+				60CE715A272FDA1A00010CB5 /* TaskTypeCollectionViewCellModel.swift in Sources */,
 				60A2F49726EE530B00C328C1 /* RemoveConfirmationViewController.swift in Sources */,
 				602289A0267B6F4000E9429A /* UserProfileDayCollectionViewCellModel.swift in Sources */,
 				60F0719726DA70820048AB71 /* UIButtons.swift in Sources */,
@@ -1170,12 +1155,10 @@
 				60454DA3269884C20042686E /* IdeaBoxTaskListViewController.swift in Sources */,
 				60D5662426CC1AB600D865DD /* OnboardingViewController.swift in Sources */,
 				6024B30926B1871900876DC6 /* TabBarController.swift in Sources */,
-				60AE9DE3265300D200E51531 /* TDAuthTextField.swift in Sources */,
 				60A2F49B26EE6E1D00C328C1 /* RemoveConfirmationViewModel.swift in Sources */,
 				60D5662826CC202B00D865DD /* OnboardingSectionModel.swift in Sources */,
 				6055D19D26720B9E00316BB4 /* DatabaseReference.swift in Sources */,
 				60B82FF12655078B00BF5F94 /* TabBarFlow.swift in Sources */,
-				60E4CE6F26DBE29C00319730 /* Theme.swift in Sources */,
 				60EB11412656A9B000992BF8 /* TaskListCollectionViewCell.swift in Sources */,
 				60D6645C269362670032908E /* DeletedTasksListViewModel.swift in Sources */,
 				6042576B2677AB0D005A518C /* UserProfileSettingsCell.swift in Sources */,

@@ -16,8 +16,6 @@ class TaskListViewModel: Stepper {
   let steps = PublishRelay<Step>()
   let services: AppServices
   
-  let disposeBag = DisposeBag()
-  
   struct Input {
     let ideaButtonClickTrigger: Driver<Void>
     let overdueButtonClickTrigger: Driver<Void>

@@ -13,35 +13,35 @@ import Foundation
 import SwipeCellKit
 
 class AuthCollectionViewCell: UICollectionViewCell {
+  
+  //MARK: - Properties
+  var disposeBag = DisposeBag()
+  var viewModel: AuthCollectionViewCellModel!
+  
+  static var reuseID: String = "AuthCollectionViewCell"
+  
+  //MARK: - UI Elements
+  private lazy var textField = TDAuthTextField(customPlaceholder: "", imageName: "")
+  
+  //MARK: - Bind to ViewModel
+  func bindToViewModel(viewModel: AuthCollectionViewCellModel){
+    self.viewModel = viewModel
     
-    //MARK: - Properties
-    var disposeBag = DisposeBag()
-    var viewModel: AuthCollectionViewCellModel!
+    textField = TDAuthTextField(customPlaceholder: viewModel.placeholder, imageName: viewModel.imageName)
     
-    static var reuseID: String = "AuthCollectionViewCell"
+    configureUI()
     
-    //MARK: - UI Elements
-    private lazy var textField = TDAuthTextField(customPlaceholder: "", imageName: "")
+  }
+  
+  //MARK: - Configure UI
+  func configureUI() {
+    textField.cornerRadius = 13
     
-    //MARK: - Bind to ViewModel
-    func bindToViewModel(viewModel: AuthCollectionViewCellModel){
-        self.viewModel = viewModel
-        
-        textField = TDAuthTextField(customPlaceholder: viewModel.placeholder, imageName: viewModel.imageName)
-        
-        configureUI()
-        
-    }
-    
-    //MARK: - Configure UI
-    func configureUI() {
-        textField.cornerRadius = 13
-        
-        contentView.addSubview(textField)
-        textField.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 0, rightConstant: 0)
-    }
-    
-    
+    contentView.addSubview(textField)
+    textField.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 0, rightConstant: 0)
+  }
+  
+  
 }
 
 

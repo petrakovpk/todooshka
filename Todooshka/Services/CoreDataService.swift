@@ -11,7 +11,6 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import CoreData
-import YandexMobileMetrica
 
 protocol HasCoreDataService {
   var coreDataService: CoreDataService { get }
