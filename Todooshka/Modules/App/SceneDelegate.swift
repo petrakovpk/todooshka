@@ -10,7 +10,6 @@ import SwiftUI
 import RxFlow
 import RxSwift
 import RxCocoa
-import Firebase
 import CoreData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -18,13 +17,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   let disposeBag = DisposeBag()
   var window: UIWindow?
   var coordinator = FlowCoordinator()
+  
+  let birdService = BirdService()
+  let birdTypeService = BirdTypeService()
+  let pointService = PointService()
   let preferencesService = PreferencesService()
-  let networkAuthService = NetworkAuthService()
-  let networkDatabaseService = NetworkDatabaseService()
-  let coreDataService = CoreDataService()
+  let tasksService = TasksService()
+  let typesService = TypesService()
   
   lazy var appServices = {
-    return AppServices(preferencesService: preferencesService, networkAuthService: networkAuthService, networkDatabaseService: networkDatabaseService, coreDataService: coreDataService)
+    return AppServices(
+      birdService: birdService,
+      birdTypeService: birdTypeService,
+      pointService: pointService,
+      preferencesService: preferencesService,
+      tasksService: tasksService,
+      typesService: typesService
+    )
   }()
   
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {

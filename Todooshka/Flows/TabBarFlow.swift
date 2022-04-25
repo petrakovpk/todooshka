@@ -37,11 +37,9 @@ class TabBarFlow: Flow {
     guard let step = step as? AppStep else { return .none }
     
     switch step {
-    case .tabBarIsRequired:
+    case .TabBarIsRequired:
       return navigateToTabBar()
-    case .logoutIsRequired:
-      return navigateToLogInScreen()
-    case .createTaskIsRequired:
+    case .CreateTaskIsRequired:
       return navigateToTaskFlow()
     default:
       return .none
@@ -59,9 +57,14 @@ class TabBarFlow: Flow {
       }
     }
     
-    return .one(flowContributor: .contribute(withNextPresentable: taskFlow,
-                                             withNextStepper: OneStepper(withSingleStep: AppStep.createTaskIsRequired(status: .created, createdDate: nil))))
-    
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: taskFlow,
+        withNextStepper: OneStepper(
+          withSingleStep: AppStep.CreateTaskIsRequired(status: .Created, createdDate: nil)
+        )
+      )
+    )
   }
   
   
@@ -90,14 +93,8 @@ class TabBarFlow: Flow {
     
     return .multiple(flowContributors: [
       .contribute(withNextPresentable: self, withNextStepper: viewModel),
-      .contribute(withNextPresentable: taskListFlow, withNextStepper: OneStepper(withSingleStep: AppStep.taskListIsRequired)),
-      .contribute(withNextPresentable: userProfileFlow, withNextStepper: OneStepper(withSingleStep: AppStep.userProfileIsRequired))
+      .contribute(withNextPresentable: taskListFlow, withNextStepper: OneStepper(withSingleStep: AppStep.MainTaskListIsRequired)),
+      .contribute(withNextPresentable: userProfileFlow, withNextStepper: OneStepper(withSingleStep: AppStep.UserProfileIsRequired))
     ])
-  }
-  
-  
-  
-  private func navigateToLogInScreen() -> FlowContributors {
-    return .end(forwardToParentFlowWithStep: AppStep.authIsRequired)
   }
 }

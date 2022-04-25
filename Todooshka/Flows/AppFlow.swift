@@ -36,11 +36,9 @@ class AppFlow: Flow {
     func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? AppStep else { return .none }
         switch step {
-        case .authIsRequired:
-            return navigateToAuthFlow()
-        case .onboardingIsRequired:
+        case .OnboardingIsRequired:
             return navigateToOnboardingFlow()
-        case .onboardingIsCompleted:
+        case .OnboardingIsCompleted:
             return navigateToTabBarScreen()
         default:
             return .none
@@ -48,21 +46,8 @@ class AppFlow: Flow {
     }
     
     //MARK: - Navigate func
-    private func navigateToAuthFlow() -> FlowContributors {
-        
-        let authFlow = AuthFlow(withServices: services)
-        
-        Flows.use(authFlow, when: .created) { [unowned self] root in
-            DispatchQueue.main.async {
-                root.modalPresentationStyle = .fullScreen
-                rootViewController.present(root, animated: true)
-            }
-        }
-        
-        return .one(flowContributor: .contribute(withNextPresentable: authFlow,
-                                                 withNextStepper: OneStepper(withSingleStep: AppStep.authIsRequired)))
-        
-    }
+  
+  
     
     private func navigateToOnboardingFlow() -> FlowContributors {
         let viewController = OnboardingViewController()
@@ -83,6 +68,6 @@ class AppFlow: Flow {
         }
 
         return .one(flowContributor: .contribute(withNextPresentable: tabBarFlow,
-                                                 withNextStepper: OneStepper(withSingleStep: AppStep.tabBarIsRequired)))
+                                                 withNextStepper: OneStepper(withSingleStep: AppStep.TabBarIsRequired)))
     }
 }

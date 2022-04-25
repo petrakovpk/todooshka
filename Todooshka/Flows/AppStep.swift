@@ -9,66 +9,96 @@ import RxFlow
 
 enum AppStep: Step {
   
-  // Global
-  case logoutIsRequired
+  // Logout Is Required
+  case LogoutIsRequired
   
-  // Auth
-  case authIsRequired
-  case authIsCompleted
-  case createAccountIsRequired(isNewUser: Bool)
-  case createAccountIsCompleted
+  // Onboarding Is Required
+  case OnboardingIsRequired
   
-  // Onboarding
-  case onboardingIsRequired
-  case onboardingIsCompleted
+  // Onboarding Is Completed
+  case OnboardingIsCompleted
   
   // Tab Bar
-  case tabBarIsRequired
+  case TabBarIsRequired
   
-  // Task List
-  case taskListIsRequired
+  // Main Task List Is Required
+  case MainTaskListIsRequired
   
-  // Task Type
-  case taskTypeIsRequired(type: TaskType?)
-  case taskTypeIsCompleted
+  // Overdued Task List Is Required
+  case OverduedTaskListIsRequired
   
-  // Deleted Task List
-  case deletedTaskTypeListIsRequired
-  case deletedTaskTypeListIsCompleted
+  // Idea Task list Is Required
+  case IdeaTaskListIsRequired
   
-  // Overdued Task List
-  case overdueTaskListIsRequired
-  case overdueTaskListIsCompleted
+  // Completed Task List Is Required
+  case CompletedTaskListIsRequired(date: Date)
   
-  // Completed Task List
-  case completedTaskListIsRequired(date: Date)
-  case completedTaskListIsCompleted
+  // Deleted Task List Is Required
+  case DeletedTaskListIsRequired
+
+  // Task List Is Completed
+  case TaskListIsCompleted
   
-  // Deleted Task List
-  case deletedTaskListIsRequired
-  case deletedTaskListIsCompleted
+  // Type List Is Required
+  case TaskTypesListIsRequired
   
-  // Idea Box Task list
-  case ideaBoxTaskListIsRequired
-  case ideaBoxTaskListIsCompleted
+  // Type List Is Completed
+  case TaskTypesListIsCompleted
   
-  // Task
-  case createTaskIsRequired(status: TaskStatus, createdDate: Date?)
-  case showTaskIsRequired(task: Task)
+  // Deleted Task Type List  Is Required
+  case DeletedTaskTypeListIsRequired
   
-  case taskProcessingIsCompleted
+  // Deleted Task Type List Is Completed
+  case DeletedTaskTypeListIsCompleted
   
-  // Type List
-  case taskTypesListIsRequired
-  case taskTypesListIsCompleted
+  // Create Task Type Is Required
+  case CreateTaskTypeIsRequired
   
-  // UserProfile
-  case userProfileIsRequired
-  case userSettingsIsRequired
-  case userSettingsIsCompleted
+  // Show Task Type Is Required
+  case ShowTaskTypeIsRequired(type: TaskType)
   
-  // Remove Confirmation
-  case removeTaskConfirmationIsRequired
-  case removeTaskConfirmationisCompleted
+  // Task Type Is Completed
+  case TaskTypeProcessingIsCompleted
+
+  // Create Task Is Required
+  case CreateTaskIsRequired(status: TaskStatus, createdDate: Date?)
   
+  // Show Task Is Required
+  case ShowTaskIsRequired(task: Task)
+  
+  // Task Processing Is Completed
+  case TaskProcessingIsCompleted
+
+  // User Profile Is Required
+  case UserProfileIsRequired
+  
+  // User Settings Is Required
+  case UserSettingsIsRequired
+  
+  // User Settings Is Completed
+  case UserSettingsIsCompleted
+  
+  // Remove Task Is Required
+  case RemoveTaskIsRequired
+  
+  // Remove Task Is Completed
+  case RemoveTaskIsCompleted
+  
+  // Shop Is Required
+  case ShopIsRequired
+  
+  // Shop Is Completed
+  case ShopIsCompleted
+  
+  // Show Bird Is Required
+  case ShowBirdIsRequired(bird: Bird)
+  
+  // Show Bird Is Completed
+  case ShowBirdIsCompleted
+  
+  // Show Points is Required
+  case ShowPointsIsRequired
+  
+  // Show Points is Completed
+  case ShowPointsIsCompleted
 }

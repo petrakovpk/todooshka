@@ -9,7 +9,6 @@
 import RxFlow
 import RxSwift
 import RxCocoa
-import Firebase
 
 class TabBarViewModel: Stepper {
   
@@ -31,7 +30,7 @@ class TabBarViewModel: Stepper {
   func transform(input: Input) -> Output {
     
     let createTask = input.createTaskButtonClickTrigger
-      .map { self.steps.accept(AppStep.createTaskIsRequired(status: .created, createdDate: nil)) }
+      .map { self.steps.accept(AppStep.CreateTaskIsRequired(status: .Created, createdDate: nil)) }
     
     return Output(createTask: createTask)
   }

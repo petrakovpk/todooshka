@@ -1,5 +1,5 @@
 //
-//  TasksViewModel.swift
+//  TaskListViewModel.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 17.05.2021.
@@ -8,105 +8,229 @@
 import RxFlow
 import RxSwift
 import RxCocoa
-import Firebase
+import UIKit
+
+enum RemoveMode {
+  case DeletedTasks
+  case Task(task: Task)
+}
 
 class TaskListViewModel: Stepper {
   
   //MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
+  let listType: ListType
+  var removeMode: RemoveMode?
   
   struct Input {
-    let ideaButtonClickTrigger: Driver<Void>
-    let overdueButtonClickTrigger: Driver<Void>
-    let sortedByButtoncLickTrigger: Driver<Void>
-    let deleteAlertButtonClickTrigger: Driver<Void>
-    let cancelAlerrtButtonClickTrigger: Driver<Void>
+    // selection
     let selection: Driver<IndexPath>
+    // alert
+    let alertDeleteButtonClick: Driver<Void>
+    let alertCancelButtonClick: Driver<Void>
+    // back
+    let backButtonClickTrigger: Driver<Void>?
+    // add
+    let addTaskButtonClickTrigger: Driver<Void>?
+    // remove all
+    let removeAllDeletedTasksButtonClickTrigger: Driver<Void>?
   }
   
   struct Output {
-    let ideaButtonClick: Driver<Void>
-    let overdueButtonClick: Driver<Void>
-    let sortedByButtoncLick: Driver<Void>
-    let deleteAlertButtonClick: Driver<Void>
-    let cancelAlerrtButtonClick: Driver<Void>
-    
-    let openTask: Driver<Void>
+    // dataSource
     let dataSource: Driver<[TaskListSectionModel]>
-    let tasksCount: Driver<Int>
-    let overdueButtonIsHidden: Driver<Bool>
+    // selection
+    let selection: Driver<Task>
+    // alert
+    let alertText: Driver<String>
+    let alertDeleteButtonClick: Driver<Void>
+    let alertCancelButtonClick: Driver<Void>
     let alertIsHidden: Driver<Bool>
+    // back
+    let backButtonClick: Driver<Void>?
+    // addTask
+    let addTaskButtonClick: Driver<Void>?
+    let addTaskButtonIsHidden: Driver<Bool>
+    // title
+    let title: Driver<String>
+    // remove all
+    let removeAllDeletedTasksButtonClick: Driver<Void>?
+    let removeAllDeletedTasksButtonIsHidden: Driver<Bool>
   }
   
   //MARK: - Init
-  init(services: AppServices) {
+  init(services: AppServices, type: ListType) {
     self.services = services
+    self.listType = type
   }
   
   func transform(input: Input) -> Output {
     
-    let ideaButtonClick = input.ideaButtonClickTrigger
-      .map{ self.steps.accept(AppStep.ideaBoxTaskListIsRequired) }
-    
-    let overdueButtonClick = input.overdueButtonClickTrigger
-      .map{ self.steps.accept(AppStep.overdueTaskListIsRequired) }
-    
-    let sortedByButtoncLick = input.sortedByButtoncLickTrigger
-    
-    let deleteAlertButtonClick = input.deleteAlertButtonClickTrigger
-      .map { _ in
-        if let task = self.services.coreDataService.taskRemovingIsRequired.value {
-        task.status = .deleted
-        self.services.coreDataService.saveTasksToCoreData(tasks: [task]) { error in
-          if let error = error  {
-            print(error.localizedDescription)
-            return
+    // tasks
+    let tasks = services.tasksService.tasks
+      .map {
+        $0.filter { task in
+          switch self.listType {
+          case .Main:
+            return task.is24hoursPassed == false && task.status == .Created
+          case .Overdued:
+            return task.is24hoursPassed && task.status == .Created
+          case .Deleted:
+            return task.status == .Deleted
+          case .Idea:
+            return task.status == .Idea
+          case .Completed(let date):
+            guard let closed = task.closed else { return false }
+            return task.status == .Completed && Calendar.current.isDate(closed, inSameDayAs: date)
           }
-          self.services.coreDataService.taskRemovingIsRequired.accept(nil)
         }
       }
-    }
-    
-    let cancelAlertButtonClick = input.cancelAlerrtButtonClickTrigger
-      .map{ self.services.coreDataService.taskRemovingIsRequired.accept(nil) }
-    
-    let dataSource = services.coreDataService.tasks
-      .withLatestFrom(services.coreDataService.reloadTasksDataSorce) { (tasks, _) -> [TaskListSectionModel] in
-        let tasks = tasks.filter{ $0.isCurrent == true }
-        return [TaskListSectionModel(header: "", items: tasks)] }
       .asDriver(onErrorJustReturn: [])
     
-    let tasksCount = dataSource
-      .map{ return $0.first?.items.count ?? 0 }
+    // dataSource
+    let dataSource = tasks
+      .map { [TaskListSectionModel(header: "", items: $0)] }
     
-    let overdueButtonIsHidden = services.coreDataService.tasks
-      .map{ tasks -> Bool in
-        let tasks = tasks.filter{ $0.isOverdued == true }
-        return tasks.count == 0 }
-      .asDriver(onErrorJustReturn: false)
-    
-    let alertIsHidden = services.coreDataService.taskRemovingIsRequired
-      .map{ return $0 == nil }
-      .asDriver(onErrorJustReturn: false)
-    
-    let openTask = input.selection
+    // selection
+    let selection = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource in
-      let task = dataSource[indexPath.section].items[indexPath.item]
-      self.steps.accept(AppStep.showTaskIsRequired(task: task)) }
+        return dataSource[indexPath.section].items[indexPath.item]
+      }
+      .do { task in
+        self.steps.accept(AppStep.ShowTaskIsRequired(task: task))
+      }
+    
+    // title
+    let title = Driver.just(self.getTitle(with: self.listType))
+    
+    // backButtonClick
+    let backButtonClick = input.backButtonClickTrigger?
+      .do { _ in
+        self.steps.accept(AppStep.TaskListIsCompleted)
+      }
+    
+    // addTaskButton
+    let addTaskButtonIsHidden = Driver.just(self.addTaskButtonIsHidden(with: self.listType))
+    let addTaskButtonClick = input.addTaskButtonClickTrigger?
+      .do{ _ in
+        self.steps.accept(AppStep.CreateTaskIsRequired(status: .Idea, createdDate: Date()))
+      }
+    
+    // remove all
+    let removeAllTasksButtonIsHidden = Driver.just(self.removeAllTasksButtonIsHIdden(with: self.listType))
+    let removeAllTasksButtonClick = input.removeAllDeletedTasksButtonClickTrigger?
+      .do { _ in
+        self.services.tasksService.removeTrigger.accept(.DeletedTasks)
+      }
+    
+    // removeMode
+    let removeMode = services.tasksService.removeTrigger
+      .asDriver()
+    
+    // alert
+    let alertText = removeMode
+      .map { mode -> String in
+        switch mode {
+        case .DeletedTasks:
+          return "Удалить ВСЕ задачи?"
+        case .Task(_):
+          return "Удалить задачу?"
+        default:
+          return ""
+        }
+      }
+    
+    // alertIsHidden
+    let alertIsHidden = removeMode
+      .map { $0 == nil }
+      .asDriver(onErrorJustReturn: false)
+    
+    // alert delete button click
+    let alertDeleteButtonClick = input.alertDeleteButtonClick
+      .withLatestFrom(removeMode) { _, mode in
+        guard let mode = mode else { return }
+        switch mode {
+        case .Task(var task):
+          task.status = .Deleted
+          self.services.tasksService.saveTasksToCoreData(tasks: [task])
+          self.services.tasksService.removeTrigger.accept(nil)
+          if let egg = self.services.birdService.eggs.value.first(where: { $0.taskUID == task.UID }) {
+            self.services.birdService.removeEgg(egg: egg)
+          }
+          return
+        case .DeletedTasks:
+          let tasks = self.services.tasksService.tasks.value.filter{ $0.status == .Deleted }
+          self.services.tasksService.removeTasksFromCoreData(tasks: tasks)
+          self.services.tasksService.removeTrigger.accept(nil)
+        }
+      }
+    
+    // alertCancelButtonClick
+    let alertCancelButtonClick = input.alertCancelButtonClick
+      .do { _ in
+        self.services.tasksService.removeTrigger.accept(nil)
+      }
     
     return Output(
-      ideaButtonClick: ideaButtonClick,
-      overdueButtonClick: overdueButtonClick,
-      sortedByButtoncLick: sortedByButtoncLick,
-      deleteAlertButtonClick: deleteAlertButtonClick,
-      cancelAlerrtButtonClick: cancelAlertButtonClick,
-      openTask: openTask,
+      // dataSource
       dataSource: dataSource,
-      tasksCount: tasksCount,
-      overdueButtonIsHidden: overdueButtonIsHidden,
-      alertIsHidden: alertIsHidden
+      // selection
+      selection: selection,
+      // alert
+      alertText: alertText,
+      alertDeleteButtonClick: alertDeleteButtonClick,
+      alertCancelButtonClick: alertCancelButtonClick,
+      alertIsHidden:alertIsHidden,
+      // back
+      backButtonClick: backButtonClick,
+      // add
+      addTaskButtonClick: addTaskButtonClick,
+      addTaskButtonIsHidden: addTaskButtonIsHidden,
+      // title
+      title: title,
+      // remove all
+      removeAllDeletedTasksButtonClick: removeAllTasksButtonClick,
+      removeAllDeletedTasksButtonIsHidden: removeAllTasksButtonIsHidden
     )
   }
   
+  // Helpers
+  func viewWillAppear() {
+    services.tasksService.reloadDataSource.accept(())
+  }
+  
+  func addTaskButtonIsHidden(with type: ListType) -> Bool {
+    if case .Idea = type { return false } else { return true }
+  }
+  
+  func removeAllTasksButtonIsHIdden(with type: ListType) -> Bool {
+    if case .Deleted = type { return false } else { return true }
+  }
+  
+  func getTitle(with type: ListType) -> String {
+    switch type {
+    case .Completed(_):
+      return "Выполненные задачи"
+    case .Deleted:
+      return "Удаленные задачи"
+    case .Idea:
+      return "Ящик идей"
+    case .Overdued:
+      return "Просроченные задачи"
+    default:
+      return ""
+    }
+  }
+  
+  func getSceneImage(date: Date) -> UIImage? {
+    let hour = Date().hour
+    switch hour {
+    case 0...5: return UIImage(named: "ночь01")
+    case 6...11: return UIImage(named: "утро01")
+    case 12...17: return UIImage(named: "день01")
+    case 18...23: return UIImage(named: "вечер01")
+    default: return nil
+    }
+  }
 }

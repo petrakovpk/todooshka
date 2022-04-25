@@ -20,7 +20,7 @@ class TaskSteppers: Stepper {
     }
     
     var initialStep: Step {
-        return AppStep.taskListIsRequired
+      return AppStep.MainTaskListIsRequired
     }
     
 }

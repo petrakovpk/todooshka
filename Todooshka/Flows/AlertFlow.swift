@@ -34,10 +34,10 @@ class AlertFlow: Flow {
     guard let step = step as? AppStep else { return .none }
     switch step {
     
-    case .removeTaskConfirmationIsRequired:
+    case .RemoveTaskIsRequired:
       return .none
     
-    case .removeTaskConfirmationisCompleted:
+    case .RemoveTaskIsCompleted:
       return dismiss()
     
     default:

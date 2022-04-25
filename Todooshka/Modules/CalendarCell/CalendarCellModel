@@ -1,0 +1,118 @@
+//
+//  UserProfileDayCollectionViewCellModel.swift
+//  Todooshka
+//
+//  Created by Петраков Павел Константинович on 17.06.2021.
+//
+
+import RxFlow
+import RxSwift
+import RxCocoa
+import Foundation
+import UIKit
+
+enum DayMode {
+  case completed, planned
+}
+
+struct DayImage {
+  let completedImage: UIImage?
+  let plannedImage: UIImage?
+}
+//
+//class UserProfileDayCollectionViewCellModel: Stepper {
+//
+//  //MARK: - Properties
+//  let steps = PublishRelay<Step>()
+//  let services: AppServices
+//  let calendarDay: CalendarDay
+  
+//  struct Output {
+//    let dateLabelText: Driver<String>
+//
+//    let isToday: Driver<Bool>
+//    let isSelected: Driver<Bool>
+//    let isSelectedMonth: Driver<Bool>
+//
+//    let dayImage: Driver<UIImage?>
+//  }
+//
+//  //MARK: - Init
+//  init(services: AppServices, calendarDay: CalendarDay) {
+//    self.services = services
+//    self.calendarDay = calendarDay
+//  }
+//
+//  //MARK: - Transform
+//  func transform() -> Output {
+//
+//    let dateLabelText = Driver<String>.just(calendarDay.date.day.string)
+//
+//    let isToday = Driver<Bool>
+//      .just( Calendar.current.isDate(Date(), inSameDayAs: self.calendarDay.date) ? true : false)
+//
+//    let isSelected = services.coreDataService.calendarSelectedDate
+//      .map{ Calendar.current.isDate($0, inSameDayAs: self.calendarDay.date) }
+//      .asDriver(onErrorJustReturn: false)
+//
+//    let isSelectedMonth = services.coreDataService.calendarSelectedMonth
+//      .map { $0.month == self.calendarDay.date.month ? true : false }
+//      .asDriver(onErrorJustReturn: false)
+//
+//    let completedTasksImage = services.coreDataService
+//      .tasks
+//      .map { $0.filter{ $0.closedDate?.beginning(of: .day) == self.calendarDay.date.beginning(of: .day) } }
+//      .map { tasks -> UIImage? in
+//        switch tasks.count {
+//        case 1...3:
+//          return UIImage(named: "dragon_face_green")
+//        case 4...999:
+//          return UIImage(named: "dragon_face_purple")
+//        default:
+//          return UIImage(named: "nest")
+//        }
+//      }
+//      .asDriver(onErrorJustReturn: nil)
+//
+//    let plannedTasksImage = services.coreDataService
+//      .tasks
+//      .map { $0.filter{ $0.plannedDate?.beginning(of: .day) == self.calendarDay.date.beginning(of: .day) } }
+//      .map { tasks -> UIImage? in
+//        switch tasks.count {
+//        case 1...2:
+//          return UIImage(named: "nestWithOneEgg")
+//        case 3...4:
+//          return UIImage(named: "nestWithTwoEggs")
+//        case 5...999:
+//          return UIImage(named: "nestWithThreeEggs")
+//        default:
+//          return UIImage(named: "nest")
+//        }
+//      }
+//      .asDriver(onErrorJustReturn: nil)
+//
+//    let dayImages = Driver<DayImage>
+//      .combineLatest(completedTasksImage, plannedTasksImage) { completedImage, plannedImage in
+//        return DayImage(completedImage: completedImage, plannedImage: plannedImage)
+//      }.asDriver()
+//
+//    let dayMode = Driver<DayMode>.just(self.calendarDay.date <= Date() ? DayMode.completed : DayMode.planned )
+//
+//    let dayImage = dayMode.withLatestFrom(dayImages) { dayMode, images -> UIImage? in
+//      return dayMode == .completed ? images.completedImage : images.plannedImage
+//    }.asDriver()
+//
+//
+//    return Output(
+//      dateLabelText: dateLabelText,
+//
+//      isToday: isToday,
+//      isSelected: isSelected,
+//      isSelectedMonth: isSelectedMonth,
+//
+//      dayImage: dayImage
+//    )
+//  }
+
+  
+//}

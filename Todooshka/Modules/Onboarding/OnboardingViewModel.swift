@@ -8,7 +8,6 @@
 import RxFlow
 import RxSwift
 import RxCocoa
-import Firebase
 import UIKit
 
 class OnboardingViewModel: Stepper {
@@ -54,7 +53,7 @@ class OnboardingViewModel: Stepper {
         if cellIndex == 1 { return 2 }
         if cellIndex == 2 {
           UserDefaults.standard.setValue(true, forKey: "isOnboardingCompleted")
-          self.steps.accept(AppStep.onboardingIsCompleted)
+          self.steps.accept(AppStep.OnboardingIsCompleted)
         }
         return nil
       }

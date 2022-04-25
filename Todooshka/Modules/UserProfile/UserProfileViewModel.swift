@@ -8,172 +8,153 @@
 import RxFlow
 import RxSwift
 import RxCocoa
-import Firebase
 import CoreData
 
 class UserProfileViewModel: Stepper {
   
+  // MARK: - Properties
   let steps = PublishRelay<Step>()
+  private let services: AppServices
   
-  let services: AppServices
+  // Calendar
+  private let selected = BehaviorRelay<Date>(value: Date())
+  private let months = BehaviorRelay<[Int]>(value: [-1, 0, 1])
   
   struct Input {
-    let wreathImageViewTrigger: Driver<Void>
-    let leftButtonClickTrigger: Driver<Void>
-    let rightButtonClickTrigger: Driver<Void>
+    // buttons
     let settingsButtonClickTrigger: Driver<Void>
+    let shopButtonClickTrigger: Driver<Void>
+    // scores
+    let scoreBackgroundClickTrigger: Driver<Void>
+    // selection
     let selection: Driver<IndexPath>
   }
   
   struct Output {
-    let completedTaskCount: Driver<String>
-    let completedTaskStatus: Driver<String>
-    let monthText: Driver<String>
-    let dataSource: Driver<[UserProfileSectionModel]>
-    let selectedCalendarDay: Driver<CalendarDay>
-    let settingsButtonClicked: Driver<Void>
-    let completedTasksGroupedByType: Driver<[String]>
-    let wreathImageViewClick: Driver<Void>
+    // buttons
+    let settingsButtonClickHandler: Driver<Void>
+    let shopButtonClickHandler: Driver<Void>
+    // score
+    let featherScoreLabel: Driver<String>
+    let diamondScoreLabel: Driver<String>
+    let scoreBackgroundClickHandler: Driver<Void>
+    // selection
+    let selectionHandler: Driver<CalendarDay>
+    // dataSource
+    let dataSource: Driver<[CalendarSectionModel]>
   }
   
-  
+  // MARK: - Init
   init(services: AppServices) {
     self.services = services
-    
-    self.services.coreDataService.calendarSelectedDate.accept(Date())
-    
   }
   
   //MARK: - Transform
   func transform(input: Input) -> Output {
     
-    let previousMonthSelected = input.leftButtonClickTrigger.map { return -1 }
-    let nextMonthSelected = input.rightButtonClickTrigger.map { return 1 }
-    
-    let selectedMonth = Driver.of(previousMonthSelected, nextMonthSelected)
-      .merge()
-      .startWith(0)
-      .scan(Date()) { selectedDate, deltaMonth in
-        let date = selectedDate.adding(.month, value: deltaMonth)
-        self.services.coreDataService.calendarSelectedMonth.accept(date)
-        return date }
-      .asDriver()
-    
-    let selectedMonthText = selectedMonth.map { date -> String in
-      let dateFormatter = DateFormatter()
-      dateFormatter.locale = Locale(identifier: "ru_RU")
-      dateFormatter.dateFormat = "LLLL"
-      var stringDate = dateFormatter.string(from: date)
-      stringDate.firstCharacterUppercased()
-      return stringDate
-    }
-    
-    let allCompletedTasks = services.coreDataService.tasks
-      .map{ $0.filter { $0.status == .completed }}.asDriver(onErrorJustReturn: [])
-    
-    let selectedDayCompletedTasks = Driver<[Task]>.combineLatest(allCompletedTasks, self.services.coreDataService.calendarSelectedDate.asDriver() ) { tasks, date -> [Task] in
-      return tasks.filter { task in
-        if let closedDate = task.closedDate {
-          return Calendar.current.isDate(date , inSameDayAs: closedDate)
-        } else { return false }
+    // buttons
+    let settingsButtonClicked = input.settingsButtonClickTrigger
+      .do { _ in
+        self.steps.accept(AppStep.UserSettingsIsRequired)
       }
-    }
     
-    let completedTaskCount = selectedDayCompletedTasks.map{ return $0.count.string }
-    let completedTaskStatus = selectedDayCompletedTasks.map{ return self.getDayText(tasksCount: $0.count) }
+    let shopButtonClicked = input.shopButtonClickTrigger
+      .do { _ in
+        self.steps.accept(AppStep.ShopIsRequired)
+      }
     
-    let dataSource = Driver<[UserProfileSectionModel]>
-      .combineLatest(allCompletedTasks, selectedMonth) {(tasks, selectedMonth) -> [UserProfileSectionModel] in
-        
-        let startOfMonthDate = selectedMonth.startOfMonth
-        let endOfMonthDate = selectedMonth.endOfMonth
-        let startOfMonthWeekday = startOfMonthDate.weekday - 1 == 0 ? 7 : startOfMonthDate.weekday - 1
-        let endOfMonthDateWeekday = endOfMonthDate.weekday - 1 == 0 ? 7 : endOfMonthDate.weekday - 1
-        let daysInMonth = Calendar.current.numberOfDaysInMonth(for: startOfMonthDate)
-        
-        var items: [CalendarDay] = []
-        
-        for i in 0 ..< startOfMonthWeekday - 1 {
-          let minusDay = startOfMonthWeekday - 1 - i
-          items.append( CalendarDay(date: startOfMonthDate.adding(.day, value: -1 * minusDay), isSelectedMonth: false) )
+    // caledar
+    let months = months.asDriver()
+    let selected = selected.asDriver()
+    
+    // completed tasks
+    let completedTasks = services.tasksService
+      .tasks
+      .map {
+        $0.filter {
+          $0.status == .Completed
         }
+      }
+      .asDriver(onErrorJustReturn: [])
+    
+    // dataSource
+    let dataSource = Driver<[CalendarSectionModel]>
+      .combineLatest(months, selected, completedTasks) { months, selected, completedTasks -> [CalendarSectionModel] in
+        var result: [CalendarSectionModel] = []
         
-        for i in 0 ... daysInMonth - 1 {
-          items.append( CalendarDay(date: startOfMonthDate.adding(.day, value: i), isSelectedMonth: true) )
-        }
-        
-        for i in 0 ..< 7 - endOfMonthDateWeekday {
-          let plusDay = i + 1
-          items.append( CalendarDay(date: endOfMonthDate.adding(.day, value: plusDay), isSelectedMonth: false) )
-        }
-        
-        if items.count == 5 * 7 {
-          for i in 0 ..< 7 {
-            let plusDay = i + 8 - endOfMonthDateWeekday
-            items.append( CalendarDay(date: endOfMonthDate.adding(.day, value: plusDay), isSelectedMonth: false) )
+        for month in months {
+          var days: [CalendarDay] = []
+          let start = Date()
+            .adding(.month, value: month)
+            .startOfMonth
+          
+          for delta in 0...Calendar.current.numberOfDaysInMonth(for: start) {
+            let date = start.adding(.day, value: delta)
+            let completedTasks = completedTasks
+              .filter { task -> Bool in
+                guard let closed = task.closed else { return false }
+                return Calendar.current.isDate(closed, inSameDayAs: date)
+              }
+            
+            days.append(
+              CalendarDay(
+                date: date,
+                isSelected: Calendar.current.isDate(date, inSameDayAs: selected),
+                completedTasksCount: completedTasks.count
+              ))
           }
+          
+          result.append(CalendarSectionModel(header: start.monthName(), items: days))
         }
         
-       // items.sort{ return $0.date <= $1.date }
-        return [UserProfileSectionModel(header: "", items: items)]
+        return result
       }.asDriver()
     
-    let calendarDaySelected = input.selection.withLatestFrom(dataSource) { indexPath, dataSource -> CalendarDay in
-      let calendarDate = dataSource[indexPath.section].items[indexPath.item]
-      
-      if calendarDate.isSelectedMonth {
-        calendarDate.date == self.services.coreDataService.calendarSelectedDate.value ? self.steps.accept(AppStep.completedTaskListIsRequired(date: calendarDate.date)) : self.services.coreDataService.calendarSelectedDate.accept(calendarDate.date)
+    // selection
+    let selectionHandler = input.selection
+      .withLatestFrom(dataSource) { indexPath, dataSource -> CalendarDay in
+        return dataSource[indexPath.section].items[indexPath.item]
       }
-      return calendarDate
-    }.asDriver()
-    
-    let wreathImageViewClick = input.wreathImageViewTrigger.map { _ in
-      let day = self.services.coreDataService.calendarSelectedDate.value
-      self.steps.accept(AppStep.completedTaskListIsRequired(date: day))
-    }
-
-    let completedTasksGroupedByType = selectedDayCompletedTasks.map { tasks -> [String] in
-      let tasksGroupByTypeDict = Dictionary(grouping: tasks, by: { $0.type?.text ?? "" }).sorted{ $0.value.count > $1.value.count }
-      
-      var result: [String] = []
-      for type in tasksGroupByTypeDict {
-        result.append("\(type.key): \(type.value.count)")
+      .do { day in
+        self.selected.value == day.date ? self.steps.accept(AppStep.CompletedTaskListIsRequired(date: day.date)) : self.selected.accept(day.date)
       }
-      return result
-    }
     
-    let settingsButtonClicked = input.settingsButtonClickTrigger
-      .map{ self.steps.accept(AppStep.userSettingsIsRequired) }
-  
+    // score
+    let featherScoreLabel = services.pointService.points
+      .map {
+        $0.filter {
+          $0.currency == .Feather
+        }
+        .count
+        .string
+      }.asDriver(onErrorJustReturn: "")
+    
+    let diamondScoreLabel = services.pointService.points
+      .map {
+        $0.filter {
+          $0.currency == .Diamond
+        }
+        .count
+        .string
+      }.asDriver(onErrorJustReturn: "")
+    
+    let scoreBackgroundClickHandler = input.scoreBackgroundClickTrigger
+      .do { _ in
+        self.steps.accept(AppStep.ShowPointsIsRequired)
+      }
+    
     return Output(
-      completedTaskCount: completedTaskCount,
-      completedTaskStatus: completedTaskStatus,
-      monthText: selectedMonthText,
-      dataSource: dataSource,
-      selectedCalendarDay: calendarDaySelected,
-      settingsButtonClicked: settingsButtonClicked,
-      completedTasksGroupedByType: completedTasksGroupedByType,
-      wreathImageViewClick: wreathImageViewClick
+      // buttons
+      settingsButtonClickHandler: settingsButtonClicked,
+      shopButtonClickHandler: shopButtonClicked,
+      // selection
+      featherScoreLabel: featherScoreLabel,
+      diamondScoreLabel: diamondScoreLabel,
+      scoreBackgroundClickHandler: scoreBackgroundClickHandler,
+      selectionHandler: selectionHandler,
+      // dataSource
+      dataSource: dataSource
     )
-    
   }
-  
-  func getDayText(tasksCount: Int) -> String {
-    switch tasksCount {
-    case 0:
-      return "Нужно взять себя в руки! Давай-ка поднажмём?"
-    case 1...3:
-      return "Уже неплохо, у тебя все получится!"
-    case 4...6:
-      return "Ты просто герой, горжусь тобой!"
-    case 7...10:
-      return "Нереально, просто пушка!"
-    case 11... .max():
-      return "Человеку это вообще под силу?"
-    default:
-      return ""
-    }
-  }
-
 }
 

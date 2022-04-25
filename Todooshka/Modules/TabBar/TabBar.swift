@@ -24,12 +24,12 @@ class TabBar: UITabBar {
   override var selectedItem: UITabBarItem? {
     didSet {
       if selectedItem?.tag == 1 {
-        tabBarItem1.tintColor = UIColor(named: "tabBarItemSelectedTint")
-        tabBarItem2.tintColor = UIColor(named: "tabBarItemUnselectedTint")
+        tabBarItem1.tintColor = Theme.TabBar.selected
+        tabBarItem2.tintColor = Theme.TabBar.unselected
       }
       if selectedItem?.tag == 2 {
-        tabBarItem1.tintColor = UIColor(named: "tabBarItemUnselectedTint")
-        tabBarItem2.tintColor = UIColor(named: "tabBarItemSelectedTint")
+        tabBarItem1.tintColor = Theme.TabBar.unselected
+        tabBarItem2.tintColor = Theme.TabBar.selected
       }
     }
   }
@@ -74,8 +74,8 @@ class TabBar: UITabBar {
     
     let gradientLayer = CAGradientLayer()
     gradientLayer.colors = [
-      UIColor(named: "tabBarBackground")!.cgColor,
-      UIColor(named: "tabBarBackground")!.withAlphaComponent(0).cgColor
+      Theme.TabBar.background!.cgColor,
+      Theme.TabBar.background!.withAlphaComponent(0).cgColor
     ]
     gradientLayer.locations = [0,1]
     gradientLayer.startPoint = CGPoint(x: 0, y: 0)
@@ -108,7 +108,7 @@ class TabBar: UITabBar {
     backgroundLayer.frame = bounds
     backgroundLayer.mask = shapeLayer
     
-    backgroundLayer.backgroundColor = UIColor(named: "tabBarBackground")?.cgColor
+    backgroundLayer.backgroundColor = Theme.TabBar.background?.cgColor
     
     if let oldLayer = oldLayer {
       layer.replaceSublayer(oldLayer, with: backgroundLayer)

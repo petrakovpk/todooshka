@@ -19,11 +19,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
   //MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    configureUI()
-  }
-  
-  //MARK: - Configure UI
-  func configureUI() {
     setValue(customTabBar, forKey: "tabBar")
   }
   

@@ -7,21 +7,16 @@ target 'Todooshka' do
 
   # Pods for Todooshka
 
-pod 'GoogleSignIn'
 pod 'SwifterSwift'
 pod 'RxCocoa'
 pod 'RxFlow'
-pod "RxGesture"
+pod 'RxGesture'
 pod 'RxSwift'
 pod 'RxDataSources'
-pod 'Firebase/Analytics'
-pod 'Firebase/Auth'
-pod 'Firebase/Firestore'
-pod 'Firebase/Storage'
-pod 'Firebase/Database'
 pod 'SwipeCellKit'
 pod 'lottie-ios'
 pod 'YandexMobileMetrica/Dynamic'
+pod 'RxOptional'
 
   target 'TodooshkaTests' do
     inherit! :search_paths

@@ -9,7 +9,6 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import UIKit
-import Firebase
 
 class UserProfileFlow: Flow {
   
@@ -19,7 +18,6 @@ class UserProfileFlow: Flow {
   
   private let rootViewController = UINavigationController()
   private let services: AppServices
-  
   
   init(withServices services: AppServices) {
     self.services = services
@@ -32,71 +30,68 @@ class UserProfileFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-    case .userProfileIsRequired:
+      
+    case .UserProfileIsRequired:
       return navigateToUserProfile()
-    case .logoutIsRequired:
-      return endUserProfileFLow()
       
-    case .completedTaskListIsRequired(let date):
-      return navigateToCompletedTaskList(date: date)
-    case .completedTaskListIsCompleted:
+    case .CreateTaskIsRequired(let status, let date):
+      return navigateToTask(taskFlowAction: .create(status: status, closed: date))
+    case .ShowTaskIsRequired(let task):
+      return navigateToTask(taskFlowAction: .show(task: task) )
+      
+    case .TaskProcessingIsCompleted:
       return navigateBack()
       
-    case .deletedTaskListIsRequired:
+    case .DeletedTaskListIsRequired:
       return navigateToDeletedTaskList()
-    case .deletedTaskListIsCompleted:
+    case .CompletedTaskListIsRequired(let date):
+      return navigateToCompletedTaskList(date: date)
+    
+    case .TaskListIsCompleted:
       return navigateBack()
-      
-    case .deletedTaskTypeListIsRequired:
+    
+    case .DeletedTaskTypeListIsRequired:
       return navigateToDeletedTaskTypeList()
-    case .deletedTaskTypeListIsCompleted:
+    
+    case .DeletedTaskTypeListIsCompleted:
       return navigateBack()
       
-    case .ideaBoxTaskListIsRequired:
-      return navigateToIdeaBoxTaskList()
-    case .ideaBoxTaskListIsCompleted:
-      return navigateBack()
-      
-    case .createTaskIsRequired(let status, let date):
-      return navigateToTask(taskFlowAction: .createTask(status: status, closedDate: date))
-    case .showTaskIsRequired(let task):
-      return navigateToTask(taskFlowAction: .showTask(task: task) )
-      
-    case .taskTypesListIsRequired:
+    case .TaskTypesListIsRequired:
       return navigateToTaskTypesList()
-    case .taskTypesListIsCompleted:
+      
+    case .TaskTypesListIsCompleted:
       return navigateBack()
       
-    case .userSettingsIsRequired:
+    case .UserSettingsIsRequired:
       return navigateToSettings()
-    case .userSettingsIsCompleted:
+    
+    case .UserSettingsIsCompleted:
       return navigateBack()
       
-    case .taskProcessingIsCompleted:
+    case .ShopIsRequired:
+      return navigateToShop()
+      
+    case .ShopIsCompleted:
       return navigateBack()
       
-    case .authIsRequired:
-      return navigateToAuthFlow()
+    case .ShowBirdIsRequired(let bird):
+      return navigateToBird(bird: bird)
+      
+    case .ShowBirdIsCompleted:
+      return navigateBack()
+      
+    case .ShowPointsIsRequired:
+      return navigateToScore()
+      
+    case .ShowPointsIsCompleted:
+      return navigateBack()
+      
+    case .LogoutIsRequired:
+      return endUserProfileFLow()
       
     default:
       return .none
     }
-  }
-  
-  private func navigateToAuthFlow() -> FlowContributors {
-    
-    let authFlow = AuthFlow(withServices: services)
-    
-    Flows.use(authFlow, when: .created) { [unowned self] root in
-      DispatchQueue.main.async {
-        root.modalPresentationStyle = .fullScreen
-        rootViewController.present(root, animated: true)
-      }
-    }
-    
-    return .one(flowContributor: .contribute(withNextPresentable: authFlow,
-                                             withNextStepper: OneStepper(withSingleStep: AppStep.authIsRequired)))
-    
   }
   
   private func navigateToUserProfile() -> FlowContributors {
@@ -117,18 +112,18 @@ class UserProfileFlow: Flow {
   }
   
   private func navigateToCompletedTaskList(date: Date) -> FlowContributors {
-    let viewController = CompletedTasksListViewController()
-    let viewModel = CompletedTasksListViewModel(services: services, date: date )
-    viewController.bindTo(with: viewModel)
+    let viewController = TaskListViewController()
+    let viewModel = TaskListViewModel(services: services, type: .Completed(date: date))
+    viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
   private func navigateToDeletedTaskList() -> FlowContributors {
-    let viewController = DeletedTasksListViewController()
-    let viewModel = DeletedTasksListViewModel(services: services)
-    viewController.bindTo(with: viewModel)
+    let viewController = TaskListViewController()
+    let viewModel = TaskListViewModel(services: services, type: .Deleted)
+    viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
@@ -150,10 +145,26 @@ class UserProfileFlow: Flow {
   }
   
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
-    let viewController = IdeaBoxTaskListViewController()
-    let viewModel = IdeaBoxTaskListViewModel(services: services)
+    let viewController = TaskListViewController()
+    let viewModel = TaskListViewModel(services: services, type: .Idea)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToShop() -> FlowContributors {
+    let viewController = ShopViewController()
+    let viewModel = ShopViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToBird(bird: Bird) -> FlowContributors {
+    let viewController = BirdViewController()
+    let viewModel = BirdViewModel(bird: bird, services: services)
+    viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
@@ -166,6 +177,14 @@ class UserProfileFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
+  private func navigateToScore() -> FlowContributors {
+    let viewController = ScoreViewController()
+    let viewModel = ScoreViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
   private func navigateBack() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .none
@@ -173,7 +192,7 @@ class UserProfileFlow: Flow {
   
   func endUserProfileFLow() -> FlowContributors {
     rootViewController.popViewController(animated: true)
-    return .end(forwardToParentFlowWithStep: AppStep.logoutIsRequired)
+    return .end(forwardToParentFlowWithStep: AppStep.LogoutIsRequired)
   }
   
 }

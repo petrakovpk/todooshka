@@ -5,7 +5,6 @@
 //  Created by Петраков Павел Константинович on 17.05.2021.
 //
 
-import Firebase
 import RxSwift
 import CoreData
 
@@ -19,10 +18,6 @@ class PreferencesService {
     
     init() {
         formatter.timeZone = TimeZone.current
-    }
-
-    func isUserLoggedin() -> Bool {
-        return !(Auth.auth().currentUser == nil)
     }
     
     func isOnboardingCompleted() -> Bool {

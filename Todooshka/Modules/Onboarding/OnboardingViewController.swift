@@ -20,11 +20,12 @@ final class OnboardingViewController: UIViewController {
   private let disposeBag = DisposeBag()
   var viewModel: OnboardingViewModel!
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<OnboardingSectionModel>!
-
+  
   //MARK: - UI Elements
-  private let firstDot = UIView()
-  private let secondDot = UIView()
-  private let thirdDot = UIView()
+  private let leftDot = UIView()
+  private let centralDot = UIView()
+  private let rightDot = UIView()
+  
   private let headerLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
@@ -39,6 +40,8 @@ final class OnboardingViewController: UIViewController {
     let attrString = NSAttributedString(string: "Войти в аккаунт / Зарегестрироваться", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     button.isHidden = true
+    button.backgroundColor = UIColor.Palette.BlueRibbon
+    button.setTitleColor(.white, for: .normal)
     return button
   }()
   
@@ -64,69 +67,84 @@ final class OnboardingViewController: UIViewController {
     configureUI()
     configureDataSource()
     bindViewModel()
-    configureColor()
   }
   
   //MARK: - Configure UI
   func configureUI() {
     
+    // def
+    collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: collectionViewLayout)
+    
+    // adding
     view.addSubview(backgroundImageView)
+    view.addSubview(skipButton)
+    view.addSubview(collectionView)
+    view.addSubview(headerLabel)
+    view.addSubview(leftDot)
+    view.addSubview(centralDot)
+    view.addSubview(rightDot)
+    
+    // view
+    view.backgroundColor = Theme.App.background
+    
+    // backgroundImageView
     backgroundImageView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor)
     
-    view.addSubview(skipButton)
-    skipButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor , right: view.rightAnchor, leftConstant: 16, bottomConstant: (26 + 50).adjusted, rightConstant: 16, heightConstant: 50.adjusted)
+    // skipButton
     skipButton.cornerRadius = 25
+    skipButton.backgroundColor = UIColor.Palette.BlueRibbon
+    skipButton.setTitleColor(.white, for: .normal)
+    skipButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor , right: view.rightAnchor, leftConstant: 16, bottomConstant: (26 + 50).adjusted, rightConstant: 16, heightConstant: 50.adjusted)
     
-    collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: collectionViewLayout)
-    collectionView.register(OnboardingCollectionViewCell.self, forCellWithReuseIdentifier: OnboardingCollectionViewCell.reuseID)
-    
-    collectionView.showsHorizontalScrollIndicator = false
+    // collectionView
     collectionView.isPagingEnabled = true
-    
-    view.addSubview(collectionView)
+    collectionView.showsHorizontalScrollIndicator = false
+    collectionView.backgroundColor = .clear
+    collectionView.register(OnboardingCollectionViewCell.self, forCellWithReuseIdentifier: OnboardingCollectionViewCell.reuseID)
     collectionView.anchor(left: view.leftAnchor, bottom: skipButton.topAnchor, right: view.rightAnchor, topConstant: 0, bottomConstant: 0, heightConstant: UIScreen.main.bounds.height * 0.57)
     
-    view.addSubview(headerLabel)
+    // headerLabel
+    headerLabel.textColor = Theme.App.text
     headerLabel.anchor(bottom: collectionView.topAnchor, bottomConstant: 80.adjusted)
     headerLabel.anchorCenterXToSuperview()
     
-    firstDot.cornerRadius = 3
-    secondDot.cornerRadius = 3
-    thirdDot.cornerRadius = 3
+    // centralDot
+    centralDot.cornerRadius = 3
+    centralDot.backgroundColor = Theme.Onboarding.dotBackground
+    centralDot.anchorCenterXToSuperview()
+    centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: 6, heightConstant: 6)
     
-    firstDot.backgroundColor = .blueRibbon
-    secondDot.backgroundColor = UIColor(named: "onboardingDotBackground")
-    thirdDot.backgroundColor = UIColor(named: "onboardingDotBackground")
+    // leftDot
+    leftDot.cornerRadius = 3
+    leftDot.backgroundColor = UIColor.Palette.BlueRibbon
+    leftDot.removeAllConstraints()
+    leftDot.anchor(top: centralDot.topAnchor, right: centralDot.leftAnchor, rightConstant: 10.0, widthConstant: 25, heightConstant: 6)
     
-    view.addSubview(firstDot)
-    view.addSubview(secondDot)
-    view.addSubview(thirdDot)
-    
-    secondDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: 6, heightConstant: 6)
-    secondDot.anchorCenterXToSuperview()
-    
-    firstDot.removeAllConstraints()
-    firstDot.anchor(top: secondDot.topAnchor, right: secondDot.leftAnchor, rightConstant: 10.0, widthConstant: 25, heightConstant: 6)
-    
-    thirdDot.removeAllConstraints()
-    thirdDot.anchor(top: secondDot.topAnchor, left: secondDot.rightAnchor, leftConstant: 10.0, widthConstant: 6, heightConstant: 6)
+    // rightDot
+    rightDot.cornerRadius = 3
+    rightDot.backgroundColor = Theme.Onboarding.dotBackground
+    rightDot.removeAllConstraints()
+    rightDot.anchor(top: centralDot.topAnchor, left: centralDot.rightAnchor, leftConstant: 10.0, widthConstant: 6, heightConstant: 6)
     
   }
   
-  func setDotWidth(firstDotPercent: Int, secondDotPercent: Int, thirdDotPercent: Int) {
-    secondDot.removeAllConstraints()
-    secondDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: CGFloat(6 + 19 * secondDotPercent / 100).adjusted, heightConstant: 6)
-    secondDot.anchorCenterXToSuperview()
+  func setDotWidth(leftDotPercent: Int, centralDotPercent: Int, rightDotPercent: Int) {
     
-    firstDot.removeAllConstraints()
-    firstDot.anchor(top: secondDot.topAnchor, right: secondDot.leftAnchor, rightConstant: 10.0, widthConstant: CGFloat(6 + 19 * firstDotPercent / 100).adjusted, heightConstant: 6)
+    // centralDot
+    centralDot.removeAllConstraints()
+    centralDot.anchorCenterXToSuperview()
+    centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: CGFloat(6 + 19 * centralDotPercent / 100).adjusted, heightConstant: 6)
+    centralDotPercent == 0 ? (leftDot.backgroundColor = Theme.Onboarding.dotBackground) : (centralDot.backgroundColor = UIColor.Palette.BlueRibbon)
     
-    thirdDot.removeAllConstraints()
-    thirdDot.anchor(top: secondDot.topAnchor, left: secondDot.rightAnchor, leftConstant: 10.0, widthConstant: CGFloat(6 + 19 * thirdDotPercent / 100).adjusted, heightConstant: 6)
+    // leftDot
+    leftDot.removeAllConstraints()
+    leftDot.anchor(top: centralDot.topAnchor, right: centralDot.leftAnchor, rightConstant: 10.0, widthConstant: CGFloat(6 + 19 * leftDotPercent / 100).adjusted, heightConstant: 6)
+    leftDotPercent == 0 ? (centralDot.backgroundColor = Theme.Onboarding.dotBackground) : (leftDot.backgroundColor = UIColor.Palette.BlueRibbon)
     
-    if firstDotPercent == 0 { firstDot.backgroundColor = UIColor(named: "onboardingDotBackground") } else { firstDot.backgroundColor = .blueRibbon }
-    if secondDotPercent == 0 { secondDot.backgroundColor = UIColor(named: "onboardingDotBackground") } else { secondDot.backgroundColor = .blueRibbon }
-    if thirdDotPercent == 0 { thirdDot.backgroundColor = UIColor(named: "onboardingDotBackground") } else { thirdDot.backgroundColor = .blueRibbon }
+    // rightDot
+    rightDot.removeAllConstraints()
+    rightDot.anchor(top: centralDot.topAnchor, left: centralDot.rightAnchor, leftConstant: 10.0, widthConstant: CGFloat(6 + 19 * rightDotPercent / 100).adjusted, heightConstant: 6)
+    rightDotPercent == 0 ? (rightDot.backgroundColor = Theme.Onboarding.dotBackground) : (rightDot.backgroundColor = UIColor.Palette.BlueRibbon)
     
     self.view.layoutIfNeeded()
   }
@@ -148,9 +166,9 @@ final class OnboardingViewController: UIViewController {
   func bindViewModel() {
     
     let cellScrolled = collectionView.rx.didScroll.map { _ -> Int in
-      var firstDotPercent = 0
-      var secondDotPercent = 0
-      var thirdDotPercent = 0
+      var leftDotPercent = 0
+      var centralDotPercent = 0
+      var rightDotPercent = 0
       
       let cells = self.collectionView.visibleCells
       for cell in cells {
@@ -160,17 +178,17 @@ final class OnboardingViewController: UIViewController {
         let inter = rect.intersection(w.bounds)
         let ratio = (inter.width * inter.height) / (f.width * f.height)
         if let indexPath = self.collectionView.indexPath(for: cell) {
-          if indexPath.section == 0 { firstDotPercent = Int(ratio * 100) }
-          if indexPath.section == 1 { secondDotPercent = Int(ratio * 100) }
-          if indexPath.section == 2 { thirdDotPercent = Int(ratio * 100) }
+          if indexPath.section == 0 { leftDotPercent = Int(ratio * 100) }
+          if indexPath.section == 1 { centralDotPercent = Int(ratio * 100) }
+          if indexPath.section == 2 { rightDotPercent = Int(ratio * 100) }
         }
       }
       
-      self.setDotWidth(firstDotPercent: firstDotPercent, secondDotPercent: secondDotPercent, thirdDotPercent: thirdDotPercent)
+      self.setDotWidth(leftDotPercent: leftDotPercent, centralDotPercent: centralDotPercent, rightDotPercent: rightDotPercent)
       
-      let array = [firstDotPercent, secondDotPercent, thirdDotPercent]
-      return array.firstIndex(of: array.max() ?? 0) ?? 0 }
-    
+      let array = [leftDotPercent, centralDotPercent, rightDotPercent]
+      return array.firstIndex(of: array.max() ?? 0) ?? 0
+    }
       .distinctUntilChanged()
       .asDriver(onErrorJustReturn: 0)
       .startWith(0)
@@ -219,21 +237,4 @@ final class OnboardingViewController: UIViewController {
   }
 }
 
-//MARK: - Colors and Texts
-extension OnboardingViewController: ConfigureColorProtocol {
-  func configureColor() {
-    
-    view.backgroundColor = UIColor(named: "appBackground")
-    
-    collectionView.backgroundColor = .clear
-    
-    headerLabel.textColor = UIColor(named: "appText")
-    
-    authButton.backgroundColor = .blueRibbon
-    authButton.setTitleColor(.white, for: .normal)
-    
-    skipButton.backgroundColor = .blueRibbon
-    skipButton.setTitleColor(.white, for: .normal)
-  }
-  
-}
+

@@ -6,34 +6,31 @@
 //
 
 import UIKit
-import CoreData
-import Firebase
-import GoogleSignIn
+import CoreData 
 import SwifterSwift
 import YandexMobileMetrica
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate  {
   
-  @available(iOS 9.0, *)
-  func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any])
-  -> Bool {
-    return GIDSignIn.sharedInstance.handle(url)
-  }
+  //  @available(iOS 9.0, *)
+  //  func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any])
+  //  -> Bool {
+  //    //return GIDSignIn.sharedInstance.handle(url)
+  //  }
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     // Initializing the AppMetrica SDK.
-     let configuration = YMMYandexMetricaConfiguration.init(apiKey: "36538b4c-0eb1-408f-b8e5-c8786424d033")
-     YMMYandexMetrica.activate(with: configuration!)
+    let configuration = YMMYandexMetricaConfiguration.init(apiKey: "36538b4c-0eb1-408f-b8e5-c8786424d033")
     configuration?.sessionTimeout = 15
-    YMMYandexMetrica.activate(with: configuration!)
+    //    YMMYandexMetrica.activate(with: configuration!)
     
-    FirebaseApp.configure()
-    Database.database().isPersistenceEnabled = true
-    Auth.auth().languageCode = "ru";
-    #if DEBUG
+    //    FirebaseApp.configure()
+    //    Database.database().isPersistenceEnabled = true
+    //    Auth.auth().languageCode = "ru";
+#if DEBUG
     UIApplication.shared.isIdleTimerDisabled = true
-    #endif
+#endif
     return true
   }
   
@@ -61,6 +58,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate  {
      error conditions that could cause the creation of the store to fail.
      */
     let container = NSPersistentContainer(name: "Todooshka")
+    
+    /*add necessary support for migration*/
+//    let description = NSPersistentStoreDescription()
+//    description.shouldMigrateStoreAutomatically = true
+//    description.shouldInferMappingModelAutomatically = true
+//    container.persistentStoreDescriptions =  [description]
+    /*add necessary support for migration*/
+    
     container.loadPersistentStores(completionHandler: { (storeDescription, error) in
       if let error = error as NSError? {
         // Replace this implementation with code to handle the error appropriately.

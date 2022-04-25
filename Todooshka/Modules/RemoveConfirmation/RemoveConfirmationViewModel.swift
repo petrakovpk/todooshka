@@ -8,7 +8,6 @@
 import RxFlow
 import RxSwift
 import RxCocoa
-import Firebase
 
 class RemoveConfirmationViewModel: Stepper {
   
@@ -21,8 +20,6 @@ class RemoveConfirmationViewModel: Stepper {
   //MARK: Init
   init(services: AppServices) {
     self.services = services
-    
   }
-
 }
 

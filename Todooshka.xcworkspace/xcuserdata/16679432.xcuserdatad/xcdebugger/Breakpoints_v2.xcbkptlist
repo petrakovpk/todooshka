@@ -3,4 +3,22 @@
    uuid = "A9B8914B-61ED-495C-85E5-3EE3A8758F1B"
    type = "0"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "60E754F5-5B26-417B-85EA-F2A6ED17A43B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Todooshka/Modules/Bird/BirdViewController.swift"
+            startingColumnNumber = "62"
+            endingColumnNumber = "86"
+            startingLineNumber = "240"
+            endingLineNumber = "240"
+            landmarkName = "configureDataSource()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

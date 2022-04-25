@@ -33,37 +33,47 @@ class TaskListFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-    case .taskListIsRequired:
+      
+      // Main Task List Is Required
+    case .MainTaskListIsRequired:
       return navigateToTaskList()
       
-    case .overdueTaskListIsRequired:
+      // Overdued Task List Is Required
+    case .OverduedTaskListIsRequired:
       return navigateToOverdueTaskFlow()
-    case .overdueTaskListIsCompleted:
-      return navigateBack()
       
-    case .ideaBoxTaskListIsRequired:
+      // Idea Task List Is Required
+    case .IdeaTaskListIsRequired:
       return navigateToIdeaBoxTaskList()
-    case .ideaBoxTaskListIsCompleted:
+      
+      // Task List Is Completed
+    case .TaskListIsCompleted:
       return navigateBack()
       
-    case .taskTypeIsRequired(let taskType):
-      return navigateToTaskType(taskType: taskType)
-    case .taskTypeIsCompleted:
+    case .CreateTaskTypeIsRequired:
+      return navigateToCreateTaskType()
+      
+    case .ShowTaskTypeIsRequired(let type):
+      return navigateToShowTaskType(type: type)
+      
+    case .TaskTypeProcessingIsCompleted:
       return navigateBack()
       
-    case .createTaskIsRequired(let status, let date):
-      return navigateToTask(taskFlowAction: .createTask(status: status, closedDate: date))
-    case .showTaskIsRequired(let task):
-      return navigateToTask(taskFlowAction: .showTask(task: task))
-    case .taskProcessingIsCompleted:
+    case .CreateTaskIsRequired(let status, let date):
+      return navigateToTask(taskFlowAction: .create(status: status, closed: date))
+    case .ShowTaskIsRequired(let task):
+      return navigateToTask(taskFlowAction: .show(task: task))
+      
+    case .TaskProcessingIsCompleted:
       return navigateBack()
       
-    case .taskTypesListIsRequired:
+    case .TaskTypesListIsRequired:
       return navigateToTaskTypesList()
-    case .taskTypesListIsCompleted:
+      
+    case .TaskTypesListIsCompleted:
       return navigateBack()
       
-    case .removeTaskConfirmationIsRequired:
+    case .RemoveTaskIsRequired:
       return navigateToRemoveConfirmation()
       
     default:
@@ -72,33 +82,42 @@ class TaskListFlow: Flow {
   }
   
   private func navigateToTaskList() -> FlowContributors {
-    let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services)
-    viewController.viewModel = viewModel
+    let viewController = MainTaskListViewController()
+    let sceneModel = MainTaskListSceneModel(services: services)
+    let viewModel = MainTaskListViewModel(services: services)
+    let taskListViewModel = TaskListViewModel(services: services, type: .Main)
+    viewController.sceneModel = sceneModel
+    viewController.mainViewModel = viewModel
+    viewController.taskListViewModel = taskListViewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.pushViewController(viewController, animated: false)
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: viewController,
+        withNextStepper: CompositeStepper(steppers: [viewModel, taskListViewModel])
+      )
+    )
   }
   
   private func navigateToRemoveConfirmation() -> FlowContributors {
     let alertFlow = AlertFlow(withServices: services)
     
-    Flows.use(alertFlow, when: .created) { [unowned self] root in
-        DispatchQueue.main.async {
-          root.modalPresentationStyle = .fullScreen
-            rootViewController.present(root, animated: true)
-        }
+    Flows.use(alertFlow, when: .created) { [self] root in
+      DispatchQueue.main.async {
+        root.modalPresentationStyle = .fullScreen
+        rootViewController.present(root, animated: true)
+      }
     }
     
     return .one(flowContributor: .contribute(withNextPresentable: alertFlow,
-                                             withNextStepper: OneStepper(withSingleStep: AppStep.removeTaskConfirmationIsRequired)))
+                                             withNextStepper: OneStepper(withSingleStep: AppStep.RemoveTaskIsRequired)))
   }
   
   private func navigateToOverdueTaskFlow() -> FlowContributors {
-    let viewController = OverdueTasksListViewController()
-    let viewModel = OverdueTaskListViewModel(services: services)
-    viewController.bindTo(with: viewModel)
+    let viewController = TaskListViewController()
+    let viewModel = TaskListViewModel(services: services, type: .Overdued)
+    viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
@@ -122,17 +141,26 @@ class TaskListFlow: Flow {
   }
   
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
-    let viewController = IdeaBoxTaskListViewController()
-    let viewModel = IdeaBoxTaskListViewModel(services: services)
+    let viewController = TaskListViewController()
+    let viewModel = TaskListViewModel(services: services, type: .Idea)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToTaskType(taskType: TaskType?) -> FlowContributors {
+  private func navigateToCreateTaskType() -> FlowContributors {
     let viewController = TaskTypeViewController()
-    let viewModel = TaskTypeViewModel(services: services, taskType: taskType)
+    let viewModel = TaskTypeViewModel(services: services, action: .create)
+    viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToShowTaskType(type: TaskType) -> FlowContributors {
+    let viewController = TaskTypeViewController()
+    let viewModel = TaskTypeViewModel(services: services, action: .show(type: type))
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)

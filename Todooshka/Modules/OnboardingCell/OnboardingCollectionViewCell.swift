@@ -45,7 +45,6 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
   //MARK: - Draw
   override func draw(_ rect: CGRect) {
     configureUI()
-    configureColor()
     bindToViewModel()
   }
 
@@ -59,29 +58,32 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
   
   //MARK: - Configure UI
   func configureUI() {
-    contentView.addSubview(descriptionTextView)
-    descriptionTextView.anchor(left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 32, bottomConstant: 100.adjusted, rightConstant: 32, heightConstant: 90.adjusted)
-    descriptionTextView.anchorCenterXToSuperview()
     
+    // adding
+    contentView.addSubview(descriptionTextView)
     contentView.addSubview(headerLabel)
-    headerLabel.anchor(bottom: descriptionTextView.topAnchor, bottomConstant: 26.adjusted, heightConstant: 25.adjusted)
-    headerLabel.anchorCenterXToSuperview()
-
     contentView.addSubview(imageView)
-    imageView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: headerLabel.topAnchor, right: contentView.rightAnchor, leftConstant: 16, bottomConstant: 20.adjusted, rightConstant: 16)
+    
+    // contentView
+    contentView.backgroundColor = .clear
+    
+    // containerView
     containerView.anchorCenterXToSuperview()
+    
+    // descriptionTextView
+    descriptionTextView.backgroundColor = .clear
+    descriptionTextView.textColor = Theme.Onboarding.text
+    descriptionTextView.anchorCenterXToSuperview()
+    descriptionTextView.anchor(left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 32, bottomConstant: 100.adjusted, rightConstant: 32, heightConstant: 90.adjusted)
+   
+    // headerLabel
+    headerLabel.textColor = Theme.App.text
+    headerLabel.anchorCenterXToSuperview()
+    headerLabel.anchor(bottom: descriptionTextView.topAnchor, bottomConstant: 26.adjusted, heightConstant: 25.adjusted)
+   
+    // imageView
+    imageView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: headerLabel.topAnchor, right: contentView.rightAnchor, leftConstant: 16, bottomConstant: 20.adjusted, rightConstant: 16)
+    
   }
   
-}
-
-
-extension OnboardingCollectionViewCell: ConfigureColorProtocol {
-  func configureColor() {
-    
-    contentView.backgroundColor = .clear
-    headerLabel.textColor = UIColor(named: "appText")
-    
-    descriptionTextView.backgroundColor = .clear
-    descriptionTextView.textColor = .santasGray
-  }
 }

@@ -31,9 +31,9 @@ class UserProfileSettingsCell: UITableViewCell {
     //layer.borderColor = UIColor(red: 0.094, green: 0.106, blue: 0.235, alpha: 1).cgColor
     
     imageView?.image = UIImage(named: imageName)?.template
-    imageView?.tintColor = UIColor(named: "appText")
+    imageView?.tintColor = Theme.App.text
     textLabel?.text = text
-    textLabel?.textColor =  UIColor(named: "appText")
+    textLabel?.textColor =  Theme.App.text
   }
   
 }

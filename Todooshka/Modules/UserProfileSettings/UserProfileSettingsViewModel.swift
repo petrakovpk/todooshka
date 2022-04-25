@@ -9,7 +9,6 @@
 import RxFlow
 import RxSwift
 import RxCocoa
-import Firebase
 import UIKit
 import CoreData
 
@@ -38,7 +37,6 @@ class UserProfileSettingsViewModel: Stepper {
   //MARK: - Init
   init(services: AppServices) {
     self.services = services
-    
   }
   
   func transform(input: Input) -> Output {
@@ -47,19 +45,20 @@ class UserProfileSettingsViewModel: Stepper {
     
     let dataSource = Driver.just([UserProfileSettingsSectionModel(header: "Удаленные данные", items: [showDeletedTaskTypesItem, showDeletedTasksItem])])
     
-    let itemSelected = input.selection.withLatestFrom(dataSource) { indexPath, dataSource in
-      let item = dataSource[indexPath.section].items[indexPath.item]
-      switch item.type {
-      case .deletedTaskListIsRequired:
-        self.steps.accept(AppStep.deletedTaskListIsRequired)
-      case .deletedTaskTypeListIsRequired:
-        self.steps.accept(AppStep.deletedTaskTypeListIsRequired)
-      default:
-        return
+    let itemSelected = input.selection
+      .withLatestFrom(dataSource) { indexPath, dataSource in
+        let item = dataSource[indexPath.section].items[indexPath.item]
+        switch item.type {
+        case .deletedTaskListIsRequired:
+          self.steps.accept(AppStep.DeletedTaskListIsRequired)
+        case .deletedTaskTypeListIsRequired:
+          self.steps.accept(AppStep.DeletedTaskTypeListIsRequired)
+        default:
+          return
+        }
       }
-    }
     
-    let backButtonClick = input.backButtonClickTrigger.map { self.steps.accept(AppStep.userSettingsIsCompleted) }
+    let backButtonClick = input.backButtonClickTrigger.map { self.steps.accept(AppStep.UserSettingsIsCompleted) }
     
     return Output(
       backButtonClick: backButtonClick,
@@ -72,6 +71,6 @@ class UserProfileSettingsViewModel: Stepper {
     UserDefaults.standard.set(false, forKey: "isOnboardingCompleted")
   }
   
-
+  
   
 }

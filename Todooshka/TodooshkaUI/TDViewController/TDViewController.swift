@@ -13,6 +13,7 @@ class TDViewController: UIViewController {
   public let titleLabel = UILabel()
   public let headerView = UIView()
   public let backButton = UIButton(type: .custom)
+  
   public let saveButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setImage(UIImage(named: "tick-round")?.original, for: .normal)
@@ -21,48 +22,56 @@ class TDViewController: UIViewController {
     return button
   }()
   
+  private let safeAreaHeaderView = UIView()
+  private let dividerView = UIView()
+  
   //MARK: - Lifecycle
   open override func viewDidLoad() {
     super.viewDidLoad()
-    configureViewController()
+    configureHeader()
   }
   
   //MARK: - Configure
-  private func configureViewController() {
-    headerView.backgroundColor = UIColor(named: "navigationBarBackground")
+  private func configureHeader() {
     
-    let safeAreaHeaderView = UIView()
-    safeAreaHeaderView.backgroundColor = UIColor(named: "navigationBarBackground")
-    
+    //adding
     view.addSubview(safeAreaHeaderView)
-    safeAreaHeaderView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor)
-    
     view.addSubview(headerView)
-    headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: 55.adjusted)
-    
-    backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
     
     headerView.addSubview(backButton)
+    headerView.addSubview(saveButton)
+    headerView.addSubview(titleLabel)
+    headerView.addSubview(dividerView)
+    
+    // view
+    view.backgroundColor = Theme.App.background
+
+    // safeAreaHeaderView
+    safeAreaHeaderView.backgroundColor = Theme.Header.background
+    safeAreaHeaderView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor)
+
+    // headerView
+    headerView.backgroundColor = Theme.Header.background
+    headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: 55.adjusted)
+    
+    // backButton
+    backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
     backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
-    headerView.addSubview(saveButton)
+    // saveButton
     saveButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
+    // titleLabel
     titleLabel.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
     titleLabel.textAlignment = .center
-    
-    headerView.addSubview(titleLabel)
     titleLabel.anchorCenterXToSuperview()
     titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0, bottomConstant: 20.adjusted, rightConstant: 0)
     
-    let dividerView = UIView()
-    dividerView.backgroundColor = UIColor(named: "navigationBarDividerBackground")
-    
-    headerView.addSubview(dividerView)
+    // dividerView
+    dividerView.backgroundColor = Theme.Header.dividerBackground
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
     
-    view.backgroundColor = UIColor(named: "appBackground")
-    backButton.imageView?.tintColor = UIColor(named: "appText")
+    // backButton
+    backButton.imageView?.tintColor = Theme.App.text
   }
-  
 }

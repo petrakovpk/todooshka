@@ -8,7 +8,6 @@
 import RxFlow
 import RxSwift
 import RxCocoa
-import Firebase
 
 class DeletedTasksListViewModel: Stepper {
   
@@ -28,7 +27,7 @@ class DeletedTasksListViewModel: Stepper {
     formatter.timeZone =  TimeZone(abbreviation: "UTC")
     formatter.locale = Locale(identifier: "ru")
     
-    services.coreDataService.tasks.map({$0.filter{ $0.status == .deleted }}).bind { [weak self] tasks in
+    services.tasksService.tasks.map({$0.filter{ $0.status == .deleted }}).bind { [weak self] tasks in
       guard let self = self else { return }
       
       let tasksDict = Dictionary(grouping: tasks , by: {$0.createdDate.beginning(of: .day)}).sorted{ $0.key! > $1.key! }
@@ -41,7 +40,7 @@ class DeletedTasksListViewModel: Stepper {
       }
     }.disposed(by: disposeBag)
     
-    services.coreDataService.allTaskRemovingIsRequired.bind(to: showAlert).disposed(by: disposeBag)
+    services.tasksService.allTaskRemovingIsRequired.bind(to: showAlert).disposed(by: disposeBag)
   }
   
   //MARK: - Handlers
@@ -55,23 +54,23 @@ class DeletedTasksListViewModel: Stepper {
   }
   
   func removeAllTasksButtonClick() {
-    services.coreDataService.allTaskRemovingIsRequired.accept(true)
+    services.tasksService.allTaskRemovingIsRequired.accept(true)
   }
   
   func alertCancelButtonClicked() {
-    services.coreDataService.allTaskRemovingIsRequired.accept(false)
+    services.tasksService.allTaskRemovingIsRequired.accept(false)
   }
   
   func alertDeleteButtonClicked() {
     
     let tasks = dataSource.value.flatMap{ $0.items }
     
-    services.coreDataService.removeTasksFromCoreData(tasks: tasks) {[weak self] error in
+    services.tasksService.removeTasks(tasks: tasks) {[weak self] error in
       guard let self = self else { return }
       if let error = error {
         print(error.localizedDescription)
       }
-      self.services.coreDataService.allTaskRemovingIsRequired.accept(false)
+      self.services.tasksService.allTaskRemovingIsRequired.accept(false)
     }
   }
   

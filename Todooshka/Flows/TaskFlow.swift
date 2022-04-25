@@ -33,17 +33,19 @@ class TaskFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-    case .createTaskIsRequired:
-      return navigateToTask(taskFlowAction: .createTask(status: .created, closedDate: nil) )
-    case .taskTypesListIsRequired:
+    case .CreateTaskIsRequired:
+      return navigateToTask(taskFlowAction: .create(status: .Created, closed: nil) )
+    case .TaskTypesListIsRequired:
       return navigateToTaskTypesList()
-    case .taskTypesListIsCompleted:
+    case .TaskTypesListIsCompleted:
       return navigateBack()
-    case .taskProcessingIsCompleted:
+    case .TaskProcessingIsCompleted:
       return dismissTask()
-    case .taskTypeIsRequired(let taskType):
-      return navigateToTaskType(taskType: taskType)
-    case .taskTypeIsCompleted:
+    case .CreateTaskTypeIsRequired:
+      return navigateToCreateTaskType()
+    case .ShowTaskTypeIsRequired(let type):
+      return navigateToShowTaskType(type: type)
+    case .TaskTypeProcessingIsCompleted:
       return navigateBack()
     default:
       return .none
@@ -67,9 +69,18 @@ class TaskFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToTaskType(taskType: TaskType?) -> FlowContributors {
+  private func navigateToCreateTaskType() -> FlowContributors {
     let viewController = TaskTypeViewController()
-    let viewModel = TaskTypeViewModel(services: services, taskType: taskType)
+    let viewModel = TaskTypeViewModel(services: services, action: .create)
+    viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToShowTaskType(type: TaskType) -> FlowContributors {
+    let viewController = TaskTypeViewController()
+    let viewModel = TaskTypeViewModel(services: services, action: .show(type: type))
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
@@ -85,5 +96,4 @@ class TaskFlow: Flow {
     rootViewController.dismiss(animated: true)
     return .none
   }
-  
 }
