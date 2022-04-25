@@ -20,6 +20,7 @@
     <entity name="PointCoreData" representedClassName="PointCoreData" syncable="YES">
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="currency" attributeType="String"/>
+        <attribute name="taskUID" optional="YES" attributeType="String"/>
         <attribute name="uid" attributeType="String"/>
     </entity>
     <entity name="TaskCoreData" representedClassName="TaskCoreData" elementID="CoreDataTask" syncable="YES">
@@ -47,7 +48,7 @@
     <elements>
         <element name="BirdCoreData" positionX="45" positionY="-36" width="128" height="149"/>
         <element name="EggCoreData" positionX="27" positionY="-27" width="128" height="104"/>
-        <element name="PointCoreData" positionX="-136.0000610351562" positionY="-99.328857421875" width="128" height="74"/>
+        <element name="PointCoreData" positionX="-136.0000610351562" positionY="-99.328857421875" width="128" height="89"/>
         <element name="TaskCoreData" positionX="36" positionY="-135" width="128" height="179"/>
         <element name="TypeCoreData" positionX="189.2603149414062" positionY="-106.2628479003906" width="128" height="149"/>
     </elements>

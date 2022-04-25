@@ -127,7 +127,8 @@ class UserProfileViewModel: Stepper {
         }
         .count
         .string
-      }.asDriver(onErrorJustReturn: "")
+      }
+      .asDriver(onErrorJustReturn: "")
     
     let diamondScoreLabel = services.pointService.points
       .map {

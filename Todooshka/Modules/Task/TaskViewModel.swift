@@ -21,6 +21,7 @@ class TaskViewModel: Stepper {
   
   //MARK: - Properties
   var task: Task
+  var type: TaskType
   let taskIsNew: Bool
   let steps = PublishRelay<Step>()
   let services: AppServices
@@ -60,15 +61,24 @@ class TaskViewModel: Stepper {
     let selection: Driver<TaskType>
     
     // buttons
-    let backButtonClick: Driver<Void>
     let configureTaskTypesButtonClick: Driver<Void>
-    let completeButtonClick: Driver<Void>
+    
+    // back
+    let navigateBack: Driver<Void>
     
     // alert
-    let alertOkButtonClick: Driver<Void>
+    let showAlert: Driver<Void>
+    let hideAlert: Driver<Void>
 
     // save
-    let saveTaskTrigger: Driver<Void>
+    let saveTask: Driver<Task>
+    
+    // point
+    let getPoint: Driver<Task>
+    
+    // egg
+    let createEgg: Driver<Task>
+    let removeEgg: Driver<Task>
     
     // is task is New?
     let taskIsNew: Driver<Bool>
@@ -84,35 +94,29 @@ class TaskViewModel: Stepper {
       self.task.status = status
       self.task.closed = closed
       self.taskIsNew = true
+      self.type = TaskType.Standart.Empty
     case .show(let task):
       self.task = task
       self.taskIsNew = false
-    }
-  
-    // Убираем все типы, которые были выбраны
-    if var oldSelectedType = services.typesService.types.value.first(where: { $0.isSelected }) {
-      oldSelectedType.isSelected = false
-      services.typesService.saveTypesToCoreData(types: [oldSelectedType])
+      self.type = services.typesService.types.value.first(where: { $0.UID == task.typeUID }) ?? TaskType.Standart.Empty
     }
     
-    // Записываем выбранный тип
-    if var newSelectedType = services.typesService.types.value
-      .first(where: { $0.UID == self.task.typeUID }) {
-      newSelectedType.isSelected = true
-      services.typesService.saveTypesToCoreData(types: [newSelectedType])
+    // Убираем все типы, которые были выбраны
+    for var selectedType in services.typesService.types.value.filter({ $0.isSelected }) {
+      selectedType.isSelected = false
+      services.typesService.saveTypesToCoreData(types: [selectedType])
     }
   }
   
   //MARK: - Transform
   func transform(input: Input) -> Output {
     
+    // task in new
+    let taskIsNew = Driver<Bool>.just(self.taskIsNew)
     
     // text
     let text = input.text
       .startWith(self.task.text)
-      .do { text in // ok
-        self.task.text = text
-      }
     
     // showDescriptionPlaceholder
     let showDescriptionPlaceholder = Driver
@@ -129,9 +133,6 @@ class TaskViewModel: Stepper {
       .withLatestFrom(showDescriptionPlaceholder) { $1 ? "" : $0 }
       .asDriver()
       .distinctUntilChanged()
-      .do { description in // ok
-        self.task.description = description
-      }
     
     // descriptionWithPlaceholder
     let descriptionWithPlaceholder = showDescriptionPlaceholder
@@ -143,11 +144,7 @@ class TaskViewModel: Stepper {
       .asDriver(onErrorJustReturn: [])
     
     let selectedType = types
-      .map {
-        $0.filter {
-          $0.isSelected
-        }.first ?? .Standart.Empty
-      }
+      .map { $0.filter { $0.isSelected }.first ?? .Standart.Empty }
     
     // dataSource
     let dataSource = types
@@ -158,6 +155,7 @@ class TaskViewModel: Stepper {
     let selection = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> TaskType in
         return dataSource[indexPath.section].items[indexPath.item] }
+      .startWith(self.type)
       .withLatestFrom(selectedType) { newSelectedType, oldSelectedType -> TaskType in
         var newSelectedType = newSelectedType
         var oldSelectedType = oldSelectedType
@@ -169,77 +167,89 @@ class TaskViewModel: Stepper {
 
         return newSelectedType
       }
-      .do { type in
-        guard self.task.text.isEmpty == false else { return }
-        self.task.typeUID = type.UID // ok
-        self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
-      }
+    
+    let isCompleted = input.completeButtonClickTrigger
+      .map { true }
+      .startWith(false)
     
     // task
     let task = Driver<Task>
-      .combineLatest(text, description, selection) { (text, description, type) -> Task in
-        return Task(UID: self.task.UID, text: text, description: description, type: type, status: self.task.status, created: self.task.created)
+      .combineLatest(text, description, selection, isCompleted) { (text, description, type, isCompleted) -> Task in
+        return Task(
+          UID: self.task.UID,
+          text: text,
+          description: description,
+          type: type,
+          status: isCompleted ? .Completed : self.task.status,
+          created: self.task.created,
+          closed: isCompleted ? Date() : nil
+        )
       }
       .startWith(self.task)
-    
-    // back button click
-    let backButtonClick = input.backButtonClickTrigger
-      .do { _ in
-        self.steps.accept(AppStep.TaskProcessingIsCompleted)
-      }
     
     // configure task button click
     let configureTaskTypeButtonClick = input.configureTaskTypesButtonClickTrigger
       .do { _ in
         self.steps.accept(AppStep.TaskTypesListIsRequired)
       }
-    
-    // complete button click
-    let completeButtonClick = input.completeButtonClickTrigger
-      .do { _ in
-        self.task.status = .Completed
-        self.task.closed = Date()
-      }
-      .do { _ in
-        self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
-        
-        if let egg = self.services.birdService.eggs
-          .value
-          .first(where: { $0.taskUID == self.task.UID }) {
-          self.services.birdService.removeEgg(egg: egg)
-        }
-      }
-    
-    // save task
+
+    // save
     let saveTaskTrigger = Driver
-      .of(input.saveTaskButtonClickTrigger, input.textFieldEditingDidEndOnExit)
+      .of(
+        input.saveTaskButtonClickTrigger,
+        input.textFieldEditingDidEndOnExit,
+        input.completeButtonClickTrigger,
+        selection.map { _ in return () }
+      )
       .merge()
-      .filter {
-        self.task.text.isEmpty == false
+      
+    let saveTask = saveTaskTrigger
+      .withLatestFrom(task) { $1 }
+      .filter{ $0.text.isEmpty == false }
+      .asObservable()
+      .save(with: services)
+      .asDriver(onErrorJustReturn: .emptyTask)
+    
+    // egg
+    let createEgg = saveTask
+      .filter{ self.taskIsNew && $0.status == .Created }
+      .do { task in
+        self.services.birdService.createEgg(task: task)
       }
-      .do { _ in
-        if let position = self.services.birdService.getFreePosition(eggs: self.services.birdService.eggs.value),
-           self.task.status == .Created {
-            let egg = Egg(UID: UUID().uuidString, type: .Chiken, taskUID: self.task.UID, position: position, created: Date())
-          self.services.birdService.saveEgg(egg: egg)
-        }
+    
+    let removeEgg = input.completeButtonClickTrigger
+      .withLatestFrom(task) { $1 }
+      .asDriver()
+      .do { task in
+        self.services.birdService.removeEgg(task: task)
       }
+    
+    // добавляем пойнт
+    let getPoint = input.completeButtonClickTrigger
+      .withLatestFrom(task) { $1 }
+      .asDriver()
+      .do { task in
+        self.services.pointService.createPoint(task: task)
+      }
+    
+    
+    // navigateBack
+    let navigateBack = Driver
+      .of(
+        input.saveTaskButtonClickTrigger,
+        input.textFieldEditingDidEndOnExit,
+        input.backButtonClickTrigger,
+        input.alertCompleteTaskOkButtonClickTrigger
+      )
+      .merge()
       .do { _ in
-        self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
         self.steps.accept(AppStep.TaskProcessingIsCompleted)
       }
     
     // alert
-    let alertOkButtonClick = input.alertCompleteTaskOkButtonClickTrigger
-      .do { _ in
-        self.steps.accept(AppStep.TaskProcessingIsCompleted)
-      }
+    let showAlert = input.completeButtonClickTrigger
+    let hideAlert = input.alertCompleteTaskOkButtonClickTrigger
    
-    // task in new
-    let taskIsNew = Driver<Bool>.just(self.taskIsNew)
-    
-    
-    
     return Output(
       // text
       text: text,
@@ -249,13 +259,19 @@ class TaskViewModel: Stepper {
       dataSource: dataSource,
       selection: selection,
       // buttons
-      backButtonClick: backButtonClick,
       configureTaskTypesButtonClick: configureTaskTypeButtonClick,
-      completeButtonClick: completeButtonClick,
+      // back
+      navigateBack: navigateBack,
       // Complete Task Alert
-      alertOkButtonClick: alertOkButtonClick,
+      showAlert: showAlert,
+      hideAlert: hideAlert,
       // save
-      saveTaskTrigger: saveTaskTrigger,
+      saveTask: saveTask,
+      // point
+      getPoint: getPoint,
+      // egg
+      createEgg: createEgg,
+      removeEgg: removeEgg,
       // taskIsNew
       taskIsNew: taskIsNew
     )

@@ -15,7 +15,7 @@ protocol HasTasksService {
 }
 
 class TasksService {
-  
+
   // MARK: - Properties
   let appDelegate = UIApplication.shared.delegate as! AppDelegate
   var managedContext: NSManagedObjectContext {

@@ -153,11 +153,20 @@ class TaskListViewModel: Stepper {
         switch mode {
         case .Task(var task):
           task.status = .Deleted
+          
+          // удаляем задачу
           self.services.tasksService.saveTasksToCoreData(tasks: [task])
+          
+          // убираем алерт
           self.services.tasksService.removeTrigger.accept(nil)
-          if let egg = self.services.birdService.eggs.value.first(where: { $0.taskUID == task.UID }) {
-            self.services.birdService.removeEgg(egg: egg)
-          }
+          
+          // удаляем пойнт
+          self.services.pointService.removePoint(task: task)
+          
+          // удаляем яйцо
+          self.services.birdService.removeEgg(task: task)
+          
+      
           return
         case .DeletedTasks:
           let tasks = self.services.tasksService.tasks.value.filter{ $0.status == .Deleted }

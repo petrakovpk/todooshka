@@ -27,6 +27,15 @@ class PointService {
   // MARK: - Init
   init() {
 
+    // Get Points from Core Data
+    for pointCoreData in getPointsCoreData() {
+      if let point = Point(pointCoreData: pointCoreData) {
+        self.points.accept(self.points.value + [point])
+      }
+    }
+    
+    observeData()
+    
   }
   
   // MARK: - Get Data From Core Data
@@ -41,8 +50,16 @@ class PointService {
   }
   
   // MARK: - Save Data To Core Data
-  func createOneFeather(completion: @escaping () -> Result<Point, Error>) {
-
+  func createPoint(task: Task) {
+    if points.value.count(where: { $0.created >= Date().startOfDay }) < 6 {
+      self.points.accept(self.points.value + [Point(UID: UUID().uuidString, currency: .Feather, created: Date(), task: task)])
+    }
+  }
+  
+  func removePoint(task: Task) {
+    if let point = points.value.first(where: { $0.taskUID == task.UID }) {
+      self.removePoint(point: point)
+    }
   }
   
   func savePointToCoreData(point: Point) {
@@ -69,7 +86,26 @@ class PointService {
   }
   
   
-  // MARK: - Remove Data To Core Data
+  // MARK: - Remove Data From Core Data
+  func removePoint(point: Point) {
+    do {
+      let fetchRequest = PointCoreData.fetchRequest()
+      fetchRequest.predicate = NSPredicate(
+        format: "%K == %@",
+        argumentArray: ["uid", point.UID]
+      )
+      
+      for pointCoreData in try managedContext.fetch(fetchRequest) {
+        try managedContext.delete(pointCoreData)
+      }
+      try managedContext.save()
+    }
+    
+    catch {
+      print(error.localizedDescription)
+    }
+  }
+  
   func removeAllPointsFromCoreData() {
     do {
       for point in try managedContext.fetch(PointCoreData.fetchRequest()) {

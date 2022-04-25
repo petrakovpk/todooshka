@@ -58,13 +58,14 @@ struct Task: IdentifiableType, Equatable {
     self.created = created
   }
   
-  init(UID: String, text: String, description: String, type: TaskType, status: TaskStatus, created: Date) {
+  init(UID: String, text: String, description: String, type: TaskType, status: TaskStatus, created: Date, closed: Date?) {
     self.UID = UID
     self.text = text
     self.description = description
     self.status = status
     self.created = created
     self.typeUID = type.UID
+    self.closed = closed
   }
   
   init?(taskCoreData: TaskCoreData) {

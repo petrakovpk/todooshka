@@ -11,12 +11,14 @@ struct Point {
   let UID: String
   let currency: Currency
   let created: Date
+  let taskUID: String
   
   // MARK: - Init
-  init(UID: String, currency: Currency, created: Date) {
+  init(UID: String, currency: Currency, created: Date, task: Task) {
     self.UID = UID
     self.currency = currency
     self.created = created
+    self.taskUID = task.UID
   }
   
   init?(pointCoreData: PointCoreData) {
@@ -24,5 +26,6 @@ struct Point {
     self.UID = pointCoreData.uid
     self.currency = currency
     self.created = pointCoreData.created
+    self.taskUID = pointCoreData.taskUID
   }
 }

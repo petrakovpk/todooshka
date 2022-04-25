@@ -52,7 +52,7 @@ class TaskListCellModel: Stepper {
     let repeatButtonClick: Driver<Void>
     let repeatButtonIsHidden: Driver<Bool>
     
-    // actions 
+    // actions
     let isHidden: Driver<Bool>
     
     // dataSource
@@ -77,7 +77,7 @@ class TaskListCellModel: Stepper {
     let type = Driver<TaskType>.just(
       self.services.typesService.types.value.first{ $0.UID == self.task.typeUID } ?? .Standart.Empty
     )
-
+    
     // timer
     let timer = Observable<Int>
       .timer(
@@ -100,8 +100,8 @@ class TaskListCellModel: Stepper {
     
     // repeatButtonIsHidden
     let repeatButtonIsHidden = Driver<Bool>.just(self.repeatButtonIsHidden(task: self.task))
-  
-  
+    
+    // taskTimeLeftViewIsHidden
     let taskTimeLeftViewIsHidden = repeatButtonIsHidden
       .map { !$0 }
     
@@ -114,7 +114,12 @@ class TaskListCellModel: Stepper {
         self.task.planned = nil
       }
       .do { _ in
+        
+        // сохраняем таску
         self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
+        
+        // создаем яйцо
+        self.services.birdService.createEgg(task: self.task)
       }
     
     // isHidden
@@ -200,7 +205,12 @@ extension TaskListCellModel: SwipeCollectionViewCellDelegate {
       action.fulfill(with: .reset)
       self.task.status = .Completed
       self.task.closed = Date()
+      
+      // сохраняем яйцо
       self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
+      
+      // получаем очко
+      self.services.pointService.createPoint(task: self.task)
     }
     
     configure(action: deleteAction, with: .trash)

@@ -279,14 +279,18 @@ class TaskViewController: TDViewController {
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.selection.drive(),
       // buttons
-      outputs.backButtonClick.drive(),
+      outputs.navigateBack.drive(),
       outputs.configureTaskTypesButtonClick.drive(),
-      // Complete Task Alert
-      outputs.completeButtonClick.drive(showAlertBinder),
-      // Complete Task Alert
-      outputs.alertOkButtonClick.drive(hideAlertBinder),
+      // alert
+      outputs.showAlert.drive(showAlertBinder),
+      outputs.hideAlert.drive(hideAlertBinder),
       // save
-      outputs.saveTaskTrigger.drive(),
+      outputs.saveTask.drive(),
+      // point
+      outputs.getPoint.drive(),
+      // egg
+      outputs.createEgg.drive(),
+      outputs.removeEgg.drive(),
       // isNew
       outputs.taskIsNew.drive(taskIsNewBinder)
     ]
