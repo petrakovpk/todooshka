@@ -10,80 +10,111 @@ struct Theme {
   
   // App
   struct App {
-    static let background: UIColor? = .Theme.Selago_Haiti_8_10_32
-    static let text: UIColor? = .Theme.BlackPearl_White
-    static let textInverted: UIColor? = .Theme.White_BlackPearl
-    static let placeholder: UIColor? = .Theme.Martinique_a30_Martinique
+    static let background = Palette.DualColors.Selago_Haiti_8_10_32
+    static let text = Palette.DualColors.BlackPearl_White
+    static let textInverted = Palette.DualColors.White_BlackPearl
+    static let placeholder = Palette.DualColors.Martinique_a30_Martinique
   }
   
   // TabBar
   struct TabBar {
-    static let background: UIColor? = .Theme.Snuff_Haiti_18_22_55
-    static let selected: UIColor? = .Theme.BlueRibbon_White
-    static let unselected: UIColor? = .Theme.BlackPearl_a50_White_a30
+    static let background = Palette.DualColors.Snuff_Haiti_18_22_55
+    static let selected = Palette.DualColors.BlueRibbon_White
+    static let unselected = Palette.DualColors.BlackPearl_a50_White_a30
   }
   
   // MainTaskList
   struct MainTaskList {
-    static let buttonBackground: UIColor? = .Theme.TitanWhite_228_229_254_Haiti_17_20_52
+    static let buttonBackground = Palette.DualColors.TitanWhite_228_229_254_Haiti_17_20_52
   }
   
   // TaskListCell
   struct TaskListCell {
-    static let descriptionText: UIColor? = .Theme.BlackPearl_a60_White_a60
-    static let timeLeftViewBackground: UIColor? = .Theme.BlueBayoux_Haiti_10_13_36
+    static let descriptionText = Palette.DualColors.BlackPearl_a60_White_a60
+    static let timeLeftViewBackground = Palette.DualColors.BlueBayoux_Haiti_10_13_36
   }
   
   // TypeLargeCollectionViewCell
   struct TypeLargeCollectionViewCell {
-    static let selectedText: UIColor? = .white
-    static let selectedTint: UIColor? = .white
-    static let selectedBackground: UIColor? = .Palette.BlueRibbon
-    static let unselectedBackground: UIColor? = .Theme.White_BlackPearl
+    static let selectedText = UIColor.white
+    static let selectedTint = UIColor.white
+    static let selectedBackground = Palette.SingleColors.BlueRibbon
+    static let unselectedBackground = Palette.DualColors.White_BlackPearl
   }
-  
   
   // TypeSmallCollectionViewCell
   struct TypeSmallCollectionViewCell {
-    static let selectedText: UIColor? = .black
-    static let selectedTint: UIColor? = .black
-    static let selectedBackground: UIColor? = .Palette.Shamrock
-    static let unselectedBackground: UIColor? = .Theme.White_BlackPearl
+    static let selectedText = UIColor.black
+    static let selectedTint = UIColor.black
+    static let selectedBackground = Palette.SingleColors.Shamrock
+    static let unselectedBackground = Palette.DualColors.White_BlackPearl
   }
   
   // Cell
   struct Cell {
-    static let background: UIColor? = .Theme.TitanWhite_244_245_255_Haiti_16_18_54
-    static let border: UIColor? = .Theme.Periwinkle_PortGore
+    static let background = Palette.DualColors.TitanWhite_244_245_255_Haiti_16_18_54
+    static let border = Palette.DualColors.Periwinkle_PortGore
   }
   
   // Header
   struct Header {
-    static let background: UIColor? = .Theme.TitanWhite_228_229_254_Haiti_17_20_52
-    static let dividerBackground: UIColor? = .Theme.HawkesBlue_Haiti_7_9_30
+    static let background = Palette.DualColors.TitanWhite_228_229_254_Haiti_17_20_52
+    static let dividerBackground = Palette.DualColors.HawkesBlue_Haiti_7_9_30
   }
   
   // Onboarding
   struct Onboarding {
-    static let dotBackground: UIColor? = .Theme.PeriwinkleGray_Fiord
-    static let text: UIColor? = .Palette.SantasGray
+    static let dotBackground = Palette.DualColors.PeriwinkleGray_Fiord
+    static let text = Palette.SingleColors.SantasGray
   }
    
   // RoundButton
   struct RoundButton {
-    static let background: UIColor? = .Theme.BlackPearl_White?.withAlphaComponent(0.1)
-    static let tint: UIColor? = .Theme.BlackPearl_White
+    static let background = Palette.DualColors.BlackPearl_White?.withAlphaComponent(0.1)
+    static let tint = Palette.DualColors.BlackPearl_White
   }
   
   // Calendar
   struct Calendar {
     
     struct Cell {
-      static let border: UIColor? = .Palette.BlueRibbon
-      static let selectedBackground: UIColor? = .Palette.BlueRibbon
+      static let border = Palette.SingleColors.BlueRibbon
+      static let selectedBackground = Palette.SingleColors.BlueRibbon
     }
     
-    static let background: UIColor? = .Theme.Selago_PortGore
-    static let divider: UIColor? = .Theme.MoonRaker_PortGore
+    static let background = Palette.DualColors.Selago_PortGore
+    static let divider = Palette.DualColors.MoonRaker_PortGore
+  }
+  
+  // Alert
+  struct BuyAlertView {
+    static let width = UIScreen.main.bounds.width * 2 / 3
+    static let height = UIScreen.main.bounds.height / 3
+    static let background = UIColor.black.withAlphaComponent(0.5)
+    
+    struct eggImageView {
+      static let width = Theme.BuyAlertView.width / 4
+      static let height = Theme.BuyAlertView.eggImageView.width * 1.3
+      static let topConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2
+      static let leftConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2 + 16
+    }
+    
+    struct birdImageView {
+      static let width = Theme.BuyAlertView.width / 4
+      static let height = Theme.BuyAlertView.eggImageView.width * 1.3
+      static let topConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2
+      static let rightConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2 + 16
+    }
+    
+    struct cancelButton {
+      static let width = Theme.BuyAlertView.width / 2 - 16 - 8
+      static let height = 50
+    }
+    
+    struct buyButton {
+      static let width = Theme.BuyAlertView.width / 2 - 16 - 8
+      static let height = 50
+    }
+    
   }
 }

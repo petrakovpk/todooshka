@@ -57,7 +57,7 @@ class TaskTypeListCollectionViewCell: SwipeCollectionViewCell {
     
     // repeatButton
     repeatButton.setImage(UIImage(named: "refresh-circle")?.original, for: .normal)
-    repeatButton.backgroundColor = .Palette.BlueRibbon
+    repeatButton.backgroundColor = Palette.SingleColors.BlueRibbon
     repeatButton.cornerRadius = 25 / 2
     repeatButton.setAttributedTitle(attributedTitle , for: .normal)
     repeatButton.setTitleColor(.white, for: .normal)

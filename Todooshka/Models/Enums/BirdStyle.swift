@@ -6,6 +6,7 @@
 //
 
 enum BirdStyle: String {
+  
   // Курица
   case Simple = "Simple"
   // Пингвин
@@ -20,7 +21,8 @@ enum BirdStyle: String {
   case Kid = "Kid"
   // Дракон
   case Sport = "Sport"
-  // func
+  
+  // index
   var index: Int {
     switch self {
     case .Simple:
@@ -37,6 +39,25 @@ enum BirdStyle: String {
       return 5
     case .Kid:
       return 6
+    }
+  }
+  
+  var imageName: String {
+    switch self {
+    case .Simple:
+      return "обычный"
+    case .Student:
+      return "студент"
+    case .Business:
+      return "деловой"
+    case .Cook:
+      return "повар"
+    case .Fashion:
+      return "модный"
+    case .Sport:
+      return "спортивный"
+    case .Kid:
+      return "ребенок"
     }
   }
 }

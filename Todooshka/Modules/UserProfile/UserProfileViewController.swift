@@ -56,7 +56,7 @@ class UserProfileViewController: UIViewController {
     let button = UIButton(type: .system)
     button.setTitle("Фабрика птиц", for: .normal)
     button.setTitleColor(.white, for: .normal)
-    button.backgroundColor = UIColor(hexString: "ec55d4")
+    button.backgroundColor = Palette.SingleColors.Cerise
     button.cornerRadius = 15
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     return button
@@ -105,11 +105,12 @@ class UserProfileViewController: UIViewController {
   //MARK: - Configure UI
   func configureScene() {
     view.addSubview(sceneView)
-    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,  heightConstant: sceneView.frame.height)
     sceneView.presentScene(scene)
+    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,  heightConstant: sceneView.frame.height)
   }
   
   func configureUI() {
+    
     // collection view
     collectionView = UICollectionView(frame: .zero , collectionViewLayout: createCompositionalLayout())
     

@@ -79,7 +79,7 @@ class CalendarCell: UICollectionViewCell {
       return UIImage(named: "крылья_попугай")
     case 6:
       return UIImage(named: "крылья_орел")
-    case 7:
+    case 7 ... .max:
       return UIImage(named: "крылья_дракон")
     default:
       return nil

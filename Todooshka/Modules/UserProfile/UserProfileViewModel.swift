@@ -88,7 +88,7 @@ class UserProfileViewModel: Stepper {
             .adding(.month, value: month)
             .startOfMonth
           
-          for delta in 0...Calendar.current.numberOfDaysInMonth(for: start) {
+          for delta in 0...Calendar.current.numberOfDaysInMonth(for: start) - 1 {
             let date = start.adding(.day, value: delta)
             let completedTasks = completedTasks
               .filter { task -> Bool in

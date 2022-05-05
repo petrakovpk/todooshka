@@ -18,7 +18,7 @@ struct TaskType: IdentifiableType, Equatable  {
   var serialNum: Int
   var status: TypeStatus = .active
   var isSelected: Bool = false
-  var birdUID: String
+  var birdUID: String?
   
   //MARK: - Identity
   var identity: String {
@@ -56,6 +56,7 @@ struct TaskType: IdentifiableType, Equatable  {
   static func == (lhs: TaskType, rhs: TaskType) -> Bool {
     return lhs.identity == rhs.identity
     && lhs.isSelected == rhs.isSelected
+    && lhs.birdUID == rhs.birdUID
   }
 }
 

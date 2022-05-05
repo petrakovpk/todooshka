@@ -62,32 +62,6 @@ class TaskViewController: TDViewController {
     return textView
   }()
   
-  private let dateButton: UIButton = {
-    let button = UIButton(type: .custom)
-    button.layer.cornerRadius = 5
-    button.layer.borderWidth = 1.0
-    button.layer.borderColor = Theme.Cell.border?.cgColor
-    button.backgroundColor = Theme.Cell.background
-    
-    let attrString = NSAttributedString(string: "Сегодня", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium), NSAttributedString.Key.strokeColor: Theme.App.text])
-    button.setAttributedTitle(attrString, for: .normal)
-    
-    return button
-  }()
-  
-  private let timeButton: UIButton = {
-    let button = UIButton(type: .custom)
-    button.layer.cornerRadius = 5
-    button.layer.borderWidth = 1.0
-    button.layer.borderColor = Theme.Cell.border?.cgColor
-    button.backgroundColor = Theme.Cell.background
-    
-    let attrString = NSAttributedString(string: "В течение дня", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium), NSAttributedString.Key.strokeColor: Theme.App.text])
-    button.setAttributedTitle(attrString, for: .normal)
-    
-    return button
-  }()
-  
   private let typesButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setImage(UIImage(named: "settings")?.template , for: .normal)
@@ -101,13 +75,6 @@ class TaskViewController: TDViewController {
     button.setTitleColor(.black, for: .normal)
     button.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
     return button
-  }()
-  
-  private let errorLabel: UILabel = {
-    let label = UILabel()
-    label.font = UIFont.systemFont(ofSize: 12.adjusted, weight: .light)
-    label.textColor = UIColor(red: 0.937, green: 0.408, blue: 0.322, alpha: 1)
-    return label
   }()
   
   private var collectionView: UICollectionView!
@@ -158,7 +125,6 @@ class TaskViewController: TDViewController {
     view.addSubview(nameTextField)
     view.addSubview(typeLabel)
     view.addSubview(typesButton)
-    view.addSubview(errorLabel)
     view.addSubview(collectionView)
     view.addSubview(descriptionLabel)
     view.addSubview(descriptionTextView)
@@ -181,9 +147,6 @@ class TaskViewController: TDViewController {
     typesButton.imageView?.tintColor = Theme.RoundButton.tint
     typesButton.centerYAnchor.constraint(equalTo: typeLabel.centerYAnchor).isActive = true
     typesButton.anchor(right: view.rightAnchor, rightConstant: 16)
-    
-    // errorLabel
-    errorLabel.anchor(top: typeLabel.bottomAnchor, left: view.leftAnchor, topConstant: 4, leftConstant: 16)
     
     // collectionView
     collectionView.backgroundColor = UIColor.clear

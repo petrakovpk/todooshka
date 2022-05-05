@@ -46,9 +46,6 @@ class AppFlow: Flow {
     }
     
     //MARK: - Navigate func
-  
-  
-    
     private func navigateToOnboardingFlow() -> FlowContributors {
         let viewController = OnboardingViewController()
         let viewModel = OnboardingViewModel(services: services)

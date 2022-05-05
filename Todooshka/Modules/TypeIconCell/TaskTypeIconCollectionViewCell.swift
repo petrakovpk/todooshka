@@ -60,9 +60,9 @@ class TaskTypeIconCollectionViewCell: UICollectionViewCell {
   
   var isSelectedBinder: Binder<Bool> {
     return Binder(self, binding: { (cell, isSelected) in
-      cell.shapeLayer.fillColor =   isSelected ? UIColor.Palette.BlueRibbon?.cgColor : Theme.Cell.background?.cgColor
+      cell.shapeLayer.fillColor =   isSelected ? Palette.SingleColors.BlueRibbon?.cgColor : Theme.Cell.background?.cgColor
       cell.shapeLayer.strokeColor = isSelected ? nil : Theme.Cell.border?.cgColor
-      cell.shapeLayer.shadowColor = isSelected ? UIColor.Palette.BlueRibbon?.cgColor : UIColor.clear.cgColor
+      cell.shapeLayer.shadowColor = isSelected ? Palette.SingleColors.BlueRibbon?.cgColor : UIColor.clear.cgColor
       cell.imageView.tintColor =    isSelected ? UIColor.white : Theme.App.text
     })
   }

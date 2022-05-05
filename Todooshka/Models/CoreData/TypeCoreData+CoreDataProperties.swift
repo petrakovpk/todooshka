@@ -22,7 +22,7 @@ extension TypeCoreData {
   @NSManaged public var color: String
   @NSManaged public var icon: String
   @NSManaged public var isSelected: Bool
-  @NSManaged public var bird: String
+  @NSManaged public var bird: String?
   
   convenience init(context: NSManagedObjectContext, type: TaskType) {
     self.init(context: context)

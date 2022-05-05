@@ -28,7 +28,7 @@ class BirdService {
   // MARK: - Init
   init() {
     removeAllEggsCoreData()
-   // removeAllBirdsCoreData()
+    removeAllBirdsCoreData()
     
     // Get Birds from Core Data
     for birdCoreData in getBirdsCoreData() {
@@ -55,6 +55,7 @@ class BirdService {
     }
   }
   
+  // MARK: - Eggs
   func createEgg(task: Task) {
     if let position = getFreePosition(eggs: eggs.value) {
       let egg = Egg(UID: UUID().uuidString, type: .Chiken, taskUID: task.UID, position: position, created: Date())
@@ -67,7 +68,7 @@ class BirdService {
       removeEgg(egg: egg)
     }
   }
-  
+    
   // MARK: - Get Data From Core Data
  
   // birds

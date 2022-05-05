@@ -232,7 +232,6 @@ class TaskViewModel: Stepper {
         self.services.pointService.createPoint(task: task)
       }
     
-    
     // navigateBack
     let navigateBack = Driver
       .of(

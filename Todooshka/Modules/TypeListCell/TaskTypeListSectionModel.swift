@@ -7,11 +7,6 @@
 
 import RxDataSources
 
-//struct OrderedHeader {
-//  var text: String
-//  var orderNumber: Int
-//}
-
 struct TaskTypeListSectionModel: AnimatableSectionModelType {
     
     var identity: String {

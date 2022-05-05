@@ -40,7 +40,7 @@ final class OnboardingViewController: UIViewController {
     let attrString = NSAttributedString(string: "Войти в аккаунт / Зарегестрироваться", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     button.isHidden = true
-    button.backgroundColor = UIColor.Palette.BlueRibbon
+    button.backgroundColor = Palette.SingleColors.BlueRibbon
     button.setTitleColor(.white, for: .normal)
     return button
   }()
@@ -92,7 +92,7 @@ final class OnboardingViewController: UIViewController {
     
     // skipButton
     skipButton.cornerRadius = 25
-    skipButton.backgroundColor = UIColor.Palette.BlueRibbon
+    skipButton.backgroundColor = Palette.SingleColors.BlueRibbon
     skipButton.setTitleColor(.white, for: .normal)
     skipButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor , right: view.rightAnchor, leftConstant: 16, bottomConstant: (26 + 50).adjusted, rightConstant: 16, heightConstant: 50.adjusted)
     
@@ -116,7 +116,7 @@ final class OnboardingViewController: UIViewController {
     
     // leftDot
     leftDot.cornerRadius = 3
-    leftDot.backgroundColor = UIColor.Palette.BlueRibbon
+    leftDot.backgroundColor = Palette.SingleColors.BlueRibbon
     leftDot.removeAllConstraints()
     leftDot.anchor(top: centralDot.topAnchor, right: centralDot.leftAnchor, rightConstant: 10.0, widthConstant: 25, heightConstant: 6)
     
@@ -134,17 +134,17 @@ final class OnboardingViewController: UIViewController {
     centralDot.removeAllConstraints()
     centralDot.anchorCenterXToSuperview()
     centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: CGFloat(6 + 19 * centralDotPercent / 100).adjusted, heightConstant: 6)
-    centralDotPercent == 0 ? (leftDot.backgroundColor = Theme.Onboarding.dotBackground) : (centralDot.backgroundColor = UIColor.Palette.BlueRibbon)
+    centralDotPercent == 0 ? (leftDot.backgroundColor = Theme.Onboarding.dotBackground) : (centralDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // leftDot
     leftDot.removeAllConstraints()
     leftDot.anchor(top: centralDot.topAnchor, right: centralDot.leftAnchor, rightConstant: 10.0, widthConstant: CGFloat(6 + 19 * leftDotPercent / 100).adjusted, heightConstant: 6)
-    leftDotPercent == 0 ? (centralDot.backgroundColor = Theme.Onboarding.dotBackground) : (leftDot.backgroundColor = UIColor.Palette.BlueRibbon)
+    leftDotPercent == 0 ? (centralDot.backgroundColor = Theme.Onboarding.dotBackground) : (leftDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // rightDot
     rightDot.removeAllConstraints()
     rightDot.anchor(top: centralDot.topAnchor, left: centralDot.rightAnchor, leftConstant: 10.0, widthConstant: CGFloat(6 + 19 * rightDotPercent / 100).adjusted, heightConstant: 6)
-    rightDotPercent == 0 ? (rightDot.backgroundColor = Theme.Onboarding.dotBackground) : (rightDot.backgroundColor = UIColor.Palette.BlueRibbon)
+    rightDotPercent == 0 ? (rightDot.backgroundColor = Theme.Onboarding.dotBackground) : (rightDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     self.view.layoutIfNeeded()
   }
