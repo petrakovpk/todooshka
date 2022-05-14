@@ -29,10 +29,34 @@ extension ObservableType where Element == Task {
   }
   
   // save
-  func save(with service: HasTasksService) -> Observable<Task> {
+  func saveTask(service: HasTasksService) -> Observable<Task> {
     return self.do( onNext: { task in
       service.tasksService.saveTasksToCoreData(tasks: [task])
     })
+  }
+  
+  func changeTaskStatus(status: TaskStatus?) -> Observable<Task> {
+    return self.map { task in
+      if let status = status {
+        var task = task
+        task.status = status
+        return task
+      }
+      return task
+    }
+  }
+
+  
+  //
+  func makeTaskInProgressIfDraft() -> Observable<Task> {
+    return self.map { task in
+      if task.status == .Draft {
+        var task = task
+        task.status = .InProgress
+        return task
+      }
+      return task
+    }
   }
   
   // back

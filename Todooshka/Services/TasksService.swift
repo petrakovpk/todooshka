@@ -23,31 +23,34 @@ class TasksService {
   }
   
   let tasks = BehaviorRelay<[Task]>(value: [])
+ // var actions: [MainTaskListSceneAction] = []
   let removeTrigger = BehaviorRelay<RemoveMode?>(value: nil)
-  
   let reloadDataSource = BehaviorRelay<Void>(value: ())
   
   // MARK: - Init
   init() {
 
     // load tasks from Core Data
-    self.tasks.accept( getTasksFromCoreData()
-      .compactMap{ Task(taskCoreData: $0) }
-      .sorted{ $0.created < $1.created }
-    )
+    getTasksFromCoreData { tasksCoreData in
+      tasksCoreData.forEach { taskCoreData in
+        if let task = Task(taskCoreData: taskCoreData) {
+          task.status == .Draft ? removeTasksFromCoreData(tasks: [task]) : self.tasks.accept(self.tasks.value + [task])
+        }
+      }
+    }
     
     // start observing
     startObserveCoreData()
   }
   
   // MARK: - Get Data From Core Data
-  func getTasksFromCoreData() -> [TaskCoreData] {
+  func getTasksFromCoreData(completion: ([TaskCoreData]) -> ()) {
     do {
-      return try managedContext.fetch(TaskCoreData.fetchRequest())
+      completion(try managedContext.fetch(TaskCoreData.fetchRequest()))
     }
     catch {
       print(error.localizedDescription)
-      return []
+      completion([])
     }
   }
   

@@ -45,7 +45,7 @@ enum BirdClade: String {
   }
   
   // imageName
-  var imageName: String {
+  var stringForImage: String {
     switch self {
     case .Chiken:
       return "курица"
@@ -66,21 +66,8 @@ enum BirdClade: String {
   
   // image
   var image: UIImage? {
-    switch self {
-    case .Chiken:
-      return UIImage(named: "яйцо_курицы")
-    case .Penguin:
-      return UIImage(named: "яйцо_пингвина")
-    case .Ostrich:
-      return UIImage(named: "яйцо_страуса")
-    case .Parrot:
-      return UIImage(named: "яйцо_попугая")
-    case .Eagle:
-      return UIImage(named: "яйцо_орла")
-    case .Owl:
-      return UIImage(named: "яйцо_совы")
-    case .Dragon:
-      return UIImage(named: "яйцо_дракона")
-    }
+    return UIImage(named: "яйцо_" + stringForImage + "_без_трещин")
   }
+  
+  
 }

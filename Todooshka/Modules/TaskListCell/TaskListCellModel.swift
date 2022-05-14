@@ -95,7 +95,7 @@ class TaskListCellModel: Stepper {
     
     // timeLeftPercent
     let timeLeftPercent = timer
-      .map { _ in self.task.status == .Created ? self.task.secondsLeft / (24 * 60 * 60) : 0 }
+      .map { _ in self.task.status == .InProgress ? self.task.secondsLeft / (24 * 60 * 60) : 0 }
       .asDriver(onErrorJustReturn: 0)
     
     // repeatButtonIsHidden
@@ -108,7 +108,7 @@ class TaskListCellModel: Stepper {
     // repeatButton
     let repeatButton = input.repeatButtonClickTrigger
       .do { _ in
-        self.task.status = .Created
+        self.task.status = .InProgress
         self.task.created = Date()
         self.task.closed = nil
         self.task.planned = nil
@@ -119,7 +119,7 @@ class TaskListCellModel: Stepper {
         self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
         
         // создаем яйцо
-        self.services.birdService.createEgg(task: self.task)
+//        self.services.birdService.createEgg(task: self.task)
       }
     
     // isHidden
@@ -198,6 +198,7 @@ extension TaskListCellModel: SwipeCollectionViewCellDelegate {
       action.fulfill(with: .reset)
       self.task.status = .Idea
       self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
+      self.services.actionService.runActionsTrigger.accept(())
     }
     
     let completeTaskAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in

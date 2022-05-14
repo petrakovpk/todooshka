@@ -18,6 +18,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
   var coordinator = FlowCoordinator()
   
+  // serrvices
+  let actionService = ActionService()
   let birdService = BirdService()
   let birdTypeService = BirdTypeService()
   let pointService = PointService()
@@ -27,6 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   lazy var appServices = {
     return AppServices(
+      actionService: actionService,
       birdService: birdService,
       birdTypeService: birdTypeService,
       pointService: pointService,

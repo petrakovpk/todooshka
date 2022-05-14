@@ -69,7 +69,7 @@ struct Bird: IdentifiableType, Equatable {
   
   // MARK: - image
   func getImageForState(state: BirdState) -> UIImage? {
-    return UIImage(named: clade.imageName + "_" + style.imageName + "_" + state.imageName)
+    return UIImage(named: clade.stringForImage + "_" + style.stringForImage + "_" + state.stringForImage)
   }
   
 }
@@ -152,7 +152,7 @@ extension Bird {
   // Penguin
   struct Penguin {
     
-    static let Simple: Bird = Bird(UID: "PenguinSimple", name: "Курица", description: "Простая", clade: .Penguin, style: .Simple, price: 5, currency: .Feather, isBought: false)
+    static let Simple: Bird = Bird(UID: "PenguinSimple", name: "Курица", description: "Простая", clade: .Penguin, style: .Simple, price: 5, currency: .Feather, isBought: true)
     
     static let Student: Bird = Bird( UID: "PenguinStudent", name: "Ряба", description: "Так себе птица", clade: .Penguin, style: .Student, price: 2, currency: .Feather, isBought: false)
     

@@ -19,8 +19,7 @@ struct TypeSmallCollectionViewCellSectionModelItem: IdentifiableType, Equatable 
   
   // MARK: - Equatable
   static func == (lhs: TypeSmallCollectionViewCellSectionModelItem, rhs: TypeSmallCollectionViewCellSectionModelItem) -> Bool {
-    return lhs.type.birdUID == rhs.type.birdUID
-    && lhs.isSelected == rhs.isSelected
+    return lhs.isSelected == rhs.isSelected
     && lhs.isEnabled == rhs.isEnabled
   }
 }

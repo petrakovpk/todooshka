@@ -20,8 +20,8 @@ class MainTaskListViewController: UIViewController {
   let disposeBag = DisposeBag()
   
   // view models
-  var sceneModel: MainTaskListSceneModel!
-  var mainViewModel: MainTaskListViewModel!
+  var mainTaskListSceneModel: MainTaskListSceneModel!
+  var mainTaskListViewModel: MainTaskListViewModel!
   var taskListViewModel: TaskListViewModel!
   
   // MARK: - UI Elements
@@ -83,8 +83,8 @@ class MainTaskListViewController: UIViewController {
     return button
   }()
   
-  private let scene: TaskListScene? = {
-    let scene = SKScene(fileNamed: "TaskListScene") as? TaskListScene
+  private let scene: MainTaskListScene? = {
+    let scene = SKScene(fileNamed: "MainTaskListScene") as? MainTaskListScene
     scene?.scaleMode = .aspectFill
     return scene
   }()
@@ -93,8 +93,8 @@ class MainTaskListViewController: UIViewController {
     let view = SKView(frame: CGRect(
       center: .zero,
       size: CGSize(
-        width: Constants.Scene.width,
-        height: Constants.Scene.height)))
+        width: Theme.MainTaskListScene.Scene.width,
+        height: Theme.MainTaskListScene.Scene.height)))
     return view
   }()
   
@@ -129,18 +129,26 @@ class MainTaskListViewController: UIViewController {
     bindTaskListViewModel()
   }
   
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    navigationController?.tabBarController?.tabBar.isHidden = false
+    taskListViewModel.viewWillAppear()
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    mainTaskListSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
+    mainTaskListSceneModel.services.actionService.runActionsTrigger.accept(())
+  }
+  
+  // MARK: - Configure Scene
   func configureScene() {
     view.addSubview(sceneView)
     sceneView.presentScene(scene)
     sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,  heightConstant: sceneView.frame.height)
   }
   
-  override func viewWillAppear(_ animated: Bool) {
-    navigationController?.tabBarController?.tabBar.isHidden = false
-    taskListViewModel.viewWillAppear()
-  }
-  
-  //MARK: - ConfigureUI
+  // MARK: - ConfigureUI
   private func configureUI() {
     // collectionView
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
@@ -213,7 +221,7 @@ class MainTaskListViewController: UIViewController {
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(
       configureCell: { (_, collectionView, indexPath, task) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskListCell.reuseID, for: indexPath) as! TaskListCell
-        let cellViewModel = TaskListCellModel(services: self.mainViewModel.services, task: task)
+        let cellViewModel = TaskListCellModel(services: self.mainTaskListViewModel.services, task: task)
         cell.viewModel = cellViewModel
         cell.delegate = cellViewModel
         cell.disposeBag = DisposeBag()
@@ -245,11 +253,17 @@ class MainTaskListViewController: UIViewController {
     
     let input = MainTaskListSceneModel.Input()
     
-    let outputs = sceneModel.transform(input: input)
+    let outputs = mainTaskListSceneModel.transform(input: input)
     
     [
       outputs.background.drive(sceneBackgroundBinder),
-      outputs.actions.drive(actionsBinder)
+      // eggs
+//      outputs.createEggs.drive(),
+//      outputs.removeEggs.drive(),
+//      outputs.changeEggsClade.drive(),
+      // actions
+      outputs.saveAction.drive(),
+      outputs.runActions.drive(runActionsBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
@@ -261,7 +275,7 @@ class MainTaskListViewController: UIViewController {
       overduedButtonClickTrigger: overduedTasksButton.rx.tap.asDriver()
     )
     
-    let outputs = mainViewModel.transform(input: input)
+    let outputs = mainTaskListViewModel.transform(input: input)
     
     [
       outputs.ideaButtonClick.drive(),
@@ -311,10 +325,11 @@ class MainTaskListViewController: UIViewController {
     })
   }
   
-  var actionsBinder: Binder<[EggAction]> {
+  var runActionsBinder: Binder<[MainTaskListSceneAction]> {
     return Binder(self, binding: { (vc, actions) in
-      for action in actions {
-        vc.scene?.doAction(action: action)
+      if let scene = vc.scene {
+        scene.runActions(actions: actions)
+        vc.mainTaskListSceneModel.services.actionService.removeActions(actions: actions)
       }
     })
   }

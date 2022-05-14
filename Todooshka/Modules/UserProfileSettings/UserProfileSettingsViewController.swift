@@ -62,6 +62,11 @@ class UserProfileSettingsViewController: UIViewController {
     bindViewModel()
   }
   
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    viewModel.services.actionService.tabBarSelectedItem.accept(.UserProfile)
+  }
+  
   //MARK: - Configure UI
   func configureUI() {
     

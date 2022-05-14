@@ -42,7 +42,7 @@ enum BirdStyle: String {
     }
   }
   
-  var imageName: String {
+  var stringForImage: String {
     switch self {
     case .Simple:
       return "обычный"

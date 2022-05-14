@@ -12,7 +12,7 @@ enum BirdState: String {
   case LeftLegForward = "LeftLegForward"
   case RightLegForward = "RightLegForward"
   
-  var imageName: String {
+  var stringForImage: String {
     switch self {
     case .Normal:
       return "статика"
@@ -21,9 +21,9 @@ enum BirdState: String {
     case .RaisedWings:
       return "взмах_крыла"
     case .LeftLegForward:
-      return "левая_нога_вперед"
+      return "левая_вперед"
     case .RightLegForward :
-      return "правая_нога_вперед"
+      return "правая_вперед"
     }
   }
 }

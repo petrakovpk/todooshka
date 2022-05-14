@@ -115,6 +115,17 @@ struct Theme {
       static let width = Theme.BuyAlertView.width / 2 - 16 - 8
       static let height = 50
     }
-    
+  }
+  
+  struct MainTaskListScene {
+    struct Scene {
+      static let width = UIScreen.main.bounds.width
+      static let height = UIScreen.main.bounds.width * UIImage(named: "день01")!.size.height / UIImage(named: "день01")!.size.width
+      static let scale = UIScreen.main.bounds.width / UIImage(named: "день01")!.size.width
+    }
+    struct Egg {
+      static let scale = UIScreen.main.bounds.width / UIImage(named: "день01")!.size.width / 1.5
+    }
   }
 }
+

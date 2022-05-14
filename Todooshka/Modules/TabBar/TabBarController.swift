@@ -24,12 +24,18 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
   
   //MARK: - Bind
   func bindViewModel() {
-    
+
     let input = TabBarViewModel.Input(
-      createTaskButtonClickTrigger: customTabBar.addTaskButton.rx.tap.asDriver() 
+      createTaskButtonClickTrigger: customTabBar.addTaskButton.rx.tap.asDriver()
     )
     
-    let output = viewModel.transform(input: input)
-    output.createTask.drive().disposed(by: disposeBag)    
+    let outputs = viewModel.transform(input: input)
+    
+    [
+      outputs.createTask.drive()
+    ]
+      .forEach({ $0.disposed(by: disposeBag) })
+    
+   
   }
 }

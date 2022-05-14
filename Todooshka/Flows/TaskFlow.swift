@@ -34,7 +34,7 @@ class TaskFlow: Flow {
     guard let step = step as? AppStep else { return .none }
     switch step {
     case .CreateTaskIsRequired:
-      return navigateToTask(taskFlowAction: .create(status: .Created, closed: nil) )
+      return navigateToTask(taskFlowAction: .create(status: .InProgress, closed: nil) )
     case .TaskTypesListIsRequired:
       return navigateToTaskTypesList()
     case .TaskTypesListIsCompleted:

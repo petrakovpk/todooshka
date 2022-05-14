@@ -18,7 +18,7 @@ class UserProfileSettingsViewModel: Stepper {
   let steps = PublishRelay<Step>()
   let dataSource = BehaviorRelay<[UserProfileSettingsSectionModel]>(value: [])
   
-  private let services: AppServices
+  public let services: AppServices
   private let disposeBag = DisposeBag()
   let showAlert = BehaviorRelay<Bool>(value: false)
   

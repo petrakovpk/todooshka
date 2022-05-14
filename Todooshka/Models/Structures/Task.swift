@@ -11,11 +11,10 @@ import CoreData
 struct Task: IdentifiableType, Equatable {
   
   // MARK: - Static Properties
-  static let emptyTask: Task = Task(UID: "Empty", text: "", description: "", status: .Created, created: Date())
+  static let emptyTask: Task = Task(UID: "Empty", text: "", description: "", status: .InProgress, created: Date())
   
-  //MARK: - Properites
+  // MARK: - Properites
   var UID: String
-  var typeUID: String = TaskType.Standart.Empty.UID
   
   var text: String
   var description: String = ""
@@ -26,6 +25,9 @@ struct Task: IdentifiableType, Equatable {
   var created: Date
   var planned: Date?
   var closed: Date?
+  
+  // link properties
+  var typeUID: String = TaskType.Standart.Empty.UID
   
   //MARK: - Calculated Properties
   var identity: String { return self.UID }
@@ -81,8 +83,14 @@ struct Task: IdentifiableType, Equatable {
     self.serialNum = Int(taskCoreData.serialNum)
   }
   
-  //MARK: - Equatable
+  // MARK: - Equatable
   static func == (lhs: Task, rhs: Task) -> Bool {
     return lhs.UID == rhs.UID && lhs.typeUID == rhs.typeUID
   }
+  
+  // MARK: - Helpers
+  func type(withTypeService service: HasTypesService) -> TaskType? {
+    service.typesService.types.value.first(where: { $0.UID == self.typeUID })
+  }
+
 }

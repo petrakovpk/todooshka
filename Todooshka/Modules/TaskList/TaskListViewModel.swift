@@ -73,9 +73,9 @@ class TaskListViewModel: Stepper {
         $0.filter { task in
           switch self.listType {
           case .Main:
-            return task.is24hoursPassed == false && task.status == .Created
+            return task.is24hoursPassed == false && task.status == .InProgress
           case .Overdued:
-            return task.is24hoursPassed && task.status == .Created
+            return task.is24hoursPassed && task.status == .InProgress
           case .Deleted:
             return task.status == .Deleted
           case .Idea:
@@ -162,11 +162,10 @@ class TaskListViewModel: Stepper {
           
           // удаляем пойнт
           self.services.pointService.removePoint(task: task)
-          
-          // удаляем яйцо
-          self.services.birdService.removeEgg(task: task)
-          
-      
+
+          // запускаем анимацию
+          self.services.actionService.runActionsTrigger.accept(())
+
           return
         case .DeletedTasks:
           let tasks = self.services.tasksService.tasks.value.filter{ $0.status == .Deleted }
@@ -229,17 +228,6 @@ class TaskListViewModel: Stepper {
       return "Просроченные задачи"
     default:
       return ""
-    }
-  }
-  
-  func getSceneImage(date: Date) -> UIImage? {
-    let hour = Date().hour
-    switch hour {
-    case 0...5: return UIImage(named: "ночь01")
-    case 6...11: return UIImage(named: "утро01")
-    case 12...17: return UIImage(named: "день01")
-    case 18...23: return UIImage(named: "вечер01")
-    default: return nil
     }
   }
 }

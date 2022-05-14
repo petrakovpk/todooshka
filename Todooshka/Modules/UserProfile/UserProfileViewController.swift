@@ -25,8 +25,8 @@ class UserProfileViewController: UIViewController {
     let view = SKView(frame: CGRect(
       center: .zero,
       size: CGSize(
-        width: Constants.Scene.width,
-        height: Constants.Scene.height)))
+        width: Theme.MainTaskListScene.Scene.width,
+        height: Theme.MainTaskListScene.Scene.height)))
     return view
   }()
   

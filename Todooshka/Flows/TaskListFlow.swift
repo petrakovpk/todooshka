@@ -83,11 +83,11 @@ class TaskListFlow: Flow {
   
   private func navigateToTaskList() -> FlowContributors {
     let viewController = MainTaskListViewController()
-    let sceneModel = MainTaskListSceneModel(services: services)
-    let viewModel = MainTaskListViewModel(services: services)
+    let mainTaskListSceneModel = MainTaskListSceneModel(services: services)
+    let mainTaskListViewModel = MainTaskListViewModel(services: services)
     let taskListViewModel = TaskListViewModel(services: services, type: .Main)
-    viewController.sceneModel = sceneModel
-    viewController.mainViewModel = viewModel
+    viewController.mainTaskListSceneModel = mainTaskListSceneModel
+    viewController.mainTaskListViewModel = mainTaskListViewModel
     viewController.taskListViewModel = taskListViewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.tabBarController?.tabBar.isHidden = false
@@ -95,7 +95,7 @@ class TaskListFlow: Flow {
     return .one(
       flowContributor: .contribute(
         withNextPresentable: viewController,
-        withNextStepper: CompositeStepper(steppers: [viewModel, taskListViewModel])
+        withNextStepper: CompositeStepper(steppers: [mainTaskListViewModel, taskListViewModel])
       )
     )
   }

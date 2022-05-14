@@ -13,13 +13,11 @@ import RxGesture
 class TabBar: UITabBar {
   
   //MARK: - Properties
-  private let tabBarItem1 = UIImageView(image: UIImage(named: "clipboard-tick")?.template)
-  private let tabBarItem2 = UIImageView(image: UIImage(named: "user-square")?.template)
-  
-  private var oldLayer: CALayer?
+  public let tabBarItem1 = UIImageView(image: UIImage(named: "clipboard-tick")?.template)
+  public let tabBarItem2 = UIImageView(image: UIImage(named: "user-square")?.template)
   public let addTaskButton = TDAddTaskButton(type: .system)
   
- // let disposeBag = DisposeBag()
+  private var oldLayer: CALayer?
   
   override var selectedItem: UITabBarItem? {
     didSet {
@@ -37,25 +35,29 @@ class TabBar: UITabBar {
   //MARK: - Lifecycle
   override func layoutSubviews() {
     super.layoutSubviews()
-        
-    itemPositioning = .fill
     
+    // adding
     addSubview(tabBarItem1)
+    addSubview(tabBarItem2)
+    addSubview(addTaskButton)
+    
+    // tabBar
+    itemPositioning = .fill
+    layer.masksToBounds = false
+    
+    // tabBarItem1
     tabBarItem1.anchor(widthConstant: 24, heightConstant: 24)
     tabBarItem1.anchorCenterXToSuperview(constant: -1 * bounds.width / 4 - 15 )
     tabBarItem1.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
     
-    addSubview(tabBarItem2)
+    // tabBarItem2
     tabBarItem2.anchor(widthConstant: 24, heightConstant: 24)
     tabBarItem2.anchorCenterXToSuperview(constant: bounds.width / 4 + 15 )
     tabBarItem2.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
 
-    addSubview(addTaskButton)
+    // addTaskButton
     addTaskButton.anchor(bottom: topAnchor, bottomConstant: -45, widthConstant: 60.0, heightConstant: 60.0)
     addTaskButton.anchorCenterXToSuperview()
-    
-    layer.masksToBounds = false
-   // translatesAutoresizingMaskIntoConstraints = false
   }
   
   override func draw(_ rect: CGRect) {
@@ -70,24 +72,26 @@ class TabBar: UITabBar {
   private func drawDarkMode() {
     
     let shapeLayer = CAShapeLayer()
+    let gradientLayer = CAGradientLayer()
+    let backgroundLayer = CALayer()
+    
+    // shapeLayer
     shapeLayer.path = createPath()
     
-    let gradientLayer = CAGradientLayer()
+    // gradientLayer
+    gradientLayer.locations = [0,1]
+    gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+    gradientLayer.endPoint = CGPoint(x: 0, y: 1)
+    gradientLayer.frame = bounds
+    gradientLayer.mask = shapeLayer
     gradientLayer.colors = [
       Theme.TabBar.background!.cgColor,
       Theme.TabBar.background!.withAlphaComponent(0).cgColor
     ]
-    gradientLayer.locations = [0,1]
-    gradientLayer.startPoint = CGPoint(x: 0, y: 0)
-    gradientLayer.endPoint = CGPoint(x: 0, y: 1)
     
-    gradientLayer.frame = bounds
-    gradientLayer.mask = shapeLayer
-    
-    let backgroundLayer = CALayer()
+    // backgroundLayer
     backgroundLayer.frame = bounds
     backgroundLayer.mask = shapeLayer
-    
     backgroundLayer.addSublayer(gradientLayer)
     backgroundLayer.backgroundColor = UIColor.clear.cgColor
     
@@ -101,13 +105,17 @@ class TabBar: UITabBar {
   }
   
   func drawLightMode() {
+    
+    // adding
     let shapeLayer = CAShapeLayer()
+    let backgroundLayer = CALayer()
+    
+    // shapeLayer
     shapeLayer.path = createPath()
     
-    let backgroundLayer = CALayer()
+    // backgroundLayer
     backgroundLayer.frame = bounds
     backgroundLayer.mask = shapeLayer
-    
     backgroundLayer.backgroundColor = Theme.TabBar.background?.cgColor
     
     if let oldLayer = oldLayer {
@@ -121,6 +129,7 @@ class TabBar: UITabBar {
   
   //MARK: - Core Graph
   func createPath() -> CGPath {
+    
     let plusButtonRadius: CGFloat = 30.0
     let path = UIBezierPath()
     let centerWidth = self.frame.width / 2

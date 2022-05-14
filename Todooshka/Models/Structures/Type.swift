@@ -17,16 +17,17 @@ struct TaskType: IdentifiableType, Equatable  {
   var text: String
   var serialNum: Int
   var status: TypeStatus = .active
-  var isSelected: Bool = false
+  
+  // link
   var birdUID: String?
   
-  //MARK: - Identity
+  // MARK: - Identity
   var identity: String {
     return UID
   }
   
-  //MARK: - Init
-  init(UID: String, icon: Icon, color: TypeColor, text: String, serialNum: Int, birdUID: String) {
+  // MARK: - Init
+  init(UID: String, icon: Icon, color: TypeColor, text: String, serialNum: Int, birdUID: String?) {
     self.UID = UID
     self.icon = icon
     self.color = color
@@ -48,18 +49,21 @@ struct TaskType: IdentifiableType, Equatable  {
     self.text = typeCoreData.text
     self.serialNum = Int(typeCoreData.serialNum)
     self.status = status
-    self.isSelected = typeCoreData.isSelected
-    self.birdUID = typeCoreData.bird
+    self.birdUID = typeCoreData.birdUID
   }
   
   // MARK: - Equatable
   static func == (lhs: TaskType, rhs: TaskType) -> Bool {
     return lhs.identity == rhs.identity
-    && lhs.isSelected == rhs.isSelected
     && lhs.birdUID == rhs.birdUID
   }
+  
+  // MARK: - Helpers
+  func bird(withBirdService service: HasBirdService) -> Bird? {
+    service.birdService.birds.value.first(where: { $0.UID == self.birdUID })
+  }
+  
 }
-
 
 // MARK: - Static Properties
 extension TaskType {
@@ -68,23 +72,16 @@ extension TaskType {
     
     static let Empty: TaskType = TaskType(UID: "Empty", icon: .Unlimited, color: .Corduroy, text: "Без типа", serialNum: 0, birdUID: Bird.Chiken.Simple.UID)
     
-    static let Work = TaskType(UID: "Work", icon: .Briefcase, color: .PurpleHeart, text: "Работа", serialNum: 1, birdUID: Bird.Chiken.Simple.UID)
+    static let Work = TaskType(UID: "Work", icon: .Briefcase, color: .PurpleHeart, text: "Работа", serialNum: 1, birdUID: Bird.Penguin.Simple.UID)
     
-    static let Family = TaskType(UID: "Family", icon: .Profile2user, color: .Jaffa, text: "Семья", serialNum: 0, birdUID: Bird.Chiken.Simple.UID)
+    static let Family = TaskType(UID: "Family", icon: .Profile2user, color: .Jaffa, text: "Семья", serialNum: 2, birdUID: Bird.Chiken.Simple.UID)
     
-    static let Home = TaskType(UID: "Home", icon: .House, color: .Cerise, text: "Дом", serialNum: 0, birdUID: Bird.Chiken.Simple.UID)
+    static let Home = TaskType(UID: "Home", icon: .House, color: .Cerise, text: "Дом", serialNum: 3, birdUID: Bird.Chiken.Simple.UID)
     
-    static let Love = TaskType(UID: "Love", icon: .Lovely, color: .Amethyst, text: "Вторая половинка", serialNum: 0, birdUID: Bird.Chiken.Simple.UID)
+    static let Love = TaskType(UID: "Love", icon: .Lovely, color: .Amethyst, text: "Вторая половинка", serialNum: 4, birdUID: Bird.Chiken.Simple.UID)
     
-    static let Pet = TaskType(UID: "Pet", icon: .Pet, color: .BrinkPink, text: "Домашнее животное", serialNum: 0, birdUID: Bird.Chiken.Simple.UID)
+    static let Pet = TaskType(UID: "Pet", icon: .Pet, color: .BrinkPink, text: "Домашнее животное", serialNum: 5, birdUID: Bird.Chiken.Simple.UID)
     
-    static let Sport = TaskType(UID: "Sport", icon: .Dumbbell, color: .BlushPink, text: "Спорт", serialNum: 0, birdUID: Bird.Chiken.Simple.UID)
+    static let Sport = TaskType(UID: "Sport", icon: .Dumbbell, color: .BlushPink, text: "Спорт", serialNum: 6, birdUID: Bird.Chiken.Simple.UID)
   }
-  
-  
-  
-//  static let New: TaskType = TaskType(UID: UUID().uuidString, icon: .Unlimited, color: .Corduroy, text: "Новый тип", serialNum: 0, birdUID: Bird.Chiken.Simple.UID)
-  
- 
-  
 }

@@ -18,7 +18,7 @@ class TaskViewController: TDViewController {
   var viewModel: TaskViewModel!
   
   private let disposeBag = DisposeBag()
-  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskTypeListSectionModel>!
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TypeLargeCollectionViewCellSectionModel>!
   
   // MARK: - Task UI Elements
   private let nameLabel: UILabel = {
@@ -112,6 +112,12 @@ class TaskViewController: TDViewController {
     configureAlert()
     configureDataSource()
     bindViewModel()
+  }
+  
+  override func viewDidDisappear(_ animated: Bool) {
+    if isModal == false && viewModel.services.actionService.tabBarSelectedItem.value == .TaskList {
+      viewModel.services.actionService.runActionsTrigger.accept(())
+    }
   }
   
   //MARK: - Configure UI
@@ -233,9 +239,9 @@ class TaskViewController: TDViewController {
     
     [
       // textChanging
-      outputs.text.drive(nameTextField.rx.text),
+      outputs.nameTextField.drive(nameTextField.rx.text),
       // descriptionTextField
-      outputs.descriptionWithPlaceholder.drive(descriptionWithPlaceholderBinder),
+      outputs.descriptionTextView.drive(descriptionTextViewBinder),
       // typeChanging
      // outputs.typeChanging.drive(),
       // collectionView
@@ -252,8 +258,7 @@ class TaskViewController: TDViewController {
       // point
       outputs.getPoint.drive(),
       // egg
-      outputs.createEgg.drive(),
-      outputs.removeEgg.drive(),
+//      outputs.actions.drive(),
       // isNew
       outputs.taskIsNew.drive(taskIsNewBinder)
     ]
@@ -262,15 +267,15 @@ class TaskViewController: TDViewController {
   }
   
   //MARK: - Binders
-  var descriptionWithPlaceholderBinder: Binder<(Bool, String)> {
-    return Binder(self, binding: { (vc, descriptionWithPlaceholder) in
-      let (showDescriptionPlaceholder, description) = descriptionWithPlaceholder
-      if showDescriptionPlaceholder {
-        vc.descriptionTextView.textColor = Theme.App.placeholder
-        vc.descriptionTextView.text = "Напишите комментарий"
-      } else {
+  var descriptionTextViewBinder: Binder<(placeholderIsHidden: Bool, description: String)> {
+    return Binder(self, binding: { (vc, descriptionTextView) in
+      let (placeholderIsHidden, description) = descriptionTextView
+      if placeholderIsHidden {
         vc.descriptionTextView.textColor = Theme.App.text
         vc.descriptionTextView.text = description
+      } else {
+        vc.descriptionTextView.textColor = Theme.App.placeholder
+        vc.descriptionTextView.text = "Напишите комментарий"
       }
     })
   }
@@ -315,10 +320,10 @@ class TaskViewController: TDViewController {
   
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskTypeListSectionModel>(
-      configureCell: {(_, collectionView, indexPath, type) in
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<TypeLargeCollectionViewCellSectionModel>(
+      configureCell: {(_, collectionView, indexPath, item) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TypeLargeCollectionViewCell.reuseID, for: indexPath) as! TypeLargeCollectionViewCell
-        cell.configure(with: type)
+        cell.configure(type: item.type, isSelected: item.isSelected)
         return cell
       })
   }

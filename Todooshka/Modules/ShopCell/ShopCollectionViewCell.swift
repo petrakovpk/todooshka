@@ -49,6 +49,6 @@ class ShopCollectionViewCell: UICollectionViewCell {
   // MARK: - Configure UI
   func configure(bird: Bird) {
     nameLabel.text = bird.style.rawValue
-    imageView.image = bird.getImageForState(state: .LeftLegForward)
+    imageView.image = bird.getImageForState(state: .Normal)
   }
 }

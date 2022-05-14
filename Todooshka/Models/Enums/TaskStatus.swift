@@ -6,9 +6,9 @@
 //
 
 enum TaskStatus: String, Codable {
-  case New = "new"
-  case Created = "created"
-  case Completed = "completed"
-  case Deleted = "deleted"
-  case Idea = "idea"
+  case Draft = "Draft"
+  case InProgress = "InProgress"
+  case Completed = "Completed"
+  case Deleted = "Deleted"
+  case Idea = "Idea"
 }

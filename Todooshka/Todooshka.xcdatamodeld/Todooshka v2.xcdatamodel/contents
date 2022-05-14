@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="BirdCoreData" representedClassName="BirdCoreData" syncable="YES">
         <attribute name="clade" attributeType="String"/>
         <attribute name="currency" attributeType="String"/>
@@ -8,13 +8,6 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="price" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="style" optional="YES" attributeType="String"/>
-        <attribute name="uid" attributeType="String"/>
-    </entity>
-    <entity name="EggCoreData" representedClassName="EggCoreData" syncable="YES">
-        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="taskUID" attributeType="String"/>
-        <attribute name="type" attributeType="String"/>
         <attribute name="uid" attributeType="String"/>
     </entity>
     <entity name="PointCoreData" representedClassName="PointCoreData" syncable="YES">
@@ -36,10 +29,9 @@
         <attribute name="userUID" attributeType="String"/>
     </entity>
     <entity name="TypeCoreData" representedClassName="TypeCoreData" elementID="CoreDataTaskType" syncable="YES">
-        <attribute name="bird" optional="YES" attributeType="String"/>
+        <attribute name="birdUID" optional="YES" attributeType="String"/>
         <attribute name="color" attributeType="String" versionHashModifier="CoreDataTaskType"/>
         <attribute name="icon" attributeType="String"/>
-        <attribute name="isSelected" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="serialNum" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" elementID="orderNumber"/>
         <attribute name="status" attributeType="String"/>
         <attribute name="text" attributeType="String"/>
@@ -47,9 +39,8 @@
     </entity>
     <elements>
         <element name="BirdCoreData" positionX="45" positionY="-36" width="128" height="149"/>
-        <element name="EggCoreData" positionX="27" positionY="-27" width="128" height="104"/>
         <element name="PointCoreData" positionX="-136.0000610351562" positionY="-99.328857421875" width="128" height="89"/>
         <element name="TaskCoreData" positionX="36" positionY="-135" width="128" height="179"/>
-        <element name="TypeCoreData" positionX="189.2603149414062" positionY="-106.2628479003906" width="128" height="149"/>
+        <element name="TypeCoreData" positionX="189.2603149414062" positionY="-106.2628479003906" width="128" height="134"/>
     </elements>
 </model>

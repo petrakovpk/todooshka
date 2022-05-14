@@ -61,7 +61,7 @@ class TabBarFlow: Flow {
       flowContributor: .contribute(
         withNextPresentable: taskFlow,
         withNextStepper: OneStepper(
-          withSingleStep: AppStep.CreateTaskIsRequired(status: .Created, createdDate: nil)
+          withSingleStep: AppStep.CreateTaskIsRequired(status: .InProgress, createdDate: nil)
         )
       )
     )
