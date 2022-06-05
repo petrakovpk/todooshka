@@ -8,6 +8,7 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="price" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="style" optional="YES" attributeType="String"/>
+        <attribute name="typesUID" optional="YES" attributeType="Transformable"/>
         <attribute name="uid" attributeType="String"/>
     </entity>
     <entity name="PointCoreData" representedClassName="PointCoreData" syncable="YES">
@@ -29,7 +30,6 @@
         <attribute name="userUID" attributeType="String"/>
     </entity>
     <entity name="TypeCoreData" representedClassName="TypeCoreData" elementID="CoreDataTaskType" syncable="YES">
-        <attribute name="birdUID" optional="YES" attributeType="String"/>
         <attribute name="color" attributeType="String" versionHashModifier="CoreDataTaskType"/>
         <attribute name="icon" attributeType="String"/>
         <attribute name="serialNum" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" elementID="orderNumber"/>
@@ -38,9 +38,9 @@
         <attribute name="uid" attributeType="String"/>
     </entity>
     <elements>
-        <element name="BirdCoreData" positionX="45" positionY="-36" width="128" height="149"/>
+        <element name="BirdCoreData" positionX="45" positionY="-36" width="128" height="164"/>
         <element name="PointCoreData" positionX="-136.0000610351562" positionY="-99.328857421875" width="128" height="89"/>
         <element name="TaskCoreData" positionX="36" positionY="-135" width="128" height="179"/>
-        <element name="TypeCoreData" positionX="189.2603149414062" positionY="-106.2628479003906" width="128" height="134"/>
+        <element name="TypeCoreData" positionX="189.2603149414062" positionY="-106.2628479003906" width="128" height="119"/>
     </elements>
 </model>

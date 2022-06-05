@@ -77,11 +77,6 @@ class TaskViewModel: Stepper {
     // point
     let getPoint: Driver<Task>
     
-    // actions
- //   let actions: Driver<MainTaskListSceneAction>
-//    let createEgg: Driver<Task>
-//    let removeEgg: Driver<Task>
-    
     // is task is New?
     let taskIsNew: Driver<Bool>
   }
@@ -121,11 +116,6 @@ class TaskViewModel: Stepper {
         } ?? self.task
       }
       .asDriver(onErrorJustReturn: self.task)
-
-//    let egg = services.actionService.eggs
-//      .withLatestFrom(task) { eggs, task -> Egg? in
-//        eggs.first(where: { $0.taskUID == task.UID })
-//      }
     
     // text
     let text = input.text
@@ -225,50 +215,12 @@ class TaskViewModel: Stepper {
       .saveTask(service: services)
       .asDriver(onErrorJustReturn: .emptyTask)
     
-    let clade = task.compactMap {
-      $0.type(withTypeService: self.services)?
-        .bird(withBirdService: self.services)?
-        .clade
-    }
+//    let clade = task.compactMap {
+//      $0.type(withTypeService: self.services)?
+//        .bird(withBirdService: self.services)?
+//        .clade
+//    }
     
-    // actions
-//    let createTheEgg = save
-//      .filter{ $0.status == .InProgress && $0.is24hoursPassed == false }
-//      .withLatestFrom(clade) {
-//        MainTaskListSceneAction(
-//          UID: UUID().uuidString,
-//          action: .CreateOrUpdateTheEgg(
-//            egg: Egg(
-//              UID: UUID().uuidString,
-//              clade: $1,
-//              created: $0.created,
-//              taskUID: $0.UID),
-//            withAnimation: true),
-//          status: .ReadyToRun
-//        )
-//      }
-//
-//    let brokeTheEgg = input.alertCompleteTaskOkButtonClickTrigger
-//      .withLatestFrom(task) { $1 }
-//      .map {
-//        MainTaskListSceneAction(
-//          UID: UUID().uuidString,
-//          action: .BrokeTheEgg(taskUID: $0.UID),
-//          status: .ReadyToRun
-//        )
-//      }
-    
-   // let actions = Driver<[]>.just([])
-    
-//    let actions = Driver.of(
-//      createOrUpdateTheEgg,
-//      brokeTheEgg
-//    )
-//      .merge()
-//      .do {
-//        self.services.actionService.addAction(action: $0)
-//      }
-
     // добавляем пойнт
     let getPoint = input.completeButtonClickTrigger
       .withLatestFrom(changedTask) { $1 }
@@ -314,10 +266,6 @@ class TaskViewModel: Stepper {
       saveTask: save,
       // point
       getPoint: getPoint,
-      // actions
- //     actions: actions,
-//      createEgg: createEgg,
-//      removeEgg: removeEgg,
       // taskIsNew
       taskIsNew: taskIsNew
     )

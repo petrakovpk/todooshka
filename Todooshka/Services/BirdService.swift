@@ -23,17 +23,16 @@ class BirdService {
   
   // MARK: - Score Properties
   let birds = BehaviorRelay<[Bird]>(value: [])
-  let mainTaskListSceneActions = BehaviorRelay<[MainTaskListSceneAction]>(value: [])
+  let mainTaskListSceneActions = BehaviorRelay<[SceneAction]>(value: [])
   
   // MARK: - Init
   init() {
     
     // removeAll
-  //  removeAllEggsCoreData()
-  //  removeAllBirdsCoreData()
+    removeAllBirdsFromCoreData()
     
     // Get Birds from Core Data
-    getBirdsCoreData { birdsCoreData in
+    getBirdsFromCoreData { birdsCoreData in
       birdsCoreData.forEach { birdCoreData in
         if let bird = Bird(birdCoreData: birdCoreData) {
           self.birds.accept(self.birds.value + [bird])
@@ -41,50 +40,37 @@ class BirdService {
       }
     }
     
-    
-    // Get Eggs from Core Data
-//    getEggsCoreData { eggsCoreData in
-//      eggsCoreData.forEach { eggCoreData in
-//        if let egg = Egg(eggCoreData: eggCoreData) {
-//          egg.created < Date().adding(.day, value: -1) ? removeEgg(egg: egg) : self.eggs.accept(self.eggs.value + [egg])
-//        }
-//      }
-//    }
-    
     // Start Observing
     startObserveCoreData()
     
     // If first loading - create standart
     if self.birds.value.isEmpty {
       getStandartBirds { birds in
-        birds.forEach { saveBird(bird: $0) }
+        birds.forEach { saveBirdToCoreData(bird: $0) }
       }
     }
   }
   
-  // MARK: - Actions
-  func brokeEggAndBornBird(egg: Egg, completion: (Bird) -> Void) {
+  func linkBirdToTypeUID(bird: Bird, type: TaskType) {
+    // удаляем типы из всех птиц аналогичного типа
+    birds.value
+      .filter({
+        $0.clade == bird.clade &&
+        $0.typesUID.contains(where: { $0 == type.UID })})
+      .forEach { bird in
+        var bird = bird
+        bird.typesUID.removeAll(type.UID)
+        self.saveBirdToCoreData(bird: bird)
+      }
     
+    // добавляем тип
+    var bird = bird
+    bird.typesUID.append(type.UID)
+    saveBirdToCoreData(bird: bird)
   }
   
-  // MARK: - Eggs
-//  func createEgg(task: Task) {
-//    if let position = getFreePosition(eggs: eggs.value) {
-//      let egg = Egg(UID: UUID().uuidString, type: .Chiken, taskUID: task.UID, position: position, created: Date())
-//      saveEgg(egg: egg)
-//    }
-//  }
-//
-//  func removeEgg(task: Task) {
-//    if let egg = eggs.value.first(where: { $0.taskUID == task.UID }) {
-//      removeEgg(egg: egg)
-//    }
-//  }
-//
   // MARK: - Get Data From Core Data
- 
-  // birds
-  func getBirdsCoreData(completion: ([BirdCoreData]) -> Void ) {
+  func getBirdsFromCoreData(completion: ([BirdCoreData]) -> Void ) {
     do {
       completion(try managedContext.fetch(BirdCoreData.fetchRequest()))
     }
@@ -95,9 +81,7 @@ class BirdService {
   }
 
   // MARK: - Save Data To Core Data
-
-  // birds
-  func saveBird(bird: Bird) {
+  func saveBirdToCoreData(bird: Bird) {
     do {
       let fetchRequest = BirdCoreData.fetchRequest()
       fetchRequest.predicate = NSPredicate(
@@ -121,7 +105,8 @@ class BirdService {
     return
   }
   
-  func removeAllBirdsCoreData() {
+  // MARK: - Remove Data From Core Data
+  func removeAllBirdsFromCoreData() {
     do {
       for eggCoreData in try managedContext.fetch(BirdCoreData.fetchRequest()) {
         managedContext.delete(eggCoreData)
@@ -145,8 +130,6 @@ class BirdService {
     // Insert
     if let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject>, !insertedObjects.isEmpty {
       for insertedObject in insertedObjects {
-        
-        // birdCoreData
         if let birdCoreData = insertedObject as? BirdCoreData {
           if let bird = Bird(birdCoreData: birdCoreData) {
             self.birds.accept(self.birds.value + [bird])
@@ -158,8 +141,6 @@ class BirdService {
     // Update
     if let updatedObjects = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject>, !updatedObjects.isEmpty {
       for updatedObject in updatedObjects {
-        
-        // birdCoreData
         if let birdCoreData = updatedObject as? BirdCoreData {
           if let index = self.birds.value.firstIndex(where: { $0.UID == birdCoreData.uid }) {
             if let bird = Bird(birdCoreData: birdCoreData) {
@@ -175,8 +156,6 @@ class BirdService {
     // Delete
     if let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? Set<NSManagedObject>, !deletedObjects.isEmpty {
       for deletedObject in deletedObjects {
-        
-        // birdCoreData
         if let birdCoreData = deletedObject as? BirdCoreData {
           if let index = self.birds.value.firstIndex(where: { $0.UID == birdCoreData.uid}) {
             var birds = self.birds.value

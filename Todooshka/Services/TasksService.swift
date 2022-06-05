@@ -30,6 +30,8 @@ class TasksService {
   // MARK: - Init
   init() {
 
+    removeAllTasksFromCoreData()
+    
     // load tasks from Core Data
     getTasksFromCoreData { tasksCoreData in
       tasksCoreData.forEach { taskCoreData in

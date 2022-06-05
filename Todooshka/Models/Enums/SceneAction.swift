@@ -1,15 +1,9 @@
 //
-//  MainTaskListSceneAction.swift
+//  SceneAction.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 11.04.2022.
 //
-
-enum ActionStatus {
-  case ReadyToRun
-  case Running
-  case Completed
-}
 
 struct SceneAction: Equatable {
   

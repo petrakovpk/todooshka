@@ -9,10 +9,7 @@ import RxDataSources
 import CoreData
 
 struct Task: IdentifiableType, Equatable {
-  
-  // MARK: - Static Properties
-  static let emptyTask: Task = Task(UID: "Empty", text: "", description: "", status: .InProgress, created: Date())
-  
+
   // MARK: - Properites
   var UID: String
   
@@ -93,4 +90,11 @@ struct Task: IdentifiableType, Equatable {
     service.typesService.types.value.first(where: { $0.UID == self.typeUID })
   }
 
+}
+
+// MARK: - Static Properties
+extension Task {
+  
+  static let emptyTask: Task = Task(UID: "Empty", text: "", description: "", status: .InProgress, created: Date())
+  
 }

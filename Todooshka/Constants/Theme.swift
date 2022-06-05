@@ -120,7 +120,7 @@ struct Theme {
   struct MainTaskListScene {
     struct Scene {
       static let width = UIScreen.main.bounds.width
-      static let height = UIScreen.main.bounds.width * UIImage(named: "день01")!.size.height / UIImage(named: "день01")!.size.width
+      static let height = UIScreen.main.bounds.width * UIImage(named: "день01")!.size.height / UIImage(named: "день01")!.size.width * 1.5
       static let scale = UIScreen.main.bounds.width / UIImage(named: "день01")!.size.width
     }
     struct Egg {

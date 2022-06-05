@@ -108,10 +108,10 @@ class BirdViewModel: Stepper {
     let dataSource = Driver.combineLatest(bird, types) { bird, types -> [TypeSmallCollectionViewCellSectionModel] in
       [TypeSmallCollectionViewCellSectionModel(
         header: "",
-        items: types.map {
+        items: types.map { type -> TypeSmallCollectionViewCellSectionModelItem in
           TypeSmallCollectionViewCellSectionModelItem(
-            type: $0,
-            isSelected: $0.birdUID == bird.UID,
+            type: type,
+            isSelected: bird.isBought && bird.typesUID.contains(where: { $0 == type.UID }),
             isEnabled: bird.isBought)
         }
       )]
@@ -142,9 +142,7 @@ class BirdViewModel: Stepper {
         return dataSource[indexPath.section].items[indexPath.item].type }
       .withLatestFrom(bird) { type, bird -> TaskType in
         guard bird.isBought else { return type }
-        var type = type
-        type.birdUID = (type.birdUID == bird.UID) ? nil : bird.UID
-        self.services.typesService.saveTypesToCoreData(types: [type])
+        self.services.birdService.linkBirdToTypeUID(bird: bird, type: type)
         return type
       }
     
@@ -170,7 +168,7 @@ class BirdViewModel: Stepper {
     let buy = input.alertBuyButtonClick.withLatestFrom(points) { _, points in
       var bird  = self.bird
       bird.isBought = true
-      self.services.birdService.saveBird(bird: bird)
+      self.services.birdService.saveBirdToCoreData(bird: bird)
       for point in points {
         self.services.pointService.removePointFromCoreData(point: point)
       }

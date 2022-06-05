@@ -256,13 +256,10 @@ class MainTaskListViewController: UIViewController {
     let outputs = mainTaskListSceneModel.transform(input: input)
     
     [
+      // scene
       outputs.background.drive(sceneBackgroundBinder),
-      // eggs
-//      outputs.createEggs.drive(),
-//      outputs.removeEggs.drive(),
-//      outputs.changeEggsClade.drive(),
       // actions
-      outputs.saveAction.drive(),
+      outputs.createActions.drive(),
       outputs.runActions.drive(runActionsBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
@@ -320,12 +317,12 @@ class MainTaskListViewController: UIViewController {
   var sceneBackgroundBinder: Binder<UIImage?> {
     return Binder(self, binding: { (vc, image) in
       if let image = image {
-        vc.scene?.updateBackgroundImage(image: image)
+        vc.scene?.setupBackgroundNode(image: image)
       }
     })
   }
   
-  var runActionsBinder: Binder<[MainTaskListSceneAction]> {
+  var runActionsBinder: Binder<[SceneAction]> {
     return Binder(self, binding: { (vc, actions) in
       if let scene = vc.scene {
         scene.runActions(actions: actions)

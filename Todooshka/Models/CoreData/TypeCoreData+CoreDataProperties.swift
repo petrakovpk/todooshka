@@ -22,7 +22,6 @@ extension TypeCoreData {
   @NSManaged public var color: String
   @NSManaged public var icon: String
   @NSManaged public var isSelected: Bool
-  @NSManaged public var birdUID: String?
   
   convenience init(context: NSManagedObjectContext, type: TaskType) {
     self.init(context: context)
@@ -32,7 +31,6 @@ extension TypeCoreData {
     self.serialNum = Int16(type.serialNum)
     self.icon = type.icon.rawValue
     self.color = type.color.rawValue
-    self.birdUID = type.birdUID
   }
   
   func loadFromType(type: TaskType) {
@@ -42,6 +40,5 @@ extension TypeCoreData {
     self.serialNum = Int16(type.serialNum)
     self.icon = type.icon.rawValue
     self.color = type.color.rawValue
-    self.birdUID = type.birdUID
   }
 }
