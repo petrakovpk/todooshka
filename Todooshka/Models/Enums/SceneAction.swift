@@ -1,33 +1,23 @@
 //
-//  SceneAction.swift
+//  MainTaskListSceneAction.swift
 //  Todooshka
 //
-//  Created by Петраков Павел Константинович on 07.05.2022.
+//  Created by Петраков Павел Константинович on 11.04.2022.
 //
 
-enum SceneAction {
+enum ActionStatus {
+  case ReadyToRun
+  case Running
+  case Completed
+}
+
+struct SceneAction: Equatable {
   
-  case BrokeTheEggWithoutBird(egg: Egg)
-  case BrokeTheEggAndBornTheBirdAndSendTheBirdWalkToTheRight(egg: Egg)
-  case CreateTheEgg(egg: Egg, withAnimation: Bool)
-  case ChangeEggClyde(egg: Egg)
-  case CrackTheEgg(egg: Egg)
-  case HardCrackTheEgg(egg: Egg)
-  
-  var runOrder: Int {
-    switch self {
-    case .BrokeTheEggWithoutBird(_):
-      return 0
-    case .CreateTheEgg(_,_):
-      return 1
-    case .ChangeEggClyde(_):
-      return 2
-    case .CrackTheEgg(_):
-      return 3
-    case .HardCrackTheEgg(_):
-      return 4
-    case .BrokeTheEggAndBornTheBirdAndSendTheBirdWalkToTheRight(_):
-      return 5
-    }
+  let UID: String
+  let action: SceneActionType
+
+  // MARK: - Equatable
+  static func == (lhs: SceneAction, rhs: SceneAction) -> Bool {
+    lhs.UID == rhs.UID
   }
 }
