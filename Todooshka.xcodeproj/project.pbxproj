@@ -50,7 +50,6 @@
 		6045FEBB284D4B64002C9C24 /* TypeSmallCollectionViewCellSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6045FEBA284D4B64002C9C24 /* TypeSmallCollectionViewCellSectionModel.swift */; };
 		6049C4EE27EC7960005A7150 /* EggType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6049C4ED27EC7960005A7150 /* EggType.swift */; };
 		6049C4F027EC8441005A7150 /* Egg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6049C4EF27EC8441005A7150 /* Egg.swift */; };
-		604D1F7B27ADB15300E05D09 /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604D1F7A27ADB15300E05D09 /* Typealias.swift */; };
 		604D1F7D27ADB80500E05D09 /* TypeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604D1F7C27ADB80500E05D09 /* TypeStatus.swift */; };
 		604D1F7F27ADC13C00E05D09 /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604D1F7E27ADC13B00E05D09 /* Currency.swift */; };
 		6053F858282014060047C204 /* ErrorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F857282014060047C204 /* ErrorType.swift */; };
@@ -214,7 +213,6 @@
 		6045FEBA284D4B64002C9C24 /* TypeSmallCollectionViewCellSectionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeSmallCollectionViewCellSectionModel.swift; sourceTree = "<group>"; };
 		6049C4ED27EC7960005A7150 /* EggType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EggType.swift; sourceTree = "<group>"; };
 		6049C4EF27EC8441005A7150 /* Egg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Egg.swift; sourceTree = "<group>"; };
-		604D1F7A27ADB15300E05D09 /* Typealias.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Typealias.swift; path = Todooshka/Services/Typealias.swift; sourceTree = SOURCE_ROOT; };
 		604D1F7C27ADB80500E05D09 /* TypeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeStatus.swift; sourceTree = "<group>"; };
 		604D1F7E27ADC13B00E05D09 /* Currency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Currency.swift; sourceTree = "<group>"; };
 		6053F857282014060047C204 /* ErrorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorType.swift; sourceTree = "<group>"; };
@@ -524,14 +522,6 @@
 			path = Enums;
 			sourceTree = "<group>";
 		};
-		604D1F7927ADB0F500E05D09 /* Typealias */ = {
-			isa = PBXGroup;
-			children = (
-				604D1F7A27ADB15300E05D09 /* Typealias.swift */,
-			);
-			path = Typealias;
-			sourceTree = "<group>";
-		};
 		6053F86228213BD00047C204 /* DeletedTaskTypeList */ = {
 			isa = PBXGroup;
 			children = (
@@ -672,7 +662,6 @@
 				60EB113C2656850C00992BF8 /* Todooshka.entitlements */,
 				60ED957627B52C4B005ACC33 /* Todooshka.xcdatamodeld */,
 				60AE9DE1265300AB00E51531 /* TodooshkaUI */,
-				604D1F7927ADB0F500E05D09 /* Typealias */,
 			);
 			path = Todooshka;
 			sourceTree = "<group>";
@@ -1191,7 +1180,6 @@
 				60ED959327B5A628005ACC33 /* BirdCoreData+CoreDataProperties.swift in Sources */,
 				6006F83627AA8EDF00E5AE9E /* BirdViewController.swift in Sources */,
 				60E44687272742D300C514FC /* Device.swift in Sources */,
-				604D1F7B27ADB15300E05D09 /* Typealias.swift in Sources */,
 				6069AE4326E7E59B0098B25E /* TaskTypeIconCollectionViewCellModel.swift in Sources */,
 				6045FEBB284D4B64002C9C24 /* TypeSmallCollectionViewCellSectionModel.swift in Sources */,
 				60E9704928284B5F00577484 /* ActionService.swift in Sources */,
