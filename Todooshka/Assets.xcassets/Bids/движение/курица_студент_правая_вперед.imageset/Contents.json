@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "курица_студент_правая_вперед.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "курица_студент_правая_вперед.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
