@@ -31,7 +31,6 @@
 		60227A0A27AD2A3700DA7572 /* TypesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60227A0927AD2A3700DA7572 /* TypesService.swift */; };
 		6022899E267B6F2C00E9429A /* CalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6022899D267B6F2C00E9429A /* CalendarCell.swift */; };
 		6024B30926B1871900876DC6 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6024B30826B1871900876DC6 /* TabBarController.swift */; };
-		602591CA2679CF3C00E2BBF8 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602591C92679CF3C00E2BBF8 /* TaskListViewController.swift */; };
 		602D0959266B779D00946D1D /* UIVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602D0958266B779D00946D1D /* UIVIew.swift */; };
 		602D1B3E26C1BBE600DAA711 /* TDTaskCommentTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602D1B3D26C1BBE600DAA711 /* TDTaskCommentTextView.swift */; };
 		602EA052274E67F000525D6C /* TDAuthTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602EA050274E67EF00525D6C /* TDAuthTextField.swift */; };
@@ -162,6 +161,7 @@
 		60FB0F4027F61A9500430A23 /* ListType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0F3F27F61A9500430A23 /* ListType.swift */; };
 		60FFF65727A9A5D800290331 /* ShopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FFF65627A9A5D700290331 /* ShopViewController.swift */; };
 		60FFF65927A9A5E300290331 /* ShopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FFF65827A9A5E300290331 /* ShopViewModel.swift */; };
+		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -194,7 +194,6 @@
 		60227A0927AD2A3700DA7572 /* TypesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypesService.swift; sourceTree = "<group>"; };
 		6022899D267B6F2C00E9429A /* CalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCell.swift; sourceTree = "<group>"; };
 		6024B30826B1871900876DC6 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
-		602591C92679CF3C00E2BBF8 /* TaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TaskListViewController.swift; path = ../../../../TaskListViewController.swift; sourceTree = "<group>"; };
 		602D0958266B779D00946D1D /* UIVIew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIVIew.swift; sourceTree = "<group>"; };
 		602D1B3D26C1BBE600DAA711 /* TDTaskCommentTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TDTaskCommentTextView.swift; sourceTree = "<group>"; };
 		602EA050274E67EF00525D6C /* TDAuthTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TDAuthTextField.swift; path = Todooshka/TodooshkaUI/TDTextFields/TDAuthTextField.swift; sourceTree = SOURCE_ROOT; };
@@ -331,6 +330,7 @@
 		60FFF65827A9A5E300290331 /* ShopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewModel.swift; sourceTree = "<group>"; };
 		65CF4454CBCF66052FBD4AA1 /* Pods_Todooshka.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Todooshka.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7558BF1D43D39A86CC82AC0C /* Pods-Todooshka.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todooshka.release.xcconfig"; path = "Target Support Files/Pods-Todooshka/Pods-Todooshka.release.xcconfig"; sourceTree = "<group>"; };
+		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
 		B5F115849678A61737D0D7B8 /* Pods-Todooshka-TodooshkaUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todooshka-TodooshkaUITests.debug.xcconfig"; path = "Target Support Files/Pods-Todooshka-TodooshkaUITests/Pods-Todooshka-TodooshkaUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -407,8 +407,8 @@
 		602591C82679CF0800E2BBF8 /* TaskList */ = {
 			isa = PBXGroup;
 			children = (
+				9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */,
 				6055D1A1267245D100316BB4 /* TaskListSectionModel.swift */,
-				602591C92679CF3C00E2BBF8 /* TaskListViewController.swift */,
 				60AE9DD52652FD1800E51531 /* TaskListViewModel.swift */,
 			);
 			path = TaskList;
@@ -679,7 +679,6 @@
 			children = (
 				60AE9DDF2652FF9200E51531 /* App */,
 				6006F83427AA8EC100E5AE9E /* Bird */,
-				60FFF65A27A9A60800290331 /* BuyDiamonds */,
 				60C8343A26D7FC4C006E4FBE /* CalendarCell */,
 				60C8343D26D80615006E4FBE /* ConfirmRemoveTask */,
 				6053F86228213BD00047C204 /* DeletedTaskTypeList */,
@@ -906,13 +905,6 @@
 			path = Shop;
 			sourceTree = "<group>";
 		};
-		60FFF65A27A9A60800290331 /* BuyDiamonds */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = BuyDiamonds;
-			sourceTree = "<group>";
-		};
 		8C9A133C03866BF91C5572D0 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -1107,7 +1099,6 @@
 				600718FA27BE9121006F2FEF /* ScoreViewController.swift in Sources */,
 				603C5CF626F21A060056729B /* TaskTypeColorCollectionViewCell.swift in Sources */,
 				6006F82B27AA6C0200E5AE9E /* ShopCollectionViewHeader.swift in Sources */,
-				602591CA2679CF3C00E2BBF8 /* TaskListViewController.swift in Sources */,
 				606B03AD26C4619200F332C5 /* Date.swift in Sources */,
 				602D1B3E26C1BBE600DAA711 /* TDTaskCommentTextView.swift in Sources */,
 				60C1AC552817D52100C63404 /* TaskTypeListSectionModel.swift in Sources */,
@@ -1161,6 +1152,7 @@
 				60227A0A27AD2A3700DA7572 /* TypesService.swift in Sources */,
 				6053F86A2822B1F30047C204 /* TypeSmallCollectionViewCellSectionModelItem.swift in Sources */,
 				60D5662426CC1AB600D865DD /* OnboardingViewController.swift in Sources */,
+				9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */,
 				6024B30926B1871900876DC6 /* TabBarController.swift in Sources */,
 				60A2F49B26EE6E1D00C328C1 /* RemoveConfirmationViewModel.swift in Sources */,
 				6053F85A282025D30047C204 /* AlertBuyView.swift in Sources */,
