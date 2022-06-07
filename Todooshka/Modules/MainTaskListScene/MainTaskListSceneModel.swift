@@ -48,9 +48,6 @@ class MainTaskListSceneModel: Stepper {
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
     
-    // eggs
-  //  let eggs = services.actionService.eggs.asDriver()
-    
     // actions
     let createTheEggAction = services.tasksService.tasks
       .withPrevious(startWith: [])
@@ -67,32 +64,7 @@ class MainTaskListSceneModel: Stepper {
       .flatMapLatest { Driver.just($0) }
       .filter { $0.isEmpty == false }
       .asDriver(onErrorJustReturn: [])
-//      .flatMapLatest { Driver.just(SceneAction(UID: UUID().uuidString, action: .CreateTheEgg(withAnimation: true))) }
-//      .filter { $0.isEmpty == false }
-//      .asDriver(onErrorJustReturn: [])
-    
-//    let changeEggCladeAction = services.tasksService.tasks
-//      .withLatestFrom(eggs) { tasks, eggs -> [MainTaskListSceneAction] in
-//        tasks.compactMap { task -> MainTaskListSceneAction? in
-//          if var egg = eggs.first(where: {$0.UID == task.UID}),
-//             let clade = task.type(withTypeService: self.services)?.bird(withBirdService: self.services)?.clade {
-//            self.services.actionService.removeAllActionsForEgg(egg: egg)
-//            if egg.clade != clade {
-//              egg.clade = clade
-//              return  MainTaskListSceneAction(
-//                UID: UUID().uuidString,
-//                action: .ChangeEggClyde(egg: egg),
-//                status: .ReadyToRun
-//              )
-//            }
-//          }
-//          return nil
-//        }
-//      }
-//      .flatMapLatest { Driver.just($0) }
-//      .filter { $0.isEmpty == false }
-//      .asDriver(onErrorJustReturn: [])
-//
+
     let removeTheEggAction = services.tasksService.tasks
       .withPrevious(startWith: [])
       .map { previous, current -> [SceneAction] in
@@ -111,18 +83,6 @@ class MainTaskListSceneModel: Stepper {
       .flatMapLatest { Driver.just($0) }
       .filter { $0.isEmpty == false }
       .asDriver(onErrorJustReturn: [])
-    
-//      .withLatestFrom(eggs) { tasks, eggs -> [MainTaskListSceneAction] in
-//        tasks.compactMap { task -> MainTaskListSceneAction? in
-//          if let egg = eggs.first(where: { $0.UID == task.UID }) {
-//            return MainTaskListSceneAction(
-//              UID: UUID().uuidString,
-//              action: .BrokeTheEggWithoutBird(egg: egg),
-//              status: .ReadyToRun
-//            )
-//          } else { return nil }
-//        }
-//      }
      
     let hatchTheBirdAction = services.tasksService.tasks
       .withPrevious(startWith: [])
@@ -144,18 +104,6 @@ class MainTaskListSceneModel: Stepper {
       .flatMapLatest { Driver.just($0) }
       .filter { $0.isEmpty == false }
       .asDriver(onErrorJustReturn: [])
-//      .withLatestFrom(eggs) { tasks, eggs -> [MainTaskListSceneAction] in
-//        tasks.compactMap { task -> MainTaskListSceneAction? in
-//          if let egg = eggs.first(where: { $0.UID == task.UID }) {
-//            return MainTaskListSceneAction(
-//              UID: UUID().uuidString,
-//              action: .BrokeTheEggAndBornTheBirdAndSendTheBirdWalkToTheRight(egg: egg),
-//              status: .ReadyToRun
-//            )
-//          } else { return nil }
-//        }
-//      }
-      
     
     let createActions = Driver.of(
       createTheEggAction,
@@ -172,33 +120,6 @@ class MainTaskListSceneModel: Stepper {
     
     let runActions = runActionsTrigger
       .withLatestFrom(actions) { $1 }
-    
-//
-//    let readyForRunActions = services.actionService.actions.asDriver()
-//
-    // runActions
-//    let runActions = runActionsTrigger
-//      .withLatestFrom(readyForRunActions) { $1 }
-//      .do {
-//        self.services.actionService.addActions(actions: $0)
-//      }
-//      .do { actions in
-//        actions.forEach { action in
-//          switch action.action {
-//          case .CreateTheEgg(let withAnimation):
-//            return
-//            //self.services.actionService.saveEgg(egg: egg)
-//          case .ChangeEggClyde(let egg):
-//            self.services.actionService.saveEgg(egg: egg)
-//          case .BrokeTheEggWithoutBird(let egg):
-//            self.services.actionService.removeEgg(egg: egg)
-//          case .BrokeTheEggAndBornTheBirdAndSendTheBirdWalkToTheRight(let egg):
-//            self.services.actionService.removeEgg(egg: egg)
-//          default:
-//            return
-//          }
-//        }
-//      }
 
     return Output(
       background: background,

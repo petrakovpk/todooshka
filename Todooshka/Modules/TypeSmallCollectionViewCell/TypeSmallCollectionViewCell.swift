@@ -78,7 +78,7 @@ class TypeSmallCollectionViewCell: UICollectionViewCell {
     
     // textView
     textView.text = type.text
-    textView.textColor = isSelected ? Theme.TypeSmallCollectionViewCell.selectedText : Theme.App.text
+    textView.textColor = Theme.App.text // isSelected ? Theme.TypeSmallCollectionViewCell.selectedText : Theme.App.text
     
     // taskTypeImageView
     imageView.image = type.icon.image

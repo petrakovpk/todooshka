@@ -69,5 +69,26 @@ enum BirdClade: String {
     return UIImage(named: "яйцо_" + stringForImage + "_без_трещин")
   }
   
+  // init
+  init?(index: Int) {
+    switch index {
+    case 0:
+      self = .Chiken
+    case 1:
+      self = .Penguin
+    case 2:
+      self = .Ostrich
+    case 3:
+      self = .Parrot
+    case 4:
+      self = .Eagle
+    case 5:
+      self = .Owl
+    case 6:
+      self = .Dragon
+    default:
+      return nil
+    }
+  }
   
 }

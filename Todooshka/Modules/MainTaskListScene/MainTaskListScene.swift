@@ -52,46 +52,8 @@ class MainTaskListScene: SKScene {
         addEggNode(withAnimation: withAnimation)
       case .RemoveTheEgg:
         removeLastEggNode()
-//      case .ChangeEggClyde(let egg):
-//        self.updateEggNode(egg: egg, cracks: egg.cracks, withAnimation: true) { node in
-//
-//        }
-//
-//      case .BrokeTheEggWithoutBird(let egg):
-//        self.removeEggNode(egg: egg)
-//
-//      case .BrokeTheEggAndBornTheBirdAndSendTheBirdWalkToTheRight(let egg):
-//        switch egg.cracks {
-//        case .NoCrack:
-//          self.updateEggNode(egg: egg, cracks: .OneCrack, withAnimation: true) { node in
-//            self.updateEggNode(egg: egg, cracks: .ThreeCracks, withAnimation: true) { node in
-////              self.setupBirdNode(egg: egg) { node in
-////                self.animateBirdNode(node: node) { node in
-////                  node.removeFromParent()
-////                }
-////              }
-//            }
-//          }
-//
-//        case .OneCrack:
-//          self.updateEggNode(egg: egg, cracks: .ThreeCracks, withAnimation: true) { node in
-//            self.setupBirdNode(egg: egg) { node in
-//              self.animateBirdNode(node: node) { node in
-//                node.removeFromParent()
-//              }
-//            }
-//          }
-//
-//        case .ThreeCracks:
-//          self.setupBirdNode(egg: egg) { node in
-//            self.animateBirdNode(node: node) { node in
-//              node.removeFromParent()
-//            }
-//          }
-//        }
-      
-      default:
-        return
+      case .HatchTheBird(birds: let birds):
+        hatchTheBird(birds: birds)
       }
     }
   }
@@ -100,7 +62,7 @@ class MainTaskListScene: SKScene {
   func addEggNode(withAnimation: Bool) {
     getFisrtEmptyEggIndex { index in
       self.getEggPositionWithIndex(position: self.position, eggIndex: index) { position in
-        guard let image = getEggImageForIndex(index: index) else { return }
+        guard let image = getEggImage(index: index, type: .NoCrack) else { return }
         let texture = SKTexture(image: image)
         let node = SKSpriteNode(texture: texture)
         
@@ -111,6 +73,7 @@ class MainTaskListScene: SKScene {
         node.name = "Egg"
         node.userData = [
           "uid": UUID().uuidString,
+          "isBroken": false,
           "index": index]
         node.xScale = Theme.MainTaskListScene.Egg.scale
         node.yScale = Theme.MainTaskListScene.Egg.scale
@@ -127,9 +90,12 @@ class MainTaskListScene: SKScene {
   
   // removeEggNode
   func removeLastEggNode() {
+    // last egg
     if let node = children
       .filter({ $0.name == "Egg" })
-      .max(by: { ($0.userData?["index"] as? Int ?? 0) < ($1.userData?["index"] as? Int ?? 0) }) {
+      .max(by: {
+        $0.userData?["index"] as? Int ?? 0 < $1.userData?["index"] as? Int ?? 0
+      }) {
       node.run(fadeOutAction) {
         node.removeFromParent()
       }
@@ -137,10 +103,68 @@ class MainTaskListScene: SKScene {
   }
   
   // hatchTheBird
-  func hatchTheBird(typeUID: String) {
+  func hatchTheBird(birds: [Bird]) {
     
+    guard let node = children.filter({
+      $0.name == "Egg" &&
+      $0.userData?["isBroken"] as? Bool ?? false == false
+    }).min(by: {
+      $0.userData?["index"] as? Int ?? 0 < $1.userData?["index"] as? Int ?? 0
+    }) else { return }
     
+    guard let index = node.userData?["index"] as? Int else { return }
+    guard let oneCrackImage = getEggImage(index: index, type: .OneCrack) else { return }
+    guard let threeCracksImage = getEggImage(index: index, type: .ThreeCracks) else { return }
+    
+    let oneCrackTexture = SKTexture(image: oneCrackImage)
+    let threeCrackTexture = SKTexture(image: threeCracksImage)
+    
+    let wait = SKAction.wait(forDuration: 0.5)
+    
+    let oneCrackAction = SKAction.setTexture(oneCrackTexture, resize: true)
+    let threeCrackAction = SKAction.setTexture(threeCrackTexture, resize: true)
+    
+    let sequence = SKAction.sequence([wait, oneCrackAction, wait, threeCrackAction, wait])
+    
+    node.userData?.setValue(true, forKey: "isBroken")
+    
+    node.run(sequence) {
+      node.alpha = 0.7
+      
+      guard let birdNormalImage = self.getBirdImage(index: index, birds: birds, state: .Normal) else { return }
+      guard let birdLeftLegForwardImage = self.getBirdImage(index: index, birds: birds, state: .LeftLegForward) else { return }
+      guard let birdRightLegForwardImage = self.getBirdImage(index: index, birds: birds, state: .RightLegForward) else { return }
+      
+      let birdNormalTexture = SKTexture(image: birdNormalImage)
+      let birdLeftLegForwardTexture = SKTexture(image: birdLeftLegForwardImage)
+      let birdRightLegForwardTexture = SKTexture(image: birdRightLegForwardImage)
+
+      let birdNode = SKSpriteNode(texture: birdNormalTexture)
+
+      let animateAction = SKAction.repeatForever(SKAction.animate(with: [birdLeftLegForwardTexture, birdRightLegForwardTexture], timePerFrame: 0.3))
+      let moveAction = SKAction.move(to: CGPoint(x: UIScreen.main.bounds.width + 50, y: birdNode.position.y), duration: 4.0)
+      
+      let animateSequence = SKAction.sequence([wait, animateAction])
+      let moveSequence = SKAction.sequence([wait, moveAction])
+      
+      // adding
+      self.addChild(birdNode)
+      
+      // node
+      birdNode.name = "Bird"
+      birdNode.xScale = Theme.MainTaskListScene.Egg.scale
+      birdNode.yScale = Theme.MainTaskListScene.Egg.scale
+      birdNode.zPosition = node.zPosition + 1
+      birdNode.position = node.position
+      
+      birdNode.run(animateSequence)
+      birdNode.run(moveSequence) {
+        birdNode.removeFromParent()
+      }
+    }
   }
+  
+  
 
 
 //  func bornTheBird(egg: Egg, completion: @escaping (SKNode) -> Void) {
@@ -255,16 +279,14 @@ class MainTaskListScene: SKScene {
     }
   }
   
-  func getEggImageForIndex(index: Int) -> UIImage? {
-    switch index {
-    case 0: return UIImage(named: "яйцо_курица_без_трещин")
-    case 1: return UIImage(named: "яйцо_страус_без_трещин")
-    case 2: return UIImage(named: "яйцо_пингвин_без_трещин")
-    case 3: return UIImage(named: "яйцо_сова_без_трещин")
-    case 4: return UIImage(named: "яйцо_попугай_без_трещин")
-    case 5: return UIImage(named: "яйцо_орел_без_трещин")
-    case 6: return UIImage(named: "яйцо_дракон_без_трещин")
-    default: return nil
-    }
+  func getEggImage(index: Int, type: CrackType) -> UIImage? {
+    guard let clade = BirdClade.init(index: index) else { return nil }
+    return UIImage(named: "яйцо_" + clade.stringForImage + "_" + type.stringForImage)
   }
+  
+  func getBirdImage(index: Int, birds: [Bird], state: BirdState) -> UIImage? {
+    guard let bird = birds.first(where: { $0.clade.index == index }) else { return nil }
+    return UIImage(named: bird.clade.stringForImage + "_" + bird.style.stringForImage + "_" + state.stringForImage)
+  }
+  
 }

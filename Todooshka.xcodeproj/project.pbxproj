@@ -74,7 +74,7 @@
 		6069AE4326E7E59B0098B25E /* TaskTypeIconCollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069AE4226E7E59B0098B25E /* TaskTypeIconCollectionViewCellModel.swift */; };
 		606B03AD26C4619200F332C5 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606B03AC26C4619200F332C5 /* Date.swift */; };
 		606FB75127F728A400782E17 /* TaskListCellMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FB75027F728A400782E17 /* TaskListCellMode.swift */; };
-		6075496227EDC5B400B96D20 /* EggState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6075496127EDC5B400B96D20 /* EggState.swift */; };
+		6075496227EDC5B400B96D20 /* CrackType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6075496127EDC5B400B96D20 /* CrackType.swift */; };
 		607BCB6026E62E48000A8248 /* TaskTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607BCB5F26E62E48000A8248 /* TaskTypeViewController.swift */; };
 		607BCB6226E62E59000A8248 /* TaskTypeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607BCB6126E62E59000A8248 /* TaskTypeViewModel.swift */; };
 		60819A172705A49F0067AF05 /* TDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60819A162705A49F0067AF05 /* TDViewController.swift */; };
@@ -238,7 +238,7 @@
 		6069AE4226E7E59B0098B25E /* TaskTypeIconCollectionViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeIconCollectionViewCellModel.swift; sourceTree = "<group>"; };
 		606B03AC26C4619200F332C5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		606FB75027F728A400782E17 /* TaskListCellMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListCellMode.swift; sourceTree = "<group>"; };
-		6075496127EDC5B400B96D20 /* EggState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EggState.swift; sourceTree = "<group>"; };
+		6075496127EDC5B400B96D20 /* CrackType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrackType.swift; sourceTree = "<group>"; };
 		607BCB5F26E62E48000A8248 /* TaskTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeViewController.swift; sourceTree = "<group>"; };
 		607BCB6126E62E59000A8248 /* TaskTypeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeViewModel.swift; sourceTree = "<group>"; };
 		60819A162705A49F0067AF05 /* TDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDViewController.swift; sourceTree = "<group>"; };
@@ -505,8 +505,8 @@
 				6006F82E27AA701F00E5AE9E /* BirdClade.swift */,
 				6053F86C2822DAE90047C204 /* BirdState.swift */,
 				600935672804708E0028C9AA /* BirdStyle.swift */,
+				6075496127EDC5B400B96D20 /* CrackType.swift */,
 				604D1F7E27ADC13B00E05D09 /* Currency.swift */,
-				6075496127EDC5B400B96D20 /* EggState.swift */,
 				6049C4ED27EC7960005A7150 /* EggType.swift */,
 				6053F857282014060047C204 /* ErrorType.swift */,
 				600DA58A27FED471004A4634 /* Icon.swift */,
@@ -837,9 +837,9 @@
 		60E970372823F28100577484 /* MainTaskListScene */ = {
 			isa = PBXGroup;
 			children = (
-				6045FEB8284D4B56002C9C24 /* MainTaskListSceneModel.swift */,
 				602EA057274E93E500525D6C /* MainTaskListScene.sks */,
 				602EA059274E944A00525D6C /* MainTaskListScene.swift */,
+				6045FEB8284D4B56002C9C24 /* MainTaskListSceneModel.swift */,
 			);
 			path = MainTaskListScene;
 			sourceTree = "<group>";
@@ -1130,7 +1130,7 @@
 				6055D193267104E800316BB4 /* UIViewController.swift in Sources */,
 				600935662804227A0028C9AA /* SceneAction.swift in Sources */,
 				60A2F49726EE530B00C328C1 /* RemoveConfirmationViewController.swift in Sources */,
-				6075496227EDC5B400B96D20 /* EggState.swift in Sources */,
+				6075496227EDC5B400B96D20 /* CrackType.swift in Sources */,
 				60F0719726DA70820048AB71 /* UIButtons.swift in Sources */,
 				60AE9DD62652FD1800E51531 /* TaskListViewModel.swift in Sources */,
 				6053F85E28206C060047C204 /* AlertBuyButton.swift in Sources */,

@@ -215,12 +215,6 @@ class TaskViewModel: Stepper {
       .saveTask(service: services)
       .asDriver(onErrorJustReturn: .emptyTask)
     
-//    let clade = task.compactMap {
-//      $0.type(withTypeService: self.services)?
-//        .bird(withBirdService: self.services)?
-//        .clade
-//    }
-    
     // добавляем пойнт
     let getPoint = input.completeButtonClickTrigger
       .withLatestFrom(changedTask) { $1 }
@@ -247,7 +241,6 @@ class TaskViewModel: Stepper {
     let hideAlert = input.alertCompleteTaskOkButtonClickTrigger
    
     return Output(
-      
       // text
       nameTextField: text,
       // descriptionTextField
