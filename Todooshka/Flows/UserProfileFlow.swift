@@ -96,10 +96,12 @@ class UserProfileFlow: Flow {
   
   private func navigateToUserProfile() -> FlowContributors {
     let viewController = UserProfileViewController()
-    let viewModel = UserProfileViewModel(services: services)
-    viewController.viewModel = viewModel
+    let userProfileViewModel = UserProfileViewModel(services: services)
+    let userProfileSceneModel = UserProfileSceneModel(services: services)
+    viewController.userProfileViewModel = userProfileViewModel
+    viewController.userProfileSceneModel = userProfileSceneModel
     rootViewController.pushViewController(viewController, animated: false)
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: userProfileViewModel))
   }
   
   private func navigateToSettings() -> FlowContributors {

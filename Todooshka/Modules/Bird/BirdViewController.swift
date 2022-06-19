@@ -70,7 +70,7 @@ class BirdViewController: UIViewController {
   
   private let priceImageView: UIImageView = {
     let imageView = UIImageView()
-    imageView.image = UIImage(named: "перо")
+    imageView.image = UIImage(named: "feather")
     return imageView
   }()
   

@@ -1,8 +1,8 @@
 //
-//  MainTaskListSceneModel.swift
+//  UserProfileSceneModel.swift
 //  Todooshka
 //
-//  Created by Петраков Павел Константинович on 08.04.2022.
+//  Created by Pavel Petakov on 07.06.2022.
 //
 
 import RxFlow
@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-class MainTaskListSceneModel: Stepper {
+class UserProfileSceneModel: Stepper {
   
   //MARK: - Properties
   let steps = PublishRelay<Step>()
@@ -33,14 +33,14 @@ class MainTaskListSceneModel: Stepper {
   }
   
   func transform(input: Input) -> Output {
-    
+
     // actions
     let actions = services.actionService.actions
       .asDriver()
       .map {
         $0.filter {
           switch $0.action {
-          case .CreateTheEgg(_), .RemoveTheEgg, .HatchTheBird(_):
+          case .RunTheBird(_), .RemoveLastBird:
             return true
           default:
             return false
@@ -57,9 +57,9 @@ class MainTaskListSceneModel: Stepper {
       .map{ _ in self.getBackgroundImage(date: Date()) }
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
-
+    
     // run actions
-    let runActionsTrigger = services.actionService.runMainTaskListActionsTrigger.asDriver()
+    let runActionsTrigger = services.actionService.runUserProfileActionsTrigger.asDriver()
     
     let runActions = runActionsTrigger
       .withLatestFrom(actions) { $1 }
@@ -74,11 +74,12 @@ class MainTaskListSceneModel: Stepper {
   func getBackgroundImage(date: Date) -> UIImage? {
     let hour = Date().hour
     switch hour {
-    case 0...5: return UIImage(named: "ночь01")
-    case 6...11: return UIImage(named: "утро01")
-    case 12...17: return UIImage(named: "день01")
-    case 18...23: return UIImage(named: "вечер01")
+    case 0...5: return UIImage(named: "ночь02")
+    case 6...11: return UIImage(named: "утро02")
+    case 12...17: return UIImage(named: "день02")
+    case 18...23: return UIImage(named: "вечер02")
     default: return nil
     }
   }
 }
+

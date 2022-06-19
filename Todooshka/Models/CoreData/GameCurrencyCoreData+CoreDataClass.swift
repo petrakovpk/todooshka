@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-@objc(PointCoreData)
-public class PointCoreData: NSManagedObject {
+@objc(GameCurrencyCoreData)
+public class GameCurrencyCoreData: NSManagedObject {
 
 }

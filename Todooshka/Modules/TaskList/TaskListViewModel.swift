@@ -161,10 +161,10 @@ class TaskListViewModel: Stepper {
           self.services.tasksService.removeTrigger.accept(nil)
           
           // удаляем пойнт
-          self.services.pointService.removePoint(task: task)
+          self.services.gameCurrencyService.removeGameCurrency(task: task)
 
           // запускаем анимацию
-          self.services.actionService.runActionsTrigger.accept(())
+          self.services.actionService.runMainTaskListActionsTrigger.accept(())
 
           return
         case .DeletedTasks:

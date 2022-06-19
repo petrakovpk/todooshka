@@ -46,8 +46,8 @@ class TaskTypeListCollectionViewCell: SwipeCollectionViewCell {
     // contentView
     contentView.cornerRadius = height / 2
     contentView.layer.borderWidth = 1
-    contentView.layer.borderColor = Theme.Cell.border?.cgColor
-    contentView.backgroundColor = Theme.Cell.background
+    contentView.layer.borderColor = Theme.TaskType.Cell.border?.cgColor
+    contentView.backgroundColor = Theme.TaskType.Cell.background
     contentView.layer.masksToBounds = false
     
     // imageView

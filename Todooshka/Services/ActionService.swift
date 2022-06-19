@@ -22,36 +22,16 @@ protocol HasActionService {
 class ActionService {
   
   // MARK: - Properties
- // var eggs = BehaviorRelay<[Egg]>(value: [])
   var actions = BehaviorRelay<[SceneAction]>(value: [])
-  var runActionsTrigger = BehaviorRelay<Void>(value: ())
+  var runMainTaskListActionsTrigger = BehaviorRelay<Void>(value: ())
+  var runUserProfileActionsTrigger = BehaviorRelay<Void>(value: ())
   var tabBarSelectedItem = BehaviorRelay<TabBarItemSelected>(value: .TaskList)
   
   // MARK: - Init
   init() {
     
   }
-  
-  // MARK: - Eggs
-//  func saveEgg(egg: Egg) {
-//
-//    if let index = eggs.value.firstIndex(where: { $0.UID == egg.UID }) {
-//      var eggs = self.eggs.value
-//      eggs[index] = egg
-//      self.eggs.accept(eggs)
-//    } else {
-//      self.eggs.accept(self.eggs.value + [egg])
-//    }
-//  }
-//
-//  func removeEgg(egg: Egg) {
-//    if let index = self.eggs.value.firstIndex(where: { $0.UID == egg.UID }) {
-//      var eggs = self.eggs.value
-//      eggs.remove(at: index)
-//      self.eggs.accept(eggs)
-//    }
-//  }
-  
+ 
   // MARK: - Actions
   func addActions(actions: [SceneAction]) {
     self.actions.accept(self.actions.value + actions)

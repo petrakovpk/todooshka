@@ -40,10 +40,38 @@ class UserProfileSettingsViewModel: Stepper {
   }
   
   func transform(input: Input) -> Output {
-    let showDeletedTaskTypesItem = SettingsItem(imageName: "trash", text: "Удаленные типы", type: .deletedTaskTypeListIsRequired)
-    let showDeletedTasksItem = SettingsItem(imageName: "trash", text: "Удаленные задачи", type: .deletedTaskListIsRequired)
     
-    let dataSource = Driver.just([UserProfileSettingsSectionModel(header: "Удаленные данные", items: [showDeletedTaskTypesItem, showDeletedTasksItem])])
+    // auth
+    let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .logInIsRequired)
+    let logOutIsRequired = SettingsItem(imageName: "logout", text: "Выйти из аккаунта", type: .logOutIsRequired)
+
+    //data
+    let saveDataIsRequired = SettingsItem(imageName: "box-add", text: "Сохранить данные", type: .saveDataIsRequired)
+    let loadDataIsRequired = SettingsItem(imageName: "box-tick", text: "Загрузить данные", type: .loadDataIsRequired)
+    
+    // deleted
+    let deletedTaskTypeListIsRequired = SettingsItem(imageName: "trash", text: "Типы", type: .deletedTaskTypeListIsRequired)
+    let deletedTaskListIsRequired = SettingsItem(imageName: "trash", text: "Задачи", type: .deletedTaskListIsRequired)
+    
+    // security
+    let removeAccount = SettingsItem(imageName: "remove", text: "Удалить аккаунт", type: .removeAccountIsRequired)
+    
+    // dataSource
+    let dataSource = Driver.just([
+      UserProfileSettingsSectionModel(
+        header: "Аккаунт",
+        items: [logInIsRequired, logOutIsRequired]),
+      UserProfileSettingsSectionModel(
+        header: "Облако",
+        items: [saveDataIsRequired, loadDataIsRequired]),
+      UserProfileSettingsSectionModel(
+        header: "Удаленные данные",
+        items: [deletedTaskTypeListIsRequired, deletedTaskListIsRequired]),
+      UserProfileSettingsSectionModel(
+        header: "Безопасность",
+        items: [removeAccount])
+      
+    ])
     
     let itemSelected = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource in

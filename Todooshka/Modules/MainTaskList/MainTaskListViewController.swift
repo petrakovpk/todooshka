@@ -93,8 +93,8 @@ class MainTaskListViewController: UIViewController {
     let view = SKView(frame: CGRect(
       center: .zero,
       size: CGSize(
-        width: Theme.MainTaskListScene.Scene.width,
-        height: Theme.MainTaskListScene.Scene.height)))
+        width: Theme.Scene.width,
+        height: Theme.Scene.height)))
     return view
   }()
   
@@ -124,8 +124,8 @@ class MainTaskListViewController: UIViewController {
     configureUI()
     configureAlert()
     configureDataSource()
-    bindSceneModel()
-    bindMainViewModel()
+    bindMainTaskListSceneModel()
+    bindMainTaskListViewModel()
     bindTaskListViewModel()
   }
   
@@ -138,7 +138,7 @@ class MainTaskListViewController: UIViewController {
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     mainTaskListSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
-    mainTaskListSceneModel.services.actionService.runActionsTrigger.accept(())
+    mainTaskListSceneModel.services.actionService.runMainTaskListActionsTrigger.accept(())
   }
   
   // MARK: - Configure Scene
@@ -249,29 +249,26 @@ class MainTaskListViewController: UIViewController {
   }
   
   //MARK: - Bind To
-  func bindSceneModel() {
+  func bindMainTaskListSceneModel() {
     
     let input = MainTaskListSceneModel.Input()
-    
     let outputs = mainTaskListSceneModel.transform(input: input)
     
     [
       // scene
       outputs.background.drive(sceneBackgroundBinder),
       // actions
-      outputs.createActions.drive(),
       outputs.runActions.drive(runActionsBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
   }
   
-  func bindMainViewModel() {
+  func bindMainTaskListViewModel() {
+    
     let input = MainTaskListViewModel.Input(
       ideaButtonClickTrigger: ideaTasksButton.rx.tap.asDriver(),
-      overduedButtonClickTrigger: overduedTasksButton.rx.tap.asDriver()
-    )
-    
+      overduedButtonClickTrigger: overduedTasksButton.rx.tap.asDriver() )
     let outputs = mainTaskListViewModel.transform(input: input)
     
     [

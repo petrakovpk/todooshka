@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   let actionService = ActionService()
   let birdService = BirdService()
   let birdTypeService = BirdTypeService()
-  let pointService = PointService()
+  let gameCurrencyService = GameCurrencyService()
   let preferencesService = PreferencesService()
   let tasksService = TasksService()
   let typesService = TypesService()
@@ -32,7 +32,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
       actionService: actionService,
       birdService: birdService,
       birdTypeService: birdTypeService,
-      pointService: pointService,
+      gameCurrencyService: gameCurrencyService,
       preferencesService: preferencesService,
       tasksService: tasksService,
       typesService: typesService

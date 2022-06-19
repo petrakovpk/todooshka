@@ -32,7 +32,8 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.createTask.drive()
+      outputs.createTask.drive(),
+      outputs.createActions.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     

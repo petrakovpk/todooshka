@@ -116,7 +116,7 @@ class TaskViewController: TDViewController {
   
   override func viewDidDisappear(_ animated: Bool) {
     if isModal == false && viewModel.services.actionService.tabBarSelectedItem.value == .TaskList {
-      viewModel.services.actionService.runActionsTrigger.accept(())
+      viewModel.services.actionService.runMainTaskListActionsTrigger.accept(())
     }
   }
   
@@ -150,7 +150,7 @@ class TaskViewController: TDViewController {
     typeLabel.anchor(top: nameTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16.superAdjusted, leftConstant: 16, rightConstant: 16)
     
     // configureTaskTypesButton
-    typesButton.imageView?.tintColor = Theme.RoundButton.tint
+    typesButton.imageView?.tintColor = Theme.App.Buttons.RoundButton.tint
     typesButton.centerYAnchor.constraint(equalTo: typeLabel.centerYAnchor).isActive = true
     typesButton.anchor(right: view.rightAnchor, rightConstant: 16)
     
@@ -221,7 +221,7 @@ class TaskViewController: TDViewController {
       text: nameTextField.rx.text.orEmpty.asDriver(),
       textFieldEditingDidEndOnExit: nameTextField.rx.controlEvent([.editingDidEndOnExit]).asDriver(),
       // descriptionTextField
-      description: descriptionTextView.rx.text.orEmpty.asDriver(),
+      descriptionTextViewText: descriptionTextView.rx.text.orEmpty.asDriver(),
       descriptionTextViewDidBeginEditing: descriptionTextView.rx.didBeginEditing.asDriver(),
       descriptionTextViewDidEndEditing: descriptionTextView.rx.didEndEditing.asDriver(),
       // collectionView
@@ -241,7 +241,7 @@ class TaskViewController: TDViewController {
       // textChanging
       outputs.nameTextField.drive(nameTextField.rx.text),
       // descriptionTextField
-      outputs.descriptionTextView.drive(descriptionTextViewBinder),
+      outputs.descriptionTextViewData.drive(descriptionTextViewDataBinder),
       // typeChanging
      // outputs.typeChanging.drive(),
       // collectionView
@@ -257,8 +257,6 @@ class TaskViewController: TDViewController {
       outputs.saveTask.drive(),
       // point
       outputs.getPoint.drive(),
-      // egg
-//      outputs.actions.drive(),
       // isNew
       outputs.taskIsNew.drive(taskIsNewBinder)
     ]
@@ -267,15 +265,15 @@ class TaskViewController: TDViewController {
   }
   
   //MARK: - Binders
-  var descriptionTextViewBinder: Binder<(placeholderIsHidden: Bool, description: String)> {
-    return Binder(self, binding: { (vc, descriptionTextView) in
-      let (placeholderIsHidden, description) = descriptionTextView
-      if placeholderIsHidden {
-        vc.descriptionTextView.textColor = Theme.App.text
-        vc.descriptionTextView.text = description
-      } else {
+  var descriptionTextViewDataBinder: Binder<(text: String, isPlaceholder: Bool)> {
+    return Binder(self, binding: { (vc, descriptionTextViewData) in
+      let (text, isPlaceholder) = descriptionTextViewData
+      if isPlaceholder {
         vc.descriptionTextView.textColor = Theme.App.placeholder
         vc.descriptionTextView.text = "Напишите комментарий"
+      } else {
+        vc.descriptionTextView.textColor = Theme.App.text
+        vc.descriptionTextView.text = text
       }
     })
   }

@@ -14,7 +14,7 @@ struct Task: IdentifiableType, Equatable {
   var UID: String
   
   var text: String
-  var description: String = ""
+  var description: String?
   
   var status: TaskStatus
   var serialNum: Int = 0
@@ -49,7 +49,7 @@ struct Task: IdentifiableType, Equatable {
   }
   
   //MARK: - init
-  init(UID: String, text: String, description: String, status: TaskStatus, created: Date) {
+  init(UID: String, text: String, description: String?, status: TaskStatus, created: Date) {
     self.UID = UID
     self.text = text
     self.description = description
@@ -57,7 +57,7 @@ struct Task: IdentifiableType, Equatable {
     self.created = created
   }
   
-  init(UID: String, text: String, description: String, type: TaskType, status: TaskStatus, created: Date, closed: Date?) {
+  init(UID: String, text: String, description: String?, type: TaskType, status: TaskStatus, created: Date, closed: Date?) {
     self.UID = UID
     self.text = text
     self.description = description

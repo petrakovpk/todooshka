@@ -17,7 +17,7 @@ extension TaskCoreData {
   
   @NSManaged public var uid: String
   @NSManaged public var text: String
-  @NSManaged public var desc: String
+  @NSManaged public var desc: String?
   @NSManaged public var status: String
   @NSManaged public var type: String
   @NSManaged public var serialNum: Int16

@@ -20,25 +20,37 @@ class ScoreViewController: UIViewController {
   // MARK: - Body UI Elemenets
   private let featherImageView: UIImageView = {
     let imageView = UIImageView()
-    imageView.image = UIImage(named: "feather")
+    imageView.image = UIImage(named: "feather")?
+      .withAlignmentRectInsets(UIEdgeInsets(top: -20, left: -20, bottom: -20, right: -20))
     return imageView
   }()
   
   private let diamondImageView: UIImageView = {
     let imageView = UIImageView()
-    imageView.image = UIImage(named: "diamond")
+    imageView.image = UIImage(named: "diamond")?
+      .withAlignmentRectInsets(UIEdgeInsets(top: -20, left: -20, bottom: -20, right: -20))
     return imageView
   }()
   
   private let featherDescriptionTextView: UITextView = {
     let textView = UITextView()
-    textView.text = "Это первышке. Вы их получаете за выполнение задач. В день не более 6 перышек"
+    textView.cornerRadius = 15
+    textView.isEditable = false
+    textView.isScrollEnabled = false
+    textView.backgroundColor = Theme.GameCurrency.textViewBackground
+    textView.textAlignment = .center
+    textView.text = "Перышко. Зарабатываются за выполнение задач. Ежедневно можно получить не более 7 перышек.  Перышки можно потратить их на покупку обычных птиц."
     return textView
   }()
   
   private let diamondDescriptionTextView: UITextView = {
     let textView = UITextView()
-    textView.text = "Это бриллианты. За них можно купить редких птиц."
+    textView.cornerRadius = 15
+    textView.isEditable = false
+    textView.isScrollEnabled = false
+    textView.backgroundColor = Theme.GameCurrency.textViewBackground
+    textView.textAlignment = .center
+    textView.text = "Бриллиант. Приобретаются за деньги. Бриллианты можно потратить на покупку редких птиц."
     return textView
   }()
   
@@ -71,6 +83,10 @@ class ScoreViewController: UIViewController {
   
   private let packageDescriptionTextView: UITextView = {
     let textView = UITextView()
+    textView.cornerRadius = 15
+    textView.isEditable = false
+    textView.isScrollEnabled = false
+    textView.backgroundColor = Theme.GameCurrency.textViewBackground
     textView.textAlignment = .center
     textView.text = "Такого количества бриллиантов хватит что бы купить всех редких птиц! Этономия 50%"
     return textView
@@ -78,10 +94,10 @@ class ScoreViewController: UIViewController {
   
   private let buyButton: UIButton = {
     let button = UIButton()
-    button.setTitle("Купить", for: .normal)
-    button.setTitleColor(.black, for: .normal)
-    button.backgroundColor = .systemPurple
-    button.layer.cornerRadius = 5
+    button.cornerRadius = 15
+    button.setTitle("Купить!", for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    button.backgroundColor = Palette.SingleColors.Cerise
     return button
   }()
   
@@ -164,7 +180,7 @@ class ScoreViewController: UIViewController {
     diamondDescriptionTextView.anchor(top: diamondImageView.topAnchor, left: diamondImageView.rightAnchor, bottom: diamondImageView.bottomAnchor, right: view.rightAnchor, leftConstant: 16, rightConstant: 16)
     
     // buy buttons
-    let widthConstant = (UIScreen.main.bounds.width - 16 * 5)/3
+    let widthConstant = (UIScreen.main.bounds.width - 16 * 4)/3
     
     // smallPackageButton
     smallPackageButton.anchor(top: diamondImageView.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16, widthConstant: widthConstant, heightConstant: widthConstant * 1.5 )
@@ -179,7 +195,7 @@ class ScoreViewController: UIViewController {
     packageDescriptionTextView.anchor(top: smallPackageButton.bottomAnchor, left: view.leftAnchor,  right: view.rightAnchor, topConstant: 16, leftConstant: 16,  rightConstant: 16,  heightConstant: 50)
     
     // buyButton
-    buyButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 16, rightConstant: 16, heightConstant: 50)
+    buyButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 32, rightConstant: 16, heightConstant: 50)
   }
   
   // MARK: - Bind View Model

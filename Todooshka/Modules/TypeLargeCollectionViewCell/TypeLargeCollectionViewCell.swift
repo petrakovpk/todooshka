@@ -72,7 +72,7 @@ class TypeLargeCollectionViewCell: UICollectionViewCell {
 
     // textView
     textView.text = type.text
-    textView.textColor = isSelected ? Theme.TypeLargeCollectionViewCell.selectedText : Theme.App.text
+    textView.textColor = isSelected ? Theme.Task.TypeLargeCollectionViewCell.selectedText : Theme.App.text
     
     // imageView
     imageView.image = type.icon.image
@@ -83,8 +83,8 @@ class TypeLargeCollectionViewCell: UICollectionViewCell {
     shapeLayer.shadowRadius = isSelected ? 7 : 0
     shapeLayer.shadowPath = isSelected ? shapeLayer.path : nil
     shapeLayer.shadowOffset = isSelected ? CGSize(width: 0, height: 4) : CGSize(width: 0, height: 0)
-    shapeLayer.shadowColor = isSelected ? Theme.TypeLargeCollectionViewCell.selectedBackground?.cgColor : UIColor.clear.cgColor
-    shapeLayer.fillColor = isSelected ? Theme.TypeLargeCollectionViewCell.selectedBackground?.cgColor : Theme.TypeLargeCollectionViewCell.unselectedBackground?.cgColor
+    shapeLayer.shadowColor = isSelected ? Theme.Task.TypeLargeCollectionViewCell.selectedBackground?.cgColor : UIColor.clear.cgColor
+    shapeLayer.fillColor = isSelected ? Theme.Task.TypeLargeCollectionViewCell.selectedBackground?.cgColor : Theme.Task.TypeLargeCollectionViewCell.unselectedBackground?.cgColor
   }
 }
 

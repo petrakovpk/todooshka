@@ -30,53 +30,40 @@ class TaskViewModel: Stepper {
     // nameTextField
     let text: Driver<String>
     let textFieldEditingDidEndOnExit: Driver<Void>
-    
     // descriptionTextField
-    let description: Driver<String>
+    let descriptionTextViewText: Driver<String>
     let descriptionTextViewDidBeginEditing: Driver<Void>
     let descriptionTextViewDidEndEditing: Driver<Void>
-    
     // collectionView
     let selection: Driver<IndexPath>
-    
     // buttons
     let backButtonClickTrigger: Driver<Void>
     let configureTaskTypesButtonClickTrigger: Driver<Void>
     let saveTaskButtonClickTrigger: Driver<Void>
     let completeButtonClickTrigger: Driver<Void>
-    
     // alert
     let alertCompleteTaskOkButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
-    
     // text
     let nameTextField: Driver<String>
-    
     // descriptionLabel
-    let descriptionTextView: Driver<(placeholderIsHidden: Bool, description: String)>
-    
+    let descriptionTextViewData: Driver<(text: String, isPlaceholder: Bool)>
     // collectionView
     let dataSource: Driver<[TypeLargeCollectionViewCellSectionModel]>
     let selection: Driver<TaskType>
-    
     // buttons
     let configureTaskTypesButtonClick: Driver<Void>
-    
     // back
     let navigateBack: Driver<Void>
-    
     // alert
     let showAlert: Driver<Void>
     let hideAlert: Driver<Void>
-
     // save
     let saveTask: Driver<Task>
-    
     // point
     let getPoint: Driver<Task>
-    
     // is task is New?
     let taskIsNew: Driver<Bool>
   }
@@ -89,7 +76,7 @@ class TaskViewModel: Stepper {
       self.task = Task(
         UID: UUID().uuidString,
         text: "",
-        description: "",
+        description: nil,
         type: TaskType.Standart.Empty,
         status: .Draft,
         created: Date(),
@@ -121,25 +108,24 @@ class TaskViewModel: Stepper {
     let text = input.text
       .startWith(self.task.text)
     
-    // showDescriptionPlaceholder
-    let descriptionPlaceholderIsHidden = Driver
-      .of(input.descriptionTextViewDidBeginEditing, input.descriptionTextViewDidEndEditing)
+    let descriptionTextViewIsPlaceholderWhenBeginEditing = input.descriptionTextViewDidBeginEditing
+      .map { false }
+    
+    let descriptionTextViewIsPlaceholderWhenEndEditing = input.descriptionTextViewDidEndEditing
+      .withLatestFrom(input.descriptionTextViewText) { $1.isEmpty }
+    
+    let descriptionTextViewIsPlaceholder = Driver
+      .of(descriptionTextViewIsPlaceholderWhenBeginEditing, descriptionTextViewIsPlaceholderWhenEndEditing)
       .merge()
-      .withLatestFrom(input.description)
-      .map { $0.isEmpty == false } // если дескрипшн пустой, то показывает плейсхолдер
-      .startWith(self.task.description.isEmpty)
-      .asDriver()
-  
-    // description
-    let description = input.description
-      .startWith(self.task.description)
-      .withLatestFrom(descriptionPlaceholderIsHidden) { $1 ? "" : $0 }
-      .asDriver()
-      .distinctUntilChanged()
+      .startWith(self.task.description == nil)
+
+    let descriptionTextViewText = input.descriptionTextViewText
+      .withLatestFrom(descriptionTextViewIsPlaceholder) { $1 ? "" : $0 }
     
     // descriptionTextView
-    let descriptionTextView = descriptionPlaceholderIsHidden
-      .withLatestFrom(description) { (placeholderIsHidden: $0, description: $1) }
+    let descriptionTextViewData = descriptionTextViewIsPlaceholder
+      .withLatestFrom(descriptionTextViewText) { (text: $1, isPlaceholder: $0) }
+    
     
     // types
     let types = services.typesService.types
@@ -176,11 +162,11 @@ class TaskViewModel: Stepper {
     
     // task
     let changedTask = Driver<Task>
-      .combineLatest(task, text, description, selection, completeTask) { (task, text, description, type, completeTask) -> Task in
+      .combineLatest(task, text, descriptionTextViewText, selection, completeTask) { (task, text, description, type, completeTask) -> Task in
         return Task(
           UID: task.UID,
           text: text,
-          description: description,
+          description: description.isEmpty ? nil : description,
           type: type,
           status: completeTask ? .Completed : task.status,
           created: task.created,
@@ -220,7 +206,7 @@ class TaskViewModel: Stepper {
       .withLatestFrom(changedTask) { $1 }
       .asDriver()
       .do { task in
-        self.services.pointService.createPoint(task: task)
+        self.services.gameCurrencyService.createGameCurrency(task: task)
       }
     
     // navigateBack
@@ -244,7 +230,7 @@ class TaskViewModel: Stepper {
       // text
       nameTextField: text,
       // descriptionTextField
-      descriptionTextView: descriptionTextView,
+      descriptionTextViewData: descriptionTextViewData,
       // collectionView
       dataSource: dataSource,
       selection: selection,

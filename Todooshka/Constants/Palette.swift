@@ -47,7 +47,7 @@ struct Palette {
     static let Periwinkle_PortGore = UIColor(named: "Periwinkle_PortGore")
     static let PeriwinkleGray_Fiord = UIColor(named: "PeriwinkleGray_Fiord")
     
-    static let Selago_Haiti_8_10_32 = UIColor(named: "Selago_Haiti(8_10_32)")
+    static let Selago_235_235_252_Haiti_8_10_32 = UIColor(named: "Selago_235_235_252_Haiti_8_10_32")
     static let Selago_PortGore = UIColor(named: "Selago_PortGore")
     
     static let Snuff_Haiti_18_22_55 = UIColor(named: "Snuff_Haiti(18_22_55)")

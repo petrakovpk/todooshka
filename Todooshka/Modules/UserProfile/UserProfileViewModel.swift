@@ -120,7 +120,7 @@ class UserProfileViewModel: Stepper {
       }
     
     // score
-    let featherScoreLabel = services.pointService.points
+    let featherScoreLabel = services.gameCurrencyService.gameCurrency
       .map {
         $0.filter {
           $0.currency == .Feather
@@ -130,7 +130,7 @@ class UserProfileViewModel: Stepper {
       }
       .asDriver(onErrorJustReturn: "")
     
-    let diamondScoreLabel = services.pointService.points
+    let diamondScoreLabel = services.gameCurrencyService.gameCurrency
       .map {
         $0.filter {
           $0.currency == .Diamond

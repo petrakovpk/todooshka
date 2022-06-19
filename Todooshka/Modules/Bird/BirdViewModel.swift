@@ -155,22 +155,22 @@ class BirdViewModel: Stepper {
       )
       .merge()
     
-    let points = services.pointService.points
+    let gameCurrency = services.gameCurrencyService.gameCurrency
       .map { $0.filter{ $0.currency == self.bird.currency } }
       .asDriver(onErrorJustReturn: [])
     
-    let possibilities = bird.withLatestFrom(points) { $1.count - $0.price }
+    let possibilities = bird.withLatestFrom(gameCurrency) { $1.count - $0.price }
     
     let buyButtonIsEnabled = possibilities.map{ $0 >= 0 ? true : false }
     
     let labelText = possibilities.map{ $0 >= 0 ? "Можете купить!" : "Не хватает \(abs($0)) перышек" }
     
-    let buy = input.alertBuyButtonClick.withLatestFrom(points) { _, points in
+    let buy = input.alertBuyButtonClick.withLatestFrom(gameCurrency) { _, gameCurrency in
       var bird  = self.bird
       bird.isBought = true
       self.services.birdService.saveBirdToCoreData(bird: bird)
-      for point in points {
-        self.services.pointService.removePointFromCoreData(point: point)
+      for gameCurrencyForRemoving in gameCurrency {
+        self.services.gameCurrencyService.removeGameCurrencyFromCoreData(gameCurrency: gameCurrencyForRemoving)
       }
     }
     

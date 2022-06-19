@@ -32,29 +32,21 @@ class TaskListCellModel: Stepper {
   }
   
   struct Output {
-    
     // text
     let text: Driver<String>
-    
     // description
     let description: Driver<String>
-    
     // type
     let type: Driver<TaskType>
-    
     // time Left
     let taskTimeLeftViewIsHidden: Driver<Bool>
     let timeLeftText: Driver<String>
     let timeLeftPercent: Driver<Double>
-    
-    
     // Repeat Button
     let repeatButtonClick: Driver<Void>
     let repeatButtonIsHidden: Driver<Bool>
-    
     // actions
     let isHidden: Driver<Bool>
-    
     // dataSource
     let reloadDataSource: Driver<Void>
   }
@@ -71,7 +63,7 @@ class TaskListCellModel: Stepper {
     let text = Driver<String>.just(task.text)
     
     // description
-    let description = Driver<String>.just(task.description)
+    let description = Driver<String>.just(task.description ?? "")
     
     // type
     let type = Driver<TaskType>.just(
@@ -118,8 +110,6 @@ class TaskListCellModel: Stepper {
         // сохраняем таску
         self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
         
-        // создаем яйцо
-//        self.services.birdService.createEgg(task: self.task)
       }
     
     // isHidden
@@ -198,7 +188,7 @@ extension TaskListCellModel: SwipeCollectionViewCellDelegate {
       action.fulfill(with: .reset)
       self.task.status = .Idea
       self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
-      self.services.actionService.runActionsTrigger.accept(())
+      self.services.actionService.runMainTaskListActionsTrigger.accept(())
     }
     
     let completeTaskAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
@@ -211,7 +201,7 @@ extension TaskListCellModel: SwipeCollectionViewCellDelegate {
       self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
       
       // получаем очко
-      self.services.pointService.createPoint(task: self.task)
+      self.services.gameCurrencyService.createGameCurrency(task: self.task)
     }
     
     configure(action: deleteAction, with: .trash)

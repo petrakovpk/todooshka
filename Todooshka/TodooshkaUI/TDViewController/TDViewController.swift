@@ -47,11 +47,11 @@ class TDViewController: UIViewController {
     view.backgroundColor = Theme.App.background
 
     // safeAreaHeaderView
-    safeAreaHeaderView.backgroundColor = Theme.Header.background
+    safeAreaHeaderView.backgroundColor = Theme.App.Header.background
     safeAreaHeaderView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor)
 
     // headerView
-    headerView.backgroundColor = Theme.Header.background
+    headerView.backgroundColor = Theme.App.Header.background
     headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: 55.adjusted)
     
     // backButton
@@ -68,7 +68,7 @@ class TDViewController: UIViewController {
     titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0, bottomConstant: 20.adjusted, rightConstant: 0)
     
     // dividerView
-    dividerView.backgroundColor = Theme.Header.dividerBackground
+    dividerView.backgroundColor = Theme.App.Header.dividerBackground
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
     
     // backButton

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="BirdCoreData" representedClassName="BirdCoreData" syncable="YES">
         <attribute name="clade" attributeType="String"/>
         <attribute name="currency" attributeType="String"/>
@@ -11,7 +11,7 @@
         <attribute name="typesUID" optional="YES" attributeType="Transformable"/>
         <attribute name="uid" attributeType="String"/>
     </entity>
-    <entity name="PointCoreData" representedClassName="PointCoreData" syncable="YES">
+    <entity name="GameCurrencyCoreData" representedClassName="GameCurrencyCoreData" syncable="YES">
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="currency" attributeType="String"/>
         <attribute name="taskUID" optional="YES" attributeType="String"/>
@@ -20,7 +20,7 @@
     <entity name="TaskCoreData" representedClassName="TaskCoreData" elementID="CoreDataTask" syncable="YES">
         <attribute name="closed" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="desc" attributeType="String" elementID="longText"/>
+        <attribute name="desc" optional="YES" attributeType="String" elementID="longText"/>
         <attribute name="planned" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="serialNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="status" attributeType="String"/>
@@ -39,7 +39,7 @@
     </entity>
     <elements>
         <element name="BirdCoreData" positionX="45" positionY="-36" width="128" height="164"/>
-        <element name="PointCoreData" positionX="-136.0000610351562" positionY="-99.328857421875" width="128" height="89"/>
+        <element name="GameCurrencyCoreData" positionX="-136.0000610351562" positionY="-99.328857421875" width="128" height="89"/>
         <element name="TaskCoreData" positionX="36" positionY="-135" width="128" height="179"/>
         <element name="TypeCoreData" positionX="189.2603149414062" positionY="-106.2628479003906" width="128" height="119"/>
     </elements>

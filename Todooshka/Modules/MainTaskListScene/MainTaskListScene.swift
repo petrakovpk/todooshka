@@ -8,11 +8,6 @@
 import UIKit
 import SpriteKit
 
-enum ActionType {
-  case Create
-  case Update
-}
-
 class MainTaskListScene: SKScene {
   
   // MARK: - Properties
@@ -36,8 +31,8 @@ class MainTaskListScene: SKScene {
       node.run(action)
     } else {
       let node = SKSpriteNode(texture: texture)
-      node.xScale = Theme.MainTaskListScene.Scene.scale * 1.25
-      node.yScale = Theme.MainTaskListScene.Scene.scale * 1.5
+      node.xScale = Theme.Scene.scale * 1.5
+      node.yScale = Theme.Scene.scale * 1.5
       node.name = "background"
       node.position = CGPoint(x: self.position.x + 40, y: self.position.y)
       addChild(node)
@@ -54,37 +49,39 @@ class MainTaskListScene: SKScene {
         removeLastEggNode()
       case .HatchTheBird(birds: let birds):
         hatchTheBird(birds: birds)
+      default:
+        return
       }
     }
   }
   
   // addEggNode
   func addEggNode(withAnimation: Bool) {
-    getFisrtEmptyEggIndex { index in
-      self.getEggPositionWithIndex(position: self.position, eggIndex: index) { position in
-        guard let image = getEggImage(index: index, type: .NoCrack) else { return }
-        let texture = SKTexture(image: image)
-        let node = SKSpriteNode(texture: texture)
-        
-        // adding
-        self.addChild(node)
-        
-        // node
-        node.name = "Egg"
-        node.userData = [
-          "uid": UUID().uuidString,
-          "isBroken": false,
-          "index": index]
-        node.xScale = Theme.MainTaskListScene.Egg.scale
-        node.yScale = Theme.MainTaskListScene.Egg.scale
-        node.zPosition = CGFloat(index + 2)
-        node.alpha = withAnimation ? 0.0 : 1.0
-        node.position = position
-        if withAnimation {
-          node.run(self.fadeInAction)
-        }
-        
-      }
+    
+    let index = getFirstEmptyEggIndex()
+    
+    guard let position = getEggPositionWithIndex(position: self.position, eggIndex: index) else { return }
+    guard let image = getEggImage(index: index, type: .NoCrack) else { return }
+    
+    let texture = SKTexture(image: image)
+    let node = SKSpriteNode(texture: texture)
+    
+    // adding
+    self.addChild(node)
+    
+    // node
+    node.name = "Egg"
+    node.userData = [
+      "uid": UUID().uuidString,
+      "isBroken": false,
+      "index": index]
+    node.xScale = Theme.Scene.Egg.scale
+    node.yScale = Theme.Scene.Egg.scale
+    node.zPosition = CGFloat(index + 2)
+    node.alpha = withAnimation ? 0.0 : 1.0
+    node.position = position
+    if withAnimation {
+      node.run(self.fadeInAction)
     }
   }
   
@@ -141,7 +138,7 @@ class MainTaskListScene: SKScene {
 
       let birdNode = SKSpriteNode(texture: birdNormalTexture)
 
-      let animateAction = SKAction.repeatForever(SKAction.animate(with: [birdLeftLegForwardTexture, birdRightLegForwardTexture], timePerFrame: 0.3))
+      let animateAction = SKAction.repeatForever(SKAction.animate(with: [birdLeftLegForwardTexture, birdRightLegForwardTexture], timePerFrame: 0.3, resize: true, restore: false))
       let moveAction = SKAction.move(to: CGPoint(x: UIScreen.main.bounds.width + 50, y: birdNode.position.y), duration: 4.0)
       
       let animateSequence = SKAction.sequence([wait, animateAction])
@@ -152,8 +149,8 @@ class MainTaskListScene: SKScene {
       
       // node
       birdNode.name = "Bird"
-      birdNode.xScale = Theme.MainTaskListScene.Egg.scale
-      birdNode.yScale = Theme.MainTaskListScene.Egg.scale
+      birdNode.xScale = Theme.Scene.Egg.scale
+      birdNode.yScale = Theme.Scene.Egg.scale
       birdNode.zPosition = node.zPosition + 1
       birdNode.position = node.position
       
@@ -164,118 +161,25 @@ class MainTaskListScene: SKScene {
     }
   }
   
-  
-
-
-//  func bornTheBird(egg: Egg, completion: @escaping (SKNode) -> Void) {
-//    if let image = UIImage(named: "курица_обычный_статика"),
-//       let node = children.first(where: { $0.userData?["uid"] as? String ?? "" == egg.UID }) {
-//
-//      let texture = SKTexture(image: image)
-//      let action = SKAction.setTexture(texture, resize: true)
-//      let wait = SKAction.wait(forDuration: 0.5)
-//      let sequence = SKAction.sequence([wait, action])
-//      node.run(sequence) {
-//        completion(node)
-//      }
-//    }
-//  }
-//
-//  func sendTheBirdWalkToTheRight(egg: Egg, completion: @escaping (SKNode) -> Void) {
-//    if let leftImage = UIImage(named: "курица_обычный_левая_вперед"),
-//       let rightImage = UIImage(named: "курица_обычный_правая_вперед"),
-//       let node = children.first(where: { $0.userData?["uid"] as? String ?? "" == egg.UID }) {
-//
-//      let leftTexture = SKTexture(image: leftImage)
-//      let rightTexture = SKTexture(image: rightImage)
-//     // let action = SKAction.setTexture(leftTexture, resize: true)
-//      let animate = SKAction.repeatForever(SKAction.animate(with: [leftTexture, rightTexture], timePerFrame: 0.3))
-//      let moveAction = SKAction.move(to: CGPoint(x: UIScreen.main.bounds.width + 50, y: node.position.y), duration: 4.0)
-//      let wait = SKAction.wait(forDuration: 0.5)
-//      let sequence = SKAction.sequence([wait, moveAction])
-//      node.run(animate)
-//      node.run(sequence) {
-//        completion(node)
-//      }
-//    }
-//  }
-//
-//  func changeEggClyde(egg: Egg) {
-//
-//    // проверяем есть ли для данной задачи яйца с другой расой
-//    getEggNodesWithSameTask(egg: egg) { oldEggNodes in
-//      // удаляем другие яйца
-//      removeEggs(eggs: oldEggNodes) {
-//        // добавляем наше яйцо
-//        self.addEggNode(egg: egg, withAlpha: 0.0) { eggNode in
-//          eggNode.run(self.fadeInAction)
-//        }
-//      }
-//    }
-//  }
-//
-//  func addEggNode(egg: Egg, withAlpha alpha: Double, completion: (SKNode) -> Void) {
-//
-//    // get egg Index
-//    getEggIndex(egg: egg) { index in
-//      if let image = egg.image {
-//
-//        // properties
-//        let texture = SKTexture(image: image)
-//        let eggNode = SKSpriteNode(texture: texture)
-//
-//        // eggNode
-//        eggNode.name = "Egg"
-//        eggNode.userData = ["uid": egg.UID, "index": index, "clade": egg.clade.rawValue]
-//        eggNode.xScale = Theme.MainTaskListScene.Egg.scale
-//        eggNode.yScale = Theme.MainTaskListScene.Egg.scale
-//        eggNode.zPosition = CGFloat(index)
-//
-//        // position
-//        getEggPosition(background: self.position, eggIndex: index) { position in
-//          eggNode.position = position
-//          eggNode.alpha = alpha
-//          //  withAnimation ? eggNode.run(fadeInAction) : nil
-//          // adding
-//          addChild(eggNode)
-//          completion(eggNode)
-//        }
-//      }
-//    }
-//  }
-  
-  
   // MARK: - Helpers
-  func getFisrtEmptyEggIndex(completion: (Int) -> Void ) {
-    let indexes = children
-      .filter({
-        $0.name == "Egg"
-      })
-      .compactMap{
-        $0.userData?["index"] as? Int
-      }
-      .sorted()
-    
-    for (index, busyIndex) in indexes.enumerated() {
-      if index != busyIndex {
-        completion(index)
-        return
-      }
-    }
-    
-    completion(indexes.count)
+  func getFirstEmptyEggIndex() -> Int {
+    children
+     .filter({
+       $0.name == "Egg"
+     })
+     .count
   }
   
-  func getEggPositionWithIndex(position: CGPoint, eggIndex index: Int, completion: (CGPoint) -> Void) {
+  func getEggPositionWithIndex(position: CGPoint, eggIndex index: Int) -> CGPoint? {
     switch index {
-    case 0: completion(CGPoint(x: position.x - 30, y: position.y + 20))
-    case 1: completion(CGPoint(x: position.x + 20, y: position.y + 20))
-    case 2: completion(CGPoint(x: position.x + 70, y: position.y - 5))
-    case 3: completion(CGPoint(x: position.x + 35, y: position.y - 35))
-    case 4: completion(CGPoint(x: position.x - 5, y: position.y - 40))
-    case 5: completion(CGPoint(x: position.x - 45, y: position.y - 35))
-    case 6: completion(CGPoint(x: position.x - 80, y: position.y - 5))
-    default: return
+    case 0: return CGPoint(x: position.x - 30, y: position.y + 20)
+    case 1: return CGPoint(x: position.x + 20, y: position.y + 20)
+    case 2: return CGPoint(x: position.x + 70, y: position.y - 5)
+    case 3: return CGPoint(x: position.x + 35, y: position.y - 35)
+    case 4: return CGPoint(x: position.x - 5, y: position.y - 40)
+    case 5: return CGPoint(x: position.x - 45, y: position.y - 35)
+    case 6: return CGPoint(x: position.x - 80, y: position.y - 5)
+    default :return nil
     }
   }
   

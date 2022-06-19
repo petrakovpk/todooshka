@@ -25,8 +25,8 @@ class UserProfileViewController: UIViewController {
     let view = SKView(frame: CGRect(
       center: .zero,
       size: CGSize(
-        width: Theme.MainTaskListScene.Scene.width,
-        height: Theme.MainTaskListScene.Scene.height)))
+        width: Theme.Scene.width,
+        height: Theme.Scene.height)))
     return view
   }()
   
@@ -37,8 +37,8 @@ class UserProfileViewController: UIViewController {
   private let featherBackgroundView = UIView()
   private let diamondBackroundView = UIView()
   
-  private let feathersImageView = UIImageView(image: UIImage(named: "перо"))
-  private let diamondsImageView = UIImageView(image: UIImage(named: "бриллиант"))
+  private let feathersImageView = UIImageView(image: UIImage(named: "feather"))
+  private let diamondsImageView = UIImageView(image: UIImage(named: "diamond"))
   
   private let featherLabel: UILabel = {
     let label = UILabel()
@@ -75,7 +75,8 @@ class UserProfileViewController: UIViewController {
   var collectionView: UICollectionView!
   
   // MARK: - MVVM
-  var viewModel: UserProfileViewModel!
+  var userProfileViewModel: UserProfileViewModel!
+  var userProfileSceneModel: UserProfileSceneModel!
   
   // MARK: - Rx
   private let disposeBag = DisposeBag()
@@ -88,7 +89,8 @@ class UserProfileViewController: UIViewController {
     configureScene()
     configureUI()
     configureDataSource()
-    bindViewModel()
+    bindUserProfileViewModel()
+    bindUserProfileSceneModel()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -96,6 +98,8 @@ class UserProfileViewController: UIViewController {
   }
   
   override func viewDidAppear(_ animated: Bool) {
+    userProfileSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
+    userProfileSceneModel.services.actionService.runUserProfileActionsTrigger.accept(())
     if let attributes =
         collectionView.collectionViewLayout.layoutAttributesForSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: 1)) {
       collectionView.setContentOffset(CGPoint(x: 0, y: attributes.frame.origin.y - collectionView.contentInset.top), animated: false)
@@ -178,7 +182,7 @@ class UserProfileViewController: UIViewController {
     diamondLabel.anchor(top: diamondBackroundView.topAnchor, left: diamondBackroundView.leftAnchor, bottom: diamondBackroundView.bottomAnchor, right: diamondsImageView.leftAnchor, topConstant: 4, leftConstant: 8, bottomConstant: 4, rightConstant: 8)
     
     // calendarBackgroundView
-    calendarBackgroundView.backgroundColor = Theme.Calendar.background
+    calendarBackgroundView.backgroundColor = Theme.UserProfile.Calendar.background
     calendarBackgroundView.cornerRadius = 11
     calendarBackgroundView.anchor(top: shopButton.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 30.superAdjusted, leftConstant: 16, bottomConstant: 32.superAdjusted, rightConstant: 16)
     
@@ -186,7 +190,7 @@ class UserProfileViewController: UIViewController {
     calendarHeaderView.anchor(top: calendarBackgroundView.topAnchor, left: calendarBackgroundView.leftAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted, heightConstant: 30)
     
     //calendarDividerView
-    calendarDividerView.backgroundColor = Theme.Calendar.divider
+    calendarDividerView.backgroundColor = Theme.UserProfile.Calendar.divider
     calendarDividerView.anchor(top: calendarHeaderView.bottomAnchor, left: calendarBackgroundView.leftAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted, heightConstant: 1)
     
     // collectionView
@@ -222,7 +226,7 @@ class UserProfileViewController: UIViewController {
   }
   
   //MARK: - Bind To
-  func bindViewModel() {
+  func bindUserProfileViewModel() {
     
     let input = UserProfileViewModel.Input(
       settingsButtonClickTrigger: settingsButton.rx.tap.asDriver() ,
@@ -235,7 +239,7 @@ class UserProfileViewController: UIViewController {
       selection: collectionView.rx.itemSelected.asDriver()
     )
     
-    let outputs = viewModel.transform(input: input)
+    let outputs = userProfileViewModel.transform(input: input)
     
     [
       outputs.settingsButtonClickHandler.drive(),
@@ -253,10 +257,34 @@ class UserProfileViewController: UIViewController {
       .forEach({ $0.disposed(by: disposeBag) })
   }
   
+  func bindUserProfileSceneModel() {
+    let input = UserProfileSceneModel.Input()
+    let outputs = userProfileSceneModel.transform(input: input)
+    
+    [
+      // scene
+      outputs.background.drive(sceneBackgroundBinder),
+      // actions
+      outputs.runActions.drive(runActionsBinder)
+    ]
+      .forEach({ $0.disposed(by: disposeBag) })
+  }
+  
   // MARK: - Binder
-  var completedTaskCountBinder: Binder<Int> {
-    return Binder(self, binding: { (vc, count) in
-      vc.scene?.configureDragons(count: count)
+  var sceneBackgroundBinder: Binder<UIImage?> {
+    return Binder(self, binding: { (vc, image) in
+      if let image = image {
+        vc.scene?.setupBackgroundNode(image: image)
+      }
+    })
+  }
+  
+  var runActionsBinder: Binder<[SceneAction]> {
+    return Binder(self, binding: { (vc, actions) in
+      if let scene = vc.scene {
+        scene.runActions(actions: actions)
+        vc.userProfileSceneModel.services.actionService.removeActions(actions: actions)
+      }
     })
   }
   

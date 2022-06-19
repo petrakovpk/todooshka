@@ -85,7 +85,7 @@ class TypeSmallCollectionViewCell: UICollectionViewCell {
     imageView.tintColor = type.color.uiColor
     
     // shapeLayer
-    shapeLayer.fillColor = isEnabled ? (isSelected ? Theme.TypeSmallCollectionViewCell.unselectedBackground?.cgColor : Theme.TypeSmallCollectionViewCell.unselectedBackground?.cgColor) : Palette.SingleColors.SantasGray?.withAlphaComponent(0.3).cgColor
+    shapeLayer.fillColor = isEnabled ? (isSelected ? Theme.Bird.TypeSmallCollectionViewCell.unselectedBackground?.cgColor : Theme.Bird.TypeSmallCollectionViewCell.unselectedBackground?.cgColor) : Palette.SingleColors.SantasGray?.withAlphaComponent(0.3).cgColor
   }
 }
 

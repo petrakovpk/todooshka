@@ -10,99 +10,114 @@ import SpriteKit
 
 class UserProfileScene: SKScene {
 
-  // MARK: - Properties
-  private var background: SKSpriteNode!
-//  private let dragon1 = SKSpriteNode(imageNamed: "dragon")
-//  private let dragon2 = SKSpriteNode(imageNamed: "dragon")
-//  private let dragon3 = SKSpriteNode(imageNamed: "dragon")
-//  private let dragon4 = SKSpriteNode(imageNamed: "dragon")
-  
   // MARK: - UI Nodes
   override func didMove(to view: SKView) {
     if let scene = scene {
       scene.size = view.size
-      background = SKSpriteNode(imageNamed: gerScreenImageName())
-      background.size = view.frame.size
-      addChild(background)
+      backgroundColor = .clear
     }
   }
   
-  // MARK: - Setup Nodes
-  func setupNodes() {
-//    backgroundColor = .white
-//
-//    let dragonHeight = 150.0
-//    let dragonWidth = dragonHeight
-//
-//    addChild(dragon1)
-//    dragon1.size = CGSize(width: dragonWidth, height: dragonHeight)
-//    dragon1.position = CGPoint(x: 80, y: -40)
-//
-//    dragon2.xScale = -1.0;
-//    addChild(dragon2)
-//    dragon2.size = CGSize(width: dragonWidth, height: dragonHeight)
-//    dragon2.position = CGPoint(x: -80, y: -40)
-//
-//    addChild(dragon3)
-//    dragon3.size = CGSize(width: dragonWidth, height: dragonHeight)
-//    dragon3.position = CGPoint(x: 220, y: -40)
-//
-//    dragon4.xScale = -1.0;
-//    addChild(dragon4)
-//    dragon4.size = CGSize(width: dragonWidth, height: dragonHeight)
-//    dragon4.position = CGPoint(x: -220, y: -40)
-  }
-  
-  func gerScreenImageName() -> String {
-    switch Date().hour {
-    case 0...6:
-      return "ночь02"
-    case 7...12:
-      return "утро02"
-    case 13...18:
-      return "день02"
-    case 19...23:
-      return "вечер02"
-    default:
-      return "вечер02"
+  // MARK: - BackgroundNode
+  func setupBackgroundNode(image: UIImage) {
+    let texture = SKTexture(image: image)
+    
+    if let node = childNode(withName: "background") {
+      let action = SKAction.setTexture(texture, resize: false)
+      node.run(action)
+    } else {
+      let node = SKSpriteNode(texture: texture)
+      node.xScale = Theme.Scene.scale * 1.5
+      node.yScale = Theme.Scene.scale * 1.5
+      node.name = "background"
+      node.position = CGPoint(x: self.position.x + 40, y: self.position.y)
+      addChild(node)
     }
   }
   
-  public func configureDragons(count: Int) {
-//    switch count {
-//
-//    case 0:
-//      dragon1.isHidden = true
-//      dragon2.isHidden = true
-//      dragon3.isHidden = true
-//      dragon4.isHidden = true
-//
-//    case 1:
-//      dragon1.isHidden = false
-//      dragon2.isHidden = true
-//      dragon3.isHidden = true
-//      dragon4.isHidden = true
-//
-//    case 2:
-//      dragon1.isHidden = false
-//      dragon2.isHidden = false
-//      dragon3.isHidden = true
-//      dragon4.isHidden = true
-//
-//    case 3:
-//      dragon1.isHidden = false
-//      dragon2.isHidden = false
-//      dragon3.isHidden = false
-//      dragon4.isHidden = true
-//
-//    case 4...999 :
-//      dragon1.isHidden = false
-//      dragon2.isHidden = false
-//      dragon3.isHidden = false
-//      dragon4.isHidden = false
-//
-//    default:
-//      return
-//    }
+  // MARK: - Actions
+  func runActions(actions: [SceneAction]) {
+    actions.forEach { action in
+      switch action.action {
+      case .RunTheBird(let birds, let created):
+        runTheBird(birds: birds, created: created)
+      default:
+        return
+      }
+    }
+  }
+  
+  func runTheBird(birds: [Bird], created: Date) {
+    let index = getFirstBirdIndex()
+    guard let birdNormalImage = self.getBirdImage(index: index, birds: birds, state: .Normal) else { return }
+    guard let birdLeftLegForwardImage = self.getBirdImage(index: index, birds: birds, state: .LeftLegForward) else { return }
+    guard let birdRightLegForwardImage = self.getBirdImage(index: index, birds: birds, state: .RightLegForward) else { return }
+    
+    let birdNormalTexture = SKTexture(image: birdNormalImage)
+    let birdLeftLegForwardTexture = SKTexture(image: birdLeftLegForwardImage)
+    let birdRightLegForwardTexture = SKTexture(image: birdRightLegForwardImage)
+    
+    let birdNode = SKSpriteNode(texture: birdRightLegForwardTexture)
+    
+    let animateAction = SKAction.repeatForever(SKAction.animate(with: [birdLeftLegForwardTexture, birdRightLegForwardTexture], timePerFrame: 0.3, resize: true, restore: false))
+    
+    let velocity = 91.0
+    let space = getBirdPosition(index: index).x - (scene?.frame.origin.x)!
+    let duration = space / velocity
+    
+    let moveAction = SKAction.move(to: getBirdPosition(index: index), duration: duration)
+    
+    let shouldWait = (Date().timeIntervalSince1970 - created.timeIntervalSince1970) < 4
+    
+    let fadeIn = SKAction.fadeIn(withDuration: 0)
+    let wait = SKAction.wait(forDuration: shouldWait ? 4.5 : 0.5)
+    
+    let animateSequence = shouldWait ? SKAction.sequence([wait, fadeIn, animateAction]) : SKAction.sequence([wait, animateAction])
+    let moveSequence = SKAction.sequence([wait, moveAction])
+
+    // adding
+    self.addChild(birdNode)
+    
+    // node
+    birdNode.name = "Bird"
+    birdNode.xScale = Theme.Scene.Egg.scale
+    birdNode.yScale = Theme.Scene.Egg.scale
+    birdNode.zPosition = CGFloat(index + 1)
+    birdNode.position = CGPoint(x: -1 * UIScreen.main.bounds.width / 2, y: position.y)
+    birdNode.alpha = shouldWait ? 0.0 : 1.0
+    
+    birdNode.run(animateSequence)
+    birdNode.run(moveSequence) {
+      birdNode.removeAllActions()
+      birdNode.run(SKAction.setTexture(birdNormalTexture, resize: true))
+    }
+    
+  }
+  
+  // MARK: - Helpers
+  func getFirstBirdIndex() -> Int {
+    children
+     .filter({
+       $0.name == "Bird"
+     })
+     .count
+  }
+  
+  func getBirdPosition(index: Int) -> CGPoint {
+    switch index {
+    case 0: return CGPoint(x: position.x + 150, y: position.y)
+    case 1: return CGPoint(x: position.x - 150, y: position.y)
+    case 2: return CGPoint(x: position.x + 100, y: position.y)
+    case 3: return CGPoint(x: position.x - 100, y: position.y)
+    case 4: return CGPoint(x: position.x + 50, y: position.y)
+    case 5: return CGPoint(x: position.x - 50, y: position.y)
+    case 6: return position
+    default: return position
+    }
+  }
+  
+  func getBirdImage(index: Int, birds: [Bird], state: BirdState) -> UIImage? {
+    guard let bird = birds.first(where: { $0.clade.index == index }) else { return nil }
+    return UIImage(named: bird.clade.stringForImage + "_" + bird.style.stringForImage + "_" + state.stringForImage)
   }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Point {
+struct GameCurrency {
   let UID: String
   let currency: Currency
   let created: Date
@@ -21,11 +21,11 @@ struct Point {
     self.taskUID = task.UID
   }
   
-  init?(pointCoreData: PointCoreData) {
-    guard let currency = Currency(rawValue: pointCoreData.currency) else { return nil }
-    self.UID = pointCoreData.uid
+  init?(gameCurrencyCoreData: GameCurrencyCoreData) {
+    guard let currency = Currency(rawValue: gameCurrencyCoreData.currency) else { return nil }
+    self.UID = gameCurrencyCoreData.uid
     self.currency = currency
-    self.created = pointCoreData.created
-    self.taskUID = pointCoreData.taskUID
+    self.created = gameCurrencyCoreData.created
+    self.taskUID = gameCurrencyCoreData.taskUID
   }
 }

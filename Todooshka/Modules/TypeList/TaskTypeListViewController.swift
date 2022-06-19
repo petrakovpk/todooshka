@@ -95,7 +95,7 @@ class TaskTypesListViewController: UIViewController {
     view.backgroundColor = Theme.App.background
     
     // headerView
-    headerView.backgroundColor = Theme.Header.background
+    headerView.backgroundColor = Theme.App.Header.background
     headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
     
     // addTaskTypeButton
@@ -116,7 +116,7 @@ class TaskTypesListViewController: UIViewController {
     backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
     // dividerView
-    dividerView.backgroundColor = Theme.Header.dividerBackground
+    dividerView.backgroundColor = Theme.App.Header.dividerBackground
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
     
     // descriptionLabel

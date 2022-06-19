@@ -40,13 +40,13 @@ class TaskListCell: SwipeCollectionViewCell {
     let label = UILabel()
     label.textAlignment = .left
     label.font = UIFont.systemFont(ofSize: 10, weight: .regular)
-    label.textColor = Theme.TaskListCell.descriptionText
+    label.textColor = Theme.TaskList.Cell.descriptionText
     return label
   }()
   
   private let taskTimeLeftView: UIView = {
     let view = UIView()
-    view.backgroundColor = Theme.TaskListCell.timeLeftViewBackground
+    view.backgroundColor = Theme.TaskList.Cell.timeLeftViewBackground
     return view
   }()
   
