@@ -17,14 +17,12 @@ class ScoreViewModel: Stepper {
   
   // MARK: - Transform
   struct Input {
-    
     // button
     let backButtonClickHandler: Driver<Void>
     let buyButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
-    
     // button
     let backButtonClickHandler: Driver<Void>
     let buyButtonClickHandler: Driver<Void>

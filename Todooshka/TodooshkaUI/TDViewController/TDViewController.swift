@@ -38,14 +38,15 @@ class TDViewController: UIViewController {
     view.addSubview(safeAreaHeaderView)
     view.addSubview(headerView)
     
+    // view
+    view.backgroundColor = Theme.App.background
+    
+    // headerView
     headerView.addSubview(backButton)
     headerView.addSubview(saveButton)
     headerView.addSubview(titleLabel)
     headerView.addSubview(dividerView)
     
-    // view
-    view.backgroundColor = Theme.App.background
-
     // safeAreaHeaderView
     safeAreaHeaderView.backgroundColor = Theme.App.Header.background
     safeAreaHeaderView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor)

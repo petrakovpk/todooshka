@@ -166,6 +166,10 @@
 		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
 		9DE9607F285E6D4A00E5981A /* SettingsType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE9607E285E6D4A00E5981A /* SettingsType.swift */; };
 		9DE96081285E6D8100E5981A /* SettingsItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE96080285E6D8100E5981A /* SettingsItem.swift */; };
+		9DE96085286106A000E5981A /* FeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE96084286106A000E5981A /* FeatherViewController.swift */; };
+		9DE96087286106AB00E5981A /* FeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE96086286106AB00E5981A /* FeatherViewModel.swift */; };
+		9DE96089286106B600E5981A /* DiamondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE96088286106B600E5981A /* DiamondViewController.swift */; };
+		9DE9608B286106BF00E5981A /* DiamondViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE9608A286106BF00E5981A /* DiamondViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -339,6 +343,10 @@
 		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
 		9DE9607E285E6D4A00E5981A /* SettingsType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsType.swift; sourceTree = "<group>"; };
 		9DE96080285E6D8100E5981A /* SettingsItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsItem.swift; sourceTree = "<group>"; };
+		9DE96084286106A000E5981A /* FeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatherViewController.swift; sourceTree = "<group>"; };
+		9DE96086286106AB00E5981A /* FeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatherViewModel.swift; sourceTree = "<group>"; };
+		9DE96088286106B600E5981A /* DiamondViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondViewController.swift; sourceTree = "<group>"; };
+		9DE9608A286106BF00E5981A /* DiamondViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondViewModel.swift; sourceTree = "<group>"; };
 		B5F115849678A61737D0D7B8 /* Pods-Todooshka-TodooshkaUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todooshka-TodooshkaUITests.debug.xcconfig"; path = "Target Support Files/Pods-Todooshka-TodooshkaUITests/Pods-Todooshka-TodooshkaUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -692,6 +700,8 @@
 				60C8343A26D7FC4C006E4FBE /* CalendarCell */,
 				60C8343D26D80615006E4FBE /* ConfirmRemoveTask */,
 				6053F86228213BD00047C204 /* DeletedTaskTypeList */,
+				9DE960832861068A00E5981A /* Diamond */,
+				9DE960822861068100E5981A /* Feather */,
 				600718F827BE8E2A006F2FEF /* GameCurrency */,
 				60AE9DC42652FC5300E51531 /* MainTaskList */,
 				60E970372823F28100577484 /* MainTaskListScene */,
@@ -938,6 +948,24 @@
 			path = Typealias;
 			sourceTree = "<group>";
 		};
+		9DE960822861068100E5981A /* Feather */ = {
+			isa = PBXGroup;
+			children = (
+				9DE96084286106A000E5981A /* FeatherViewController.swift */,
+				9DE96086286106AB00E5981A /* FeatherViewModel.swift */,
+			);
+			path = Feather;
+			sourceTree = "<group>";
+		};
+		9DE960832861068A00E5981A /* Diamond */ = {
+			isa = PBXGroup;
+			children = (
+				9DE96088286106B600E5981A /* DiamondViewController.swift */,
+				9DE9608A286106BF00E5981A /* DiamondViewModel.swift */,
+			);
+			path = Diamond;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1109,6 +1137,7 @@
 				6069AE4126E7E5890098B25E /* TaskTypeIconCollectionViewCell.swift in Sources */,
 				607BCB6026E62E48000A8248 /* TaskTypeViewController.swift in Sources */,
 				6008CFB42684C5B1006DBF1F /* TaskTypeListViewController.swift in Sources */,
+				9DE96087286106AB00E5981A /* FeatherViewModel.swift in Sources */,
 				60AE9DB72652F72C00E51531 /* PreferencesService.swift in Sources */,
 				602EA052274E67F000525D6C /* TDAuthTextField.swift in Sources */,
 				603EC53B26E8913500B39FB7 /* TaskTypeListCollectionViewCellModel.swift in Sources */,
@@ -1122,6 +1151,7 @@
 				603C5CF626F21A060056729B /* TaskTypeColorCollectionViewCell.swift in Sources */,
 				6006F82B27AA6C0200E5AE9E /* ShopCollectionViewHeader.swift in Sources */,
 				606B03AD26C4619200F332C5 /* Date.swift in Sources */,
+				9DE96089286106B600E5981A /* DiamondViewController.swift in Sources */,
 				602D1B3E26C1BBE600DAA711 /* TDTaskCommentTextView.swift in Sources */,
 				60C1AC552817D52100C63404 /* TaskTypeListSectionModel.swift in Sources */,
 				60F0719926DA70970048AB71 /* UITextFields.swift in Sources */,
@@ -1148,8 +1178,10 @@
 				60C1522926BC3A9E00F10284 /* TaskTypeListCollectionViewCell.swift in Sources */,
 				60ED958527B53084005ACC33 /* GameCurrencyCoreData+CoreDataClass.swift in Sources */,
 				6006F82D27AA6E7100E5AE9E /* Bird.swift in Sources */,
+				9DE96085286106A000E5981A /* FeatherViewController.swift in Sources */,
 				60855BDA2659061200079D75 /* TaskViewController.swift in Sources */,
 				6053F86628213BED0047C204 /* DeletedTaskTypeListViewController.swift in Sources */,
+				9DE9608B286106BF00E5981A /* DiamondViewModel.swift in Sources */,
 				60AE9DBF2652F9CF00E51531 /* AppStepper.swift in Sources */,
 				60B82FED2654FCE100BF5F94 /* TaskFlow.swift in Sources */,
 				6006F83327AA74CE00E5AE9E /* ShopSectionModel.swift in Sources */,

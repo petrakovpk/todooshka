@@ -12,93 +12,65 @@ enum AppStep: Step {
   // Logout Is Required
   case LogoutIsRequired
   
-  // Onboarding Is Required
+  // Onboarding
   case OnboardingIsRequired
-  
-  // Onboarding Is Completed
   case OnboardingIsCompleted
   
   // Tab Bar
   case TabBarIsRequired
-  
-  // Main Task List Is Required
   case MainTaskListIsRequired
-  
-  // Overdued Task List Is Required
-  case OverduedTaskListIsRequired
-  
-  // Idea Task list Is Required
-  case IdeaTaskListIsRequired
-  
-  // Completed Task List Is Required
-  case CompletedTaskListIsRequired(date: Date)
-  
-  // Deleted Task List Is Required
-  case DeletedTaskListIsRequired
-
-  // Task List Is Completed
-  case TaskListIsCompleted
-  
-  // Type List Is Required
-  case TaskTypesListIsRequired
-  
-  // Type List Is Completed
-  case TaskTypesListIsCompleted
-  
-  // Deleted Task Type List  Is Required
-  case DeletedTaskTypeListIsRequired
-  
-  // Deleted Task Type List Is Completed
-  case DeletedTaskTypeListIsCompleted
-  
-  // Create Task Type Is Required
-  case CreateTaskTypeIsRequired
-  
-  // Show Task Type Is Required
-  case ShowTaskTypeIsRequired(type: TaskType)
-  
-  // Task Type Is Completed
-  case TaskTypeProcessingIsCompleted
-
-  // Create Task Is Required
-  case CreateTaskIsRequired(status: TaskStatus, createdDate: Date?)
-  
-  // Show Task Is Required
-  case ShowTaskIsRequired(task: Task)
-  
-  // Task Processing Is Completed
-  case TaskProcessingIsCompleted
-
-  // User Profile Is Required
   case UserProfileIsRequired
   
-  // User Settings Is Required
-  case UserSettingsIsRequired
+  // Task List
+  case OverduedTaskListIsRequired
+  case IdeaTaskListIsRequired
+  case CompletedTaskListIsRequired(date: Date)
+  case DeletedTaskListIsRequired
+  case TaskListIsCompleted
   
-  // User Settings Is Completed
+  // Type List
+  case TaskTypesListIsRequired
+  case TaskTypesListIsCompleted
+  
+  // Deleted Task Type List
+  case DeletedTaskTypeListIsRequired
+  case DeletedTaskTypeListIsCompleted
+  
+  // Task Type
+  case CreateTaskTypeIsRequired
+  case ShowTaskTypeIsRequired(type: TaskType)
+  case TaskTypeProcessingIsCompleted
+
+  // Task
+  case CreateTaskIsRequired(status: TaskStatus, createdDate: Date?)
+  case ShowTaskIsRequired(task: Task)
+  case TaskProcessingIsCompleted
+
+  // User Settings
+  case UserSettingsIsRequired
   case UserSettingsIsCompleted
   
-  // Remove Task Is Required
+  // Remove Task
   case RemoveTaskIsRequired
-  
-  // Remove Task Is Completed
   case RemoveTaskIsCompleted
   
-  // Shop Is Required
+  // Shop
   case ShopIsRequired
-  
-  // Shop Is Completed
   case ShopIsCompleted
   
-  // Show Bird Is Required
+  // Show Bird
   case ShowBirdIsRequired(bird: Bird)
-  
-  // Show Bird Is Completed
   case ShowBirdIsCompleted
   
-  // Show Points is Required
+  // Show Points
   case ShowPointsIsRequired
-  
-  // Show Points is Completed
   case ShowPointsIsCompleted
+  
+  // Feather
+  case FeatherIsRequired
+  case FeatherIsCompleted
+  
+  // Diamond
+  case DiamondIsRequired
+  case DiamondIsCompleted
 }

@@ -24,8 +24,9 @@ class UserProfileViewModel: Stepper {
     // buttons
     let settingsButtonClickTrigger: Driver<Void>
     let shopButtonClickTrigger: Driver<Void>
-    // scores
-    let scoreBackgroundClickTrigger: Driver<Void>
+    // game currency
+    let featherBackgroundViewClickTrigger: Driver<Void>
+    let diamondBackgroundViewClickTrigger: Driver<Void>
     // selection
     let selection: Driver<IndexPath>
   }
@@ -37,7 +38,8 @@ class UserProfileViewModel: Stepper {
     // score
     let featherScoreLabel: Driver<String>
     let diamondScoreLabel: Driver<String>
-    let scoreBackgroundClickHandler: Driver<Void>
+    let featherBackgroundViewClickHandler: Driver<Void>
+    let diamondBackgroundViewClickHandler: Driver<Void>
     // selection
     let selectionHandler: Driver<CalendarDay>
     // dataSource
@@ -51,18 +53,6 @@ class UserProfileViewModel: Stepper {
   
   //MARK: - Transform
   func transform(input: Input) -> Output {
-    
-    // buttons
-    let settingsButtonClicked = input.settingsButtonClickTrigger
-      .do { _ in
-        self.steps.accept(AppStep.UserSettingsIsRequired)
-      }
-    
-    let shopButtonClicked = input.shopButtonClickTrigger
-      .do { _ in
-        self.steps.accept(AppStep.ShopIsRequired)
-      }
-    
     // caledar
     let months = months.asDriver()
     let selected = selected.asDriver()
@@ -109,6 +99,7 @@ class UserProfileViewModel: Stepper {
         
         return result
       }.asDriver()
+      .debug()
     
     // selection
     let selectionHandler = input.selection
@@ -139,19 +130,30 @@ class UserProfileViewModel: Stepper {
         .string
       }.asDriver(onErrorJustReturn: "")
     
-    let scoreBackgroundClickHandler = input.scoreBackgroundClickTrigger
-      .do { _ in
-        self.steps.accept(AppStep.ShowPointsIsRequired)
-      }
+    
+    // buttons
+    let featherBackgroundViewClickHandler = input.featherBackgroundViewClickTrigger
+      .do { _ in self.steps.accept(AppStep.FeatherIsRequired) }
+    
+    let diamondBackgroundViewClickHandler = input.diamondBackgroundViewClickTrigger
+      .do { _ in self.steps.accept(AppStep.DiamondIsRequired) }
+
+    let settingsButtonClicked = input.settingsButtonClickTrigger
+      .do { _ in self.steps.accept(AppStep.UserSettingsIsRequired) }
+    
+    let shopButtonClicked = input.shopButtonClickTrigger
+      .do { _ in self.steps.accept(AppStep.ShopIsRequired) }
     
     return Output(
       // buttons
       settingsButtonClickHandler: settingsButtonClicked,
       shopButtonClickHandler: shopButtonClicked,
-      // selection
+      //  пфьу сгккутсн
       featherScoreLabel: featherScoreLabel,
       diamondScoreLabel: diamondScoreLabel,
-      scoreBackgroundClickHandler: scoreBackgroundClickHandler,
+      featherBackgroundViewClickHandler: featherBackgroundViewClickHandler,
+      diamondBackgroundViewClickHandler: diamondBackgroundViewClickHandler,
+      // selection
       selectionHandler: selectionHandler,
       // dataSource
       dataSource: dataSource

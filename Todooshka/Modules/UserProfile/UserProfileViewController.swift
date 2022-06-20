@@ -231,11 +231,8 @@ class UserProfileViewController: UIViewController {
     let input = UserProfileViewModel.Input(
       settingsButtonClickTrigger: settingsButton.rx.tap.asDriver() ,
       shopButtonClickTrigger: shopButton.rx.tap.asDriver(),
-      scoreBackgroundClickTrigger: pointsBackgroundView.rx
-        .tapGesture()
-        .when(.recognized)
-        .map{ _ in return () }
-        .asDriver(onErrorJustReturn: ()),
+      featherBackgroundViewClickTrigger: featherBackgroundView.rx.tapGesture().when(.recognized).map{ _ in return () }.asDriver(onErrorJustReturn: ()),
+      diamondBackgroundViewClickTrigger: diamondBackroundView.rx.tapGesture().when(.recognized).map{ _ in return () }.asDriver(onErrorJustReturn: ()),
       selection: collectionView.rx.itemSelected.asDriver()
     )
     
@@ -247,7 +244,8 @@ class UserProfileViewController: UIViewController {
       outputs.selectionHandler.drive(),
       outputs.featherScoreLabel.drive(featherLabel.rx.text),
       outputs.diamondScoreLabel.drive(diamondLabel.rx.text),
-      outputs.scoreBackgroundClickHandler.drive()
+      outputs.featherBackgroundViewClickHandler.drive(),
+      outputs.diamondBackgroundViewClickHandler.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     

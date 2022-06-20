@@ -70,7 +70,7 @@ class UserProfileScene: SKScene {
     let shouldWait = (Date().timeIntervalSince1970 - created.timeIntervalSince1970) < 4
     
     let fadeIn = SKAction.fadeIn(withDuration: 0)
-    let wait = SKAction.wait(forDuration: shouldWait ? 4.5 : 0.5)
+    let wait = SKAction.wait(forDuration: shouldWait ? 4.5 : 0.1)
     
     let animateSequence = shouldWait ? SKAction.sequence([wait, fadeIn, animateAction]) : SKAction.sequence([wait, animateAction])
     let moveSequence = SKAction.sequence([wait, moveAction])

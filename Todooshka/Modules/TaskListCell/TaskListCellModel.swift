@@ -58,7 +58,6 @@ class TaskListCellModel: Stepper {
   }
   
   func transform(input: Input) -> Output {
-    
     // text
     let text = Driver<String>.just(task.text)
     
