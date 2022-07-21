@@ -98,9 +98,20 @@ struct Theme {
     }
   }
   
-  
+  // Diamond
+  struct Diamond {
+    struct OfferCell {
+      struct selected {
+        static let background = Palette.DualColors.Sundown_254_174_181
+        static let offerBackground = Palette.DualColors.LavenderRose_254_158_242
+      }
+      struct notSeleted {
+        static let background = Palette.DualColors.TitanWhite_228_229_254_Haiti_17_20_52
+        static let offerBackground = Palette.DualColors.TitanWhite_196_198_216_Haiti_17_20_52
+      }
+    }
+  }
 
-  
   // Alert
   struct BuyAlertView {
     static let width = UIScreen.main.bounds.width * 2 / 3

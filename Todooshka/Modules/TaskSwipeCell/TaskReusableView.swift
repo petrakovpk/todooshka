@@ -1,5 +1,5 @@
 //
-//  TaskListReusableView.swift
+//  TaskReusableView.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 10.08.2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TaskListReusableView: UICollectionReusableView {
+class TaskReusableView: UICollectionReusableView {
     
     static var reuseID: String = "TaskListReusableView"
     

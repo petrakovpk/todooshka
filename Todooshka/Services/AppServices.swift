@@ -13,5 +13,4 @@ struct AppServices: HasActionService, HasBirdService, HasPreferencesService, Has
   let preferencesService: PreferencesService
   let tasksService: TasksService
   let typesService: TypesService
-  
 }

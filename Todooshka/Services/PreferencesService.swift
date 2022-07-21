@@ -9,19 +9,20 @@ import RxSwift
 import CoreData
 
 protocol HasPreferencesService {
-    var preferencesService: PreferencesService { get }
+  var preferencesService: PreferencesService { get }
 }
 
 class PreferencesService {
-    
-    let formatter = DateFormatter()
-    
-    init() {
-        formatter.timeZone = TimeZone.current
-    }
-    
-    func isOnboardingCompleted() -> Bool {
-        return UserDefaults.standard.bool(forKey: "isOnboardingCompleted")
-    }
-
+  
+  let formatter = DateFormatter()
+  var needScrollToCurrentMonth: Bool = true
+  
+  init() {
+    formatter.timeZone = TimeZone.current
+  }
+  
+  func isOnboardingCompleted() -> Bool {
+    return UserDefaults.standard.bool(forKey: "isOnboardingCompleted")
+  }
+  
 }

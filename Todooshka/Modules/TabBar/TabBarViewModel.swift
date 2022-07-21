@@ -17,6 +17,7 @@ class TabBarViewModel: Stepper {
   
   struct Input {
     let createTaskButtonClickTrigger: Driver<Void>
+   // let didSelectItemTrigger: Driver<UITabBarItem>
   }
   
   struct Output {
@@ -24,10 +25,17 @@ class TabBarViewModel: Stepper {
     let createTask: Driver<Void>
     // actions
     let createActions: Driver<[SceneAction]>
+    //
   }
   
   init(services: AppServices) {
     self.services = services
+  }
+  
+  func selectedItem(item: UITabBarItem) {
+    if item.tag == 2 {
+      services.preferencesService.needScrollToCurrentMonth = true
+    }
   }
   
   func transform(input: Input) -> Output {

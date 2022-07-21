@@ -88,14 +88,23 @@ class TaskListViewModel: Stepper {
       }
       .asDriver(onErrorJustReturn: [])
     
+    let mode: TaskCellMode = {
+      switch self.listType {
+      case .Main:
+        return TaskCellMode.WithTimer
+      default:
+        return TaskCellMode.WithRepeatButton
+      }
+    }()
+    
     // dataSource
     let dataSource = tasks
-      .map { [TaskListSectionModel(header: "", items: $0)] }
+      .map { [TaskListSectionModel(header: "", mode: mode, items: $0)] }
     
     // selection
     let selection = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource in
-        return dataSource[indexPath.section].items[indexPath.item]
+        dataSource[indexPath.section].items[indexPath.item]
       }
       .do { task in
         self.steps.accept(AppStep.ShowTaskIsRequired(task: task))

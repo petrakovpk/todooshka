@@ -12,13 +12,20 @@ import CoreData
 
 class UserProfileViewModel: Stepper {
   
-  // MARK: - Properties
-  let steps = PublishRelay<Step>()
+  // MARK: - Typealias
+  public typealias DisplayCollectionViewCellEvent = (cell: UICollectionViewCell, at: IndexPath)
+  
+  // MARK: - Public properties
+  public let steps = PublishRelay<Step>()
+  public let scrollToCurrentMonth = BehaviorRelay<Void?>(value: nil)
+  
+  // MARK: - Private properties
   private let services: AppServices
   
   // Calendar
-  private let selected = BehaviorRelay<Date>(value: Date())
-  private let months = BehaviorRelay<[Int]>(value: [-1, 0, 1])
+  private let selectedDate = BehaviorRelay<Date>(value: Date())
+  private let years = BehaviorRelay<[Int]>(value: [Date().year])
+ // private let months = BehaviorRelay<[Int]>(value: [-2,-1,0,1,2,3])
   
   struct Input {
     // buttons
@@ -29,6 +36,8 @@ class UserProfileViewModel: Stepper {
     let diamondBackgroundViewClickTrigger: Driver<Void>
     // selection
     let selection: Driver<IndexPath>
+    //
+    let willDisplayCell: Driver<DisplayCollectionViewCellEvent>
   }
   
   struct Output {
@@ -44,6 +53,8 @@ class UserProfileViewModel: Stepper {
     let selectionHandler: Driver<CalendarDay>
     // dataSource
     let dataSource: Driver<[CalendarSectionModel]>
+  //  let addMonth: Driver<Void>
+    let scrollToCurrentMonth: Driver<IndexPath>
   }
   
   // MARK: - Init
@@ -53,82 +64,80 @@ class UserProfileViewModel: Stepper {
   
   //MARK: - Transform
   func transform(input: Input) -> Output {
+    
     // caledar
-    let months = months.asDriver()
-    let selected = selected.asDriver()
+    let years = years.asDriver()
+    let selectedDate = selectedDate.asDriver()
     
     // completed tasks
     let completedTasks = services.tasksService
       .tasks
-      .map {
-        $0.filter {
-          $0.status == .Completed
-        }
-      }
+      .map { $0.filter {
+        $0.status == .Completed && $0.closed != nil
+      }}
       .asDriver(onErrorJustReturn: [])
     
     // dataSource
     let dataSource = Driver<[CalendarSectionModel]>
-      .combineLatest(months, selected, completedTasks) { months, selected, completedTasks -> [CalendarSectionModel] in
-        var result: [CalendarSectionModel] = []
-        
-        for month in months {
-          var days: [CalendarDay] = []
-          let start = Date()
-            .adding(.month, value: month)
-            .startOfMonth
-          
-          for delta in 0...Calendar.current.numberOfDaysInMonth(for: start) - 1 {
-            let date = start.adding(.day, value: delta)
-            let completedTasks = completedTasks
-              .filter { task -> Bool in
-                guard let closed = task.closed else { return false }
-                return Calendar.current.isDate(closed, inSameDayAs: date)
-              }
-            
-            days.append(
-              CalendarDay(
-                date: date,
-                isSelected: Calendar.current.isDate(date, inSameDayAs: selected),
-                completedTasksCount: completedTasks.count
-              ))
+      .combineLatest(years, selectedDate, completedTasks) { years, selectedDate, completedTasks -> [CalendarSectionModel] in
+        years.map { year -> [CalendarSectionModel] in
+          var result: [CalendarSectionModel] = [CalendarSectionModel(type: .Year, year: year, month: 1, items: [])]
+          for month in 1...12 {
+            guard let firstDayOfMonth = Calendar.current.date(from: DateComponents(year: year, month: month, day: 1)) else { continue }
+            let daysCountInMonth = Calendar.current.numberOfDaysInMonth(for: firstDayOfMonth)
+            var calendarSectionModel = CalendarSectionModel(type: .Month, year: year, month: month, items: [])
+            for dayNumber in 1 ... daysCountInMonth {
+              let day = firstDayOfMonth.adding(.day, value: dayNumber - 1)
+              calendarSectionModel.items.append(
+                CalendarDay(
+                  date: day,
+                  isSelected: Calendar.current.isDate(day, inSameDayAs: selectedDate),
+                  completedTasksCount: completedTasks.filter { Calendar.current.isDate($0.closed!, inSameDayAs: day) }.count
+                )
+              )
+            }
+            result.append(calendarSectionModel)
           }
-          
-          result.append(CalendarSectionModel(header: start.monthName(), items: days))
-        }
-        
-        return result
+          return result
+        }.flatMap{ $0 }
       }.asDriver()
-      .debug()
+    
+    let currentMonthIndexPath = dataSource
+      .map { models -> IndexPath in
+        let item = 0
+        let section = models.firstIndex(where: { $0.year == Date().year && $0.month == Date().month }) ?? 0
+        return IndexPath(item: item, section: section)
+      }
+    
+    let scrollToCurrentMonth = scrollToCurrentMonth
+      .asDriver(onErrorJustReturn: nil)
+      .filter{ _ in self.services.preferencesService.needScrollToCurrentMonth }
+      .compactMap{ $0 }
+      .withLatestFrom(currentMonthIndexPath) { $1 }
+      .do { _ in self.services.preferencesService.needScrollToCurrentMonth = false }
     
     // selection
     let selectionHandler = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> CalendarDay in
         return dataSource[indexPath.section].items[indexPath.item]
-      }
-      .do { day in
-        self.selected.value == day.date ? self.steps.accept(AppStep.CompletedTaskListIsRequired(date: day.date)) : self.selected.accept(day.date)
+      }.do { day in
+        self.selectedDate.value == day.date ? self.steps.accept(AppStep.CompletedTaskListIsRequired(date: day.date)) : self.selectedDate.accept(day.date)
       }
     
     // score
     let featherScoreLabel = services.gameCurrencyService.gameCurrency
-      .map {
-        $0.filter {
-          $0.currency == .Feather
-        }
-        .count
-        .string
-      }
+      .map { $0.filter {
+        $0.currency == .Feather }
+      .count
+        .string }
       .asDriver(onErrorJustReturn: "")
     
     let diamondScoreLabel = services.gameCurrencyService.gameCurrency
-      .map {
-        $0.filter {
-          $0.currency == .Diamond
-        }
-        .count
-        .string
-      }.asDriver(onErrorJustReturn: "")
+      .map { $0.filter {
+        $0.currency == .Diamond }
+      .count
+        .string }
+      .asDriver(onErrorJustReturn: "")
     
     
     // buttons
@@ -137,12 +146,20 @@ class UserProfileViewModel: Stepper {
     
     let diamondBackgroundViewClickHandler = input.diamondBackgroundViewClickTrigger
       .do { _ in self.steps.accept(AppStep.DiamondIsRequired) }
-
+    
     let settingsButtonClicked = input.settingsButtonClickTrigger
       .do { _ in self.steps.accept(AppStep.UserSettingsIsRequired) }
     
     let shopButtonClicked = input.shopButtonClickTrigger
       .do { _ in self.steps.accept(AppStep.ShopIsRequired) }
+    
+//    let addMonthAfter = input.willDisplayCell.withLatestFrom(dataSource) { cellEvent, dataSource -> Int in
+//      return dataSource[cellEvent.at.section].items[cellEvent.at.item].date.month - Date().month }
+//      .withLatestFrom(months) { monthSelected, months in
+//        if monthSelected == months.max() {
+//          self.months.accept(self.months.value + [monthSelected + 1, monthSelected + 2])
+//        }
+//      }
     
     return Output(
       // buttons
@@ -156,7 +173,9 @@ class UserProfileViewModel: Stepper {
       // selection
       selectionHandler: selectionHandler,
       // dataSource
-      dataSource: dataSource
+      dataSource: dataSource,
+     // addMonth: addMonthAfter,
+      scrollToCurrentMonth: scrollToCurrentMonth
     )
   }
 }

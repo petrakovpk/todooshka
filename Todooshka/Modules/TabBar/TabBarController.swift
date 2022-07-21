@@ -34,9 +34,13 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     [
       outputs.createTask.drive(),
       outputs.createActions.drive()
+    //  outputs.leftTabBarItemClick.drive(),
+    //  outputs.rightTabBarItemClick.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
-    
-   
+  }
+  
+  override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+    viewModel.selectedItem(item: item)
   }
 }

@@ -17,9 +17,11 @@ class CalendarReusableView: UICollectionReusableView {
   
   // MARK: - draw
   override func draw(_ rect: CGRect) {
+    // adding
     addSubview(label)
-    label.anchorCenterYToSuperview()
-    label.anchor(left: leftAnchor, leftConstant: 16)
+    
+    // label
+    label.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, leftConstant: 16, rightConstant: 16)
   }
 }
 

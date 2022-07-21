@@ -1,5 +1,5 @@
 //
-//  TaskListCellViewModel.swift
+//  TaskCellModel.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 20.05.2021.
@@ -11,11 +11,12 @@ import RxCocoa
 import Foundation
 import SwipeCellKit
 
-class TaskListCellModel: Stepper {
+class TaskCellModel: Stepper {
   
   // MARK: - Properties
   let services: AppServices
   let steps = PublishRelay<Step>()
+  var mode: TaskCellMode
   var task: Task
   
   var isEnabled: Bool = true
@@ -39,36 +40,36 @@ class TaskListCellModel: Stepper {
     // type
     let type: Driver<TaskType>
     // time Left
-    let taskTimeLeftViewIsHidden: Driver<Bool>
     let timeLeftText: Driver<String>
     let timeLeftPercent: Driver<Double>
     // Repeat Button
     let repeatButtonClick: Driver<Void>
-    let repeatButtonIsHidden: Driver<Bool>
     // actions
     let isHidden: Driver<Bool>
     // dataSource
     let reloadDataSource: Driver<Void>
+    // mode
+    let mode: Driver<TaskCellMode>
   }
   
   //MARK: - Init
-  init(services: AppServices, task: Task) {
+  init(services: AppServices, mode: TaskCellMode, task: Task) {
     self.services = services
+    self.mode = mode
     self.task = task
   }
   
   func transform(input: Input) -> Output {
+    // mode
+    let mode = Driver<TaskCellMode>.just(mode)
     // text
     let text = Driver<String>.just(task.text)
-    
     // description
     let description = Driver<String>.just(task.description ?? "")
-    
     // type
     let type = Driver<TaskType>.just(
       self.services.typesService.types.value.first{ $0.UID == self.task.typeUID } ?? .Standart.Empty
     )
-    
     // timer
     let timer = Observable<Int>
       .timer(
@@ -88,13 +89,6 @@ class TaskListCellModel: Stepper {
     let timeLeftPercent = timer
       .map { _ in self.task.status == .InProgress ? self.task.secondsLeft / (24 * 60 * 60) : 0 }
       .asDriver(onErrorJustReturn: 0)
-    
-    // repeatButtonIsHidden
-    let repeatButtonIsHidden = Driver<Bool>.just(self.repeatButtonIsHidden(task: self.task))
-    
-    // taskTimeLeftViewIsHidden
-    let taskTimeLeftViewIsHidden = repeatButtonIsHidden
-      .map { !$0 }
     
     // repeatButton
     let repeatButton = input.repeatButtonClickTrigger
@@ -133,16 +127,16 @@ class TaskListCellModel: Stepper {
       // type
       type: type,
       // time Left
-      taskTimeLeftViewIsHidden: taskTimeLeftViewIsHidden,
       timeLeftText: timeLeftText,
       timeLeftPercent: timeLeftPercent,
       // repeat button
       repeatButtonClick: repeatButton,
-      repeatButtonIsHidden: repeatButtonIsHidden,
       // actions
       isHidden: isHidden,
       // dataSource
-      reloadDataSource: reloadDataSource
+      reloadDataSource: reloadDataSource,
+      // mode
+      mode: mode
     )
   }
   
@@ -157,7 +151,7 @@ class TaskListCellModel: Stepper {
   }
 }
 
-extension TaskListCellModel: SwipeCollectionViewCellDelegate {
+extension TaskCellModel: SwipeCollectionViewCellDelegate {
   
   func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
     isEnabled = false

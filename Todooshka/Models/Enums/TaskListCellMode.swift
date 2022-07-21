@@ -7,7 +7,8 @@
 
 import Foundation
 
-enum TaskListCellMode {
-  case text
-  case textAndDescription
+enum TaskCellMode: String {
+  case WithTimer = "WithTimer"
+  case WithRepeatButton = "WithRepeatButton"
+  case WithFeather = "WithFeather"
 }

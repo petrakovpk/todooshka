@@ -7,17 +7,29 @@
 
 import RxDataSources
 
+enum CalendarSectionType {
+  case Month, Year
+}
+
 struct CalendarSectionModel: AnimatableSectionModelType {
   
   var identity: String {
-    return header
+    return year.string + month.string
   }
   
-  var header: String
+  var type: CalendarSectionType
+  var year: Int
+  var month: Int
   var items: [CalendarDay]
   
-  init(header: String, items: [CalendarDay]) {
-    self.header = header
+  var monthName: String {
+    DateFormatter().standaloneMonthSymbols[self.month - 1]
+  }
+  
+  init(type: CalendarSectionType, year: Int, month: Int, items: [CalendarDay]) {
+    self.type = type
+    self.year = year
+    self.month = month
     self.items = items
   }
   

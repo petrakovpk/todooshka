@@ -12,8 +12,6 @@ import RxDataSources
 
 class BirdViewController: UIViewController {
 
-  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TypeSmallCollectionViewCellSectionModel>!
-  
   // MARK: - Header UI Elemenets
   private let headerView = UIView()
   private let titleLabel = UILabel()
@@ -36,6 +34,7 @@ class BirdViewController: UIViewController {
   }()
   
   private var collectionView: UICollectionView!
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TypeSmallCollectionViewCellSectionModel>!
   
   private let descriptionBackgroundView: UIView = {
     let view = UIView()
@@ -155,15 +154,16 @@ class BirdViewController: UIViewController {
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     
     // adding
-    view.addSubview(imageView)
-    view.addSubview(typeLabel)
-    view.addSubview(collectionView)
-    view.addSubview(buyButton)
-    view.addSubview(isBoughtLabel)
-    view.addSubview(descriptionBackgroundView)
-    view.addSubview(alertBuyView)
-    descriptionBackgroundView.addSubview(descriptionTextView)
-    
+    view.addSubviews([
+      imageView,
+      typeLabel,
+      collectionView,
+      descriptionBackgroundView,
+      buyButton,
+      isBoughtLabel,
+      alertBuyView
+    ])
+
     // view
     view.backgroundColor = Theme.App.background
     
@@ -192,6 +192,7 @@ class BirdViewController: UIViewController {
     isBoughtLabel.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 32, rightConstant: 16, heightConstant: 50)
     
     // descriptionBackgroundView
+    descriptionBackgroundView.addSubview(descriptionTextView)
     descriptionBackgroundView.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, bottom: buyButton.topAnchor, right: view.rightAnchor, topConstant: 32, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
     
     // descriptionTextView

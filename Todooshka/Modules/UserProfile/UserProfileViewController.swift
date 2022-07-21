@@ -92,7 +92,7 @@ class UserProfileViewController: UIViewController {
     bindUserProfileViewModel()
     bindUserProfileSceneModel()
   }
-  
+    
   override func viewWillAppear(_ animated: Bool) {
     navigationController?.tabBarController?.tabBar.isHidden = false
   }
@@ -100,10 +100,7 @@ class UserProfileViewController: UIViewController {
   override func viewDidAppear(_ animated: Bool) {
     userProfileSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
     userProfileSceneModel.services.actionService.runUserProfileActionsTrigger.accept(())
-    if let attributes =
-        collectionView.collectionViewLayout.layoutAttributesForSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: 1)) {
-      collectionView.setContentOffset(CGPoint(x: 0, y: attributes.frame.origin.y - collectionView.contentInset.top), animated: false)
-    }
+    userProfileViewModel.scrollToCurrentMonth.accept(())
   }
   
   //MARK: - Configure UI
@@ -195,11 +192,11 @@ class UserProfileViewController: UIViewController {
     
     // collectionView
     collectionView.register(CalendarCell.self, forCellWithReuseIdentifier: CalendarCell.reuseID )
+    collectionView.register(CalendarYearCell.self, forCellWithReuseIdentifier: CalendarYearCell.reuseID )
     collectionView.register(CalendarReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CalendarReusableView.reuseID)
     collectionView.backgroundColor = UIColor.clear
     collectionView.showsVerticalScrollIndicator = false
     collectionView.anchor(top: calendarDividerView.bottomAnchor, left: calendarBackgroundView.leftAnchor, bottom: calendarBackgroundView.bottomAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted)
-    
   }
   
   private func createCompositionalLayout() -> UICollectionViewLayout {
@@ -233,10 +230,16 @@ class UserProfileViewController: UIViewController {
       shopButtonClickTrigger: shopButton.rx.tap.asDriver(),
       featherBackgroundViewClickTrigger: featherBackgroundView.rx.tapGesture().when(.recognized).map{ _ in return () }.asDriver(onErrorJustReturn: ()),
       diamondBackgroundViewClickTrigger: diamondBackroundView.rx.tapGesture().when(.recognized).map{ _ in return () }.asDriver(onErrorJustReturn: ()),
-      selection: collectionView.rx.itemSelected.asDriver()
+      selection: collectionView.rx.itemSelected.asDriver(),
+      willDisplayCell: collectionView.rx.willDisplayCell.asDriver()
     )
     
     let outputs = userProfileViewModel.transform(input: input)
+    
+    [
+      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource))
+    ]
+      .forEach({ $0.disposed(by: disposeBag) })
     
     [
       outputs.settingsButtonClickHandler.drive(),
@@ -245,14 +248,13 @@ class UserProfileViewController: UIViewController {
       outputs.featherScoreLabel.drive(featherLabel.rx.text),
       outputs.diamondScoreLabel.drive(diamondLabel.rx.text),
       outputs.featherBackgroundViewClickHandler.drive(),
-      outputs.diamondBackgroundViewClickHandler.drive()
+      outputs.diamondBackgroundViewClickHandler.drive(),
+   //   outputs.addMonth.drive(),
+      outputs.scrollToCurrentMonth.drive(scrollToCurrentMonthBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
-    [
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource))
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+   
   }
   
   func bindUserProfileSceneModel() {
@@ -277,6 +279,15 @@ class UserProfileViewController: UIViewController {
     })
   }
   
+  var scrollToCurrentMonthBinder: Binder<IndexPath> {
+    return Binder(self, binding: { (vc, indexPath) in
+      if let attributes = vc.collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: indexPath) {
+        let topOfHeader = CGPoint(x: 0, y: attributes.frame.origin.y - vc.collectionView.contentInset.top)
+        vc.collectionView.setContentOffset(topOfHeader, animated: true)
+      }
+    })
+  }
+  
   var runActionsBinder: Binder<[SceneAction]> {
     return Binder(self, binding: { (vc, actions) in
       if let scene = vc.scene {
@@ -288,16 +299,29 @@ class UserProfileViewController: UIViewController {
   
   //MARK: - Configure Data Source
   func configureDataSource() {
-    dataSource = RxCollectionViewSectionedReloadDataSource<CalendarSectionModel>(configureCell: {(dataSource, collectionView, indexPath, calendarDay) in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
-      cell.configure(calendarDay: calendarDay)
-      return cell
-    }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
-      let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CalendarReusableView.reuseID, for: indexPath) as! CalendarReusableView
-      section.label.text = dataSource[indexPath.section].header
-      return section
-    })
+    dataSource = RxCollectionViewSectionedReloadDataSource<CalendarSectionModel>(
+      configureCell: { dataSource, collectionView, indexPath, calendarDay in
+        switch dataSource[indexPath.section].type {
+        case .Month:
+          let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
+          cell.configure(calendarDay: calendarDay)
+          return cell
+        case .Year:
+          let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarYearCell.reuseID, for: indexPath) as! CalendarYearCell
+          cell.configure(year: dataSource[indexPath.section].year)
+          return cell
+        }
+      }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CalendarReusableView.reuseID, for: indexPath) as! CalendarReusableView
+        switch dataSource[indexPath.section].type {
+        case .Month:
+          header.label.text = dataSource[indexPath.section].monthName
+        case .Year:
+          header.label.text = dataSource[indexPath.section].year.string
+          header.label.textAlignment = .center
+          header.label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        }
+        return header
+      })
   }
 }
-
-

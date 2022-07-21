@@ -31,7 +31,6 @@ class TypesService {
   
   // MARK: - Init
   init() {
-     removeAllTypesFromCoreData()
     
     // load types from Core Data
     self.types.accept(

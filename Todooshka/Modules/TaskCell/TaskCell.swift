@@ -1,8 +1,8 @@
 //
-//  TaskListCollectionViewCell.swift
+//  TaskCell.swift
 //  Todooshka
 //
-//  Created by Петраков Павел Константинович on 20.05.2021.
+//  Created by Pavel Petakov on 19.07.2022.
 //
 
 import UIKit
@@ -11,11 +11,11 @@ import RxCocoa
 import Foundation
 import SwipeCellKit
 
-class TaskListCell: SwipeCollectionViewCell {
+class TaskCell: UICollectionViewCell {
   
   //MARK: - Properties
-  static var reuseID: String = "TaskListCell"
-  var viewModel: TaskListCellModel!
+  static var reuseID: String = "TaskCell"
+  var viewModel: TaskCellModel!
   var disposeBag = DisposeBag()
   
   var oldLayer: CALayer?
@@ -46,6 +46,8 @@ class TaskListCell: SwipeCollectionViewCell {
   
   private let taskTimeLeftView: UIView = {
     let view = UIView()
+    view.cornerRadius = 15
+    view.layer.masksToBounds = false
     view.backgroundColor = Theme.TaskList.Cell.timeLeftViewBackground
     return view
   }()
@@ -67,7 +69,20 @@ class TaskListCell: SwipeCollectionViewCell {
     return view
   }()
   
-  private let repeatButton = UIButton(type: .custom)
+  private let repeatButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.setImage(UIImage(named: "refresh-circle")?.original, for: .normal)
+    button.backgroundColor = Palette.SingleColors.BlueRibbon
+    button.cornerRadius = 15
+    button.setTitleColor(.white, for: .normal)
+    button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4);
+    button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0);
+    
+    let attributedTitle = NSAttributedString(string: "В работу", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 11, weight: .semibold)])
+    button.setAttributedTitle(attributedTitle , for: .normal)
+    
+    return button
+  }()
   
   override func layoutSubviews() {
     super.layoutSubviews()
@@ -180,10 +195,8 @@ class TaskListCell: SwipeCollectionViewCell {
   
   //MARK: - Configure UI
   func configureUI() {
-    let attributedTitle = NSAttributedString(
-      string: "В работу",
-      attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 11, weight: .semibold)])
     
+    // contentView
     contentView.addSubview(repeatButton)
     contentView.addSubview(taskTextLabel)
     contentView.addSubview(descriptionTextLabel)
@@ -206,8 +219,6 @@ class TaskListCell: SwipeCollectionViewCell {
     taskTypeImageView.anchor(left: contentView.leftAnchor, leftConstant: 8, widthConstant: 20, heightConstant: 20)
     
     // taskTimeLeftView
-    taskTimeLeftView.cornerRadius = 15
-    taskTimeLeftView.layer.masksToBounds = false
     taskTimeLeftView.anchorCenterYToSuperview()
     taskTimeLeftView.anchor(right: contentView.rightAnchor, rightConstant: 8, widthConstant: 110, heightConstant: 30)
     
@@ -220,13 +231,6 @@ class TaskListCell: SwipeCollectionViewCell {
     taskTimeLeftLabel.anchor(left: taskTimeLeftImageView.rightAnchor, right: taskTimeLeftView.rightAnchor, leftConstant: 3, rightConstant: 10, widthConstant: 40)
     
     // repeatButton
-    repeatButton.setImage(UIImage(named: "refresh-circle")?.original, for: .normal)
-    repeatButton.backgroundColor = Palette.SingleColors.BlueRibbon
-    repeatButton.cornerRadius = 15
-    repeatButton.setAttributedTitle(attributedTitle , for: .normal)
-    repeatButton.setTitleColor(.white, for: .normal)
-    repeatButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4);
-    repeatButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0);
     repeatButton.anchorCenterYToSuperview()
     repeatButton.anchor(right: contentView.rightAnchor, rightConstant: 8, widthConstant: 110, heightConstant: 30)
     
@@ -247,7 +251,6 @@ class TaskListCell: SwipeCollectionViewCell {
       // descriptionTextLabel
       descriptionTextLabel.anchor(top: taskTextLabel.bottomAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 3, leftConstant: 8, rightConstant: 8)
     }
-    
   }
   
   // MARK: - Configure UI
@@ -294,7 +297,7 @@ class TaskListCell: SwipeCollectionViewCell {
   //MARK: - Bind
   func bindViewModel(){
     
-    let input = TaskListCellModel.Input(
+    let input = TaskCellModel.Input(
       repeatButtonClickTrigger: repeatButton.rx.tap.asDriver()
     )
     
@@ -311,19 +314,17 @@ class TaskListCell: SwipeCollectionViewCell {
       outputs.type.drive(typeBinder),
       
       // time Left
-      outputs.taskTimeLeftViewIsHidden.drive(taskTimeLeftView.rx.isHidden),
       outputs.timeLeftText.drive(taskTimeLeftLabel.rx.text),
       outputs.timeLeftPercent.drive(timeLeftPercentBinder),
       
       // repeat button
-      outputs.repeatButtonIsHidden.drive(repeatButton.rx.isHidden),
       outputs.repeatButtonClick.drive(),
-      
-      // actions
-      outputs.isHidden.drive(isHiddenBinder),
-      
+  
       // dataSource
-      outputs.reloadDataSource.drive()
+      outputs.reloadDataSource.drive(),
+      
+      // mode
+      outputs.mode.drive(modeBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
@@ -337,13 +338,7 @@ class TaskListCell: SwipeCollectionViewCell {
     })
   }
   
-  var isHiddenBinder: Binder<Bool> {
-    return Binder(self, binding: { (cell, isHide) in
-      if isHide == false  { return }
-      cell.hideSwipe(animated: true)
-    })
-  }
-  
+ 
   var timeLeftPercentBinder: Binder<Double> {
     return Binder(self, binding: { (cell, percent) in
       let widthConstant = percent * (cell.contentView.frame.width.double - 22)
@@ -351,6 +346,23 @@ class TaskListCell: SwipeCollectionViewCell {
     })
   }
   
+  var modeBinder: Binder<TaskCellMode> {
+    return Binder(self, binding: { (cell, mode) in
+      switch mode {
+      case .WithTimer:
+        cell.taskTimeLeftView.isHidden = false
+        cell.repeatButton.isHidden = true
+      case .WithRepeatButton:
+        cell.taskTimeLeftView.isHidden = true
+        cell.repeatButton.isHidden = false
+      case .WithFeather:
+        cell.taskTimeLeftView.isHidden = true
+        cell.repeatButton.isHidden = true
+      }
+    })
+  }
+  
 }
+
 
 

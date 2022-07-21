@@ -19,11 +19,21 @@ class DiamondViewModel: Stepper {
   struct Input {
     // button
     let backButtonClickTrigger: Driver<Void>
+    // offer
+    let smallOfferBackgroundClickTrigger: Driver<Void>
+    let mediumOfferBackgroundClickTrigger: Driver<Void>
+    let largeOfferBackgroundClickTrigger: Driver<Void>
+    // buy
+    let buyButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
     // button
     let backButtonClickHandler: Driver<Void>
+    // offer
+    let offerSelected: Driver<DiamondPackageType>
+    // buy button
+    let buyButtonClick: Driver<Void>
   }
   
   //MARK: - Init
@@ -34,11 +44,27 @@ class DiamondViewModel: Stepper {
   // MARK: - Transform
   func transform(input: Input) -> Output {
     
+    // backButtonClickHandler
     let backButtonClickHandler = input.backButtonClickTrigger
       .do { _ in self.steps.accept(AppStep.DiamondIsCompleted) }
     
+    // offerSelected
+    let smallOfferSelected = input.smallOfferBackgroundClickTrigger.map{ DiamondPackageType.Small }.asDriver()
+    let mediumOfferSelected = input.mediumOfferBackgroundClickTrigger.map{ DiamondPackageType.Medium }.asDriver()
+    let largeOfferSelected = input.largeOfferBackgroundClickTrigger.map{ DiamondPackageType.Large }.asDriver()
+    
+    let offerSelected = Driver
+      .of(smallOfferSelected, mediumOfferSelected, largeOfferSelected)
+      .merge()
+      .startWith(.Medium)
+    
+    // buyButtonClick
+    let buyButtonClick = input.buyButtonClickTrigger
+    
     return Output(
-      backButtonClickHandler: backButtonClickHandler
+      backButtonClickHandler: backButtonClickHandler,
+      offerSelected: offerSelected,
+      buyButtonClick: buyButtonClick
     )
   }
 

@@ -120,8 +120,8 @@ class TaskListViewController: UIViewController {
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
     
     // collectionView
-    collectionView.register(TaskListCell.self, forCellWithReuseIdentifier: TaskListCell.reuseID)
-    collectionView.register(TaskListReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskListReusableView.reuseID)
+    collectionView.register(TaskSwipeCell.self, forCellWithReuseIdentifier: TaskSwipeCell.reuseID)
+    collectionView.register(TaskReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
     collectionView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
@@ -240,16 +240,16 @@ class TaskListViewController: UIViewController {
   
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { (_, collectionView, indexPath, task) in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskListCell.reuseID, for: indexPath) as! TaskListCell
-      let cellViewModel = TaskListCellModel(services: self.viewModel.services, task: task)
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { dataSource, collectionView, indexPath, task in
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskSwipeCell.reuseID, for: indexPath) as! TaskSwipeCell
+      let cellViewModel = TaskCellModel(services: self.viewModel.services, mode: dataSource[indexPath.section].mode, task: task)
       cell.viewModel = cellViewModel
       cell.delegate = cellViewModel
       cell.disposeBag = DisposeBag()
       cell.bindViewModel()
       return cell
     }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
-      let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskListReusableView.reuseID, for: indexPath) as! TaskListReusableView
+      let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView
       section.configure(text: dataSource[indexPath.section].header)
       return section
     })

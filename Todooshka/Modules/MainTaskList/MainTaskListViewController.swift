@@ -177,7 +177,7 @@ class MainTaskListViewController: UIViewController {
     ideaTasksButton.anchor(top: sceneView.bottomAnchor, right: view.rightAnchor, topConstant: 16, rightConstant: 16, widthConstant: UIScreen.main.bounds.width / 2 - 16 - 8, heightConstant: 40)
     
     // collectionView
-    collectionView.register(TaskListCell.self, forCellWithReuseIdentifier: TaskListCell.reuseID)
+    collectionView.register(TaskSwipeCell.self, forCellWithReuseIdentifier: TaskSwipeCell.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.layer.masksToBounds = true
     collectionView.backgroundColor = .clear
@@ -219,9 +219,9 @@ class MainTaskListViewController: UIViewController {
   private func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(
-      configureCell: { (_, collectionView, indexPath, task) in
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskListCell.reuseID, for: indexPath) as! TaskListCell
-        let cellViewModel = TaskListCellModel(services: self.mainTaskListViewModel.services, task: task)
+      configureCell: { dataSource, collectionView, indexPath, task in
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskSwipeCell.reuseID, for: indexPath) as! TaskSwipeCell
+        let cellViewModel = TaskCellModel(services: self.mainTaskListViewModel.services, mode: dataSource[indexPath.section].mode, task: task)
         cell.viewModel = cellViewModel
         cell.delegate = cellViewModel
         cell.disposeBag = DisposeBag()
