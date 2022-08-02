@@ -14,6 +14,7 @@ class TabBarViewModel: Stepper {
   
   let steps = PublishRelay<Step>()
   let services: AppServices
+  var selectedItem: Int = 1
   
   struct Input {
     let createTaskButtonClickTrigger: Driver<Void>
@@ -25,7 +26,6 @@ class TabBarViewModel: Stepper {
     let createTask: Driver<Void>
     // actions
     let createActions: Driver<[SceneAction]>
-    //
   }
   
   init(services: AppServices) {
@@ -34,7 +34,8 @@ class TabBarViewModel: Stepper {
   
   func selectedItem(item: UITabBarItem) {
     if item.tag == 2 {
-      services.preferencesService.needScrollToCurrentMonth = true
+      services.preferencesService.scrollToCurrentMonthTrigger.accept((true, selectedItem == 2 ? true : false )) 
+      selectedItem = item.tag
     }
   }
   

@@ -13,6 +13,7 @@ struct CalendarDay: IdentifiableType, Equatable {
   var date: Date
   var isSelected: Bool
   var completedTasksCount: Int
+  var isEnabled: Bool
   
   // IdentifiableType
   var identity: Double {

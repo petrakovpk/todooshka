@@ -53,16 +53,33 @@ class CalendarCell: UICollectionViewCell {
   
   func configure(calendarDay: CalendarDay) {
     
-    // contentView
-    contentView.borderWidth = calendarDay.date.isInToday ? 1 : 0
-    contentView.backgroundColor = calendarDay.isSelected ? Theme.UserProfile.Calendar.Cell.selectedBackground : UIColor.clear
+    if calendarDay.isEnabled {
+      // contentView
+      contentView.borderWidth = calendarDay.date.isInToday ? 1 : 0
+      contentView.backgroundColor = calendarDay.isSelected ? Theme.UserProfile.Calendar.Cell.selectedBackground : UIColor.clear
+      
+      // imageView
+      imageView.image = getImage(count: calendarDay.completedTasksCount)
+      
+      // dateLabel
+      dateLabel.text = calendarDay.date.day.string
+      dateLabel.textColor = imageView.image == nil ? calendarDay.isSelected ? UIColor.white : Theme.App.text : UIColor(hexString: "#030410")
+      
+    } else {
+
+      // contentView
+      contentView.borderWidth = 0.0
+      contentView.backgroundColor = .clear
+      
+      // imageView
+      imageView.image = nil
+      
+      // dateLabel
+      dateLabel.text = ""
+      dateLabel.textColor = .systemGray
+    }
     
-    // imageView
-    imageView.image = getImage(count: calendarDay.completedTasksCount)
     
-    // dateLabel
-    dateLabel.text = calendarDay.date.day.string
-    dateLabel.textColor = imageView.image == nil ? calendarDay.isSelected ? UIColor.white : Theme.App.text : UIColor(hexString: "#030410")
   }
   
   func getImage(count: Int) -> UIImage? {

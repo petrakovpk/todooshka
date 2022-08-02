@@ -7,6 +7,7 @@
 
 import RxSwift
 import CoreData
+import RxRelay
 
 protocol HasPreferencesService {
   var preferencesService: PreferencesService { get }
@@ -15,7 +16,7 @@ protocol HasPreferencesService {
 class PreferencesService {
   
   let formatter = DateFormatter()
-  var needScrollToCurrentMonth: Bool = true
+  var scrollToCurrentMonthTrigger = BehaviorRelay<(trigger: Bool, withAnimation: Bool)>(value: (false, false))
   
   init() {
     formatter.timeZone = TimeZone.current

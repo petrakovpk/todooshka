@@ -11,8 +11,21 @@ import RxCocoa
 import RxDataSources
 import RxGesture
 import SpriteKit
+import SwiftUI
+import SwifterSwift
+
+enum ScrollToIndexPath{
+  case Initial
+  case Ready
+  case Scrolled
+}
 
 class UserProfileViewController: UIViewController {
+  
+  // MARK: - Const
+  private let itemSize = CGSize(width: 45.0, height: 45.0)
+  private let sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
+  private var needScrollToToday: Bool = true
   
   // MARK: - Sprite Kit
   private let scene: UserProfileScene? = {
@@ -71,8 +84,7 @@ class UserProfileViewController: UIViewController {
   
   private let calendarBackgroundView = UIView()
   private let calendarDividerView = UIView()
-  
-  var collectionView: UICollectionView!
+  private var calendarView = CalendarView(frame: .zero, collectionViewLayout: CalendarViewLayout())
   
   // MARK: - MVVM
   var userProfileViewModel: UserProfileViewModel!
@@ -82,17 +94,18 @@ class UserProfileViewController: UIViewController {
   private let disposeBag = DisposeBag()
   
   // MARK: - Rx DataSources
-  var dataSource: RxCollectionViewSectionedReloadDataSource<CalendarSectionModel>!
+  public var dataSource: [CalendarSectionModel] = []
+  
+  fileprivate var needsDelayedScrolling: ScrollToIndexPath = .Initial
   
   //MARK: - Lifecycle
   override func viewDidLoad() {
     configureScene()
     configureUI()
-    configureDataSource()
     bindUserProfileViewModel()
     bindUserProfileSceneModel()
   }
-    
+  
   override func viewWillAppear(_ animated: Bool) {
     navigationController?.tabBarController?.tabBar.isHidden = false
   }
@@ -100,20 +113,62 @@ class UserProfileViewController: UIViewController {
   override func viewDidAppear(_ animated: Bool) {
     userProfileSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
     userProfileSceneModel.services.actionService.runUserProfileActionsTrigger.accept(())
-    userProfileViewModel.scrollToCurrentMonth.accept(())
   }
+  
+
+  
+  private func createCompositionalLayout() -> UICollectionViewLayout {
+    return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+      switch self.dataSource[sectionIndex].type {
+      case .Month:
+        return self.monthSection()
+      case .Year:
+        return self.yearSection()
+      }
+    }
+  }
+  
+  
+  
+  private func monthSection() -> NSCollectionLayoutSection{
+    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(45.adjusted), heightDimension: .absolute(45.adjusted))
+    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(45.adjusted))
+    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+    group.interItemSpacing = .fixed(5.adjusted)
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(25.0))
+    let header = NSCollectionLayoutBoundarySupplementaryItem(
+      layoutSize: headerSize,
+      elementKind: UICollectionView.elementKindSectionHeader,
+      alignment: .top)
+    let section = NSCollectionLayoutSection(group: group)
+    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
+    section.boundarySupplementaryItems = [header]
+    return section
+  }
+  
+  private func yearSection() -> NSCollectionLayoutSection{
+    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45.adjusted))
+    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(45.adjusted))
+    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+    let section = NSCollectionLayoutSection(group: group)
+    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
+    return section
+  }
+  
   
   //MARK: - Configure UI
   func configureScene() {
+    // adding
     view.addSubview(sceneView)
+    
+    // sceneView
     sceneView.presentScene(scene)
     sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,  heightConstant: sceneView.frame.height)
   }
   
   func configureUI() {
-    
-    // collection view
-    collectionView = UICollectionView(frame: .zero , collectionViewLayout: createCompositionalLayout())
     
     // adding
     view.addSubview(settingsButton)
@@ -136,7 +191,7 @@ class UserProfileViewController: UIViewController {
     // calendarBackgroundView
     calendarBackgroundView.addSubview(calendarHeaderView)
     calendarBackgroundView.addSubview(calendarDividerView)
-    calendarBackgroundView.addSubview(collectionView)
+    calendarBackgroundView.addSubview(calendarView)
     
     // view
     view.backgroundColor = Theme.App.background
@@ -163,10 +218,10 @@ class UserProfileViewController: UIViewController {
     diamondBackroundView.borderWidth = 0.5
     diamondBackroundView.layer.cornerRadius = 15
     diamondBackroundView.anchor(top: pointsBackgroundView.topAnchor, bottom: pointsBackgroundView.bottomAnchor, right: pointsBackgroundView.rightAnchor, widthConstant: (UIScreen.main.bounds.width - 32) / 2 / 2 - 8 )
-
+    
     // feathersImageView
     feathersImageView.anchor(top: featherBackgroundView.topAnchor, bottom: featherBackgroundView.bottomAnchor, right: featherBackgroundView.rightAnchor, topConstant: 4, bottomConstant: 4, rightConstant: 8, widthConstant: 20, heightConstant: 40)
-
+    
     // featherLabel
     featherLabel.textAlignment = .center
     featherLabel.anchor(top: featherBackgroundView.topAnchor, left: featherBackgroundView.leftAnchor, bottom: featherBackgroundView.bottomAnchor, right: feathersImageView.leftAnchor, topConstant: 4, leftConstant: 8, bottomConstant: 4, rightConstant: 8)
@@ -190,37 +245,14 @@ class UserProfileViewController: UIViewController {
     calendarDividerView.backgroundColor = Theme.UserProfile.Calendar.divider
     calendarDividerView.anchor(top: calendarHeaderView.bottomAnchor, left: calendarBackgroundView.leftAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted, heightConstant: 1)
     
-    // collectionView
-    collectionView.register(CalendarCell.self, forCellWithReuseIdentifier: CalendarCell.reuseID )
-    collectionView.register(CalendarYearCell.self, forCellWithReuseIdentifier: CalendarYearCell.reuseID )
-    collectionView.register(CalendarReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CalendarReusableView.reuseID)
-    collectionView.backgroundColor = UIColor.clear
-    collectionView.showsVerticalScrollIndicator = false
-    collectionView.anchor(top: calendarDividerView.bottomAnchor, left: calendarBackgroundView.leftAnchor, bottom: calendarBackgroundView.bottomAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted)
+    // calendarView
+    calendarView.delegate = self
+    calendarView.dataSource = self
+    calendarView.calendarViewDelegate = self
+    calendarView.anchor(top: calendarDividerView.bottomAnchor, left: calendarBackgroundView.leftAnchor, bottom: calendarBackgroundView.bottomAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8, leftConstant: 8, bottomConstant: 8, rightConstant: 8)
   }
   
-  private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-      return self.section()
-    }
-  }
   
-  private func section() -> NSCollectionLayoutSection{
-    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(45.adjusted), heightDimension: .absolute(45.adjusted))
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(45.adjusted))
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    group.interItemSpacing = .fixed(5.adjusted)
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(25.0))
-    let header = NSCollectionLayoutBoundarySupplementaryItem(
-      layoutSize: headerSize,
-      elementKind: UICollectionView.elementKindSectionHeader,
-      alignment: .top)
-    let section = NSCollectionLayoutSection(group: group)
-    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-    section.boundarySupplementaryItems = [header]
-    return section
-  }
   
   //MARK: - Bind To
   func bindUserProfileViewModel() {
@@ -230,18 +262,14 @@ class UserProfileViewController: UIViewController {
       shopButtonClickTrigger: shopButton.rx.tap.asDriver(),
       featherBackgroundViewClickTrigger: featherBackgroundView.rx.tapGesture().when(.recognized).map{ _ in return () }.asDriver(onErrorJustReturn: ()),
       diamondBackgroundViewClickTrigger: diamondBackroundView.rx.tapGesture().when(.recognized).map{ _ in return () }.asDriver(onErrorJustReturn: ()),
-      selection: collectionView.rx.itemSelected.asDriver(),
-      willDisplayCell: collectionView.rx.willDisplayCell.asDriver()
+      selection: calendarView.rx.itemSelected.asDriver(),
+      willDisplayCell: calendarView.rx.willDisplayCell.asDriver()
     )
     
     let outputs = userProfileViewModel.transform(input: input)
     
     [
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource))
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
-    
-    [
+      outputs.dataSource.drive(dataSourceBinder),
       outputs.settingsButtonClickHandler.drive(),
       outputs.shopButtonClickHandler.drive(),
       outputs.selectionHandler.drive(),
@@ -249,12 +277,12 @@ class UserProfileViewController: UIViewController {
       outputs.diamondScoreLabel.drive(diamondLabel.rx.text),
       outputs.featherBackgroundViewClickHandler.drive(),
       outputs.diamondBackgroundViewClickHandler.drive(),
-   //   outputs.addMonth.drive(),
+      outputs.willDisplayCell.drive(),
       outputs.scrollToCurrentMonth.drive(scrollToCurrentMonthBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
-   
+    
   }
   
   func bindUserProfileSceneModel() {
@@ -279,11 +307,79 @@ class UserProfileViewController: UIViewController {
     })
   }
   
-  var scrollToCurrentMonthBinder: Binder<IndexPath> {
-    return Binder(self, binding: { (vc, indexPath) in
-      if let attributes = vc.collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: indexPath) {
-        let topOfHeader = CGPoint(x: 0, y: attributes.frame.origin.y - vc.collectionView.contentInset.top)
-        vc.collectionView.setContentOffset(topOfHeader, animated: true)
+  var scrollToCurrentMonthBinder: Binder<(trigger: Bool, withAnimation: Bool)> {
+    return Binder(self, binding: { vc, scrollEvent in
+      
+      if scrollEvent.trigger {
+        // иначе не получим лейаут
+        vc.calendarView.layoutIfNeeded()
+        
+        // получаем секцию куда будем скролить
+        guard let sectionIndex = self.dataSource.firstIndex(where: { $0.month == Date().month }) else { return }
+        guard let layoutAttributesForSupplementaryElement = vc.calendarView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: sectionIndex)) else { return }
+
+        // Скроллим
+        vc.calendarView.collectionViewLayout.invalidateLayout()
+        vc.calendarView.collectionViewLayout.prepare()
+        vc.calendarView.setContentOffset(CGPoint(x: 0, y: layoutAttributesForSupplementaryElement.frame.origin.y), animated: scrollEvent.withAnimation)
+      }
+      
+      
+    })
+  }
+  
+  var dataSourceBinder: Binder<[CalendarSectionModel]> {
+    return Binder(self, binding: { vc, newDataSource in
+      let oldDataSource = self.dataSource
+      self.dataSource = newDataSource
+      
+      // Добавляем предыдущий месяц - если в новом dataSource первый месяц меньше, чем в старом dataSource
+      if let firstSectionOldDataSource = oldDataSource.first,
+         let firstSectionNewDataSource  = newDataSource.first,
+         firstSectionNewDataSource.year * 12 + firstSectionNewDataSource.month < firstSectionOldDataSource.year * 12 + firstSectionOldDataSource.month {
+        
+        // получаем лейауты
+        guard let firstSectionHeaderLayout = vc.calendarView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: 0)) else { return }
+        guard let firstItemFirstSectionLayout = vc.calendarView.layoutAttributesForItem(at: IndexPath(item: 0, section: 0)) else { return }
+        
+        // получаем количество строк в первой секции
+        let firstSectionRowCount = ceilf(firstSectionNewDataSource.items.count.float / 7).cgFloat
+        
+        UIView.performWithoutAnimation {
+          vc.calendarView.insertSections(IndexSet(integer: 0))
+          vc.calendarView.contentOffset.y = vc.calendarView.contentOffset.y + firstSectionHeaderLayout.bounds.height + firstSectionRowCount * (firstItemFirstSectionLayout.bounds.height + vc.calendarView.layoutMargins.top) + self.sectionInset.bottom
+        }
+      }
+      
+      
+      // Добавляем будущий месяц - если в новом dataSource последний месяц больше, чем в старом dataSource
+      if let lastSectionOldDataSource = oldDataSource.last,
+         let lastSectionNewDataSource = newDataSource.last,
+         lastSectionNewDataSource.year * 12 + lastSectionNewDataSource.month > lastSectionOldDataSource.year * 12 + lastSectionOldDataSource.month {
+        UIView.performWithoutAnimation {
+          vc.calendarView.insertSections(IndexSet(integer: newDataSource.count - 1))
+        }
+      }
+      
+      // Перегружаем выбранный месяц
+      var previousSelectedDate: Date?
+      
+      for model in oldDataSource {
+        for day in model.items {
+          if day.isSelected {
+            previousSelectedDate = day.date
+          }
+        }
+      }
+      
+      for (section, model) in newDataSource.enumerated() {
+        for (item, day) in model.items.enumerated() {
+          if day.date == previousSelectedDate || day.isSelected {
+            UIView.performWithoutAnimation {
+              vc.calendarView.reloadItems(at: [IndexPath(item: item, section: section)])
+            }
+          }
+        }
       }
     })
   }
@@ -296,32 +392,68 @@ class UserProfileViewController: UIViewController {
       }
     })
   }
+}
+
+
+extension UserProfileViewController: UICollectionViewDataSource {
+  func numberOfSections(in collectionView: UICollectionView) -> Int {
+    dataSource.count
+  }
   
-  //MARK: - Configure Data Source
-  func configureDataSource() {
-    dataSource = RxCollectionViewSectionedReloadDataSource<CalendarSectionModel>(
-      configureCell: { dataSource, collectionView, indexPath, calendarDay in
-        switch dataSource[indexPath.section].type {
-        case .Month:
-          let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
-          cell.configure(calendarDay: calendarDay)
-          return cell
-        case .Year:
-          let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarYearCell.reuseID, for: indexPath) as! CalendarYearCell
-          cell.configure(year: dataSource[indexPath.section].year)
-          return cell
-        }
-      }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CalendarReusableView.reuseID, for: indexPath) as! CalendarReusableView
-        switch dataSource[indexPath.section].type {
-        case .Month:
-          header.label.text = dataSource[indexPath.section].monthName
-        case .Year:
-          header.label.text = dataSource[indexPath.section].year.string
-          header.label.textAlignment = .center
-          header.label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        }
-        return header
-      })
+  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    dataSource[section].items.count
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    switch dataSource[indexPath.section].type {
+    case .Month:
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
+      if indexPath.section < dataSource.count && indexPath.item < dataSource[indexPath.section].items.count {
+        cell.configure(calendarDay: dataSource[indexPath.section].items[indexPath.item])
+      }
+      return cell
+    case .Year:
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarYearCell.reuseID, for: indexPath) as! CalendarYearCell
+      cell.configure(year: dataSource[indexPath.section].year)
+      return cell
+    }
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CalendarReusableView.reuseID, for: indexPath) as! CalendarReusableView
+    header.label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+    header.label.textAlignment = .left
+    header.label.text = dataSource[indexPath.section].monthName
+    header.label.text?.firstCharacterUppercased()
+    return header
   }
 }
+
+extension UserProfileViewController: CalendarViewDelegate {
+  
+  func appendPastData() {
+    userProfileViewModel.appendPastData()
+  }
+  
+  func appendFutureData() {
+    userProfileViewModel.appendFutureData()
+  }
+}
+
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension UserProfileViewController: UICollectionViewDelegateFlowLayout {
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    itemSize
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    sectionInset
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    CGSize(width: collectionView.bounds.width, height: 30)
+  }
+}
+

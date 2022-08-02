@@ -17,6 +17,11 @@ class CalendarReusableView: UICollectionReusableView {
   
   // MARK: - draw
   override func draw(_ rect: CGRect) {
+    
+    if label.isDescendant(of: self) {
+      label.removeFromSuperview()
+    }
+    
     // adding
     addSubview(label)
     

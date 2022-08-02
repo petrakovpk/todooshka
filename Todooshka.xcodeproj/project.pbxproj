@@ -165,6 +165,7 @@
 		9D17D43D2886F3E400D3E304 /* TDDiamondOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D43C2886F3E400D3E304 /* TDDiamondOfferView.swift */; };
 		9D17D43F28881ED400D3E304 /* DiamondPackageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */; };
 		9D17D44128899D4200D3E304 /* CalendarYearCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D44028899D4200D3E304 /* CalendarYearCell.swift */; };
+		9D17D46D288FE65200D3E304 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D46C288FE65200D3E304 /* CalendarView.swift */; };
 		9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */; };
 		9D6B6B12284FEC46000ABAE7 /* UserProfileSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B11284FEC46000ABAE7 /* UserProfileSceneModel.swift */; };
 		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
@@ -346,6 +347,7 @@
 		9D17D43C2886F3E400D3E304 /* TDDiamondOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDDiamondOfferView.swift; sourceTree = "<group>"; };
 		9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondPackageType.swift; sourceTree = "<group>"; };
 		9D17D44028899D4200D3E304 /* CalendarYearCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarYearCell.swift; sourceTree = "<group>"; };
+		9D17D46C288FE65200D3E304 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		9D6B6B11284FEC46000ABAE7 /* UserProfileSceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileSceneModel.swift; sourceTree = "<group>"; };
 		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
@@ -780,6 +782,7 @@
 		60AE9DC52652FC5E00E51531 /* UserProfile */ = {
 			isa = PBXGroup;
 			children = (
+				9D17D46C288FE65200D3E304 /* CalendarView.swift */,
 				60AE9DCF2652FCD300E51531 /* UserProfileViewController.swift */,
 				60AE9DD12652FCE900E51531 /* UserProfileViewModel.swift */,
 			);
@@ -1140,6 +1143,7 @@
 				6008CFB62684C8AF006DBF1F /* TaskTypeListViewModel.swift in Sources */,
 				60D5662626CC201400D865DD /* OnboardingViewModel.swift in Sources */,
 				60E970362823F13700577484 /* BirdAction.swift in Sources */,
+				9D17D46D288FE65200D3E304 /* CalendarView.swift in Sources */,
 				60E816B528116C20003F28DC /* Theme.swift in Sources */,
 				9D17D44128899D4200D3E304 /* CalendarYearCell.swift in Sources */,
 				9DE96081285E6D8100E5981A /* SettingsItem.swift in Sources */,
