@@ -25,7 +25,8 @@ class TabBarViewModel: Stepper {
     // task
     let createTask: Driver<Void>
     // actions
-    let createActions: Driver<[SceneAction]>
+    let createNestSceneActions: Driver<[NestSceneAction]>
+    let createBranchSceneActions: Driver<[BranchSceneAction]>
   }
   
   init(services: AppServices) {
@@ -41,21 +42,21 @@ class TabBarViewModel: Stepper {
   
   func transform(input: Input) -> Output {
  
-    // createTask
+    // MARK: - Task
     let createTask = input.createTaskButtonClickTrigger
-      .map { self.steps.accept(AppStep.CreateTaskIsRequired(status: .InProgress, createdDate: nil)) }
+      .do { _ in self.steps.accept(AppStep.CreateTaskIsRequired(status: .InProgress, createdDate: nil)) }
     
-    // actions
+    // MARK: - Nest Scene Actions
     let createTheEggAction = services.tasksService.tasks
       .withPrevious(startWith: [])
-      .map { previous, current -> [SceneAction] in
-        current
-          .filter { task -> Bool in
-            task.status == .InProgress &&
-            task.status != previous.first(where: { $0.UID == task.UID })?.status
+      .map { oldTasks, newTasks -> [NestSceneAction] in
+        newTasks
+          .filter { newTask -> Bool in
+            newTask.status == .InProgress &&
+            newTask.status != oldTasks.first(where: { $0.UID == newTask.UID })?.status
           }
           .map { _ in
-            SceneAction(UID: UUID().uuidString, action: .CreateTheEgg(withAnimation: true))
+            NestSceneAction(UID: UUID().uuidString, action: .AddTheEgg(withAnimation: true))
           }
       }
       .flatMapLatest { Driver.just($0) }
@@ -64,17 +65,17 @@ class TabBarViewModel: Stepper {
 
     let removeTheEggAction = services.tasksService.tasks
       .withPrevious(startWith: [])
-      .map { previous, current -> [SceneAction] in
-        previous
+      .map { oldTasks, newTasks -> [NestSceneAction] in
+        oldTasks
           .filter { task -> Bool in
-            current.contains(where: {
+            newTasks.contains(where: {
               task.status == .InProgress &&
               $0.UID == task.UID &&
               $0.status != .InProgress && $0.status != .Completed
             })
           }
           .map { _ in
-            SceneAction(UID: UUID().uuidString, action: .RemoveTheEgg)
+            NestSceneAction(UID: UUID().uuidString, action: .RemoveTheEgg)
           }
       }
       .flatMapLatest { Driver.just($0) }
@@ -83,22 +84,19 @@ class TabBarViewModel: Stepper {
      
     let hatchTheBirdAction = services.tasksService.tasks
       .withPrevious(startWith: [])
-      .map { previous, current -> [SceneAction] in
-        previous
-          .filter { previous -> Bool in
-            current.contains(where: {
-              previous.status == .InProgress &&
-              previous.UID == $0.UID &&
+      .map { oldTasks, newTasks -> [NestSceneAction] in
+        oldTasks
+          .filter { oldTasks -> Bool in
+            newTasks.contains(where: {
+              oldTasks.status == .InProgress &&
+              oldTasks.UID == $0.UID &&
               $0.status == .Completed
             })
           }
-          .map { task -> SceneAction in
-            SceneAction(
+          .map { task -> NestSceneAction in
+            NestSceneAction(
               UID: UUID().uuidString,
-              action: .HatchTheBird(
-                birds: self.services.birdService.birds.value
-                  .filter({ $0.typesUID.contains(where: { $0 == task.typeUID }) })
-              )
+              action: .HatchTheBird(typeUID: task.typeUID)
             )
           }
       }
@@ -106,25 +104,24 @@ class TabBarViewModel: Stepper {
       .filter { $0.isEmpty == false }
       .asDriver(onErrorJustReturn: [])
     
-    let runTheBirdAction =  services.tasksService.tasks
+    // MARK: - Branch Scene Actions
+    let runTheBirdAction = services.tasksService.tasks
       .withPrevious(startWith: [])
-      .map { previous, current -> [SceneAction] in
-        previous
-          .filter { previous -> Bool in
-            current.contains(where: {
-              previous.status == .InProgress &&
-              previous.UID == $0.UID &&
-              $0.status == .Completed
+      .map { oldTasks, newTasks -> [BranchSceneAction] in
+        newTasks
+          .filter { newTask -> Bool in
+            oldTasks.contains(where: { oldTask -> Bool in
+              oldTask.UID == newTask.UID &&
+              oldTask.status == .InProgress &&
+              newTask.status == .Completed
             })
-          }
-          .map { task -> SceneAction in
-            SceneAction(
+          }.map { task -> BranchSceneAction in
+            BranchSceneAction(
               UID: UUID().uuidString,
-              action: .RunTheBird(
-                birds: self.services.birdService.birds.value
-                  .filter({ $0.typesUID.contains(where: { $0 == task.typeUID }) }),
-                created: Date()
-              )
+              action: .AddTheRunningBird(
+                birds: self.services.birdService.birds.value,
+                typeUID: task.typeUID,
+                withDelay: (Date().timeIntervalSince1970 - task.closed!.timeIntervalSince1970) < 4 )
             )
           }
       }
@@ -132,20 +129,26 @@ class TabBarViewModel: Stepper {
       .filter { $0.isEmpty == false }
       .asDriver(onErrorJustReturn: [])
     
-    let createActions = Driver.of(
+    let createNestSceneActions = Driver.of(
       createTheEggAction,
       hatchTheBirdAction,
-      removeTheEggAction,
-      runTheBirdAction
-    )
-      .merge()
+      removeTheEggAction
+      ).merge()
       .do {
-        self.services.actionService.addActions(actions: $0)
+        self.services.actionService.addNestSceneActions(actions: $0)
+      }
+    
+    let createBranchSceneActions = Driver.of(
+      runTheBirdAction
+      ).merge()
+      .do {
+        self.services.actionService.addBranchSceneActions(actions: $0)
       }
     
     return Output(
       createTask: createTask,
-      createActions: createActions
+      createNestSceneActions: createNestSceneActions,
+      createBranchSceneActions: createBranchSceneActions
     )
   }
   

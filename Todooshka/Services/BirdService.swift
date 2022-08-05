@@ -23,7 +23,6 @@ class BirdService {
   
   // MARK: - Score Properties
   let birds = BehaviorRelay<[Bird]>(value: [])
-  let mainTaskListSceneActions = BehaviorRelay<[SceneAction]>(value: [])
   
   // MARK: - Init
   init() {
@@ -50,6 +49,10 @@ class BirdService {
       }
     }
   }
+  
+//  func getBirds(with typeUID: String) -> [Bird] {
+//    birds.value.filter{ $0.typesUID }
+//  }
   
   func linkBirdToTypeUID(bird: Bird, type: TaskType) {
     // удаляем типы из всех птиц аналогичного типа

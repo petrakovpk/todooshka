@@ -181,7 +181,7 @@ extension TaskCellModel: SwipeCollectionViewCellDelegate {
       action.fulfill(with: .reset)
       self.task.status = .Idea
       self.services.tasksService.saveTasksToCoreData(tasks: [self.task])
-      self.services.actionService.runMainTaskListActionsTrigger.accept(())
+      self.services.actionService.runNestSceneActionsTrigger.accept(())
     }
     
     let completeTaskAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in

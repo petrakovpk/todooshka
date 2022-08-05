@@ -116,7 +116,7 @@ class TaskViewController: TDViewController {
   
   override func viewDidDisappear(_ animated: Bool) {
     if isModal == false && viewModel.services.actionService.tabBarSelectedItem.value == .TaskList {
-      viewModel.services.actionService.runMainTaskListActionsTrigger.accept(())
+      viewModel.services.actionService.runNestSceneActionsTrigger.accept(())
     }
   }
   

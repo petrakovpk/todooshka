@@ -1,5 +1,5 @@
 //
-//  UserProfileSceneModel.swift
+//  BranchSceneModel.swift
 //  Todooshka
 //
 //  Created by Pavel Petakov on 07.06.2022.
@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-class UserProfileSceneModel: Stepper {
+class BranchSceneModel: Stepper {
   
   //MARK: - Properties
   let steps = PublishRelay<Step>()
@@ -24,7 +24,7 @@ class UserProfileSceneModel: Stepper {
     // background
     let background: Driver<UIImage?>
     // actions
-    let runActions: Driver<[SceneAction]>
+    let run: Driver<[BranchSceneAction]>
   }
   
   //MARK: - Init
@@ -33,20 +33,6 @@ class UserProfileSceneModel: Stepper {
   }
   
   func transform(input: Input) -> Output {
-
-    // actions
-    let actions = services.actionService.actions
-      .asDriver()
-      .map {
-        $0.filter {
-          switch $0.action {
-          case .RunTheBird(_), .RemoveLastBird:
-            return true
-          default:
-            return false
-          }
-        }
-      }
     
     // timer
     let timer = Driver<Int>
@@ -58,15 +44,21 @@ class UserProfileSceneModel: Stepper {
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
     
-    // run actions
-    let runActionsTrigger = services.actionService.runUserProfileActionsTrigger.asDriver()
+    // branchSceneActions
+    let branchSceneActions = services.actionService.branchSceneActions
+      .asDriver()
     
-    let runActions = runActionsTrigger
-      .withLatestFrom(actions) { $1 }
+    // run actions
+    let trigger = services.actionService.runUserProfileActionsTrigger.asDriver()
+    
+    let run = trigger
+      .withLatestFrom(branchSceneActions) { $1 }
+    
+    let birds = services.birdService.birds.asDriver()
 
     return Output(
       background: background,
-      runActions: runActions
+      run: run
     )
   }
   

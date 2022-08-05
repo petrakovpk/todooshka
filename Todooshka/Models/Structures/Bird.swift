@@ -17,8 +17,8 @@ struct Bird: IdentifiableType, Equatable {
   let description: String
   
   // clade and style
-  let clade: BirdClade
-  let style: BirdStyle
+  let clade: Clade
+  let style: Style
   
   // types
   var typesUID: [String]
@@ -35,8 +35,12 @@ struct Bird: IdentifiableType, Equatable {
     return UID
   }
   
+  var eggImage: UIImage? {
+    UIImage(named: "яйцо_" + clade.rawValue + "_" + "без_трещин")
+  }
+  
   // MARK: - Init
-  init(UID: String, name: String, description: String, clade: BirdClade, style: BirdStyle, price: Int, currency: Currency, isBought: Bool, typesUID: [String]) {
+  init(UID: String, name: String, description: String, clade: Clade, style: Style, price: Int, currency: Currency, isBought: Bool, typesUID: [String]) {
     self.UID = UID
     self.currency = currency
     self.description = description
@@ -51,8 +55,8 @@ struct Bird: IdentifiableType, Equatable {
   init?(birdCoreData: BirdCoreData) {
     guard
       let currency = Currency(rawValue: birdCoreData.currency),
-      let clade = BirdClade(rawValue: birdCoreData.clade),
-      let style = BirdStyle(rawValue: birdCoreData.style)
+      let clade = Clade(rawValue: birdCoreData.clade),
+      let style = Style(rawValue: birdCoreData.style)
     else { return nil }
     
     self.currency = currency
@@ -73,7 +77,7 @@ struct Bird: IdentifiableType, Equatable {
   
   // MARK: - image
   func getImageForState(state: BirdState) -> UIImage? {
-    return UIImage(named: clade.stringForImage + "_" + style.stringForImage + "_" + state.stringForImage)
+    return UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + state.rawValue)
   }
 }
 

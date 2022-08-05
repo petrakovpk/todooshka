@@ -173,7 +173,7 @@ class TaskListViewModel: Stepper {
           self.services.gameCurrencyService.removeGameCurrency(task: task)
 
           // запускаем анимацию
-          self.services.actionService.runMainTaskListActionsTrigger.accept(())
+          self.services.actionService.runNestSceneActionsTrigger.accept(())
 
           return
         case .DeletedTasks:

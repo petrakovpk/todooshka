@@ -23,13 +23,13 @@ enum ScrollToIndexPath{
 class UserProfileViewController: UIViewController {
   
   // MARK: - Const
-  private let itemSize = CGSize(width: 45.0, height: 45.0)
+  private let itemSize = CGSize(width: 45, height: 45)
   private let sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
   private var needScrollToToday: Bool = true
   
   // MARK: - Sprite Kit
-  private let scene: UserProfileScene? = {
-    let scene = SKScene(fileNamed: "UserProfileScene") as? UserProfileScene
+  private let scene: BranchScene? = {
+    let scene = SKScene(fileNamed: "BranchScene") as? BranchScene
     scene?.scaleMode = .aspectFill
     return scene
   }()
@@ -88,7 +88,7 @@ class UserProfileViewController: UIViewController {
   
   // MARK: - MVVM
   var userProfileViewModel: UserProfileViewModel!
-  var userProfileSceneModel: UserProfileSceneModel!
+  var branchSceneModel: BranchSceneModel!
   
   // MARK: - Rx
   private let disposeBag = DisposeBag()
@@ -111,8 +111,8 @@ class UserProfileViewController: UIViewController {
   }
   
   override func viewDidAppear(_ animated: Bool) {
-    userProfileSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
-    userProfileSceneModel.services.actionService.runUserProfileActionsTrigger.accept(())
+    branchSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
+    branchSceneModel.services.actionService.runUserProfileActionsTrigger.accept(())
   }
   
 
@@ -128,14 +128,13 @@ class UserProfileViewController: UIViewController {
     }
   }
   
-  
-  
+
   private func monthSection() -> NSCollectionLayoutSection{
-    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(45.adjusted), heightDimension: .absolute(45.adjusted))
+    let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(itemSize.width.adjusted), heightDimension: .estimated(itemSize.height.adjusted))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(45.adjusted))
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: itemSize.heightDimension)
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    group.interItemSpacing = .fixed(5.adjusted)
+    group.interItemSpacing = .fixed(0)
     let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(25.0))
     let header = NSCollectionLayoutBoundarySupplementaryItem(
       layoutSize: headerSize,
@@ -286,14 +285,15 @@ class UserProfileViewController: UIViewController {
   }
   
   func bindUserProfileSceneModel() {
-    let input = UserProfileSceneModel.Input()
-    let outputs = userProfileSceneModel.transform(input: input)
+    let input = BranchSceneModel.Input()
+    let outputs = branchSceneModel.transform(input: input)
     
     [
       // scene
       outputs.background.drive(sceneBackgroundBinder),
       // actions
-      outputs.runActions.drive(runActionsBinder)
+      outputs.run.drive(runBinder),
+
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
@@ -301,8 +301,8 @@ class UserProfileViewController: UIViewController {
   // MARK: - Binder
   var sceneBackgroundBinder: Binder<UIImage?> {
     return Binder(self, binding: { (vc, image) in
-      if let image = image {
-        vc.scene?.setupBackgroundNode(image: image)
+      if let image = image, let scene = vc.scene {
+        scene.setup(with: image)
       }
     })
   }
@@ -384,11 +384,13 @@ class UserProfileViewController: UIViewController {
     })
   }
   
-  var runActionsBinder: Binder<[SceneAction]> {
+ 
+  
+  var runBinder: Binder<[BranchSceneAction]> {
     return Binder(self, binding: { (vc, actions) in
       if let scene = vc.scene {
-        scene.runActions(actions: actions)
-        vc.userProfileSceneModel.services.actionService.removeActions(actions: actions)
+        scene.run(actions: actions)
+        vc.branchSceneModel.services.actionService.removeBranchSceneActions(branchSceneActions: actions)
       }
     })
   }

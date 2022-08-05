@@ -33,7 +33,8 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     
     [
       outputs.createTask.drive(),
-      outputs.createActions.drive()
+      outputs.createNestSceneActions.drive(),
+      outputs.createBranchSceneActions.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }

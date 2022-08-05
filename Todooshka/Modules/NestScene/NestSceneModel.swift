@@ -1,5 +1,5 @@
 //
-//  MainTaskListSceneModel.swift
+//  NestSceneModel.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 08.04.2022.
@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-class MainTaskListSceneModel: Stepper {
+class NestSceneModel: Stepper {
   
   //MARK: - Properties
   let steps = PublishRelay<Step>()
@@ -22,9 +22,11 @@ class MainTaskListSceneModel: Stepper {
   
   struct Output {
     // background
-    let background: Driver<UIImage?>
+    let backgroundImage: Driver<UIImage?>
     // actions
-    let runActions: Driver<[SceneAction]>
+    let run: Driver<[NestSceneAction]>
+    // birds
+    let birds: Driver<[Bird]>
   }
   
   //MARK: - Init
@@ -34,39 +36,34 @@ class MainTaskListSceneModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    // actions
-    let actions = services.actionService.actions
-      .asDriver()
-      .map {
-        $0.filter {
-          switch $0.action {
-          case .CreateTheEgg(_), .RemoveTheEgg, .HatchTheBird(_):
-            return true
-          default:
-            return false
-          }
-        }
-      }
-    
     // timer
     let timer = Driver<Int>
       .interval(RxTimeInterval.seconds(5))
     
     // background
-    let background = timer
+    let backgroundImage = timer
       .map{ _ in self.getBackgroundImage(date: Date()) }
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
-
-    // run actions
-    let runActionsTrigger = services.actionService.runMainTaskListActionsTrigger.asDriver()
     
-    let runActions = runActionsTrigger
-      .withLatestFrom(actions) { $1 }
+    // nestSceneActions
+    let nestSceneActions = services.actionService.nestSceneActions
+      .asDriver()
+    
+    // trigger
+    let trigger = services.actionService
+      .runNestSceneActionsTrigger
+      .asDriver()
+    
+    let run = trigger
+      .withLatestFrom(nestSceneActions) { $1 }
+    
+    let birds = services.birdService.birds.asDriver()
 
     return Output(
-      background: background,
-      runActions: runActions
+      backgroundImage: backgroundImage,
+      run: run,
+      birds: birds
     )
   }
   

@@ -7,14 +7,15 @@
 
 import Foundation
 
-enum SceneActionType {
-  
-  // MainTaskListScene
-  case CreateTheEgg(withAnimation: Bool)
-  case HatchTheBird(birds: [Bird])
+// Экран с задачами
+enum NestSceneActionType {
+  case AddTheEgg(withAnimation: Bool)
+  case HatchTheBird(typeUID: String)
   case RemoveTheEgg
-  
-  // UserProfileTaskListScene
-  case RunTheBird(birds: [Bird], created: Date)
-  case RemoveLastBird
+}
+
+// Экран с календарем
+enum BranchSceneActionType {
+  case AddTheRunningBird(birds: [Bird], typeUID: String, withDelay: Bool)
+  case AddTheSittingBird(typeUID: String)
 }

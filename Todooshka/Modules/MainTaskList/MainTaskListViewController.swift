@@ -20,7 +20,7 @@ class MainTaskListViewController: UIViewController {
   let disposeBag = DisposeBag()
   
   // view models
-  var mainTaskListSceneModel: MainTaskListSceneModel!
+  var nestSceneModel: NestSceneModel!
   var mainTaskListViewModel: MainTaskListViewModel!
   var taskListViewModel: TaskListViewModel!
   
@@ -83,8 +83,8 @@ class MainTaskListViewController: UIViewController {
     return button
   }()
   
-  private let scene: MainTaskListScene? = {
-    let scene = SKScene(fileNamed: "MainTaskListScene") as? MainTaskListScene
+  private let scene: NestScene? = {
+    let scene = SKScene(fileNamed: "NestScene") as? NestScene
     scene?.scaleMode = .aspectFill
     return scene
   }()
@@ -137,8 +137,8 @@ class MainTaskListViewController: UIViewController {
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    mainTaskListSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
-    mainTaskListSceneModel.services.actionService.runMainTaskListActionsTrigger.accept(())
+    nestSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
+    nestSceneModel.services.actionService.runNestSceneActionsTrigger.accept(())
   }
   
   // MARK: - Configure Scene
@@ -251,14 +251,16 @@ class MainTaskListViewController: UIViewController {
   //MARK: - Bind To
   func bindMainTaskListSceneModel() {
     
-    let input = MainTaskListSceneModel.Input()
-    let outputs = mainTaskListSceneModel.transform(input: input)
+    let input = NestSceneModel.Input()
+    let outputs = nestSceneModel.transform(input: input)
     
     [
       // scene
-      outputs.background.drive(sceneBackgroundBinder),
+      outputs.backgroundImage.drive(backgroundImageBinder),
       // actions
-      outputs.runActions.drive(runActionsBinder)
+      outputs.run.drive(runBinder),
+      // birds
+      outputs.birds.drive(birdsBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
@@ -311,19 +313,27 @@ class MainTaskListViewController: UIViewController {
   }
   
   //MARK: - Binders
-  var sceneBackgroundBinder: Binder<UIImage?> {
+  var backgroundImageBinder: Binder<UIImage?> {
     return Binder(self, binding: { (vc, image) in
-      if let image = image {
-        vc.scene?.setupBackgroundNode(image: image)
+      if let image = image, let scene = vc.scene {
+        scene.setup(with: image)
       }
     })
   }
   
-  var runActionsBinder: Binder<[SceneAction]> {
-    return Binder(self, binding: { (vc, actions) in
+  var runBinder: Binder<[NestSceneAction]> {
+    return Binder(self, binding: { (vc, nestSceneActions) in
       if let scene = vc.scene {
-        scene.runActions(actions: actions)
-        vc.mainTaskListSceneModel.services.actionService.removeActions(actions: actions)
+        scene.run(actions: nestSceneActions)
+        vc.nestSceneModel.services.actionService.removeNestSceneActions(nestSceneActions: nestSceneActions)
+      }
+    })
+  }
+  
+  var birdsBinder: Binder<[Bird]> {
+    return Binder(self, binding: { (vc, birds) in
+      if let scene = vc.scene {
+        scene.birds = birds
       }
     })
   }

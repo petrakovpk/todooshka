@@ -83,10 +83,10 @@ class TaskListFlow: Flow {
   
   private func navigateToTaskList() -> FlowContributors {
     let viewController = MainTaskListViewController()
-    let mainTaskListSceneModel = MainTaskListSceneModel(services: services)
+    let mainTaskListSceneModel = NestSceneModel(services: services)
     let mainTaskListViewModel = MainTaskListViewModel(services: services)
     let taskListViewModel = TaskListViewModel(services: services, type: .Main)
-    viewController.mainTaskListSceneModel = mainTaskListSceneModel
+    viewController.nestSceneModel = mainTaskListSceneModel
     viewController.mainTaskListViewModel = mainTaskListViewModel
     viewController.taskListViewModel = taskListViewModel
     rootViewController.navigationBar.isHidden = true

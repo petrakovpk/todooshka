@@ -29,7 +29,7 @@ class UserProfileViewModel: Stepper {
   private let selectedDate = BehaviorRelay<Date>(value: Date())
   private let selectedMonthComponents = BehaviorRelay<[Int]>(value: [-2,-1,0,1])
   private var dataSourceType: DataSourceType = .Initial
-
+  
   struct Input {
     // buttons
     let settingsButtonClickTrigger: Driver<Void>
@@ -99,7 +99,7 @@ class UserProfileViewModel: Stepper {
           let date = Date().adding(.month, value: monthComponent)
           let daysInMonth = Calendar.current.numberOfDaysInMonth(for: date)
           var items: [CalendarDay] = []
-    
+          
           let addDaysBeforeStartOfMonth = self.addDaysBeforeStartOfMonth(date: date)
           
           if addDaysBeforeStartOfMonth > 0 {
@@ -111,7 +111,7 @@ class UserProfileViewModel: Stepper {
                 isEnabled: false))
             }
           }
-   
+          
           for dayComponent in 0 ... daysInMonth - 1 {
             let day = date.startOfMonth.adding(.day, value: dayComponent)
             items.append(CalendarDay(
@@ -120,7 +120,7 @@ class UserProfileViewModel: Stepper {
               completedTasksCount: completedTasks.filter { Calendar.current.isDate($0.closed!, inSameDayAs: day) }.count,
               isEnabled: true))
           }
-                    
+          
           return CalendarSectionModel(
             type: .Month,
             year: date.year,
@@ -130,20 +130,61 @@ class UserProfileViewModel: Stepper {
       }
       .asDriver()
     
-   
     let scrollToCurrentMonth = services.preferencesService
       .scrollToCurrentMonthTrigger
       .asDriver()
-
+    
     // selection
     let selectionHandler = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> CalendarDay? in
         if dataSource[indexPath.section].type == .Year || dataSource[indexPath.section].items[indexPath.item].isEnabled == false { return nil }
         return dataSource[indexPath.section].items[indexPath.item]
       }.compactMap { $0 }
-      .do { day in
-        self.selectedDate.value == day.date ? self.steps.accept(AppStep.CompletedTaskListIsRequired(date: day.date)) : self.selectedDate.accept(day.date)
+      .do { calendarDay in
+        
+        // Если двойной клик, то переходим
+        if self.selectedDate.value == calendarDay.date  {
+          self.steps.accept(AppStep.CompletedTaskListIsRequired(date: calendarDay.date))
+          return
+        }
+        
+        // Устанавливаем выбранный день
+        self.selectedDate.accept(calendarDay.date)
+        
+        
       }
+    
+   
+    
+    //    let addAllBirdsAction = completedTasks
+    //      .withLatestFrom(selectedDate) { completedTasks, selectedDate -> [Task] in
+    //        completedTasks.filter{ Calendar.current.isDate(selectedDate, inSameDayAs: $0.closed!) }
+    //      }.map { tasks -> [BranchSceneAction] in
+    //        tasks.map { task -> BranchSceneAction in
+    //          BranchSceneAction(
+    //            UID: UUID().uuidString,
+    //            action: .Add(bird: )
+    //          )
+    //        }
+    //      }
+    
+    //    services.tasksService.tasks
+    //      .withPrevious(startWith: [])
+    //      .map { oldTasks, newTasks -> [NestSceneAction] in
+    //        newTasks
+    //          .filter { task -> Bool in
+    //            task.status == .InProgress &&
+    //            task.status != oldTasks.first(where: { $0.UID == task.UID })?.status
+    //          }
+    //          .map { _ in
+    //            NestSceneAction(UID: UUID().uuidString, action: .CreateTheEgg(withAnimation: true))
+    //          }
+    //      }
+    //      .flatMapLatest { Driver.just($0) }
+    //      .filter { $0.isEmpty == false }
+    //      .asDriver(onErrorJustReturn: [])
+    //
+    // let createNestSceneActions = Driver
     
     // score
     let featherScoreLabel = services.gameCurrencyService.gameCurrency
@@ -176,10 +217,9 @@ class UserProfileViewModel: Stepper {
     let willDisplayCell = input.willDisplayCell
       .map { event -> Int in
         event.at.section
-      }.distinctUntilChanged() 
+      }.distinctUntilChanged()
       .withLatestFrom(dataSource) { section, dataSource -> Void in
         if section == dataSource.count - 1 {
-          print("1234 append future")
           self.appendFutureData()
         }
       }

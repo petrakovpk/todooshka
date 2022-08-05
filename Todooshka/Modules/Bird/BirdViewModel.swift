@@ -122,7 +122,7 @@ class BirdViewModel: Stepper {
     let buyButtonIsHidden = bird.map{ $0.isBought }
     
     // eggImageView
-    let eggImageView = Driver<UIImage?>.of(self.bird.clade.image)
+    let eggImageView = Driver<UIImage?>.of(self.bird.eggImage)
     
     // birdImageView
     let birdImageView = Driver<UIImage?>.of(self.bird.getImageForState(state: .Normal))

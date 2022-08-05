@@ -6,25 +6,10 @@
 //
 
 enum BirdState: String {
-  case Normal = "Normal"
-  case ClosedEyes = "ClosedEyes"
-  case RaisedWings = "RaisedWings"
-  case LeftLegForward = "LeftLegForward"
-  case RightLegForward = "RightLegForward"
-  
-  var stringForImage: String {
-    switch self {
-    case .Normal:
-      return "статика"
-    case .ClosedEyes:
-      return "закрытые_глаза"
-    case .RaisedWings:
-      return "взмах_крыла"
-    case .LeftLegForward:
-      return "левая_вперед"
-    case .RightLegForward :
-      return "правая_вперед"
-    }
-  }
+  case Normal = "статика"
+  case ClosedEyes = "закрытые_глаза"
+  case RaisedWings = "взмах_крыла"
+  case LeftLegForward = "левая_вперед"
+  case RightLegForward = "правая_вперед"
 }
 

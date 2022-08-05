@@ -53,12 +53,6 @@ struct TaskType: IdentifiableType, Equatable  {
   static func == (lhs: TaskType, rhs: TaskType) -> Bool {
     return lhs.identity == rhs.identity
   }
-  
-  // MARK: - Helpers
-//  func bird(withBirdService service: HasBirdService) -> Bird? {
-//    service.birdService.birds.value.first(where: { $0.UID == self.birdUID })
-//  }
-
 }
 
 // MARK: - Static Properties

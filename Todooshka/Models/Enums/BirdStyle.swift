@@ -1,63 +1,37 @@
 //
-//  BirdStyle.swift
+//  Style.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 11.04.2022.
 //
 
-enum BirdStyle: String {
+enum Style: String {
   
   // Курица
-  case Simple = "Simple"
+  case Simple = "обычный"
   // Пингвин
-  case Business = "Business"
+  case Business = "деловой"
   // Страус
-  case Student = "Student"
+  case Student = "студент"
   // Попугай
-  case Cook = "Cook"
+  case Cook = "повар"
   // Орел
-  case Fashion = "Fashion"
+  case Fashion = "модный"
   // Сова
-  case Kid = "Kid"
+  case Kid = "ребенок"
   // Дракон
-  case Sport = "Sport"
+  case Sport = "спортивный"
   
-  // index
-  var index: Int {
+  // birdN
+  var birdN: Int {
     switch self {
-    case .Simple:
-      return 0
-    case .Student:
-      return 1
-    case .Business:
-      return 2
-    case .Cook:
-      return 3
-    case .Fashion:
-      return 4
-    case .Sport:
-      return 5
-    case .Kid:
-      return 6
-    }
-  }
-  
-  var stringForImage: String {
-    switch self {
-    case .Simple:
-      return "обычный"
-    case .Student:
-      return "студент"
-    case .Business:
-      return "деловой"
-    case .Cook:
-      return "повар"
-    case .Fashion:
-      return "модный"
-    case .Sport:
-      return "спортивный"
-    case .Kid:
-      return "ребенок"
+    case .Simple: return 0
+    case .Student: return 1
+    case .Business: return 2
+    case .Cook: return 3
+    case .Fashion: return 4
+    case .Sport: return 5
+    case .Kid: return 6
     }
   }
 }
