@@ -9,21 +9,19 @@ import RxDataSources
 
 struct TaskListSectionModel: AnimatableSectionModelType {
   
-  var identity: String {
-    return header
-  }
+  var identity: String { header }
   
   var header: String
   var mode: TaskCellMode
-  var items: [Task]
+  var items: [TaskListSectionItem]
   
-  init(header: String, mode: TaskCellMode, items: [Task]) {
+  init(header: String, mode: TaskCellMode, items: [TaskListSectionItem]) {
     self.header = header
     self.mode = mode
     self.items = items
   }
   
-  init(original: TaskListSectionModel, items: [Task]) {
+  init(original: TaskListSectionModel, items: [TaskListSectionItem]) {
     self = original
     self.items = items
   }

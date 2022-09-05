@@ -106,8 +106,8 @@ class UserProfileFlow: Flow {
     let viewController = UserProfileViewController()
     let userProfileViewModel = UserProfileViewModel(services: services)
     let branchSceneModel = BranchSceneModel(services: services)
-    viewController.userProfileViewModel = userProfileViewModel
-    viewController.branchSceneModel = branchSceneModel
+    viewController.viewModel = userProfileViewModel
+    viewController.sceneModel = branchSceneModel
     rootViewController.pushViewController(viewController, animated: false)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: userProfileViewModel))
   }
@@ -123,7 +123,7 @@ class UserProfileFlow: Flow {
   
   private func navigateToCompletedTaskList(date: Date) -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, type: .Completed(date: date))
+    let viewModel = TaskListViewModel(services: services, mode: .Completed(date: date))
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
@@ -132,7 +132,7 @@ class UserProfileFlow: Flow {
   
   private func navigateToDeletedTaskList() -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, type: .Deleted)
+    let viewModel = TaskListViewModel(services: services, mode: .Deleted)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
@@ -156,7 +156,7 @@ class UserProfileFlow: Flow {
   
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, type: .Idea)
+    let viewModel = TaskListViewModel(services: services, mode: .Idea)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)

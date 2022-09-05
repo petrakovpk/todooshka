@@ -24,7 +24,7 @@ enum Clade: String {
   case Dragon = "дракон"
   
   // eggN
-  var eggN: Int {
+  var index: Int {
     switch self {
     case .Chiken: return 1
     case .Penguin: return 2
@@ -36,13 +36,9 @@ enum Clade: String {
     }
   }
   
-  var birdN: Int {
-    eggN
-  }
-  
   // init
-  init?(eggN: Int) {
-    switch eggN {
+  init(index: Int) {
+    switch index {
     case 1: self = .Chiken
     case 2: self = .Penguin
     case 3: self = .Ostrich
@@ -50,22 +46,22 @@ enum Clade: String {
     case 5: self = .Eagle
     case 6: self = .Owl
     case 7: self = .Dragon
-    default: return nil
+    default: self = .Chiken
     }
   }
   
   // init
-  init?(birdN: Int) {
-    switch birdN {
-    case 1: self = .Chiken
-    case 2: self = .Penguin
-    case 3: self = .Ostrich
-    case 4: self = .Parrot
-    case 5: self = .Eagle
-    case 6: self = .Owl
-    case 7: self = .Dragon
-    default: return nil
-    }
-  }
+//  init(birdN: Int) {
+//    switch birdN {
+//    case 1: self = .Chiken
+//    case 2: self = .Penguin
+//    case 3: self = .Ostrich
+//    case 4: self = .Parrot
+//    case 5: self = .Eagle
+//    case 6: self = .Owl
+//    case 7: self = .Dragon
+//    default: self = .Chiken
+//    }
+//  }
   
 }

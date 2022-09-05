@@ -1,8 +1,8 @@
 //
-//  TaskCell.swift
+//  TaskSwipeCell.swift
 //  Todooshka
 //
-//  Created by Pavel Petakov on 19.07.2022.
+//  Created by Петраков Павел Константинович on 20.05.2021.
 //
 
 import UIKit
@@ -11,18 +11,36 @@ import RxCocoa
 import Foundation
 import SwipeCellKit
 
-class TaskCell: UICollectionViewCell {
+class TaskCell: SwipeCollectionViewCell {
   
-  //MARK: - Properties
-  static var reuseID: String = "TaskCell"
-  var viewModel: TaskCellModel!
-  var disposeBag = DisposeBag()
+  // MARK: - Static
+  static let reuseID: String = "TaskCell"
   
-  var oldLayer: CALayer?
-  var oldLineGradientLayer: CAGradientLayer?
-  var oldTimeLayer: CAGradientLayer?
+  // MARK: - Public
+  // UI
+  public let repeatButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.setImage(UIImage(named: "refresh-circle")?.original, for: .normal)
+    button.backgroundColor = Palette.SingleColors.BlueRibbon
+    button.cornerRadius = 15
+    button.setTitleColor(.white, for: .normal)
+    button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4);
+    button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0);
+    
+    let attributedTitle = NSAttributedString(string: "В работу", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 11, weight: .semibold)])
+    button.setAttributedTitle(attributedTitle , for: .normal)
+    
+    return button
+  }()
   
-  //MARK: - UI Elements
+  // MARK: - Private
+  // Properties
+  private var isEnabled: Bool = true
+  private var oldLayer: CALayer?
+  private var oldLineGradientLayer: CAGradientLayer?
+  private var oldTimeLayer: CAGradientLayer?
+  
+  // UI
   private let taskTypeImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
@@ -69,21 +87,9 @@ class TaskCell: UICollectionViewCell {
     return view
   }()
   
-  private let repeatButton: UIButton = {
-    let button = UIButton(type: .custom)
-    button.setImage(UIImage(named: "refresh-circle")?.original, for: .normal)
-    button.backgroundColor = Palette.SingleColors.BlueRibbon
-    button.cornerRadius = 15
-    button.setTitleColor(.white, for: .normal)
-    button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4);
-    button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0);
-    
-    let attributedTitle = NSAttributedString(string: "В работу", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 11, weight: .semibold)])
-    button.setAttributedTitle(attributedTitle , for: .normal)
-    
-    return button
-  }()
   
+  
+  // MARK: - Lifecycle
   override func layoutSubviews() {
     super.layoutSubviews()
   }
@@ -153,7 +159,7 @@ class TaskCell: UICollectionViewCell {
     let roundGradintLayer = CAGradientLayer()
     let size = CGSize(width: contentView.bounds.width, height: contentView.bounds.height)
     let cornerRadius = CGFloat(11)
-
+    
     // path
     path.move(to: CGPoint(x: size.width / 2, y: 0))
     path.addLine(to: CGPoint(x: size.width - cornerRadius, y: 0))
@@ -195,7 +201,7 @@ class TaskCell: UICollectionViewCell {
   
   //MARK: - Configure UI
   func configureUI() {
-    
+
     // contentView
     contentView.addSubview(repeatButton)
     contentView.addSubview(taskTextLabel)
@@ -240,22 +246,48 @@ class TaskCell: UICollectionViewCell {
     // descriptionTextLabel
     descriptionTextLabel.removeAllConstraints()
     
-    if descriptionTextLabel.text == "" {
+    if descriptionTextLabel.text == nil {
       // taskTextLabel
       taskTextLabel.anchorCenterYToSuperview()
       taskTextLabel.anchor(left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, leftConstant: 8, rightConstant: 8)
     } else {
       // taskTextLabel
       taskTextLabel.anchor(top: contentView.topAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 12, leftConstant: 8, rightConstant: 8)
-      
       // descriptionTextLabel
       descriptionTextLabel.anchor(top: taskTextLabel.bottomAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 3, leftConstant: 8, rightConstant: 8)
     }
   }
   
+  func configure(with mode: TaskCellMode) {
+    switch mode {
+    case .WithTimer:
+      taskTimeLeftView.isHidden = false
+      repeatButton.isHidden = true
+    case .WithRepeatButton:
+      taskTimeLeftView.isHidden = true
+      repeatButton.isHidden = false
+    case .WithFeather:
+      taskTimeLeftView.isHidden = true
+      repeatButton.isHidden = true
+    }
+  }
+  
+  func configure(with task: Task) {
+    taskTextLabel.text = task.text
+    descriptionTextLabel.text = task.description
+    taskTimeLeftLabel.text = task.timeLeftText
+    configureLineLayout(with: task.timeLeftPercent)
+  }
+  
+  func configure(with type: TaskType) {
+    taskTypeImageView.image = type.icon.image
+    taskTypeImageView.tintColor = type.color.uiColor
+  }
+  
   // MARK: - Configure UI
-  private func configurelineLayout(widthConstant: Double) {
+  private func configureLineLayout(with percent: Double) {
     
+    let widthConstant = percent * (contentView.frame.width.double - 22)
     let roundGradintLayer = CAGradientLayer()
     let lineGradientLayer = CAGradientLayer()
     
@@ -296,73 +328,79 @@ class TaskCell: UICollectionViewCell {
   
   //MARK: - Bind
   func bindViewModel(){
-    
-    let input = TaskCellModel.Input(
-      repeatButtonClickTrigger: repeatButton.rx.tap.asDriver()
-    )
-    
-    let outputs = viewModel.transform(input: input)
-    
-    [
-      // text
-      outputs.text.drive(taskTextLabel.rx.text),
-      
-      // description
-      outputs.description.drive(descriptionTextLabel.rx.text),
-      
-      // type
-      outputs.type.drive(typeBinder),
-      
-      // time Left
-      outputs.timeLeftText.drive(taskTimeLeftLabel.rx.text),
-      outputs.timeLeftPercent.drive(timeLeftPercentBinder),
-      
-      // repeat button
-      outputs.repeatButtonClick.drive(),
-  
-      // dataSource
-      outputs.reloadDataSource.drive(),
-      
-      // mode
-      outputs.mode.drive(modeBinder)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+    //
+    //    let input = TaskCellModel.Input(
+    //      repeatButtonClickTrigger: repeatButton.rx.tap.asDriver()
+    //    )
+    //
+    //    let outputs = viewModel.transform(input: input)
+    //
+    //    [
+    //      // text
+    //      outputs.text.drive(taskTextLabel.rx.text),
+    //
+    //      // description
+    //      outputs.description.drive(descriptionTextLabel.rx.text),
+    //
+    //      // type
+    //      outputs.type.drive(typeBinder),
+    //
+    //      // time Left
+    //      outputs.timeLeftText.drive(taskTimeLeftLabel.rx.text),
+    //      outputs.timeLeftPercent.drive(timeLeftPercentBinder),
+    //
+    //      // repeat button
+    //      outputs.repeatButtonClick.drive(),
+    //
+    //      // actions
+    //      outputs.isHidden.drive(isHiddenBinder),
+    //
+    //      // dataSource
+    //      outputs.reloadDataSource.drive(),
+    //
+    //      // mode
+    //      outputs.mode.drive(modeBinder)
+    //    ]
+    //      .forEach({ $0.disposed(by: disposeBag) })
     
   }
   
   // MARK: - Binders
-  var typeBinder: Binder<TaskType> {
-    return Binder(self, binding: { (cell, type) in
-      cell.taskTypeImageView.image = type.icon.image
-      cell.taskTypeImageView.tintColor = type.color.uiColor
-    })
-  }
-  
- 
-  var timeLeftPercentBinder: Binder<Double> {
-    return Binder(self, binding: { (cell, percent) in
-      let widthConstant = percent * (cell.contentView.frame.width.double - 22)
-      cell.configurelineLayout(widthConstant: widthConstant)
-    })
-  }
-  
-  var modeBinder: Binder<TaskCellMode> {
-    return Binder(self, binding: { (cell, mode) in
-      switch mode {
-      case .WithTimer:
-        cell.taskTimeLeftView.isHidden = false
-        cell.repeatButton.isHidden = true
-      case .WithRepeatButton:
-        cell.taskTimeLeftView.isHidden = true
-        cell.repeatButton.isHidden = false
-      case .WithFeather:
-        cell.taskTimeLeftView.isHidden = true
-        cell.repeatButton.isHidden = true
-      }
-    })
-  }
+  //  var typeBinder: Binder<TaskType> {
+  //    return Binder(self, binding: { (cell, type) in
+  //      cell.taskTypeImageView.image = type.icon.image
+  //      cell.taskTypeImageView.tintColor = type.color.uiColor
+  //    })
+  //  }
+  //
+  //  var isHiddenBinder: Binder<Bool> {
+  //    return Binder(self, binding: { (cell, isHide) in
+  //      if isHide == false  { return }
+  //      cell.hideSwipe(animated: true)
+  //    })
+  //  }
+  //
+  //  var timeLeftPercentBinder: Binder<Double> {
+  //    return Binder(self, binding: { (cell, percent) in
+  //      let widthConstant = percent * (cell.contentView.frame.width.double - 22)
+  //      cell.configurelineLayout(widthConstant: widthConstant)
+  //    })
+  //  }
+  //
+  //  var modeBinder: Binder<TaskCellMode> {
+  //    return Binder(self, binding: { (cell, mode) in
+  //      switch mode {
+  //      case .WithTimer:
+  //        cell.taskTimeLeftView.isHidden = false
+  //        cell.repeatButton.isHidden = true
+  //      case .WithRepeatButton:
+  //        cell.taskTimeLeftView.isHidden = true
+  //        cell.repeatButton.isHidden = false
+  //      case .WithFeather:
+  //        cell.taskTimeLeftView.isHidden = true
+  //        cell.repeatButton.isHidden = true
+  //      }
+  //    })
+  //  }
   
 }
-
-
-

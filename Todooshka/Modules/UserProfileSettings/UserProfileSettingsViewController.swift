@@ -62,10 +62,8 @@ class UserProfileSettingsViewController: UIViewController {
     bindViewModel()
   }
   
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-    viewModel.services.actionService.tabBarSelectedItem.accept(.UserProfile)
-  }
+  
+
   
   //MARK: - Configure UI
   func configureUI() {
@@ -146,7 +144,7 @@ class UserProfileSettingsViewController: UIViewController {
   }
   //MARK: - Bind To
   func bindViewModel() {
-    
+
     let input = UserProfileSettingsViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       selection: tableView.rx.itemSelected.asDriver()

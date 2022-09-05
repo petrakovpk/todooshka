@@ -10,19 +10,21 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-enum RemoveMode {
-  case DeletedTasks
+enum RemoveMode: Equatable {
   case Task(task: Task)
+  case Tasks(tasks: [Task])
 }
 
 class TaskListViewModel: Stepper {
   
   //MARK: - Properties
-  let steps = PublishRelay<Step>()
+  let changeStatus = BehaviorRelay<(IndexPath, TaskStatus, Date?)?>(value: nil)
+  let mode: TaskListMode
   let services: AppServices
-  let listType: ListType
-  var removeMode: RemoveMode?
+  let steps = PublishRelay<Step>()
   
+  var editingIndexPath: IndexPath?
+
   struct Input {
     // selection
     let selection: Driver<IndexPath>
@@ -30,39 +32,34 @@ class TaskListViewModel: Stepper {
     let alertDeleteButtonClick: Driver<Void>
     let alertCancelButtonClick: Driver<Void>
     // back
-    let backButtonClickTrigger: Driver<Void>?
+    let backButtonClickTrigger: Driver<Void>
     // add
-    let addTaskButtonClickTrigger: Driver<Void>?
+    let addTaskButtonClickTrigger: Driver<Void>
     // remove all
-    let removeAllDeletedTasksButtonClickTrigger: Driver<Void>?
+    let removeAllDeletedTasksButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
-    // dataSource
-    let dataSource: Driver<[TaskListSectionModel]>
-    // selection
-    let selection: Driver<Task>
-    // alert
-    let alertText: Driver<String>
-    let alertDeleteButtonClick: Driver<Void>
-    let alertCancelButtonClick: Driver<Void>
-    let alertIsHidden: Driver<Bool>
-    // back
-    let backButtonClick: Driver<Void>?
-    // addTask
-    let addTaskButtonClick: Driver<Void>?
-    let addTaskButtonIsHidden: Driver<Bool>
-    // title
-    let title: Driver<String>
-    // remove all
-    let removeAllDeletedTasksButtonClick: Driver<Void>?
-    let removeAllDeletedTasksButtonIsHidden: Driver<Bool>
+    let addTask: Driver<Void>
+    let changeStatus: Driver<Void>
+    let hideAlert: Driver<Void>
+    let hideCell: Driver<IndexPath>
+    let navigateBack: Driver<Void>
+    let openTask: Driver<Void>
+    let removeTask: Driver<Void>
+    let reloadData: Driver<Void>
+    let setAlertText: Driver<String>
+    let setDataSource: Driver<[TaskListSectionModel]>
+    let setTitle: Driver<String>
+    let showAlert: Driver<Void>
+    let showAddTaskButton: Driver<Void>
+    let showRemovaAllButton: Driver<Void>
   }
   
   //MARK: - Init
-  init(services: AppServices, type: ListType) {
+  init(services: AppServices, mode: TaskListMode) {
     self.services = services
-    self.listType = type
+    self.mode = mode
   }
   
   func transform(input: Input) -> Output {
@@ -71,7 +68,7 @@ class TaskListViewModel: Stepper {
     let tasks = services.tasksService.tasks
       .map {
         $0.filter { task in
-          switch self.listType {
+          switch self.mode {
           case .Main:
             return task.is24hoursPassed == false && task.status == .InProgress
           case .Overdued:
@@ -81,134 +78,145 @@ class TaskListViewModel: Stepper {
           case .Idea:
             return task.status == .Idea
           case .Completed(let date):
-            guard let closed = task.closed else { return false }
-            return task.status == .Completed && Calendar.current.isDate(closed, inSameDayAs: date)
+            return task.status == .Completed && Calendar.current.isDate(date, inSameDayAs: date)
           }
         }
       }
       .asDriver(onErrorJustReturn: [])
     
-    let mode: TaskCellMode = {
-      switch self.listType {
-      case .Main:
-        return TaskCellMode.WithTimer
-      default:
-        return TaskCellMode.WithRepeatButton
-      }
-    }()
+    // types
+    let types = services.typesService.types.asDriver()
     
-    // dataSource
-    let dataSource = tasks
-      .map { [TaskListSectionModel(header: "", mode: mode, items: $0)] }
+    let changeStatusTrigger = changeStatus.asDriver()
     
-    // selection
-    let selection = input.selection
-      .withLatestFrom(dataSource) { indexPath, dataSource in
-        dataSource[indexPath.section].items[indexPath.item]
-      }
-      .do { task in
-        self.steps.accept(AppStep.ShowTaskIsRequired(task: task))
-      }
-    
-    // title
-    let title = Driver.just(self.getTitle(with: self.listType))
-    
-    // backButtonClick
-    let backButtonClick = input.backButtonClickTrigger?
-      .do { _ in
+    let removeTaskIsRequired = changeStatusTrigger
+      .compactMap{ $0 }
+      .filter{ $0.1 == .Deleted }
+      .map{ $0.0 }
+
+    // navigateBack
+    let navigateBack = input.backButtonClickTrigger
+      .map { _ in
         self.steps.accept(AppStep.TaskListIsCompleted)
       }
     
-    // addTaskButton
-    let addTaskButtonIsHidden = Driver.just(self.addTaskButtonIsHidden(with: self.listType))
-    let addTaskButtonClick = input.addTaskButtonClickTrigger?
-      .do{ _ in
-        self.steps.accept(AppStep.CreateTaskIsRequired(status: .Idea, createdDate: Date()))
+    // dataSource
+    let dataSource = Driver
+      .combineLatest(tasks, types) { tasks, types -> [TaskListSectionItem] in
+        tasks.map { task in
+          TaskListSectionItem(
+            task: task,
+            type: types.first(where: { $0.UID == task.typeUID }) ?? TaskType.Standart.Empty
+          )
+        }
+      }.map {
+        [
+          TaskListSectionModel(header: "", mode: self.mode == .Main ? TaskCellMode.WithTimer : TaskCellMode.WithRepeatButton , items: $0)
+        ]
       }
     
-    // remove all
-    let removeAllTasksButtonIsHidden = Driver.just(self.removeAllTasksButtonIsHIdden(with: self.listType))
-    let removeAllTasksButtonClick = input.removeAllDeletedTasksButtonClickTrigger?
-      .do { _ in
-        self.services.tasksService.removeTrigger.accept(.DeletedTasks)
+    let changeStatus = changeStatusTrigger
+      .compactMap{ $0 }
+      .filter{ $0.1 == .Idea || $0.1 == .Completed || $0.1 == .InProgress }
+      .withLatestFrom(dataSource) { data, dataSource -> Void in
+        let (indexPath, status, closed) = data
+        var task = dataSource[indexPath.section].items[indexPath.item].task
+        task.status = status
+        task.closed = closed
+        self.services.tasksService.saveTasksToCoreData(tasks: [task])
       }
     
-    // removeMode
-    let removeMode = services.tasksService.removeTrigger
+    // selection
+    let openTask = input.selection
+      .withLatestFrom(dataSource) { indexPath, dataSource -> TaskListSectionItem in
+        dataSource[indexPath.section].items[indexPath.item] }
+      .map { item in
+        self.steps.accept(AppStep.ShowTaskIsRequired(task: item.task))
+      }
+    
+    // RemoveMode
+    let setRemoveModeRemoveTask = removeTaskIsRequired
+      .compactMap{ $0 }
+      .withLatestFrom(dataSource) { indexPath, dataSource -> RemoveMode in
+        RemoveMode.Task(task: dataSource[indexPath.section].items[indexPath.item].task )
+      }.asDriver()
+    
+    let setRemoveModeRemoveAll = input.removeAllDeletedTasksButtonClickTrigger
+      .withLatestFrom(tasks) { _, tasks -> RemoveMode in
+        RemoveMode.Tasks(tasks: tasks.filter{ $0.status == .Deleted } )
+      }
       .asDriver()
     
+    let removeMode = Driver
+      .of(setRemoveModeRemoveTask, setRemoveModeRemoveAll)
+      .merge()
+      .debug()
+  
     // alert
     let alertText = removeMode
       .map { mode -> String in
-        switch mode {
-        case .DeletedTasks:
-          return "Удалить ВСЕ задачи?"
-        case .Task(_):
-          return "Удалить задачу?"
-        default:
-          return ""
-        }
+         if case .Tasks(_) = mode { return "Удалить ВСЕ задачи?" } else { return "Удалить задачу?" }
       }
     
-    // alertIsHidden
-    let alertIsHidden = removeMode
-      .map { $0 == nil }
-      .asDriver(onErrorJustReturn: false)
+    let showAlert = removeMode.map{ _ -> Void in () }
+    let hideAlert = Driver
+      .of(input.alertCancelButtonClick, input.alertDeleteButtonClick)
+      .merge()
     
-    // alert delete button click
-    let alertDeleteButtonClick = input.alertDeleteButtonClick
+    let hideCell = hideAlert
+      .withLatestFrom(removeTaskIsRequired) { $1 }
+      .compactMap{ $0 }
+      .debug()
+    
+    let removeTask = input.alertDeleteButtonClick
       .withLatestFrom(removeMode) { _, mode in
-        guard let mode = mode else { return }
         switch mode {
+        case .Tasks(let tasks):
+          self.services.tasksService.removeTasksFromCoreData(tasks: tasks)
         case .Task(var task):
           task.status = .Deleted
-          
-          // удаляем задачу
           self.services.tasksService.saveTasksToCoreData(tasks: [task])
-          
-          // убираем алерт
-          self.services.tasksService.removeTrigger.accept(nil)
-          
-          // удаляем пойнт
           self.services.gameCurrencyService.removeGameCurrency(task: task)
-
-          // запускаем анимацию
-          self.services.actionService.runNestSceneActionsTrigger.accept(())
-
-          return
-        case .DeletedTasks:
-          let tasks = self.services.tasksService.tasks.value.filter{ $0.status == .Deleted }
-          self.services.tasksService.removeTasksFromCoreData(tasks: tasks)
-          self.services.tasksService.removeTrigger.accept(nil)
         }
       }
     
-    // alertCancelButtonClick
-    let alertCancelButtonClick = input.alertCancelButtonClick
-      .do { _ in
-        self.services.tasksService.removeTrigger.accept(nil)
-      }
+    let addTask = input.addTaskButtonClickTrigger
+      .map { _ in self.steps.accept(AppStep.CreateTaskIsRequired(status: .Idea, createdDate: Date())) }
     
+    // title
+     let setTitle = Driver.just(self.getTitle(with: self.mode))
+    
+    let showAddTaskButton = Driver.of(self.mode)
+      .filter { $0 == .Idea }
+      .map{ _ in () }
+    
+    let showRemovaAllButton = Driver.of(self.mode)
+      .filter { $0 == .Deleted }
+      .map{ _ in () }
+    
+    let reloadData = Observable<Int>
+      .timer(.seconds(0), period: .seconds(1), scheduler: MainScheduler.instance)
+      .debug()
+      .asDriver(onErrorJustReturn: 0)
+      .filter{ _ in self.editingIndexPath == nil }
+      .map{ _ in () }
+ 
+
     return Output(
-      // dataSource
-      dataSource: dataSource,
-      // selection
-      selection: selection,
-      // alert
-      alertText: alertText,
-      alertDeleteButtonClick: alertDeleteButtonClick,
-      alertCancelButtonClick: alertCancelButtonClick,
-      alertIsHidden:alertIsHidden,
-      // back
-      backButtonClick: backButtonClick,
-      // add
-      addTaskButtonClick: addTaskButtonClick,
-      addTaskButtonIsHidden: addTaskButtonIsHidden,
-      // title
-      title: title,
-      // remove all
-      removeAllDeletedTasksButtonClick: removeAllTasksButtonClick,
-      removeAllDeletedTasksButtonIsHidden: removeAllTasksButtonIsHidden
+      addTask: addTask,
+      changeStatus: changeStatus,
+      hideAlert: hideAlert,
+      hideCell: hideCell,
+      navigateBack: navigateBack,
+      openTask: openTask,
+      removeTask: removeTask,
+      reloadData: reloadData,
+      setAlertText: alertText,
+      setDataSource: dataSource,
+      setTitle: setTitle,
+      showAlert: showAlert,
+      showAddTaskButton: showAddTaskButton,
+      showRemovaAllButton: showRemovaAllButton
     )
   }
   
@@ -216,17 +224,9 @@ class TaskListViewModel: Stepper {
   func viewWillAppear() {
     services.tasksService.reloadDataSource.accept(())
   }
-  
-  func addTaskButtonIsHidden(with type: ListType) -> Bool {
-    if case .Idea = type { return false } else { return true }
-  }
-  
-  func removeAllTasksButtonIsHIdden(with type: ListType) -> Bool {
-    if case .Deleted = type { return false } else { return true }
-  }
-  
-  func getTitle(with type: ListType) -> String {
-    switch type {
+
+  func getTitle(with mode: TaskListMode) -> String {
+    switch mode {
     case .Completed(_):
       return "Выполненные задачи"
     case .Deleted:
@@ -239,4 +239,9 @@ class TaskListViewModel: Stepper {
       return ""
     }
   }
+
+  func changeStatus(indexPath: IndexPath, status: TaskStatus, completed: Date?) {
+    changeStatus.accept((indexPath, status, completed))
+  }
+  
 }

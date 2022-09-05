@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxDataSources
+import SwipeCellKit
 
 class TaskListViewController: UIViewController {
   
@@ -97,11 +98,13 @@ class TaskListViewController: UIViewController {
     headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
     
     // addTaskButton
+    addTaskButton.isHidden = true
     addTaskButton.setImage(UIImage(named: "plus-custom"), for: .normal)
     addTaskButton.cornerRadius = addTaskButton.bounds.width / 2
     addTaskButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
     // removeAllButton
+    removeAllDeletedTasksButton.isHidden = true 
     removeAllDeletedTasksButton.setImage(UIImage(named: "trash-custom")?.original, for: .normal)
     removeAllDeletedTasksButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
@@ -120,7 +123,7 @@ class TaskListViewController: UIViewController {
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
     
     // collectionView
-    collectionView.register(TaskSwipeCell.self, forCellWithReuseIdentifier: TaskSwipeCell.reuseID)
+    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
     collectionView.register(TaskReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
@@ -201,31 +204,56 @@ class TaskListViewController: UIViewController {
     let outputs = viewModel.transform(input: input)
     
     [
-      // dataSource
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      // selection
-      outputs.selection.drive(),
-      // alert
-      outputs.alertText.drive(alertLabel.rx.text),
-      outputs.alertDeleteButtonClick.drive(),
-      outputs.alertCancelButtonClick.drive(),
-      outputs.alertIsHidden.drive(alertView.rx.isHidden),
-      // back
-      outputs.backButtonClick?.drive(),
-      // add
-      outputs.addTaskButtonClick?.drive(),
-      outputs.addTaskButtonIsHidden.drive(addTaskButtonIsHiddenBinder),
-      // title
-      outputs.title.drive(titleLabel.rx.text),
-      // remove all
-      outputs.removeAllDeletedTasksButtonClick?.drive(),
-      outputs.removeAllDeletedTasksButtonIsHidden.drive(removeAllDeletedTasksButtonIsHiddenBinder)
+      outputs.addTask.drive(),
+      outputs.changeStatus.drive(),
+      outputs.hideAlert.drive(hideAlertBinder),
+      outputs.hideCell.drive(hideCellBinder),
+      outputs.navigateBack.drive(),
+      outputs.openTask.drive(),
+      outputs.removeTask.drive(),
+      outputs.setAlertText.drive(alertLabel.rx.text),
+      outputs.setDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.showAlert.drive(showAlertBinder),
+      outputs.showAddTaskButton.drive(showAddTaskButtonBinder),
+      outputs.showRemovaAllButton.drive(showRemovaAllButtonBinder)
     ]
       .forEach({ $0?.disposed(by: disposeBag) })
     
   }
   
   // MARK: - Binders
+  var hideAlertBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertView.isHidden = true
+    })
+  }
+  
+  var hideCellBinder: Binder<IndexPath> {
+    return Binder(self, binding: { (vc, indexPath) in
+      if let cell = vc.collectionView.cellForItem(at: indexPath) as? TaskCell {
+        cell.hideSwipe(animated: true)
+      }
+    })
+  }
+  
+  var showAlertBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertView.isHidden = false
+    })
+  }
+  
+  var showAddTaskButtonBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.addTaskButton.isHidden = false
+    })
+  }
+  
+  var showRemovaAllButtonBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.removeAllDeletedTasksButton.isHidden = false
+    })
+  }
+  
   var addTaskButtonIsHiddenBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isHidden) in
       vc.addTaskButton.isHidden = isHidden
@@ -240,19 +268,97 @@ class TaskListViewController: UIViewController {
   
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { dataSource, collectionView, indexPath, task in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskSwipeCell.reuseID, for: indexPath) as! TaskSwipeCell
-      let cellViewModel = TaskCellModel(services: self.viewModel.services, mode: dataSource[indexPath.section].mode, task: task)
-      cell.viewModel = cellViewModel
-      cell.delegate = cellViewModel
-      cell.disposeBag = DisposeBag()
-      cell.bindViewModel()
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { dataSource, collectionView, indexPath, item in
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
+      cell.configure(with: dataSource[indexPath.section].mode)
+      cell.configure(with: item.task)
+      cell.configure(with: item.type)
+      cell.delegate = self
+      cell.repeatButton.rx.tap.map{ _ -> IndexPath? in indexPath }.asDriver(onErrorJustReturn: nil).drive(self.repeatButtonBinder).disposed(by: self.disposeBag)
       return cell
     }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
       let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView
       section.configure(text: dataSource[indexPath.section].header)
       return section
     })
+  }
+  
+  var repeatButtonBinder: Binder<IndexPath?> {
+    return Binder(self, binding: { (vc, indexPath) in
+      guard let indexPath = indexPath else { return }
+      self.viewModel.changeStatus(indexPath: indexPath, status: .InProgress, completed: nil)
+    })
+  }
+  
+}
+
+
+extension TaskListViewController: SwipeCollectionViewCellDelegate {
+  
+  func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
+    viewModel.editingIndexPath = indexPath
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
+    viewModel.editingIndexPath = nil
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+    guard orientation == .right else { return nil }
+    
+    let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
+      guard let self = self else { return }
+      action.fulfill(with: .reset)
+      self.viewModel.changeStatus(indexPath: indexPath, status: .Deleted, completed: nil)
+    }
+    
+    let ideaBoxAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
+      guard let self = self else { return }
+      action.fulfill(with: .reset)
+      self.viewModel.changeStatus(indexPath: indexPath, status: .Idea, completed: nil)
+    }
+    
+    let completeTaskAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
+      guard let self = self else { return }
+      action.fulfill(with: .reset)
+      self.viewModel.changeStatus(indexPath: indexPath, status: .Completed, completed: Date())
+    }
+    
+    configure(action: deleteAction, with: .trash)
+    configure(action: ideaBoxAction, with: .idea)
+    configure(action: completeTaskAction, with: .complete)
+    
+    deleteAction.backgroundColor = Theme.App.background
+    ideaBoxAction.backgroundColor = Theme.App.background
+    completeTaskAction.backgroundColor = Theme.App.background
+    
+    return [completeTaskAction, deleteAction, ideaBoxAction]
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+    var options = SwipeOptions()
+    options.expansionStyle = .destructive
+    options.transitionStyle = .border
+    options.buttonSpacing = 4
+    return options
+  }
+  
+  func configure(action: SwipeAction, with descriptor: ActionDescriptor) {
+    let buttonDisplayMode: ButtonDisplayMode = .imageOnly
+    let buttonStyle: ButtonStyle = .circular
+    
+    action.title = descriptor.title(forDisplayMode: buttonDisplayMode)
+    action.image = descriptor.image(forStyle: buttonStyle, displayMode: buttonDisplayMode, size: CGSize(width: 44, height: 44))
+    
+    switch buttonStyle {
+    case .backgroundColor:
+      action.backgroundColor = descriptor.color(forStyle: buttonStyle)
+    case .circular:
+      action.backgroundColor = .clear
+      action.textColor = descriptor.color(forStyle: buttonStyle)
+      action.font = .systemFont(ofSize: 9)
+      action.transitionDelegate = ScaleTransition.default
+    }
   }
   
 }

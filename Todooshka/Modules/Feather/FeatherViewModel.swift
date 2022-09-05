@@ -40,17 +40,28 @@ class FeatherViewModel: Stepper {
     let tasks = services.tasksService.tasks
       .map {
         $0.filter {
-          $0.status == .Completed
+          $0.status == .Completed ? true : false
         }
         .sorted(by: { $0.closed! > $1.closed! })
       }
       .asDriver(onErrorJustReturn: [])
     
+    let types = services.typesService.types.asDriver()
+    
+    let taskListSectionItems = Driver<[TaskListSectionItem]>.combineLatest(tasks,types) { tasks, types -> [TaskListSectionItem] in
+      tasks.map { task in
+        TaskListSectionItem(
+          task: task,
+          type: types.first(where: { $0.UID == task.typeUID }) ?? TaskType.Standart.Empty
+        )
+      }
+    }
+    
     // dataSource
-    let dataSource = tasks
+    let dataSource = taskListSectionItems
       .map {
         Dictionary
-          .init(grouping: $0, by: { $0.closed!.dateString() })
+          .init(grouping: $0, by: { $0.task.closed!.dateString() })
           .map { key, value in
             TaskListSectionModel(header: key, mode: .WithFeather, items: value)
           }

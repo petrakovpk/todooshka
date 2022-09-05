@@ -20,9 +20,9 @@ class MainTaskListViewController: UIViewController {
   let disposeBag = DisposeBag()
   
   // view models
-  var nestSceneModel: NestSceneModel!
-  var mainTaskListViewModel: MainTaskListViewModel!
-  var taskListViewModel: TaskListViewModel!
+  var sceneModel: NestSceneModel!
+  var viewModel: MainTaskListViewModel!
+  var listViewModel: TaskListViewModel!
   
   // MARK: - UI Elements
   private var collectionView: UICollectionView!
@@ -124,21 +124,17 @@ class MainTaskListViewController: UIViewController {
     configureUI()
     configureAlert()
     configureDataSource()
-    bindMainTaskListSceneModel()
-    bindMainTaskListViewModel()
-    bindTaskListViewModel()
+    bindSceneModel()
+    bindViewModel()
+    bindListViewModel()
   }
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
+    sceneModel.willShow.accept(())
+    scene?.reloadData()
+    listViewModel.viewWillAppear()
     navigationController?.tabBarController?.tabBar.isHidden = false
-    taskListViewModel.viewWillAppear()
-  }
-  
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-    nestSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
-    nestSceneModel.services.actionService.runNestSceneActionsTrigger.accept(())
   }
   
   // MARK: - Configure Scene
@@ -150,6 +146,7 @@ class MainTaskListViewController: UIViewController {
   
   // MARK: - ConfigureUI
   private func configureUI() {
+    
     // collectionView
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
     
@@ -177,7 +174,7 @@ class MainTaskListViewController: UIViewController {
     ideaTasksButton.anchor(top: sceneView.bottomAnchor, right: view.rightAnchor, topConstant: 16, rightConstant: 16, widthConstant: UIScreen.main.bounds.width / 2 - 16 - 8, heightConstant: 40)
     
     // collectionView
-    collectionView.register(TaskSwipeCell.self, forCellWithReuseIdentifier: TaskSwipeCell.reuseID)
+    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.layer.masksToBounds = true
     collectionView.backgroundColor = .clear
@@ -186,6 +183,8 @@ class MainTaskListViewController: UIViewController {
   }
   
   private func configureAlert() {
+    
+    // adding
     view.addSubview(alertView)
     alertView.addSubview(alertSubView)
     alertSubView.addSubview(alertLabel)
@@ -219,13 +218,12 @@ class MainTaskListViewController: UIViewController {
   private func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(
-      configureCell: { dataSource, collectionView, indexPath, task in
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskSwipeCell.reuseID, for: indexPath) as! TaskSwipeCell
-        let cellViewModel = TaskCellModel(services: self.mainTaskListViewModel.services, mode: dataSource[indexPath.section].mode, task: task)
-        cell.viewModel = cellViewModel
-        cell.delegate = cellViewModel
-        cell.disposeBag = DisposeBag()
-        cell.bindViewModel()
+      configureCell: { dataSource, collectionView, indexPath, item in
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
+        cell.configure(with: dataSource[indexPath.section].mode)
+        cell.configure(with: item.task)
+        cell.configure(with: item.type)
+        cell.delegate = self
         return cell
       })
   }
@@ -248,30 +246,34 @@ class MainTaskListViewController: UIViewController {
     return section
   }
   
-  //MARK: - Bind To
-  func bindMainTaskListSceneModel() {
+  // MARK: - Bind Scene Model
+  func bindSceneModel() {
     
     let input = NestSceneModel.Input()
-    let outputs = nestSceneModel.transform(input: input)
+    let outputs = sceneModel.transform(input: input)
     
     [
       // scene
       outputs.backgroundImage.drive(backgroundImageBinder),
-      // actions
-      outputs.run.drive(runBinder),
       // birds
-      outputs.birds.drive(birdsBinder)
+      outputs.birds.drive(birdsBinder),
+      // dataSource
+      outputs.dataSource.drive(sceneDataSourceBinder),
+      // force
+      outputs.forceNestUpdate.drive(forceNestUpdateBinder),
+      outputs.forceBranchUpdate.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
   }
   
-  func bindMainTaskListViewModel() {
-    
+  // MARK: - Bind View Model
+  func bindViewModel() {
     let input = MainTaskListViewModel.Input(
       ideaButtonClickTrigger: ideaTasksButton.rx.tap.asDriver(),
       overduedButtonClickTrigger: overduedTasksButton.rx.tap.asDriver() )
-    let outputs = mainTaskListViewModel.transform(input: input)
+    
+    let outputs = viewModel.transform(input: input)
     
     [
       outputs.ideaButtonClick.drive(),
@@ -280,7 +282,9 @@ class MainTaskListViewController: UIViewController {
       .forEach({ $0.disposed(by: disposeBag) })
   }
   
-  func bindTaskListViewModel() {
+  // MARK: - Bind Task List Model
+  func bindListViewModel() {
+        
     let input = TaskListViewModel.Input(
       // selection
       selection: collectionView.rx.itemSelected.asDriver(),
@@ -288,31 +292,68 @@ class MainTaskListViewController: UIViewController {
       alertDeleteButtonClick: alertDeleteButton.rx.tap.asDriver(),
       alertCancelButtonClick: alertCancelButton.rx.tap.asDriver(),
       // back
-      backButtonClickTrigger: nil,
+      backButtonClickTrigger: Driver<Void>.of(),
       // add
-      addTaskButtonClickTrigger: nil,
+      addTaskButtonClickTrigger: Driver<Void>.of(),
       // remove all
-      removeAllDeletedTasksButtonClickTrigger: nil
+      removeAllDeletedTasksButtonClickTrigger: Driver<Void>.of()
     )
     
-    let outputs = taskListViewModel.transform(input: input)
+    let outputs = listViewModel.transform(input: input)
     
     [
-      // dataSource
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.dataSource.drive(dataSourceBinder),
-      // selection
-      outputs.selection.drive(),
-      // alert
-      outputs.alertText.drive(alertLabel.rx.text),
-      outputs.alertDeleteButtonClick.drive(),
-      outputs.alertCancelButtonClick.drive(),
-      outputs.alertIsHidden.drive(alertView.rx.isHidden)
+      outputs.changeStatus.drive(),
+      outputs.hideAlert.drive(hideAlertBinder),
+      outputs.hideCell.drive(hideCellBinder),
+      outputs.openTask.drive(),
+      outputs.removeTask.drive(),
+      outputs.reloadData.drive(reloadDataBinder),
+      outputs.setAlertText.drive(alertLabel.rx.text),
+      outputs.setDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.setDataSource.drive(dataSourceBinder),
+      outputs.showAlert.drive(showAlertBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
   
   //MARK: - Binders
+  var hideAlertBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertView.isHidden = true
+    })
+  }
+  
+  var hideCellBinder: Binder<IndexPath> {
+    return Binder(self, binding: { (vc, indexPath) in
+      if let cell = vc.collectionView.cellForItem(at: indexPath) as? TaskCell {
+        cell.hideSwipe(animated: true)
+      }
+    })
+  }
+  
+  var reloadDataBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.collectionView.reloadData()
+    })
+  }
+  
+  var showAlertBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertView.isHidden = false
+    })
+  }
+
+  var sceneDataSourceBinder: Binder<[Int: EggActionType]> {
+    return Binder(self, binding: { (vc, actions) in
+      if let scene = vc.scene {
+        scene.setup(with: actions)
+        if vc.isVisible {
+          scene.reloadData()
+        }
+      }
+    })
+  }
+  
   var backgroundImageBinder: Binder<UIImage?> {
     return Binder(self, binding: { (vc, image) in
       if let image = image, let scene = vc.scene {
@@ -321,11 +362,10 @@ class MainTaskListViewController: UIViewController {
     })
   }
   
-  var runBinder: Binder<[NestSceneAction]> {
+  var forceNestUpdateBinder: Binder<Void> {
     return Binder(self, binding: { (vc, nestSceneActions) in
       if let scene = vc.scene {
-        scene.run(actions: nestSceneActions)
-        vc.nestSceneModel.services.actionService.removeNestSceneActions(nestSceneActions: nestSceneActions)
+        scene.forceUpdate()
       }
     })
   }
@@ -333,7 +373,7 @@ class MainTaskListViewController: UIViewController {
   var birdsBinder: Binder<[Bird]> {
     return Binder(self, binding: { (vc, birds) in
       if let scene = vc.scene {
-        scene.birds = birds
+        scene.setup(with: birds)
       }
     })
   }
@@ -349,3 +389,75 @@ class MainTaskListViewController: UIViewController {
     })
   }
 }
+
+
+extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
+  
+  func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
+    listViewModel.editingIndexPath = indexPath
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
+    listViewModel.editingIndexPath = nil
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+    guard orientation == .right else { return nil }
+    
+    let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
+      guard let self = self else { return }
+      action.fulfill(with: .reset)
+      self.listViewModel.changeStatus(indexPath: indexPath, status: .Deleted, completed: nil)
+    }
+    
+    let ideaBoxAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
+      guard let self = self else { return }
+      action.fulfill(with: .reset)
+      self.listViewModel.changeStatus(indexPath: indexPath, status: .Idea, completed: nil)
+    }
+    
+    let completeTaskAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
+      guard let self = self else { return }
+      action.fulfill(with: .reset)
+      self.listViewModel.changeStatus(indexPath: indexPath, status: .Completed, completed: Date())
+    }
+    
+    configure(action: deleteAction, with: .trash)
+    configure(action: ideaBoxAction, with: .idea)
+    configure(action: completeTaskAction, with: .complete)
+    
+    deleteAction.backgroundColor = Theme.App.background
+    ideaBoxAction.backgroundColor = Theme.App.background
+    completeTaskAction.backgroundColor = Theme.App.background
+    
+    return [completeTaskAction, deleteAction, ideaBoxAction]
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+    var options = SwipeOptions()
+    options.expansionStyle = .destructive
+    options.transitionStyle = .border
+    options.buttonSpacing = 4
+    return options
+  }
+  
+  func configure(action: SwipeAction, with descriptor: ActionDescriptor) {
+    let buttonDisplayMode: ButtonDisplayMode = .imageOnly
+    let buttonStyle: ButtonStyle = .circular
+    
+    action.title = descriptor.title(forDisplayMode: buttonDisplayMode)
+    action.image = descriptor.image(forStyle: buttonStyle, displayMode: buttonDisplayMode, size: CGSize(width: 44, height: 44))
+    
+    switch buttonStyle {
+    case .backgroundColor:
+      action.backgroundColor = descriptor.color(forStyle: buttonStyle)
+    case .circular:
+      action.backgroundColor = .clear
+      action.textColor = descriptor.color(forStyle: buttonStyle)
+      action.font = .systemFont(ofSize: 9)
+      action.transitionDelegate = ScaleTransition.default
+    }
+  }
+  
+}
+

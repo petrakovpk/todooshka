@@ -23,13 +23,12 @@ class TasksService {
   }
   
   let tasks = BehaviorRelay<[Task]>(value: [])
-  let removeTrigger = BehaviorRelay<RemoveMode?>(value: nil)
   let reloadDataSource = BehaviorRelay<Void>(value: ())
   
   // MARK: - Init
   init() {
     
-    removeAllTasksFromCoreData()
+ //   removeAllTasksFromCoreData()
 
     // load tasks from Core Data
     getTasksFromCoreData { tasksCoreData in

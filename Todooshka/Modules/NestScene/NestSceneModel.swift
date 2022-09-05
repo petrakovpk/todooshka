@@ -16,6 +16,8 @@ class NestSceneModel: Stepper {
   let steps = PublishRelay<Step>()
   let services: AppServices
 
+  let willShow = BehaviorRelay<Void?>(value: nil)
+  
   struct Input {
    
   }
@@ -23,10 +25,13 @@ class NestSceneModel: Stepper {
   struct Output {
     // background
     let backgroundImage: Driver<UIImage?>
-    // actions
-    let run: Driver<[NestSceneAction]>
     // birds
     let birds: Driver<[Bird]>
+    // dataSource
+    let dataSource: Driver<[Int: EggActionType]>
+    // force
+    let forceNestUpdate: Driver<Void>
+    let forceBranchUpdate: Driver<Void>
   }
   
   //MARK: - Init
@@ -46,24 +51,27 @@ class NestSceneModel: Stepper {
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
     
-    // nestSceneActions
-    let nestSceneActions = services.actionService.nestSceneActions
-      .asDriver()
-    
-    // trigger
-    let trigger = services.actionService
-      .runNestSceneActionsTrigger
-      .asDriver()
-    
-    let run = trigger
-      .withLatestFrom(nestSceneActions) { $1 }
-    
     let birds = services.birdService.birds.asDriver()
+    
+    let dataSource = services.actionService.nestDataSource.asDriver()
+    
+    let forceNestUpdate = services.actionService.forceNestSceneTrigger
+      .compactMap{ $0 }
+      .asDriver(onErrorJustReturn: ())
+    
+    let forceBranchUpdate = willShow
+      .compactMap{ $0 }
+      .asDriver(onErrorJustReturn: ())
+      .do { _ in
+        self.services.actionService.forceBranchSceneTrigger.accept(())
+      }
 
     return Output(
       backgroundImage: backgroundImage,
-      run: run,
-      birds: birds
+      birds: birds,
+      dataSource: dataSource,
+      forceNestUpdate: forceNestUpdate,
+      forceBranchUpdate: forceBranchUpdate
     )
   }
   

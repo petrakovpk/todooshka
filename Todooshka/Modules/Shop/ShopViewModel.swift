@@ -53,7 +53,7 @@ class ShopViewModel: Stepper {
       .map { birds -> [ShopSectionModel] in
         var result: [ShopSectionModel] = []
         let birdsGroupingByClade = Dictionary(grouping: birds, by: { $0.clade })
-          .sorted(by: { $0.key.eggN < $1.key.eggN })
+          .sorted(by: { $0.key.index < $1.key.index })
         
         for birds in birdsGroupingByClade {
           let header = birds.key.rawValue

@@ -10,69 +10,83 @@ import SpriteKit
 
 class SKBirdNode: SKSpriteNode {
  
-  // MARK: - Actions
+  // MARK: - Public
+  var action: BirdActionType = .Init
+  
+  var branchPosition: CGPoint {
+    CGPoint(
+      x: (Data.Bird.deltaFromBranch[clade.index]?.x ?? 0) + position.x,
+      y: (Data.Bird.deltaFromBranch[clade.index]?.y ?? 0) + position.y)
+  }
+  
+   var nestPosition: CGPoint {
+    CGPoint(
+      x: (Data.Bird.deltaFromNest[clade.index]?.x ?? 0) + position.x,
+      y: (Data.Bird.deltaFromNest[clade.index]?.y ?? 0) + position.y)
+  }
+
+  var wingsIsUp: Bool = false
+  
+  // MARK: - Private
+  // Actions
+  private let fadeInWithAnimationAction = SKAction.fadeIn(withDuration: 0.5)
+  private let fadeInWithoutAnimationAction = SKAction.fadeIn(withDuration: 0)
   private let fadeOutAction = SKAction.fadeOut(withDuration: 0.5)
-  private let fadeInAction = SKAction.fadeIn(withDuration: 0)
+  private let waitAction = SKAction.wait(forDuration: 0.5)
   
-  // MARK: - Properties
-  let clade: Clade
-  let style: Style
-  
-  private let hatchingPositionData: [Int: CGPoint] = [
-    1: CGPoint(x: -30, y: 20),
-    2: CGPoint(x: 20, y: 20),
-    3: CGPoint(x: 70, y: -5),
-    4: CGPoint(x: 35, y: -35),
-    5: CGPoint(x: -5, y: -40),
-    6: CGPoint(x: -45, y: -35),
-    7: CGPoint(x: -80, y: -5)
-  ]
-  
-  private let sittingPositionData: [Int: CGPoint] = [
-    1: CGPoint(x: 150, y: 0),
-    2: CGPoint(x: -150, y: 0),
-    3: CGPoint(x: 100, y: 0),
-    4: CGPoint(x: -100, y: 0),
-    5: CGPoint(x: 50, y: 0),
-    6: CGPoint(x: -60, y: 0),
-    7: CGPoint(x: 0, y: 0)
-  ]
-  
-  public var hatchingPosition: CGPoint {
-    hatchingPositionData[clade.eggN] ?? CGPoint(x: 0, y: 0)
+  private var setFrontTextureAction: SKAction { SKAction.setTexture(frontTexture, resize: true) }
+  private var setClosedEyesTextureAction: SKAction { SKAction.setTexture(closedEyesTexture, resize: true) }
+  private var raiseWingsTextureAction: SKAction { SKAction.setTexture(raisedWingsTexture, resize: true) }
+  private var legsRunningAction: SKAction {
+    SKAction.repeatForever(
+      SKAction.animate(
+        with: [self.rightLegForwardTexture, self.leftLegForwardTexture],
+        timePerFrame: 0.3,
+        resize: true,
+        restore: false))
+  }
+  private var runFromNestAction: SKAction {
+    SKAction.move(
+      to: CGPoint(x: UIScreen.main.bounds.width + 50, y: position.y),
+      duration: 4.0)
   }
   
-  public var sittingPosition: CGPoint {
-    sittingPositionData[clade.eggN] ?? CGPoint(x: 0, y: 0)
+  // Other
+  private let clade: Clade
+  private let scenePosition: CGPoint
+  
+  private var style: Style {
+    didSet {
+      run(setFrontTextureAction)
+    }
   }
   
-  private var normalImage: UIImage? {
-    UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.Normal.rawValue)
-  }
+  // Image
+  private var frontImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.Normal.rawValue) ?? UIImage() }
+  private var rightLegForwardImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.RightLegForward.rawValue) ?? UIImage() }
+  private var leftLegForwardImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.LeftLegForward.rawValue) ?? UIImage() }
+  private var closedEyesImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.ClosedEyes.rawValue) ?? UIImage() }
+  private var raisedWingsImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.RaisedWings.rawValue) ?? UIImage() }
   
-  private var rightLegForwardImage: UIImage? {
-    UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.RightLegForward.rawValue)
-  }
-  
-  private var leftLegForwardImage: UIImage? {
-    UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.LeftLegForward.rawValue)
-  }
-  
+  // Texture
+  private var frontTexture: SKTexture { SKTexture(image: frontImage) }
+  private var rightLegForwardTexture: SKTexture { SKTexture(image: rightLegForwardImage) }
+  private var leftLegForwardTexture: SKTexture { SKTexture(image: leftLegForwardImage) }
+  private var closedEyesTexture: SKTexture { SKTexture(image: closedEyesImage) }
+  private var raisedWingsTexture: SKTexture {  SKTexture(image: raisedWingsImage) }
+
   // MARK: - Init
-  init(clade: Clade, style: Style) {
+  init(clade: Clade, style: Style, scenePosition: CGPoint) {
+    // Super Init
     self.clade = clade
     self.style = style
+    self.scenePosition = scenePosition
     super.init(texture: nil, color: .clear, size: .zero)
-    
+    // Setup
     name = "Bird"
-    alpha = 0.0
     xScale = Theme.Scene.Egg.scale
     yScale = Theme.Scene.Egg.scale
-    zPosition = CGFloat(clade.eggN + 1)
-    
-    guard let normalImage = normalImage else { return }
-    
-    size = SKTexture(image: normalImage).size()
+    zPosition = CGFloat(clade.index + 1)
   }
   
   required init?(coder aDecoder: NSCoder) {
@@ -80,56 +94,79 @@ class SKBirdNode: SKSpriteNode {
   }
   
   // MARK: - Actions
-  func hatchAndRunToTheRight() {
+  func changeStyle(style: Style, withDelay: Bool) {
+    switch (action, withDelay) {
     
-    guard let normalImage = normalImage,
-          let rightLegForwardImage = rightLegForwardImage,
-          let leftLegForwardImage = leftLegForwardImage else { return }
-
-    // actions
-    let animateAction = SKAction.repeatForever(SKAction.animate(with: [SKTexture(image: rightLegForwardImage), SKTexture(image: leftLegForwardImage)], timePerFrame: 0.3, resize: true, restore: false))
-    let hatchAction = SKAction.setTexture(SKTexture(image: normalImage), resize: true)
-    let runAction = SKAction.move(to: CGPoint(x: UIScreen.main.bounds.width + 50, y: position.y), duration: 4.0)
-    let waitAction = SKAction.wait(forDuration: 0.5)
+    case (.Init, _):
+      self.style = style
+      run(fadeInWithoutAnimationAction)
     
-    // sequence
-    let animateSequence = SKAction.sequence([waitAction, hatchAction, fadeInAction, animateAction])
-    let runSequence = SKAction.sequence([waitAction, waitAction, runAction])
+    case (.Hide, true):
+      self.style = style
+      run(SKAction.sequence([waitAction, fadeInWithAnimationAction]))
     
-    // run
-    run(animateSequence)
-    run(runSequence)
+    case (.Hide, false):
+      self.style = style
+      run(fadeInWithAnimationAction)
+    
+    case (.Sitting(_, _), _):
+      run(fadeOutAction) {
+        self.style = style
+        self.run(self.fadeInWithAnimationAction)
+      }
+    }
   }
-  
-  func run(withDelay: Bool, toPosition: CGPoint, completion: @escaping () -> Void ) {
     
-    guard let normalImage = normalImage,
-          let rightLegForwardImage = rightLegForwardImage,
-          let leftLegForwardImage = leftLegForwardImage else { return }
-    
-    let velocity = 91.0
-    let space = UIScreen.main.bounds.width / 2 + sittingPosition.x
-    let duration = space / velocity
-    
-    // actions
-    let animateAction = SKAction.repeatForever(SKAction.animate(with: [SKTexture(image: rightLegForwardImage), SKTexture(image: leftLegForwardImage)], timePerFrame: 0.3, resize: true, restore: false))
-    let runAction = SKAction.move(to: toPosition, duration: duration)
-    let waitAction = SKAction.wait(forDuration: withDelay ? 4.5 : 0.1)
-    
-    // sequence
-    let animateSequence = withDelay ? SKAction.sequence([waitAction, fadeInAction, animateAction]) : SKAction.sequence([waitAction, animateAction])
-    let runSequence = SKAction.sequence([waitAction, runAction])
-    
-    alpha = 1.0
-
-    // running
-    run(animateSequence)
-    run(runSequence) {
-      self.removeAllActions()
-      self.run(SKAction.setTexture(SKTexture(image: normalImage), resize: true))
+  func runFromNest(completion: @escaping (() -> Void)) {
+    run(SKAction.sequence([waitAction, legsRunningAction]))
+    run(SKAction.sequence([waitAction, runFromNestAction])) {
+      self.removeFromParent()
       completion()
     }
   }
   
+  func clapWithEyes() {
+    run(SKAction.sequence([setClosedEyesTextureAction, waitAction, setFrontTextureAction]))
+  }
+  
+  func upWings() {
+    run(raiseWingsTextureAction)
+  }
+  
+  func dowsWings() {
+    run(setFrontTextureAction)
+  }
+  
+//  func runOnBranch(toPosition position: CGPoint, completion: @escaping (() -> Void) ) {
+//
+//    // isRunning
+//    isRunning = true
+//
+//    // duration
+//    let velocity = 91.0
+//    let space = UIScreen.main.bounds.width / 2 + position.x
+//    let duration = space / velocity
+//
+//    alpha = 1.0
+//
+//    run(legsRunningAction)
+//    run(SKAction.move(to: position, duration: duration)) {
+//      self.isRunning = false
+//      self.run(self.setFrontTextureAction)
+//      self.removeAllActions()
+//      completion()
+//    }
+//  }
+  
+  func hide() {
+    run(fadeOutAction)
+  }
+  
+  func forceUpdate() {
+   // run(setFrontTextureAction)
+   // isRunning = false
+  }
+  
+
 }
 

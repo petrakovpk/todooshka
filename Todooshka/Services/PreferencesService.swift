@@ -16,7 +16,8 @@ protocol HasPreferencesService {
 class PreferencesService {
   
   let formatter = DateFormatter()
-  var scrollToCurrentMonthTrigger = BehaviorRelay<(trigger: Bool, withAnimation: Bool)>(value: (false, false))
+  let selectedDate = BehaviorRelay<Date>(value: Date())
+  let scrollToCurrentMonthTrigger = BehaviorRelay<(trigger: Bool, withAnimation: Bool)>(value: (false, false))
   
   init() {
     formatter.timeZone = TimeZone.current

@@ -37,7 +37,7 @@ struct Task: IdentifiableType, Equatable {
     return max(24 * 60 * 60 + created.timeIntervalSince1970 - Date().timeIntervalSince1970, 0)
   }
   
-  var secondsLeftText: String {
+  var timeLeftText: String {
     let formatter: DateFormatter = {
       let formatter = DateFormatter()
       formatter.dateFormat = "HH'h' mm'm' ss's'"
@@ -46,6 +46,10 @@ struct Task: IdentifiableType, Equatable {
     }()
     
     return formatter.string(from: Date(timeIntervalSince1970: secondsLeft))
+  }
+  
+  var timeLeftPercent: Double {
+    status == .InProgress ? secondsLeft / (24 * 60 * 60) : 0
   }
   
   //MARK: - init

@@ -96,7 +96,7 @@ class FeatherViewController: TDViewController {
     label.anchor(top: descriptionBackgroundView.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
     
     // collectionView
-    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+//    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
     collectionView.register(TaskReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
@@ -145,19 +145,19 @@ class FeatherViewController: TDViewController {
   
   // MARK: - Configure DataSource
   func configureDataSource() {
-    collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { dataSource, collectionView, indexPath, task in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
-      let cellViewModel = TaskCellModel(services: self.viewModel.services, mode: dataSource[indexPath.section].mode, task: task)
-      cell.viewModel = cellViewModel
-      cell.disposeBag = DisposeBag()
-      cell.bindViewModel()
-      return cell
-    }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
-      let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView
-      section.configure(text: dataSource[indexPath.section].header)
-      return section
-    })
+//    collectionView.dataSource = nil
+//    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { dataSource, collectionView, indexPath, task in
+//      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
+//      let cellViewModel = TaskCellModel(services: self.viewModel.services, mode: dataSource[indexPath.section].mode, task: task)
+//      cell.viewModel = cellViewModel
+//      cell.disposeBag = DisposeBag()
+//      cell.bindViewModel()
+//      return cell
+//    }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
+//      let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView
+//      section.configure(text: dataSource[indexPath.section].header)
+//      return section
+//    })
   }
   
 }

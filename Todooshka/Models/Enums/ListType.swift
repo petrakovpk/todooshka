@@ -6,7 +6,7 @@
 //
 import Foundation
 
-enum ListType {
+enum TaskListMode: Equatable {
   case Completed(date: Date)
   case Deleted
   case Idea

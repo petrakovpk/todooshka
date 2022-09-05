@@ -28,13 +28,13 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     let input = TabBarViewModel.Input(
       createTaskButtonClickTrigger: customTabBar.addTaskButton.rx.tap.asDriver()
     )
-    
+
     let outputs = viewModel.transform(input: input)
     
     [
       outputs.createTask.drive(),
-      outputs.createNestSceneActions.drive(),
-      outputs.createBranchSceneActions.drive()
+      outputs.nestDataSource.drive(),
+      outputs.branchDataSource.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }

@@ -15,6 +15,7 @@ class BranchSceneModel: Stepper {
   //MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
+  let willShow = BehaviorRelay<Void?>(value: nil)
 
   struct Input {
    
@@ -23,8 +24,13 @@ class BranchSceneModel: Stepper {
   struct Output {
     // background
     let background: Driver<UIImage?>
-    // actions
-    let run: Driver<[BranchSceneAction]>
+    // birds
+    let birds: Driver<[Bird]>
+    // dataSource
+    let dataSource: Driver<[Int: BirdActionType]>
+    // force
+    let forceNestUpdate: Driver<Void>
+    let forceBranchUpdate: Driver<Void>
   }
   
   //MARK: - Init
@@ -33,7 +39,19 @@ class BranchSceneModel: Stepper {
   }
   
   func transform(input: Input) -> Output {
+
+    // force
+    let forceNestUpdate = willShow
+      .compactMap{ $0 }
+      .asDriver(onErrorJustReturn: ())
+      .do { _ in
+        self.services.actionService.forceNestSceneTrigger.accept(())
+      }
     
+    let forceBranchUpdate = services.actionService.forceBranchSceneTrigger
+      .compactMap{ $0 }
+      .asDriver(onErrorJustReturn: ())
+
     // timer
     let timer = Driver<Int>
       .interval(RxTimeInterval.seconds(5))
@@ -43,22 +61,17 @@ class BranchSceneModel: Stepper {
       .map{ _ in self.getBackgroundImage(date: Date()) }
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
-    
-    // branchSceneActions
-    let branchSceneActions = services.actionService.branchSceneActions
-      .asDriver()
-    
-    // run actions
-    let trigger = services.actionService.runUserProfileActionsTrigger.asDriver()
-    
-    let run = trigger
-      .withLatestFrom(branchSceneActions) { $1 }
-    
+
     let birds = services.birdService.birds.asDriver()
+    
+    let dataSource = services.actionService.branchDataSource.asDriver()
 
     return Output(
       background: background,
-      run: run
+      birds: birds,
+      dataSource: dataSource,
+      forceNestUpdate: forceNestUpdate,
+      forceBranchUpdate: forceBranchUpdate
     )
   }
   

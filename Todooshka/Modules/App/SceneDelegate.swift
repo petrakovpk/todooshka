@@ -26,6 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   let preferencesService = PreferencesService()
   let tasksService = TasksService()
   let typesService = TypesService()
+  let tabBarService = TabBarService()
   
   lazy var appServices = {
     return AppServices(
@@ -35,7 +36,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
       gameCurrencyService: gameCurrencyService,
       preferencesService: preferencesService,
       tasksService: tasksService,
-      typesService: typesService
+      typesService: typesService,
+      tabBarService: tabBarService
     )
   }()
   

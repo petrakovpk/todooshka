@@ -85,10 +85,10 @@ class TaskListFlow: Flow {
     let viewController = MainTaskListViewController()
     let mainTaskListSceneModel = NestSceneModel(services: services)
     let mainTaskListViewModel = MainTaskListViewModel(services: services)
-    let taskListViewModel = TaskListViewModel(services: services, type: .Main)
-    viewController.nestSceneModel = mainTaskListSceneModel
-    viewController.mainTaskListViewModel = mainTaskListViewModel
-    viewController.taskListViewModel = taskListViewModel
+    let taskListViewModel = TaskListViewModel(services: services, mode: .Main)
+    viewController.sceneModel = mainTaskListSceneModel
+    viewController.viewModel = mainTaskListViewModel
+    viewController.listViewModel = taskListViewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.pushViewController(viewController, animated: false)
@@ -116,7 +116,7 @@ class TaskListFlow: Flow {
   
   private func navigateToOverdueTaskFlow() -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, type: .Overdued)
+    let viewModel = TaskListViewModel(services: services, mode: .Overdued)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
@@ -142,7 +142,7 @@ class TaskListFlow: Flow {
   
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, type: .Idea)
+    let viewModel = TaskListViewModel(services: services, mode: .Idea)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)

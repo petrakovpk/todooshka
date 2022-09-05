@@ -23,10 +23,10 @@ class UserProfileViewModel: Stepper {
   public let steps = PublishRelay<Step>()
   
   // MARK: - Private properties
-  private let services: AppServices
+  let services: AppServices
   
   // Calendar
-  private let selectedDate = BehaviorRelay<Date>(value: Date())
+ // private let selectedDate = BehaviorRelay<Date>(value: Date())
   private let selectedMonthComponents = BehaviorRelay<[Int]>(value: [-2,-1,0,1])
   private var dataSourceType: DataSourceType = .Initial
   
@@ -53,7 +53,7 @@ class UserProfileViewModel: Stepper {
     let featherBackgroundViewClickHandler: Driver<Void>
     let diamondBackgroundViewClickHandler: Driver<Void>
     // selection
-    let selectionHandler: Driver<CalendarDay>
+    let selectionHandler: Driver<Void>
     // dataSource
     let dataSource: Driver<[CalendarSectionModel]>
     let willDisplayCell: Driver<Void>
@@ -81,7 +81,7 @@ class UserProfileViewModel: Stepper {
   func transform(input: Input) -> Output {
     
     // caledar
-    let selectedDate = selectedDate.asDriver()
+    let selectedDate = services.preferencesService.selectedDate.asDriver()
     let selectedMonthComponents = selectedMonthComponents.asDriver()
     
     // completed tasks
@@ -140,52 +140,17 @@ class UserProfileViewModel: Stepper {
         if dataSource[indexPath.section].type == .Year || dataSource[indexPath.section].items[indexPath.item].isEnabled == false { return nil }
         return dataSource[indexPath.section].items[indexPath.item]
       }.compactMap { $0 }
-      .do { calendarDay in
-        
-        // Если двойной клик, то переходим
-        if self.selectedDate.value == calendarDay.date  {
+      .withLatestFrom(selectedDate) { calendarDay, selectedDate in
+        if calendarDay.date == selectedDate {
           self.steps.accept(AppStep.CompletedTaskListIsRequired(date: calendarDay.date))
           return
+        } else {
+          self.services.preferencesService.selectedDate.accept(calendarDay.date)
+          self.services.actionService.runBranchSceneActionsTrigger.accept(())
         }
         
-        // Устанавливаем выбранный день
-        self.selectedDate.accept(calendarDay.date)
-        
-        
       }
-    
    
-    
-    //    let addAllBirdsAction = completedTasks
-    //      .withLatestFrom(selectedDate) { completedTasks, selectedDate -> [Task] in
-    //        completedTasks.filter{ Calendar.current.isDate(selectedDate, inSameDayAs: $0.closed!) }
-    //      }.map { tasks -> [BranchSceneAction] in
-    //        tasks.map { task -> BranchSceneAction in
-    //          BranchSceneAction(
-    //            UID: UUID().uuidString,
-    //            action: .Add(bird: )
-    //          )
-    //        }
-    //      }
-    
-    //    services.tasksService.tasks
-    //      .withPrevious(startWith: [])
-    //      .map { oldTasks, newTasks -> [NestSceneAction] in
-    //        newTasks
-    //          .filter { task -> Bool in
-    //            task.status == .InProgress &&
-    //            task.status != oldTasks.first(where: { $0.UID == task.UID })?.status
-    //          }
-    //          .map { _ in
-    //            NestSceneAction(UID: UUID().uuidString, action: .CreateTheEgg(withAnimation: true))
-    //          }
-    //      }
-    //      .flatMapLatest { Driver.just($0) }
-    //      .filter { $0.isEmpty == false }
-    //      .asDriver(onErrorJustReturn: [])
-    //
-    // let createNestSceneActions = Driver
-    
     // score
     let featherScoreLabel = services.gameCurrencyService.gameCurrency
       .map { $0.filter {

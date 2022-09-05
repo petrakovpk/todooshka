@@ -87,8 +87,8 @@ class UserProfileViewController: UIViewController {
   private var calendarView = CalendarView(frame: .zero, collectionViewLayout: CalendarViewLayout())
   
   // MARK: - MVVM
-  var userProfileViewModel: UserProfileViewModel!
-  var branchSceneModel: BranchSceneModel!
+  var viewModel: UserProfileViewModel!
+  var sceneModel: BranchSceneModel!
   
   // MARK: - Rx
   private let disposeBag = DisposeBag()
@@ -102,20 +102,15 @@ class UserProfileViewController: UIViewController {
   override func viewDidLoad() {
     configureScene()
     configureUI()
-    bindUserProfileViewModel()
-    bindUserProfileSceneModel()
+    bindViewModel()
+    bindSceneModel()
   }
   
   override func viewWillAppear(_ animated: Bool) {
+    scene?.reloadData()
+    sceneModel.willShow.accept(())
     navigationController?.tabBarController?.tabBar.isHidden = false
   }
-  
-  override func viewDidAppear(_ animated: Bool) {
-    branchSceneModel.services.actionService.tabBarSelectedItem.accept(.TaskList)
-    branchSceneModel.services.actionService.runUserProfileActionsTrigger.accept(())
-  }
-  
-
   
   private func createCompositionalLayout() -> UICollectionViewLayout {
     return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
@@ -253,8 +248,8 @@ class UserProfileViewController: UIViewController {
   
   
   
-  //MARK: - Bind To
-  func bindUserProfileViewModel() {
+  //MARK: - Bind View Model
+  func bindViewModel() {
     
     let input = UserProfileViewModel.Input(
       settingsButtonClickTrigger: settingsButton.rx.tap.asDriver() ,
@@ -265,7 +260,7 @@ class UserProfileViewController: UIViewController {
       willDisplayCell: calendarView.rx.willDisplayCell.asDriver()
     )
     
-    let outputs = userProfileViewModel.transform(input: input)
+    let outputs = viewModel.transform(input: input)
     
     [
       outputs.dataSource.drive(dataSourceBinder),
@@ -284,16 +279,18 @@ class UserProfileViewController: UIViewController {
     
   }
   
-  func bindUserProfileSceneModel() {
+  func bindSceneModel() {
     let input = BranchSceneModel.Input()
-    let outputs = branchSceneModel.transform(input: input)
+    let outputs = sceneModel.transform(input: input)
     
     [
       // scene
       outputs.background.drive(sceneBackgroundBinder),
       // actions
-      outputs.run.drive(runBinder),
-
+      outputs.dataSource.drive(sceneDataSourceBinder),
+      // force
+      outputs.forceNestUpdate.drive(),
+      outputs.forceBranchUpdate.drive(forceBranchUpdateBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
@@ -303,6 +300,25 @@ class UserProfileViewController: UIViewController {
     return Binder(self, binding: { (vc, image) in
       if let image = image, let scene = vc.scene {
         scene.setup(with: image)
+      }
+    })
+  }
+  
+  var sceneDataSourceBinder: Binder<[Int: BirdActionType]> {
+    return Binder(self, binding: { (vc, actions) in
+      if let scene = vc.scene {
+        scene.setup(with: actions)
+        if vc.isVisible {
+          scene.reloadData()
+        }
+      }
+    })
+  }
+  
+  var forceBranchUpdateBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      if let scene = vc.scene {
+       // scene.forceUpdate()
       }
     })
   }
@@ -384,13 +400,12 @@ class UserProfileViewController: UIViewController {
     })
   }
   
- 
-  
+
   var runBinder: Binder<[BranchSceneAction]> {
     return Binder(self, binding: { (vc, actions) in
       if let scene = vc.scene {
-        scene.run(actions: actions)
-        vc.branchSceneModel.services.actionService.removeBranchSceneActions(branchSceneActions: actions)
+ //         scene.run(actions: actions)
+//        vc.branchSceneModel.services.actionService.removeBranchSceneActions(branchSceneActions: actions)
       }
     })
   }
@@ -434,11 +449,11 @@ extension UserProfileViewController: UICollectionViewDataSource {
 extension UserProfileViewController: CalendarViewDelegate {
   
   func appendPastData() {
-    userProfileViewModel.appendPastData()
+    viewModel.appendPastData()
   }
   
   func appendFutureData() {
-    userProfileViewModel.appendFutureData()
+    viewModel.appendFutureData()
   }
 }
 

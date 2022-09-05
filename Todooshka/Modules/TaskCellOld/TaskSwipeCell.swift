@@ -14,7 +14,7 @@ import SwipeCellKit
 class TaskSwipeCell: SwipeCollectionViewCell {
   
   //MARK: - Properties
-  static var reuseID: String = "TaskSwipeListCell"
+  static var reuseID: String = "TaskListCell"
   var viewModel: TaskCellModel!
   var disposeBag = DisposeBag()
   
@@ -365,6 +365,7 @@ class TaskSwipeCell: SwipeCollectionViewCell {
         cell.taskTimeLeftView.isHidden = true
         cell.repeatButton.isHidden = false
       case .WithFeather:
+        cell.swip
         cell.taskTimeLeftView.isHidden = true
         cell.repeatButton.isHidden = true
       }

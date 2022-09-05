@@ -84,7 +84,7 @@
 		6090C96526F3A58F00B0EC73 /* taskDone2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6090C96426F3A58F00B0EC73 /* taskDone2.json */; };
 		6095696B280EA0B100AF1C34 /* TypeSmallCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6095696A280EA0B100AF1C34 /* TypeSmallCollectionViewCell.swift */; };
 		6096ABA82683E9E100285AA7 /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6096ABA72683E9E100285AA7 /* UITextView.swift */; };
-		6096ABAF268464FA00285AA7 /* TaskCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6096ABAE268464FA00285AA7 /* TaskCellModel.swift */; };
+		6096ABAF268464FA00285AA7 /* TaskCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6096ABAE268464FA00285AA7 /* TaskCellViewModel.swift */; };
 		609ADE3B2750F3BF00E81FBF /* BranchScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 609ADE3A2750F3BF00E81FBF /* BranchScene.sks */; };
 		609ADE3D2750F40F00E81FBF /* BranchScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609ADE3C2750F40F00E81FBF /* BranchScene.swift */; };
 		60A2F49426EE4E5B00C328C1 /* TaskTypeListCollectionReusableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A2F49326EE4E5B00C328C1 /* TaskTypeListCollectionReusableViewCell.swift */; };
@@ -129,14 +129,14 @@
 		60E44687272742D300C514FC /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E44686272742D300C514FC /* Device.swift */; };
 		60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */; };
 		60E816B528116C20003F28DC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E816B428116C20003F28DC /* Theme.swift */; };
-		60E970362823F13700577484 /* BirdAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E970352823F13700577484 /* BirdAction.swift */; };
+		60E970362823F13700577484 /* BirdActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E970352823F13700577484 /* BirdActionType.swift */; };
 		60E970402825281E00577484 /* Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E9703F2825281E00577484 /* Link.swift */; };
 		60E9704328258EC200577484 /* TypeLargeCollectionViewCellSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E9704228258EC200577484 /* TypeLargeCollectionViewCellSectionModel.swift */; };
 		60E9704528258ED300577484 /* TypeLargeCollectionViewCellSectionModelItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E9704428258ED300577484 /* TypeLargeCollectionViewCellSectionModelItem.swift */; };
 		60E970472827025B00577484 /* SceneActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E970462827025B00577484 /* SceneActionType.swift */; };
 		60E9704928284B5F00577484 /* ActionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E9704828284B5F00577484 /* ActionService.swift */; };
 		60EB113F2656A32500992BF8 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB113E2656A32400992BF8 /* Task.swift */; };
-		60EB11412656A9B000992BF8 /* TaskSwipeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB11402656A9B000992BF8 /* TaskSwipeCell.swift */; };
+		60EB11412656A9B000992BF8 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB11402656A9B000992BF8 /* TaskCell.swift */; };
 		60ED956E27B520C1005ACC33 /* TaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED956D27B520C1005ACC33 /* TaskStatus.swift */; };
 		60ED958027B53084005ACC33 /* GameCurrencyCoreData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED957A27B53083005ACC33 /* GameCurrencyCoreData+CoreDataProperties.swift */; };
 		60ED958127B53084005ACC33 /* TypeCoreData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED957B27B53083005ACC33 /* TypeCoreData+CoreDataProperties.swift */; };
@@ -160,13 +160,17 @@
 		60FB0F4027F61A9500430A23 /* ListType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0F3F27F61A9500430A23 /* ListType.swift */; };
 		60FFF65727A9A5D800290331 /* ShopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FFF65627A9A5D700290331 /* ShopViewController.swift */; };
 		60FFF65927A9A5E300290331 /* ShopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FFF65827A9A5E300290331 /* ShopViewModel.swift */; };
-		9D17D43A2886EB4000D3E304 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D4392886EB4000D3E304 /* TaskCell.swift */; };
+		9D17D43A2886EB4000D3E304 /* TaskCellOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D4392886EB4000D3E304 /* TaskCellOld.swift */; };
 		9D17D43D2886F3E400D3E304 /* TDDiamondOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D43C2886F3E400D3E304 /* TDDiamondOfferView.swift */; };
 		9D17D43F28881ED400D3E304 /* DiamondPackageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */; };
 		9D17D44128899D4200D3E304 /* CalendarYearCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D44028899D4200D3E304 /* CalendarYearCell.swift */; };
 		9D17D46D288FE65200D3E304 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D46C288FE65200D3E304 /* CalendarView.swift */; };
 		9D42BF49289A82DB008F624F /* SKEggNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF48289A82DB008F624F /* SKEggNode.swift */; };
 		9D42BF4C289AABEF008F624F /* SKBirdNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF4B289AABEF008F624F /* SKBirdNode.swift */; };
+		9D42BF4F28BF8466008F624F /* TabBarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF4E28BF8466008F624F /* TabBarService.swift */; };
+		9D42BF5128C08D06008F624F /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF5028C08D06008F624F /* Data.swift */; };
+		9D42BF5328C090FB008F624F /* EggActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF5228C090FB008F624F /* EggActionType.swift */; };
+		9D42BF5528C23CA0008F624F /* TaskListSectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF5428C23CA0008F624F /* TaskListSectionItem.swift */; };
 		9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */; };
 		9D6B6B12284FEC46000ABAE7 /* BranchSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */; };
 		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
@@ -261,7 +265,7 @@
 		6090C96426F3A58F00B0EC73 /* taskDone2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taskDone2.json; sourceTree = "<group>"; };
 		6095696A280EA0B100AF1C34 /* TypeSmallCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeSmallCollectionViewCell.swift; sourceTree = "<group>"; };
 		6096ABA72683E9E100285AA7 /* UITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextView.swift; sourceTree = "<group>"; };
-		6096ABAE268464FA00285AA7 /* TaskCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskCellModel.swift; sourceTree = "<group>"; };
+		6096ABAE268464FA00285AA7 /* TaskCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskCellViewModel.swift; sourceTree = "<group>"; };
 		609ADE3A2750F3BF00E81FBF /* BranchScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BranchScene.sks; sourceTree = "<group>"; };
 		609ADE3C2750F40F00E81FBF /* BranchScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchScene.swift; sourceTree = "<group>"; };
 		60A2F49326EE4E5B00C328C1 /* TaskTypeListCollectionReusableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeListCollectionReusableViewCell.swift; sourceTree = "<group>"; };
@@ -308,7 +312,7 @@
 		60E44686272742D300C514FC /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDTopRoundButton.swift; sourceTree = "<group>"; };
 		60E816B428116C20003F28DC /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		60E970352823F13700577484 /* BirdAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdAction.swift; sourceTree = "<group>"; };
+		60E970352823F13700577484 /* BirdActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdActionType.swift; sourceTree = "<group>"; };
 		60E9703F2825281E00577484 /* Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Link.swift; sourceTree = "<group>"; };
 		60E9704228258EC200577484 /* TypeLargeCollectionViewCellSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeLargeCollectionViewCellSectionModel.swift; sourceTree = "<group>"; };
 		60E9704428258ED300577484 /* TypeLargeCollectionViewCellSectionModelItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeLargeCollectionViewCellSectionModelItem.swift; sourceTree = "<group>"; };
@@ -316,7 +320,7 @@
 		60E9704828284B5F00577484 /* ActionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionService.swift; sourceTree = "<group>"; };
 		60EB113C2656850C00992BF8 /* Todooshka.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Todooshka.entitlements; sourceTree = "<group>"; };
 		60EB113E2656A32400992BF8 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
-		60EB11402656A9B000992BF8 /* TaskSwipeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSwipeCell.swift; sourceTree = "<group>"; };
+		60EB11402656A9B000992BF8 /* TaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
 		60ED956D27B520C1005ACC33 /* TaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStatus.swift; sourceTree = "<group>"; };
 		60ED957727B52C4B005ACC33 /* Todooshka v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Todooshka v2.xcdatamodel"; sourceTree = "<group>"; };
 		60ED957827B52C4B005ACC33 /* Todooshka.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Todooshka.xcdatamodel; sourceTree = "<group>"; };
@@ -343,13 +347,17 @@
 		60FFF65827A9A5E300290331 /* ShopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewModel.swift; sourceTree = "<group>"; };
 		65CF4454CBCF66052FBD4AA1 /* Pods_Todooshka.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Todooshka.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7558BF1D43D39A86CC82AC0C /* Pods-Todooshka.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todooshka.release.xcconfig"; path = "Target Support Files/Pods-Todooshka/Pods-Todooshka.release.xcconfig"; sourceTree = "<group>"; };
-		9D17D4392886EB4000D3E304 /* TaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
+		9D17D4392886EB4000D3E304 /* TaskCellOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCellOld.swift; sourceTree = "<group>"; };
 		9D17D43C2886F3E400D3E304 /* TDDiamondOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDDiamondOfferView.swift; sourceTree = "<group>"; };
 		9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondPackageType.swift; sourceTree = "<group>"; };
 		9D17D44028899D4200D3E304 /* CalendarYearCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarYearCell.swift; sourceTree = "<group>"; };
 		9D17D46C288FE65200D3E304 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		9D42BF48289A82DB008F624F /* SKEggNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKEggNode.swift; sourceTree = "<group>"; };
 		9D42BF4B289AABEF008F624F /* SKBirdNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKBirdNode.swift; sourceTree = "<group>"; };
+		9D42BF4E28BF8466008F624F /* TabBarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarService.swift; sourceTree = "<group>"; };
+		9D42BF5028C08D06008F624F /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		9D42BF5228C090FB008F624F /* EggActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EggActionType.swift; sourceTree = "<group>"; };
+		9D42BF5428C23CA0008F624F /* TaskListSectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListSectionItem.swift; sourceTree = "<group>"; };
 		9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSceneModel.swift; sourceTree = "<group>"; };
 		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
@@ -435,8 +443,9 @@
 		602591C82679CF0800E2BBF8 /* TaskList */ = {
 			isa = PBXGroup;
 			children = (
-				9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */,
+				9D42BF5428C23CA0008F624F /* TaskListSectionItem.swift */,
 				6055D1A1267245D100316BB4 /* TaskListSectionModel.swift */,
+				9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */,
 				60AE9DD52652FD1800E51531 /* TaskListViewModel.swift */,
 			);
 			path = TaskList;
@@ -519,6 +528,7 @@
 		6049C4EA27EC541D005A7150 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
+				9D42BF5028C08D06008F624F /* Data.swift */,
 				6053F85B2820347E0047C204 /* Palette.swift */,
 				60E816B428116C20003F28DC /* Theme.swift */,
 			);
@@ -528,13 +538,14 @@
 		604D1F7827ADB0E200E05D09 /* Enums */ = {
 			isa = PBXGroup;
 			children = (
-				60E970352823F13700577484 /* BirdAction.swift */,
-				6006F82E27AA701F00E5AE9E /* Clade.swift */,
+				60E970352823F13700577484 /* BirdActionType.swift */,
 				6053F86C2822DAE90047C204 /* BirdState.swift */,
 				600935672804708E0028C9AA /* BirdStyle.swift */,
+				6006F82E27AA701F00E5AE9E /* Clade.swift */,
 				6075496127EDC5B400B96D20 /* CrackType.swift */,
 				604D1F7E27ADC13B00E05D09 /* Currency.swift */,
 				9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */,
+				9D42BF5228C090FB008F624F /* EggActionType.swift */,
 				6049C4ED27EC7960005A7150 /* EggType.swift */,
 				6053F857282014060047C204 /* ErrorType.swift */,
 				600DA58A27FED471004A4634 /* Icon.swift */,
@@ -571,14 +582,14 @@
 			path = SmallTypeCell;
 			sourceTree = "<group>";
 		};
-		605823A926C2F33800F79155 /* TaskSwipeCell */ = {
+		605823A926C2F33800F79155 /* TaskCell */ = {
 			isa = PBXGroup;
 			children = (
-				60EB11402656A9B000992BF8 /* TaskSwipeCell.swift */,
-				6096ABAE268464FA00285AA7 /* TaskCellModel.swift */,
+				60EB11402656A9B000992BF8 /* TaskCell.swift */,
+				6096ABAE268464FA00285AA7 /* TaskCellViewModel.swift */,
 				605823A726C2F18F00F79155 /* TaskReusableView.swift */,
 			);
-			path = TaskSwipeCell;
+			path = TaskCell;
 			sourceTree = "<group>";
 		};
 		6067D99D26B1EEF300F0FB72 /* TabBar */ = {
@@ -729,9 +740,9 @@
 				6053F86B2822BA290047C204 /* SmallTypeCell */,
 				6067D99D26B1EEF300F0FB72 /* TabBar */,
 				60855BD8265905F700079D75 /* Task */,
-				9D17D4382886EB2E00D3E304 /* TaskCell */,
+				9D17D4382886EB2E00D3E304 /* TaskCellOld */,
 				602591C82679CF0800E2BBF8 /* TaskList */,
-				605823A926C2F33800F79155 /* TaskSwipeCell */,
+				605823A926C2F33800F79155 /* TaskCell */,
 				607BCB5E26E62E2F000A8248 /* Type */,
 				603EC53926E8905A00B39FB7 /* TypeCell */,
 				603C5CF226F219C40056729B /* TypeColorCell */,
@@ -767,6 +778,7 @@
 				60D8683227BBF3720039A4CC /* BirdTypeService.swift */,
 				60227A0527AD297F00DA7572 /* GameCurrencyService.swift */,
 				60AE9DB62652F72C00E51531 /* PreferencesService.swift */,
+				9D42BF4E28BF8466008F624F /* TabBarService.swift */,
 				60227A0727AD299200DA7572 /* TasksService.swift */,
 				60227A0927AD2A3700DA7572 /* TypesService.swift */,
 			);
@@ -957,12 +969,12 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		9D17D4382886EB2E00D3E304 /* TaskCell */ = {
+		9D17D4382886EB2E00D3E304 /* TaskCellOld */ = {
 			isa = PBXGroup;
 			children = (
-				9D17D4392886EB4000D3E304 /* TaskCell.swift */,
+				9D17D4392886EB4000D3E304 /* TaskCellOld.swift */,
 			);
-			path = TaskCell;
+			path = TaskCellOld;
 			sourceTree = "<group>";
 		};
 		9D17D43B2886F3BC00D3E304 /* TDView */ = {
@@ -1161,7 +1173,7 @@
 				60C00DA026B2F6E600AAD0E1 /* TaskListFlow.swift in Sources */,
 				6008CFB62684C8AF006DBF1F /* TaskTypeListViewModel.swift in Sources */,
 				60D5662626CC201400D865DD /* OnboardingViewModel.swift in Sources */,
-				60E970362823F13700577484 /* BirdAction.swift in Sources */,
+				60E970362823F13700577484 /* BirdActionType.swift in Sources */,
 				9D17D46D288FE65200D3E304 /* CalendarView.swift in Sources */,
 				60E816B528116C20003F28DC /* Theme.swift in Sources */,
 				9D17D44128899D4200D3E304 /* CalendarYearCell.swift in Sources */,
@@ -1205,6 +1217,7 @@
 				9DE96089286106B600E5981A /* DiamondViewController.swift in Sources */,
 				602D1B3E26C1BBE600DAA711 /* TDTaskCommentTextView.swift in Sources */,
 				60C1AC552817D52100C63404 /* TaskTypeListSectionModel.swift in Sources */,
+				9D42BF5528C23CA0008F624F /* TaskListSectionItem.swift in Sources */,
 				60F0719926DA70970048AB71 /* UITextFields.swift in Sources */,
 				604257712677EC24005A518C /* UIAlertController.swift in Sources */,
 				60ED958B27B5844D005ACC33 /* Point.swift in Sources */,
@@ -1221,6 +1234,7 @@
 				6055D193267104E800316BB4 /* UIViewController.swift in Sources */,
 				600935662804227A0028C9AA /* SceneAction.swift in Sources */,
 				60A2F49726EE530B00C328C1 /* RemoveConfirmationViewController.swift in Sources */,
+				9D42BF5328C090FB008F624F /* EggActionType.swift in Sources */,
 				9D17D43F28881ED400D3E304 /* DiamondPackageType.swift in Sources */,
 				6075496227EDC5B400B96D20 /* CrackType.swift in Sources */,
 				60F0719726DA70820048AB71 /* UIButtons.swift in Sources */,
@@ -1241,11 +1255,12 @@
 				600DA58F27FEFC16004A4634 /* TaskFlowAction.swift in Sources */,
 				60EB113F2656A32500992BF8 /* Task.swift in Sources */,
 				600718FC27BE912E006F2FEF /* GameCurrencyViewModel.swift in Sources */,
+				9D42BF5128C08D06008F624F /* Data.swift in Sources */,
 				6053F858282014060047C204 /* ErrorType.swift in Sources */,
 				6049C4EE27EC7960005A7150 /* EggType.swift in Sources */,
 				60C0BC9126BAD93C000A4A79 /* TypeLargeCollectionViewCell.swift in Sources */,
 				6096ABA82683E9E100285AA7 /* UITextView.swift in Sources */,
-				9D17D43A2886EB4000D3E304 /* TaskCell.swift in Sources */,
+				9D17D43A2886EB4000D3E304 /* TaskCellOld.swift in Sources */,
 				60227A0627AD297F00DA7572 /* GameCurrencyService.swift in Sources */,
 				604257692677AAAD005A518C /* UserProfileSettingsViewModel.swift in Sources */,
 				6042576F2677BE1C005A518C /* UserProfileSettingsSectionModel.swift in Sources */,
@@ -1271,10 +1286,11 @@
 				602EA05A274E944A00525D6C /* NestScene.swift in Sources */,
 				60AE65D727F5BFB100CFE7BB /* Result.swift in Sources */,
 				60B82FF12655078B00BF5F94 /* TabBarFlow.swift in Sources */,
-				60EB11412656A9B000992BF8 /* TaskSwipeCell.swift in Sources */,
+				60EB11412656A9B000992BF8 /* TaskCell.swift in Sources */,
 				9D42BF49289A82DB008F624F /* SKEggNode.swift in Sources */,
 				60E9704528258ED300577484 /* TypeLargeCollectionViewCellSectionModelItem.swift in Sources */,
 				60ED956E27B520C1005ACC33 /* TaskStatus.swift in Sources */,
+				9D42BF4F28BF8466008F624F /* TabBarService.swift in Sources */,
 				60ED958027B53084005ACC33 /* GameCurrencyCoreData+CoreDataProperties.swift in Sources */,
 				6042576B2677AB0D005A518C /* UserProfileSettingsCell.swift in Sources */,
 				60F0719326DA70600048AB71 /* Colors.swift in Sources */,
@@ -1289,7 +1305,7 @@
 				60E9704928284B5F00577484 /* ActionService.swift in Sources */,
 				60855BDC2659064200079D75 /* TaskViewModel.swift in Sources */,
 				609ADE3D2750F40F00E81FBF /* BranchScene.swift in Sources */,
-				6096ABAF268464FA00285AA7 /* TaskCellModel.swift in Sources */,
+				6096ABAF268464FA00285AA7 /* TaskCellViewModel.swift in Sources */,
 				60ED958727B54927005ACC33 /* Todooshka.xcdatamodeld in Sources */,
 				60F9921726AD912300A2449A /* UIButton.swift in Sources */,
 				60FFF65927A9A5E300290331 /* ShopViewModel.swift in Sources */,

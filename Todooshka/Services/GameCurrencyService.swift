@@ -26,6 +26,8 @@ class GameCurrencyService {
   
   // MARK: - Init
   init() {
+    
+   // removeAllGameCurrencyFromCoreData()
 
     // Get Points from Core Data
     getGameCurrencyCoreData { gameCurrencyCoreData in

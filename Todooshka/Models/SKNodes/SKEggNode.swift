@@ -9,44 +9,52 @@ import SpriteKit
 
 class SKEggNode: SKSpriteNode {
   
-  // MARK: - Actions
+  // MARK: - Public
+  var action: EggActionType = .Init
+  var isCracking: Bool = false
+  var nestPosition: CGPoint {
+    CGPoint(
+      x: (Data.Egg.deltaFromNest[index]?.x ?? 0) + parentPosition.x,
+      y: (Data.Egg.deltaFromNest[index]?.y ?? 0) + parentPosition.y
+    )
+  }
+  
+  // MARK: - Private
+  // Actions
+  private let fadeInWithoutDuration = SKAction.fadeIn(withDuration: 0.0)
+  private let fadeInWithDuration = SKAction.fadeIn(withDuration: 1.0)
   private let fadeOutAction = SKAction.fadeOut(withDuration: 1.0)
-  private let fadeInAction = SKAction.fadeIn(withDuration: 1.0)
+  private var setNoCracksTexture: SKAction { SKAction.setTexture(noCracksTexture, resize: false) }
+  private var setOneCrackTexture: SKAction { SKAction.setTexture(oneCrackTexture, resize: false) }
+  private var setThreeCracksTexture: SKAction { SKAction.setTexture(threeCracksTexture, resize: true) }
+  private let wait = SKAction.wait(forDuration: 0.5)
   
-  // MARK: - Properties
-  private let data: [Int: CGPoint] = [
-    1: CGPoint(x: -30, y: 20),
-    2: CGPoint(x: 20, y: 20),
-    3: CGPoint(x: 70, y: -5),
-    4: CGPoint(x: 35, y: -35),
-    5: CGPoint(x: -5, y: -40),
-    6: CGPoint(x: -45, y: -35),
-    7: CGPoint(x: -80, y: -5)
-  ]
+  // Other
+  private let index: Int
+  private let parentPosition: CGPoint
   
-  private let eggN: Int
-  //private var cracks: CrackType = .NoCrack
+  // Image
+  private var noCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(index: index).rawValue + "_" + CrackType.NoCrack.stringForImage) ?? UIImage() }
+  private var oneCrackImage: UIImage { UIImage(named: "яйцо_" + Clade.init(index: index).rawValue + "_" + CrackType.OneCrack.stringForImage) ?? UIImage() }
+  private var threeCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(index: index).rawValue + "_" + CrackType.ThreeCracks.stringForImage) ?? UIImage() }
   
-  private var image: UIImage? {
-    guard let clade = Clade.init(eggN: eggN) else { return nil }
-    return UIImage(named: "яйцо_" + clade.rawValue + "_" + CrackType.NoCrack.stringForImage)
-  }
+  // Texture
+  private var noCracksTexture: SKTexture { SKTexture(image: noCracksImage) }
+  private var oneCrackTexture: SKTexture { SKTexture(image: oneCrackImage) }
+  private var threeCracksTexture: SKTexture { SKTexture(image: threeCracksImage) }
   
-  public var deltaPosition: CGPoint {
-    data[eggN] ?? CGPoint(x: 0, y: 0)
-  }
-
   // MARK: - Init
-  init(eggN: Int) {
-    self.eggN = eggN
+  init(index: Int, parentPosition: CGPoint) {
+    // Super init
+    self.index = index
+    self.parentPosition = parentPosition
     super.init(texture: nil, color: .clear, size: .zero)
     
-    guard let image = image else { return }
-    
+    // Other
     name = "Egg"
-    size = SKTexture(image: image).size()
-    texture = SKTexture(image: image)
-    zPosition = CGFloat(eggN + 1)
+    size = noCracksTexture.size()
+    texture = noCracksTexture
+    zPosition = CGFloat(index + 1)
     xScale = Theme.Scene.Egg.scale
     yScale = Theme.Scene.Egg.scale
     alpha = 0.0
@@ -57,32 +65,37 @@ class SKEggNode: SKSpriteNode {
   }
   
   // MARK: - Actions
-  func show(withAnimation: Bool, completion: (() -> Void)?) {
-    withAnimation ? run(fadeInAction) : (alpha = 1.0)
+  func show(state: EggActionType, withAnimation: Bool, completion: (() -> Void)?) {
+    switch (state, withAnimation) {
+    case (.NoCracks, true):
+      run(SKAction.sequence([setNoCracksTexture, fadeInWithDuration]))
+    case (.NoCracks, false):
+      run(SKAction.sequence([setNoCracksTexture, fadeInWithoutDuration]))
+    case (.Crack(_), _):
+      run(setThreeCracksTexture) { self.alpha = 0.7 }
+    default:
+      return
+    }
   }
   
   func crack(completion: (() -> Void)?) {
-    
-    guard let clade = Clade.init(eggN: eggN),
-          let oneCrackImage = UIImage(named: "яйцо_" + clade.rawValue + "_" + CrackType.OneCrack.stringForImage),
-          let threeCracksImage = UIImage(named: "яйцо_" + clade.rawValue + "_" + CrackType.ThreeCracks.stringForImage) else { return }
-     
-    let oneCrackTexture = SKTexture(image: oneCrackImage)
-    let threeCracksTexture = SKTexture(image: threeCracksImage)
-    
-    let wait = SKAction.wait(forDuration: 0.5)
-    let doOneCrack = SKAction.setTexture(oneCrackTexture, resize: false)
-    let doThreeCracks = SKAction.setTexture(threeCracksTexture, resize: true)
-    let sequence = SKAction.sequence([doOneCrack, wait, doThreeCracks, wait])
-    
-    run(sequence) {
+    isCracking = true
+    run(SKAction.sequence([setOneCrackTexture, wait, setThreeCracksTexture, wait])) {
       self.alpha = 0.7
+      self.isCracking = false
       completion?()
     }
   }
   
-  func hide(completion: (() -> Void)?) {
-    run(fadeOutAction)
+  func forceCrack() {
+    run(setThreeCracksTexture) { self.alpha = 0.7 }
   }
   
+  func repair() {
+    run(setNoCracksTexture) { self.alpha = 1.0 }
+  }
+  
+  func hide() {
+    run(fadeOutAction)
+  }
 }
