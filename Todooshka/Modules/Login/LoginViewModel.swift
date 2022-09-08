@@ -50,6 +50,11 @@ class LoginViewModel: Stepper {
     let emailButtonClickTrigger: Driver<Void>
     let nextButtonClickTrigger: Driver<Void>
     let phoneButtonClickTrigger: Driver<Void>
+    let emailTextFieldDidEndEditing: Driver<Void>
+    let passwordTextFieldDidEndEditing: Driver<Void>
+    let repeatPasswordTextFieldDidEndEditing: Driver<Void>
+    let phoneTextFieldDidEndEditing: Driver<Void>
+    let OTPCodeTextFieldDidEndEditing: Driver<Void>
   }
   
   struct Output {
@@ -60,6 +65,7 @@ class LoginViewModel: Stepper {
     let nextButtonIsEnabled: Driver<Bool>
     let sendEmailVerification: Driver<Void>
     let setLoginViewControllerStyle: Driver<LoginViewControllerStyle>
+    let updateUserData: Driver<Void>
   }
   
   //MARK: - Init
@@ -69,6 +75,15 @@ class LoginViewModel: Stepper {
   }
   
   func transform(input: Input) -> Output {
+    
+    let next = Driver
+      .of (input.nextButtonClickTrigger,
+           input.emailTextFieldDidEndEditing,
+           input.passwordTextFieldDidEndEditing.filter{ self.style == .Password },
+           input.repeatPasswordTextFieldDidEndEditing.filter{ self.style == .RepeatPassword },
+           input.phoneTextFieldDidEndEditing,
+           input.OTPCodeTextFieldDidEndEditing
+      ).merge()
     
     let setEmailStyleWithButtonClick = input.emailButtonClickTrigger
       .map { LoginViewControllerStyle.Email }
@@ -85,42 +100,6 @@ class LoginViewModel: Stepper {
         }
       }
     
-    let setRepeatPasswordStyleWithNextButtonClick = input.nextButtonClickTrigger
-      .filter{ _ in self.style == .Email && self.isNewUser  }
-      .map { LoginViewControllerStyle.RepeatPassword }
-    
-    let setPasswordStyleWithNextButtonClick = input.nextButtonClickTrigger
-      .filter{ _ in self.style == .Email && self.isNewUser == false }
-      .map { LoginViewControllerStyle.Password }
-    
-    let setOTPCodeStyleWithNextButtonClick = input.nextButtonClickTrigger
-      .filter { _ in self.style == .Phone }
-      .map { LoginViewControllerStyle.OTPCode }
-
-    let loginViewControllerStyle = Driver.of(
-      setEmailStyleWithButtonClick,
-      setPhoneStyleWithButtonClick,
-      setEmailOrPhoneStyleWithNavigationBack,
-      setRepeatPasswordStyleWithNextButtonClick,
-      setPasswordStyleWithNextButtonClick,
-      setOTPCodeStyleWithNextButtonClick
-    )
-      .merge()
-      .startWith(.Email)
-      .distinctUntilChanged()
-      .do { style in self.style = style }
-    
-    let clearError = loginViewControllerStyle
-      .map { _ -> String in "" }
-    
-    let navigateBack = input.backButtonClickTrigger
-      .withLatestFrom(loginViewControllerStyle) { _, style in
-        switch style {
-        case .Phone, .Email: self.steps.accept(AppStep.NavigateBack)
-        default: return
-        }
-      }
-
     let correctPhoneFormat = input.phoneTextFieldText
       .map { phone -> String in
         let mask = "+X (XXX) XXX-XX-XX"
@@ -154,6 +133,52 @@ class LoginViewModel: Stepper {
         let emailPred = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
         return emailPred.evaluate(with: email)
       }
+    
+    let setRepeatPasswordStyleWithNextButtonClick = next
+      .withLatestFrom(isEmailValid)
+      .filter{ $0 }
+      .filter{ _ in self.style == .Email && self.isNewUser  }
+      .map { _ in LoginViewControllerStyle.RepeatPassword }
+    
+    let setPasswordStyleWithNextButtonClick = next
+      .withLatestFrom(isEmailValid)
+      .filter{ $0 }
+      .filter{ _ in self.style == .Email && self.isNewUser == false }
+      .map { _ in LoginViewControllerStyle.Password }
+    
+    let setOTPCodeStyleWithNextButtonClick = next
+      .withLatestFrom(isPhoneValid)
+      .filter{ $0 }
+      .filter { _ in self.style == .Phone }
+      .map { _ in LoginViewControllerStyle.OTPCode }
+
+    let loginViewControllerStyle = Driver.of(
+      setEmailStyleWithButtonClick,
+      setPhoneStyleWithButtonClick,
+      setEmailOrPhoneStyleWithNavigationBack,
+      setRepeatPasswordStyleWithNextButtonClick,
+      setPasswordStyleWithNextButtonClick,
+      setOTPCodeStyleWithNextButtonClick
+    )
+      .merge()
+      .startWith(.Email)
+      .distinctUntilChanged()
+      .do { style in self.style = style }
+    
+    let clearError = loginViewControllerStyle
+      .map { _ -> String in "" }
+    
+    let navigateBack = input.backButtonClickTrigger
+      .withLatestFrom(loginViewControllerStyle) { _, style in
+        switch style {
+        case .Phone, .Email: self.steps.accept(AppStep.NavigateBack)
+        default: return
+        }
+      }
+
+    
+    
+    
 
     let isPasswordValid = input.passwordTextFieldText
       .map { $0.count >= 8 }
@@ -183,7 +208,7 @@ class LoginViewModel: Stepper {
     let signUpWithEmailAttr = Driver<SignUpWithEmailAttr>
       .combineLatest(input.emailTextFieldText, input.passwordTextFieldText) { SignUpWithEmailAttr(email: $0, password: $1) }
     
-    let createUserWithEmail = input.nextButtonClickTrigger
+    let createUserWithEmail = next
       .withLatestFrom(loginViewControllerStyle)
       .filter { $0 == .RepeatPassword }
       .withLatestFrom(signUpWithEmailAttr)
@@ -209,16 +234,7 @@ class LoginViewModel: Stepper {
         result.user.rx.sendEmailVerification()
       }.asDriver(onErrorJustReturn: ())
       
-    let updateUserData = createUserWithEmail
-      .compactMap { result -> AuthDataResult? in
-        guard case .success(let authDataResult) = result else { return nil }
-        return authDataResult
-      }.asObservable()
-      .flatMapLatest { authDataResult -> Observable<Result<DatabaseReference, Error>> in
-        Database.database().reference().child("USERS").child(authDataResult.user.uid).rx.updateChildValues(["email": authDataResult.user.email, "displayName": authDataResult.user.displayName ])
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
-    let errorTextUpdateUser = updateUserData
+    let errorTextUpdateUser = createUserWithEmail
       .map { result -> String in
         switch result {
         case .success(_): return ""
@@ -226,7 +242,7 @@ class LoginViewModel: Stepper {
         }
       }
     
-    let signUpWithEmail = updateUserData
+    let signUpWithEmail = createUserWithEmail
       .map { result -> Void in
         switch result {
         case .success(_): self.steps.accept(AppStep.AuthIsCompleted)
@@ -234,7 +250,7 @@ class LoginViewModel: Stepper {
         }
       }
     
-    let signInWithEmailCheckUser = input.nextButtonClickTrigger
+    let signInWithEmailCheckUser = next
       .withLatestFrom(loginViewControllerStyle)
       .filter { $0 == .Password}
       .withLatestFrom(signUpWithEmailAttr)
@@ -260,7 +276,7 @@ class LoginViewModel: Stepper {
         }
       }
     
-    let sendOTPCode = input.nextButtonClickTrigger
+    let sendOTPCode = next
       .withLatestFrom(loginViewControllerStyle)
       .filter{ $0 == .Phone }
       .withLatestFrom(input.phoneTextFieldText) {
@@ -287,7 +303,7 @@ class LoginViewModel: Stepper {
         }
       }.asDriver(onErrorJustReturn: "")
     
-    let checkVerificationCode = input.nextButtonClickTrigger
+    let checkVerificationCode = next
       .withLatestFrom(loginViewControllerStyle)
       .filter{ $0 == .OTPCode }
       .withLatestFrom(isOTPCodeValid)
@@ -299,6 +315,21 @@ class LoginViewModel: Stepper {
         Auth.auth().rx.signInAndRetrieveData(with: credential)
       }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       
+    let updateUserData = Driver
+      .of (createUserWithEmail, checkVerificationCode)
+      .merge()
+      .compactMap { result -> AuthDataResult? in
+        guard case .success(let authDataResult) = result else { return nil }
+        return authDataResult
+      }.asObservable()
+      .flatMapLatest { authDataResult -> Observable<Result<DatabaseReference, Error>> in
+        Database.database().reference().child("USERS").child(authDataResult.user.uid).rx.updateChildValues(
+          ["email": authDataResult.user.email,
+           "phoneNumber": authDataResult.user.phoneNumber,
+           "displayName": authDataResult.user.displayName ])
+      }.map { _ in () }
+      .asDriver(onErrorJustReturn: ())
+    
     let errorTextCheckOTPCode = checkVerificationCode
       .map { result -> String in
         switch result {
@@ -338,172 +369,9 @@ class LoginViewModel: Stepper {
       navigateBack: navigateBack,
       nextButtonIsEnabled: nextButtonIsEnabled,
       sendEmailVerification: sendEmailVerification,
-      setLoginViewControllerStyle: loginViewControllerStyle
+      setLoginViewControllerStyle: loginViewControllerStyle,
+      updateUserData: updateUserData
     )
   }
-  
-  //MARK: - Bind Inputs
-  //    func bindInputs() {
-  //
-  //        loginModeOutput.bind{[weak self] _ in
-  //            guard let self = self else { return }
-  //            self.errorTextFieldOutput.accept("")
-  //            self.checkNextButton()
-  //        }.disposed(by: disposeBag)
-  //
-  //        emailTextFieldInput.bind{[weak self] email in
-  //            guard let self = self else { return }
-  //            self.checkNextButton()
-  //        }.disposed(by: disposeBag)
-  //
-  //        passwordTextFieldInput.bind{[weak self] _ in
-  //            guard let self = self else { return }
-  //            self.checkNextButton()
-  //        }.disposed(by: disposeBag)
-  //
-  //        repeatPasswordTextFieldInput.bind{[weak self] _ in
-  //            guard let self = self else { return }
-  //            self.checkNextButton()
-  //        }.disposed(by: disposeBag)
-  //
-  //        phoneTextFieldInput.bind{[weak self] phone in
-  //            guard let self = self else { return }
-  //            self.phoneTextFieldOutput.accept(self.phoneFormat(with: "+X (XXX) XXX XX XX", phone: phone))
-  //            self.checkNextButton()
-  //        }.disposed(by: disposeBag)
-  //
-  //        codeTextFieldInput.bind{[weak self] _ in
-  //            guard let self = self else { return }
-  //            self.checkNextButton()
-  //        }.disposed(by: disposeBag)
-  //
-  //    }
-  //
-  //    //MARK: - Handlers
-  //    func phoneButtonClick() {
-  //        switch loginModeOutput.value {
-  //        case .email, .password:
-  //            loginModeOutput.accept(.phone)
-  //        default:
-  //            return
-  //        }
-  //    }
-  //
-  //    func emailButtonClick() {
-  //        switch loginModeOutput.value {
-  //        case .phone, .code:
-  //            loginModeOutput.accept(.email)
-  //        default:
-  //            return
-  //        }
-  //    }
-  //
-  //    func nextButtonClick() {
-  //
-  //        if nextButtonIsEnabledOutput.value == false  { return }
-  //
-  //        switch loginModeOutput.value {
-  //        case .email:
-  //            loginModeOutput.accept(.password)
-  //        case .phone:
-  //            sendCode()
-  //        case .password:
-  //            isNewUser ? signUpWithEmail() : signInWithEmail()
-  //        case .code:
-  //            signUpWithPhone()
-  //        }
-  //    }
-  //
-  //    func backButtonClick() {
-  //        switch loginModeOutput.value {
-  //        case .password:
-  //            loginModeOutput.accept(.email)
-  //        case .code:
-  //            loginModeOutput.accept(.phone)
-  //        case .email, .phone:
-  //            steps.accept(AppStep.createAccountIsCompleted)
-  //        }
-  //    }
-  //
-  //    func checkNextButton() {
-  //        switch loginModeOutput.value {
-  //        case .email:
-  //            isValidEmail(emailTextFieldInput.value) ? nextButtonIsEnabledOutput.accept(true) : nextButtonIsEnabledOutput.accept(false)
-  //        case .phone:
-  //            phoneTextFieldInput.value == "" ? nextButtonIsEnabledOutput.accept(false) : nextButtonIsEnabledOutput.accept(true)
-  //        case .password:
-  //            if isNewUser {
-  //                if passwordTextFieldInput.value != "",
-  //                   passwordTextFieldInput.value == repeatPasswordTextFieldInput.value {
-  //                    nextButtonIsEnabledOutput.accept(true)
-  //                } else {
-  //                    nextButtonIsEnabledOutput.accept(false)
-  //                }
-  //            } else {
-  //                passwordTextFieldInput.value == "" ? nextButtonIsEnabledOutput.accept(false) : nextButtonIsEnabledOutput.accept(true)
-  //            }
-  //
-  //        case .code:
-  //            codeTextFieldInput.value == "" ? nextButtonIsEnabledOutput.accept(false) : nextButtonIsEnabledOutput.accept(true)
-  //        }
-  //    }
-  //
-  //    //MARK: - Auth Methods
-  //    func signUpWithEmail() {
-  //        services.networkAuthService.signUpWithEmail(withEmail: emailTextFieldInput.value, password: repeatPasswordTextFieldInput.value, fullname: "") { [weak self] error in
-  //            guard let self = self else { return }
-  //            if let error = error {
-  //                print(error.localizedDescription)
-  //                self.errorTextFieldOutput.accept(error.localizedDescription)
-  //                return
-  //            }
-  //            self.steps.accept(AppStep.authIsCompleted)
-  //        }
-  //    }
-  //
-  //    func signInWithEmail() {
-  //        services.networkAuthService.signInWithEmail(withEmail: emailTextFieldInput.value, password: passwordTextFieldInput.value) {[weak self] result, error in
-  //            guard let self = self else { return }
-  //            if let error = error {
-  //                print(error.localizedDescription)
-  //                self.errorTextFieldOutput.accept(error.localizedDescription)
-  //                return
-  //            }
-  //            self.steps.accept(AppStep.authIsCompleted)
-  //        }
-  //    }
-  //
-  //    func sendCode() {
-  //        var phone = phoneTextFieldOutput.value.replacingOccurrences(of: " ", with: "")
-  //        phone = phone.replacingOccurrences(of: "(", with: "")
-  //        phone = phone.replacingOccurrences(of: ")", with: "")
-  //        services.networkAuthService.sendVerificationCodeWithPhone(withPhone: phone) {[weak self] verificationId, error in
-  //            guard let self = self else { return }
-  //            guard let verificationId = verificationId else { return }
-  //
-  //            if let error = error {
-  //                print(error.localizedDescription)
-  //                self.errorTextFieldOutput.accept(error.localizedDescription)
-  //                return
-  //            }
-  //
-  //            self.verificationId = verificationId
-  //            self.loginModeOutput.accept(.code)
-  //        }
-  //    }
-  //
-  //    func signUpWithPhone() {
-  //        services.networkAuthService.signInWithPhone(verificationID: verificationId, verificationCode: codeTextFieldInput.value) {[weak self]  error in
-  //            guard let self = self else { return }
-  //            if let error = error {
-  //                print(error.localizedDescription)
-  //                self.errorTextFieldOutput.accept(error.localizedDescription)
-  //                return
-  //            }
-  //            self.steps.accept(AppStep.authIsCompleted)
-  //        }
-  //    }
-  //
- 
 }
 

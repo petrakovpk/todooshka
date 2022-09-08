@@ -215,7 +215,12 @@ class LoginViewController: UIViewController {
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       emailButtonClickTrigger: emailButton.rx.tap.asDriver(),
       nextButtonClickTrigger: nextButton.rx.tap.asDriver(),
-      phoneButtonClickTrigger: phoneButton.rx.tap.asDriver()
+      phoneButtonClickTrigger: phoneButton.rx.tap.asDriver(),
+      emailTextFieldDidEndEditing: emailTextField.rx.controlEvent(.editingDidEnd).asDriver() ,
+      passwordTextFieldDidEndEditing: passwordTextField.rx.controlEvent(.editingDidEnd).asDriver(),
+      repeatPasswordTextFieldDidEndEditing: repeatPasswordTextField.rx.controlEvent(.editingDidEnd).asDriver(),
+      phoneTextFieldDidEndEditing: phoneTextField.rx.controlEvent(.editingDidEnd).asDriver(),
+      OTPCodeTextFieldDidEndEditing: OTPCodeTextField.rx.controlEvent(.editingDidEnd).asDriver()
     )
     
     let output = viewModel.transform(input: input)
@@ -227,7 +232,8 @@ class LoginViewController: UIViewController {
       output.navigateBack.drive(),
       output.nextButtonIsEnabled.drive(setNextButtonIsEnabledBinder),
       output.sendEmailVerification.drive(),
-      output.setLoginViewControllerStyle.drive(loginViewControllerStyleBinder)
+      output.setLoginViewControllerStyle.drive(loginViewControllerStyleBinder),
+      output.updateUserData.drive()
     ]
       .forEach{ $0.disposed(by: disposeBag) }
   }
@@ -264,8 +270,8 @@ class LoginViewController: UIViewController {
         vc.passwordTextField.isHidden = false
         vc.repeatPasswordTextField.isHidden = true
         vc.OTPCodeTextField.isHidden = true
-//        vc.passwordTextField.clear()
-//        vc.repeatPasswordTextField.clear()
+        vc.passwordTextField.clear()
+        vc.repeatPasswordTextField.clear()
         vc.passwordTextField.becomeFirstResponder()
       case .RepeatPassword:
         vc.leftDividerView.backgroundColor = Palette.SingleColors.BlueRibbon
@@ -277,8 +283,8 @@ class LoginViewController: UIViewController {
         vc.passwordTextField.isHidden = false
         vc.repeatPasswordTextField.isHidden = false
         vc.OTPCodeTextField.isHidden = true
-        // vc.passwordTextField.clear()
-        // vc.repeatPasswordTextField.clear()
+        vc.passwordTextField.clear()
+        vc.repeatPasswordTextField.clear()
         vc.passwordTextField.becomeFirstResponder()
       case .Phone:
         vc.leftDividerView.backgroundColor = Palette.DualColors.Mischka_205_205_223_
@@ -305,24 +311,4 @@ class LoginViewController: UIViewController {
       }
     })
   }
-
-    //    //MARK: - Bind Outputs
-    //    viewModel.nextButtonIsEnabledOutput.bind{ $0 ? self.setEnabledNextButton() : self.setDisabledNextButton() }.disposed(by: disposeBag)
-    //    viewModel.phoneTextFieldOutput.bind(to: phoneTextField.rx.text).disposed(by: disposeBag)
-    //    viewModel.errorTextFieldOutput.bind(to: errorLabel.rx.text).disposed(by: disposeBag)
-    //
-    //    viewModel.loginModeOutput.bind{[weak self] mode in
-    //      guard let self = self else { return }
-    //      switch mode {
-    //      case .email:
-    //        self.setEmailMode()
-    //      case .phone:
-    //        self.setPhoneMode()
-    //      case .password:
-    //        self.setPasswordMode()
-    //      case .code:
-    //        self.setCodeMode()
-    //      }
-    //    }.disposed(by: disposeBag)
-//  }
 }
