@@ -31,11 +31,15 @@ class UserProfileFlow: Flow {
     guard let step = step as? AppStep else { return .none }
     switch step {
       
-    // User ProfileIe
+      // Auth
+    case .AuthIsRequired:
+      return navigateToAuthFlow()
+      
+      // User ProfileIe
     case .UserProfileIsRequired:
       return navigateToUserProfile()
       
-    // Task
+      // Task
     case .CreateTaskIsRequired(let status, let date):
       return navigateToTask(taskFlowAction: .create(status: status, closed: date))
     case .ShowTaskIsRequired(let task):
@@ -43,7 +47,7 @@ class UserProfileFlow: Flow {
     case .TaskProcessingIsCompleted:
       return navigateBack()
       
-    // Task List
+      // Task List
     case .DeletedTaskListIsRequired:
       return navigateToDeletedTaskList()
     case .CompletedTaskListIsRequired(let date):
@@ -51,7 +55,7 @@ class UserProfileFlow: Flow {
     case .TaskListIsCompleted:
       return navigateBack()
       
-    // Deleted Task Type List
+      // Deleted Task Type List
     case .DeletedTaskTypeListIsRequired:
       return navigateToDeletedTaskTypeList()
     case .DeletedTaskTypeListIsCompleted:
@@ -63,37 +67,37 @@ class UserProfileFlow: Flow {
     case .TaskTypesListIsCompleted:
       return navigateBack()
       
-    // User Settings
+      // User Settings
     case .UserSettingsIsRequired:
       return navigateToSettings()
     case .UserSettingsIsCompleted:
       return navigateBack()
       
-    // Shop
+      // Shop
     case .ShopIsRequired:
       return navigateToShop()
     case .ShopIsCompleted:
       return navigateBack()
       
-    // Bird
+      // Bird
     case .ShowBirdIsRequired(let bird):
       return navigateToBird(bird: bird)
     case .ShowBirdIsCompleted:
       return navigateBack()
-    
-    // Feather
+      
+      // Feather
     case .FeatherIsRequired:
       return navigateToFeather()
     case .FeatherIsCompleted:
       return navigateBack()
       
-      // Feather
-      case .DiamondIsRequired:
-        return navigateToDiamond()
-      case .DiamondIsCompleted:
-        return navigateBack()
-    
-    // Logout
+      // Diamond
+    case .DiamondIsRequired:
+      return navigateToDiamond()
+    case .DiamondIsCompleted:
+      return navigateBack()
+      
+      // Logout
     case .LogoutIsRequired:
       return endUserProfileFLow()
       
@@ -211,6 +215,27 @@ class UserProfileFlow: Flow {
   func endUserProfileFLow() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .end(forwardToParentFlowWithStep: AppStep.LogoutIsRequired)
+  }
+  
+  private func navigateToAuthFlow() -> FlowContributors {
+    
+    let authFlow = AuthFlow(withServices: services)
+    
+    Flows.use(authFlow, when: .created) { [unowned self] root in
+      DispatchQueue.main.async {
+        root.modalPresentationStyle = .automatic
+        rootViewController.present(root, animated: true)
+      }
+    }
+    
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: authFlow,
+        withNextStepper: OneStepper(
+          withSingleStep: AppStep.AuthIsRequired
+        )
+      )
+    )
   }
   
 }

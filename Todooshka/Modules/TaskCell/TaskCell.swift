@@ -13,9 +13,11 @@ import SwipeCellKit
 
 class TaskCell: SwipeCollectionViewCell {
   
-  // MARK: - Static
+  // MARK: - Public
   static let reuseID: String = "TaskCell"
   
+  var disposeBag = DisposeBag()
+
   // MARK: - Public
   // UI
   public let repeatButton: UIButton = {
@@ -87,9 +89,12 @@ class TaskCell: SwipeCollectionViewCell {
     return view
   }()
   
-  
-  
   // MARK: - Lifecycle
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    disposeBag = DisposeBag()
+  }
+  
   override func layoutSubviews() {
     super.layoutSubviews()
   }
@@ -201,6 +206,8 @@ class TaskCell: SwipeCollectionViewCell {
   
   //MARK: - Configure UI
   func configureUI() {
+    
+    
 
     // contentView
     contentView.addSubview(repeatButton)

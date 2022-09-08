@@ -1,5 +1,5 @@
 //
-//  Data.swift
+//  Settings.swift
 //  Todooshka
 //
 //  Created by Pavel Petakov on 01.09.2022.
@@ -7,7 +7,7 @@
 
 import CoreGraphics
 
-struct Data {
+struct Settings {
   struct Bird {
     static let deltaFromNest: [Int: CGPoint] = [
       1: CGPoint(x: -30, y: 20),

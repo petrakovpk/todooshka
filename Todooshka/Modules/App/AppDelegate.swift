@@ -5,29 +5,36 @@
 //  Created by Петраков Павел Константинович on 17.05.2021.
 //
 
-import UIKit
-import CoreData 
+import CoreData
+import FirebaseCore
+import GoogleSignIn
+import Lottie
 import SwifterSwift
+import UIKit
 import YandexMobileMetrica
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate  {
   
-  //  @available(iOS 9.0, *)
-  //  func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any])
-  //  -> Bool {
-  //    //return GIDSignIn.sharedInstance.handle(url)
-  //  }
+  @available(iOS 9.0, *)
+  func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
+    return GIDSignIn.sharedInstance.handle(url)
+  }
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    
+    // Lottie
+    LottieConfiguration.shared.renderingEngine = .automatic
+    
     // Initializing the AppMetrica SDK.
     let configuration = YMMYandexMetricaConfiguration.init(apiKey: "36538b4c-0eb1-408f-b8e5-c8786424d033")
     configuration?.sessionTimeout = 15
     //    YMMYandexMetrica.activate(with: configuration!)
     
-    //    FirebaseApp.configure()
+    FirebaseApp.configure()
+  //  LottieConfiguration.shared.renderingEngine = .automatic
+    // Auth.auth().languageCode = "ru";
     //    Database.database().isPersistenceEnabled = true
-    //    Auth.auth().languageCode = "ru";
 #if DEBUG
     UIApplication.shared.isIdleTimerDisabled = true
 #endif
@@ -60,10 +67,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate  {
     let container = NSPersistentContainer(name: "Todooshka")
     
     /*add necessary support for migration*/
-//    let description = NSPersistentStoreDescription()
-//    description.shouldMigrateStoreAutomatically = true
-//    description.shouldInferMappingModelAutomatically = true
-//    container.persistentStoreDescriptions =  [description]
+    //    let description = NSPersistentStoreDescription()
+    //    description.shouldMigrateStoreAutomatically = true
+    //    description.shouldInferMappingModelAutomatically = true
+    //    container.persistentStoreDescriptions =  [description]
     /*add necessary support for migration*/
     
     container.loadPersistentStores(completionHandler: { (storeDescription, error) in

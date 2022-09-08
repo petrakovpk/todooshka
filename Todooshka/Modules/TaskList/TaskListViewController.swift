@@ -205,7 +205,9 @@ class TaskListViewController: UIViewController {
     
     [
       outputs.addTask.drive(),
-      outputs.changeStatus.drive(),
+      outputs.changeToCompleted.drive(),
+      outputs.changeToIdea.drive(),
+      outputs.changeToInProgress.drive(),
       outputs.hideAlert.drive(hideAlertBinder),
       outputs.hideCell.drive(hideCellBinder),
       outputs.navigateBack.drive(),
@@ -274,7 +276,7 @@ class TaskListViewController: UIViewController {
       cell.configure(with: item.task)
       cell.configure(with: item.type)
       cell.delegate = self
-      cell.repeatButton.rx.tap.map{ _ -> IndexPath? in indexPath }.asDriver(onErrorJustReturn: nil).drive(self.repeatButtonBinder).disposed(by: self.disposeBag)
+      cell.repeatButton.rx.tap.map{ _ -> IndexPath in indexPath }.asDriver(onErrorJustReturn: nil).drive(self.repeatButtonBinder).disposed(by: cell.disposeBag)
       return cell
     }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
       let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView

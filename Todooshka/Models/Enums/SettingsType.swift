@@ -9,11 +9,14 @@ enum SettingsType {
   // auth
   case logInIsRequired
   case logOutIsRequired
-  case removeAccountIsRequired
   // load
   case saveDataIsRequired
   case loadDataIsRequired
   // deleted
   case deletedTaskListIsRequired
   case deletedTaskTypeListIsRequired
+  // help
+  case askSupport
+  // security
+  case removeAccountIsRequired
 }

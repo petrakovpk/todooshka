@@ -72,14 +72,12 @@ class FeatherViewController: TDViewController {
     // collectionView
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     
-    
     // adding
     view.addSubview(imageView)
     view.addSubview(label)
     view.addSubview(collectionView)
     view.addSubview(descriptionBackgroundView)
     descriptionBackgroundView.addSubview(descriptionTextView)
-    
     
     // imageView
     imageView.anchorCenterXToSuperview()
@@ -94,9 +92,10 @@ class FeatherViewController: TDViewController {
     
     // label
     label.anchor(top: descriptionBackgroundView.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
+    label.layer.zPosition = 10
     
     // collectionView
-//    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
     collectionView.register(TaskReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
@@ -135,29 +134,26 @@ class FeatherViewController: TDViewController {
     let outputs = viewModel.transform(input: input)
     
     [
-      // Click
-      outputs.backButtonClickHandler.drive(),
-      // dataSource
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource))
+      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.navigateBack.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
   
   // MARK: - Configure DataSource
   func configureDataSource() {
-//    collectionView.dataSource = nil
-//    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { dataSource, collectionView, indexPath, task in
-//      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
-//      let cellViewModel = TaskCellModel(services: self.viewModel.services, mode: dataSource[indexPath.section].mode, task: task)
-//      cell.viewModel = cellViewModel
-//      cell.disposeBag = DisposeBag()
-//      cell.bindViewModel()
-//      return cell
-//    }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
-//      let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView
-//      section.configure(text: dataSource[indexPath.section].header)
-//      return section
-//    })
+    collectionView.dataSource = nil
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { dataSource, collectionView, indexPath, item in
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
+      cell.configure(with: dataSource[indexPath.section].mode)
+      cell.configure(with: item.task)
+      cell.configure(with: item.type)
+      return cell
+    }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
+      let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView
+      section.configure(text: dataSource[indexPath.section].header)
+      return section
+    })
   }
   
 }

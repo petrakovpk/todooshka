@@ -60,8 +60,8 @@ class OTPCodeViewController: UIViewController {
     
     override func viewDidLoad() {
         configureUI()
-        setViewColor()
-        setTextColor()
+     //   setViewColor()
+      //  setTextColor()
     }
     
     func configureUI() {
@@ -90,30 +90,30 @@ class OTPCodeViewController: UIViewController {
     }
     
     func bindTo(with viewModel: OTPCodeViewModel) {
-        self.viewModel = viewModel
-        
-        // inputs (Properties to ViewModel)
-        otpTextField.rx.text.orEmpty.bind(to: viewModel.OTPCodeTextInput).disposed(by: disposeBag)
-        
-        // inputs (Actions to ViewModel)
-        rightBarButtonItem.rx.tap.bind { viewModel.logIn() }.disposed(by: disposeBag)
-        
-        // outputs (Properties from ViewModel)
-        viewModel.OTPCodeTextOutput.bind(to: otpTextField.rx.text).disposed(by: disposeBag)
-        viewModel.errorTextOutput.bind(to: errorLabel.rx.text).disposed(by: disposeBag)
-        viewModel.isLoadingOutput.bind { [weak self] isLoading in
-            self?.setLoadingMode(isLoading: isLoading)
-        }.disposed(by: disposeBag)
+//        self.viewModel = viewModel
+//        
+//        // inputs (Properties to ViewModel)
+//        otpTextField.rx.text.orEmpty.bind(to: viewModel.OTPCodeTextInput).disposed(by: disposeBag)
+//        
+//        // inputs (Actions to ViewModel)
+//        rightBarButtonItem.rx.tap.bind { viewModel.logIn() }.disposed(by: disposeBag)
+//        
+//        // outputs (Properties from ViewModel)
+//        viewModel.OTPCodeTextOutput.bind(to: otpTextField.rx.text).disposed(by: disposeBag)
+//        viewModel.errorTextOutput.bind(to: errorLabel.rx.text).disposed(by: disposeBag)
+//        viewModel.isLoadingOutput.bind { [weak self] isLoading in
+//            self?.setLoadingMode(isLoading: isLoading)
+//        }.disposed(by: disposeBag)
     }
 }
 
 //MARK: - TDConfigureColorProtocol
-extension OTPCodeViewController: TDConfigureColorProtocol {
-    func setViewColor() {
-        view.backgroundColor = TDStyle.Colors.backgroundColor
-    }
-    
-    func setTextColor() {
-        errorLabel.textColor = UIColor.systemRed
-    }
-}
+//extension OTPCodeViewController: TDConfigureColorProtocol {
+//    func setViewColor() {
+//        view.backgroundColor = TDStyle.Colors.backgroundColor
+//    }
+//    
+//    func setTextColor() {
+//        errorLabel.textColor = UIColor.systemRed
+//    }
+//}

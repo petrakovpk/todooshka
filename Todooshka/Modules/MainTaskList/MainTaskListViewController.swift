@@ -34,7 +34,7 @@ class MainTaskListViewController: UIViewController {
     return label
   }()
   
-  private let animationView = AnimationView(name: "task_animation")
+  private let animationView = AnimationView(name: "task_animation", configuration: LottieConfiguration(renderingEngine: .automatic) )
   
   private let expandImageView: UIImageView = {
     let imageView = UIImageView()
@@ -176,7 +176,7 @@ class MainTaskListViewController: UIViewController {
     // collectionView
     collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
     collectionView.alwaysBounceVertical = true
-    collectionView.layer.masksToBounds = true
+    collectionView.layer.masksToBounds = false
     collectionView.backgroundColor = .clear
     collectionView.anchor(top: overduedTasksButton.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
     
@@ -302,7 +302,9 @@ class MainTaskListViewController: UIViewController {
     let outputs = listViewModel.transform(input: input)
     
     [
-      outputs.changeStatus.drive(),
+      outputs.changeToCompleted.drive(),
+      outputs.changeToIdea.drive(),
+      outputs.changeToInProgress.drive(),
       outputs.hideAlert.drive(hideAlertBinder),
       outputs.hideCell.drive(hideCellBinder),
       outputs.openTask.drive(),
@@ -331,9 +333,15 @@ class MainTaskListViewController: UIViewController {
     })
   }
   
-  var reloadDataBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
-      vc.collectionView.reloadData()
+  var reloadDataBinder: Binder<[IndexPath]> {
+    return Binder(self, binding: { (vc, indexPaths) in
+      if self.listViewModel.editingIndexPath == nil {
+        vc.collectionView.reloadData()
+      } else {
+        UIView.performWithoutAnimation {
+         vc.collectionView.reloadItems(at: indexPaths)
+       }
+      }
     })
   }
   

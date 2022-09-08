@@ -1,25 +1,38 @@
 PODS:
+  - AppAuth (1.5.0):
+    - AppAuth/Core (= 1.5.0)
+    - AppAuth/ExternalUserAgent (= 1.5.0)
+  - AppAuth/Core (1.5.0)
+  - AppAuth/ExternalUserAgent (1.5.0):
+    - AppAuth/Core
   - Differentiator (5.0.0)
-  - lottie-ios (3.3.0)
-  - RxCocoa (6.2.0):
-    - RxRelay (= 6.2.0)
-    - RxSwift (= 6.2.0)
+  - GoogleSignIn (6.2.3):
+    - AppAuth (~> 1.5)
+    - GTMAppAuth (~> 1.3)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - GTMAppAuth (1.3.0):
+    - AppAuth/Core (~> 1.4)
+    - GTMSessionFetcher/Core (~> 1.5)
+  - GTMSessionFetcher/Core (1.7.2)
+  - RxCocoa (6.5.0):
+    - RxRelay (= 6.5.0)
+    - RxSwift (= 6.5.0)
   - RxDataSources (5.0.0):
     - Differentiator (~> 5.0)
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
-  - RxFlow (2.12.4):
+  - RxFlow (2.13.0):
     - RxCocoa (>= 6.0.0)
     - RxSwift (>= 6.0.0)
-  - RxGesture (4.0.2):
+  - RxGesture (4.0.4):
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
   - RxOptional (5.0.2):
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
-  - RxRelay (6.2.0):
-    - RxSwift (= 6.2.0)
-  - RxSwift (6.2.0)
+  - RxRelay (6.5.0):
+    - RxSwift (= 6.5.0)
+  - RxSwift (6.5.0)
   - SwifterSwift (5.2.0):
     - SwifterSwift/AppKit (= 5.2.0)
     - SwifterSwift/CoreAnimation (= 5.2.0)
@@ -46,15 +59,15 @@ PODS:
   - SwifterSwift/SwiftStdlib (5.2.0)
   - SwifterSwift/UIKit (5.2.0)
   - SwipeCellKit (2.7.1)
-  - YandexMobileMetrica/Dynamic (4.0.0):
-    - YandexMobileMetrica/Dynamic/Core (= 4.0.0)
-    - YandexMobileMetrica/Dynamic/Crashes (= 4.0.0)
-  - YandexMobileMetrica/Dynamic/Core (4.0.0)
-  - YandexMobileMetrica/Dynamic/Crashes (4.0.0):
+  - YandexMobileMetrica/Dynamic (4.2.0):
+    - YandexMobileMetrica/Dynamic/Core (= 4.2.0)
+    - YandexMobileMetrica/Dynamic/Crashes (= 4.2.0)
+  - YandexMobileMetrica/Dynamic/Core (4.2.0)
+  - YandexMobileMetrica/Dynamic/Crashes (4.2.0):
     - YandexMobileMetrica/Dynamic/Core
 
 DEPENDENCIES:
-  - lottie-ios
+  - GoogleSignIn
   - RxCocoa
   - RxDataSources
   - RxFlow
@@ -67,8 +80,11 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - AppAuth
     - Differentiator
-    - lottie-ios
+    - GoogleSignIn
+    - GTMAppAuth
+    - GTMSessionFetcher
     - RxCocoa
     - RxDataSources
     - RxFlow
@@ -81,19 +97,22 @@ SPEC REPOS:
     - YandexMobileMetrica
 
 SPEC CHECKSUMS:
+  AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
   Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
-  lottie-ios: 6ac74dcc09904798f59b18cb3075c089d76be9ae
-  RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
+  GoogleSignIn: f4d3939cc0d9264d7509c4b9a924a6c987e30b54
+  GTMAppAuth: 4d8f864896f3646f0c33baf38a28362f4c601e15
+  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
+  RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxDataSources: aa47cc1ed6c500fa0dfecac5c979b723542d79cf
-  RxFlow: 03a73c83fb8f183107074b40ab2544c668583f73
-  RxGesture: f059f2aeef966fb17dad56ee440e76410f10e55f
+  RxFlow: 52f6f6379918392c1ea8cb62d8dcf2df9a5463dd
+  RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxOptional: 3664964c96b69dd20c9cf78bdfe546615e26eca8
-  RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
-  RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
+  RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
+  RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   SwifterSwift: 334181863c416882d97b7a60c05054d9e4d799e2
   SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
-  YandexMobileMetrica: 85ba4c1a6839985d58bf45ec7f915e433525b094
+  YandexMobileMetrica: f5f9c605eaaba33ff6ab2b6bc3259035ca60ed87
 
-PODFILE CHECKSUM: 105776fbf707a8d7deec3debb236b74c94936ef3
+PODFILE CHECKSUM: cad9f768432d40cc9f807997dce05c1bc2009cea
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

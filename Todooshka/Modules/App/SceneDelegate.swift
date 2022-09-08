@@ -20,6 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   // serrvices
   let actionService = ActionService()
+  let authService = AuthService()
   let birdService = BirdService()
   let birdTypeService = BirdTypeService()
   let gameCurrencyService = GameCurrencyService()
@@ -31,6 +32,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   lazy var appServices = {
     return AppServices(
       actionService: actionService,
+      authService: authService,
       birdService: birdService,
       birdTypeService: birdTypeService,
       gameCurrencyService: gameCurrencyService,

@@ -12,6 +12,7 @@
     #import "YMMYandexMetricaConfiguration.h"
     #import "YMMReporterConfiguration.h"
     #import "YMMYandexMetricaReporting.h"
+    #import "YMMYandexMetricaPluginReporting.h"
     #import "YMMYandexMetricaPreloadInfo.h"
     #import "YMMProfileAttribute.h"
     #import "YMMUserProfile.h"
@@ -19,12 +20,16 @@
     #import "YMMError.h"
     #import "YMMErrorRepresentable.h"
     #import "YMMECommerce.h"
+    #import "YMMYandexMetricaPlugins.h"
+    #import "YMMPluginErrorDetails.h"
+    #import "YMMStackTraceElement.h"
 #else
     #import <YandexMobileMetrica/YMMYandexMetrica.h>
     #import <YandexMobileMetrica/YMMVersion.h>
     #import <YandexMobileMetrica/YMMYandexMetricaConfiguration.h>
     #import <YandexMobileMetrica/YMMReporterConfiguration.h>
     #import <YandexMobileMetrica/YMMYandexMetricaReporting.h>
+    #import <YandexMobileMetrica/YMMYandexMetricaPluginReporting.h>
     #import <YandexMobileMetrica/YMMYandexMetricaPreloadInfo.h>
     #import <YandexMobileMetrica/YMMProfileAttribute.h>
     #import <YandexMobileMetrica/YMMUserProfile.h>
@@ -32,4 +37,7 @@
     #import <YandexMobileMetrica/YMMError.h>
     #import <YandexMobileMetrica/YMMErrorRepresentable.h>
     #import <YandexMobileMetrica/YMMECommerce.h>
+    #import <YandexMobileMetrica/YMMYandexMetricaPlugins.h>
+    #import <YandexMobileMetrica/YMMPluginErrorDetails.h>
+    #import <YandexMobileMetrica/YMMStackTraceElement.h>
 #endif

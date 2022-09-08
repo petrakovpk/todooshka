@@ -14,17 +14,8 @@ pod 'RxGesture'
 pod 'RxSwift'
 pod 'RxDataSources'
 pod 'SwipeCellKit'
-pod 'lottie-ios'
 pod 'YandexMobileMetrica/Dynamic'
 pod 'RxOptional'
-
-  target 'TodooshkaTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-  target 'TodooshkaUITests' do
-    # Pods for testing
-  end
+pod 'GoogleSignIn'
 
 end

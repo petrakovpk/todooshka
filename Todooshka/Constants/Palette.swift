@@ -44,6 +44,8 @@ struct Palette {
     
     static let Martinique_a30_Martinique = UIColor(named: "Martinique(30)_Martinique")
     
+    static let Mischka_205_205_223_ = UIColor(named: "Mischka_205_205_223_?")
+    
     static let MoonRaker_PortGore = UIColor(named: "MoonRaker_PortGore")
     
     static let Periwinkle_PortGore = UIColor(named: "Periwinkle_PortGore")
@@ -56,6 +58,7 @@ struct Palette {
     
     static let Sundown_254_174_181 = UIColor(named: "Sundown_254_174_181")
     
+    static let TitanWhite_224_226_255_ = UIColor(named: "TitanWhite_224_226_255_?")
     static let TitanWhite_196_198_216_Haiti_17_20_52 = UIColor(named: "TitanWhite(196_198_216)_Haiti(17_20_52)")
     static let TitanWhite_228_229_254_Haiti_17_20_52 = UIColor(named: "TitanWhite(228_229_254)_Haiti(17_20_52)")
     static let TitanWhite_244_245_255_Haiti_16_18_54 = UIColor(named: "itanWhite(244_245_255)_Haiti(16_18_54)")

@@ -20,6 +20,10 @@
 		<data>
 		TfZ0scg16lg+TrrmaZkzXyg9cH0=
 		</data>
+		<key>Headers/YMMPluginErrorDetails.h</key>
+		<data>
+		O3SGLBsQuka51Wlfm4vpxCs5mbo=
+		</data>
 		<key>Headers/YMMProfileAttribute.h</key>
 		<data>
 		/ZRyu4L34f9doy3Lzjv4reoEDtY=
@@ -32,21 +36,33 @@
 		<data>
 		VNo64rgmXTKcrD83je2UJC8r9/k=
 		</data>
+		<key>Headers/YMMStackTraceElement.h</key>
+		<data>
+		cG9XomsZl10++9GKfnPYkFhrpgI=
+		</data>
 		<key>Headers/YMMUserProfile.h</key>
 		<data>
 		A8em8NUSR/w9cPdOcFPhgFkLsfQ=
 		</data>
 		<key>Headers/YMMVersion.h</key>
 		<data>
-		yDc/BPhF5o92951d/KT6Wb619vg=
+		4LblcE63sireRPyk68HZDNAVnMk=
 		</data>
 		<key>Headers/YMMYandexMetrica.h</key>
 		<data>
-		K2e7andQ+HuIb1r59qnPg03FAmQ=
+		TDcqMhslo0Es2SN7ASgePOheWxQ=
 		</data>
 		<key>Headers/YMMYandexMetricaConfiguration.h</key>
 		<data>
 		LndO7LaC4OtZ7fi7RfJMpgBHd9A=
+		</data>
+		<key>Headers/YMMYandexMetricaPluginReporting.h</key>
+		<data>
+		du470oIj61enXrlYl9DGlzCi7Ng=
+		</data>
+		<key>Headers/YMMYandexMetricaPlugins.h</key>
+		<data>
+		tH8dNN6111Rk6+bV7x24EEANabE=
 		</data>
 		<key>Headers/YMMYandexMetricaPreloadInfo.h</key>
 		<data>
@@ -54,7 +70,7 @@
 		</data>
 		<key>Headers/YMMYandexMetricaReporting.h</key>
 		<data>
-		qMfqqlAa8d4PI71UXY8zJrC69sQ=
+		aLcfwLEyKmY9MhB+W3LiB3/n2wY=
 		</data>
 		<key>Headers/YandexMobileMetrica-umbrella.h</key>
 		<data>
@@ -62,11 +78,11 @@
 		</data>
 		<key>Headers/YandexMobileMetrica.h</key>
 		<data>
-		6HKZWtTuBae8Rtmn8sfrPlW8g+Q=
+		cUqpOqB1Arfy49K89yB0Sf7+5Lo=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		Jfy0vEfsRoOFBIa7B0/Z6A36i4s=
+		HKSYaDkgtkQ04RZ0WGJAlBDChPg=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -119,6 +135,17 @@
 			lsKcvquBoUYtbi8DjNhy6TvvmT0FND6T8cLUEYB53BU=
 			</data>
 		</dict>
+		<key>Headers/YMMPluginErrorDetails.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			O3SGLBsQuka51Wlfm4vpxCs5mbo=
+			</data>
+			<key>hash2</key>
+			<data>
+			3IXs6a2m6wC/vDniVI2RwxwPaubp+3lF4ib3AMqjMcU=
+			</data>
+		</dict>
 		<key>Headers/YMMProfileAttribute.h</key>
 		<dict>
 			<key>hash</key>
@@ -152,6 +179,17 @@
 			lctpju1kZMkC1tQNeZKhDBJe7OyWbENmA5jPROZ/3Uc=
 			</data>
 		</dict>
+		<key>Headers/YMMStackTraceElement.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			cG9XomsZl10++9GKfnPYkFhrpgI=
+			</data>
+			<key>hash2</key>
+			<data>
+			6aZy39nPMUlYeNcM54nWrcaATC/rbO6tT2JLP1g540w=
+			</data>
+		</dict>
 		<key>Headers/YMMUserProfile.h</key>
 		<dict>
 			<key>hash</key>
@@ -167,22 +205,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			yDc/BPhF5o92951d/KT6Wb619vg=
+			4LblcE63sireRPyk68HZDNAVnMk=
 			</data>
 			<key>hash2</key>
 			<data>
-			kv3z5m1e/7IbOCpKEe95lgYKTQweWH7XK8tSi5BmE2A=
+			gKbwC9npzDUTy5nOWBDC/DdNwUlbOXJFOBBCd57nOxI=
 			</data>
 		</dict>
 		<key>Headers/YMMYandexMetrica.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			K2e7andQ+HuIb1r59qnPg03FAmQ=
+			TDcqMhslo0Es2SN7ASgePOheWxQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			7Gzb3gFKNvBcwM97pDwqGvwVC0nTqh63h2X36vkrl0M=
+			6ZrHAhKqv3WEmWX5BA0la3vjxq46JqSorMkErUgc2kg=
 			</data>
 		</dict>
 		<key>Headers/YMMYandexMetricaConfiguration.h</key>
@@ -194,6 +232,28 @@
 			<key>hash2</key>
 			<data>
 			Weg5i74CqVVB6so0+zavXojWSFhRpnfrVtQbP8tayIM=
+			</data>
+		</dict>
+		<key>Headers/YMMYandexMetricaPluginReporting.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			du470oIj61enXrlYl9DGlzCi7Ng=
+			</data>
+			<key>hash2</key>
+			<data>
+			45lVtiaq30ip9heLHz8HFNOAAdkJvDP9KwoUUZbz7I0=
+			</data>
+		</dict>
+		<key>Headers/YMMYandexMetricaPlugins.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			tH8dNN6111Rk6+bV7x24EEANabE=
+			</data>
+			<key>hash2</key>
+			<data>
+			DzCZIBg1PGwUa5LegOFgfpyOAIYAPAoNDaoM2woBzn0=
 			</data>
 		</dict>
 		<key>Headers/YMMYandexMetricaPreloadInfo.h</key>
@@ -211,11 +271,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			qMfqqlAa8d4PI71UXY8zJrC69sQ=
+			aLcfwLEyKmY9MhB+W3LiB3/n2wY=
 			</data>
 			<key>hash2</key>
 			<data>
-			CWqMbwv/7VKG3N61zHSjU/NDCP5UzWFI29Gi2vd4IgU=
+			tYhvOX25vp3RKsI81sHdAPnk613FviYgDACAsDitKE4=
 			</data>
 		</dict>
 		<key>Headers/YandexMobileMetrica-umbrella.h</key>
@@ -233,11 +293,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			6HKZWtTuBae8Rtmn8sfrPlW8g+Q=
+			cUqpOqB1Arfy49K89yB0Sf7+5Lo=
 			</data>
 			<key>hash2</key>
 			<data>
-			/pY01GCNdBz6dmIZTJBJZEDLZdnTGhAFTGwX7lbDyd0=
+			bNILwU42lgpunmTI+AzNj2CbX7xRjEfFH9ERpJ4IrKU=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

@@ -26,6 +26,8 @@ class TDAuthTextField: UITextField {
     leftViewMode = .always
     returnKeyType = .done
     placeholder = customPlaceholder
+    borderColor = Palette.DualColors.HawkesBlue_Haiti_7_9_30
+    backgroundColor = Palette.DualColors.TitanWhite_224_226_255_
     
     // spacer
     spacer.anchor(widthConstant: 54, heightConstant: 54)

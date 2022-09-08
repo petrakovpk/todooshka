@@ -17,15 +17,12 @@ class FeatherViewModel: Stepper {
   
   // MARK: - Transform
   struct Input {
-    // button
     let backButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
-    // button
-    let backButtonClickHandler: Driver<Void>
-    // dataSource
     let dataSource: Driver<[TaskListSectionModel]>
+    let navigateBack: Driver<Void>
   }
   
   //MARK: - Init
@@ -57,23 +54,25 @@ class FeatherViewModel: Stepper {
       }
     }
     
+
     // dataSource
     let dataSource = taskListSectionItems
       .map {
         Dictionary
-          .init(grouping: $0, by: { $0.task.closed!.dateString() })
+          .init(grouping: $0, by: { $0.task.closed?.startOfDay ?? Date().startOfDay })
+          .sorted(by: { $0.key > $1.key })
           .map { key, value in
-            TaskListSectionModel(header: key, mode: .WithFeather, items: value)
+            TaskListSectionModel(header: key.string(withFormat: "dd MMM yyyy") , mode: .WithFeather, items: value)
           }
       }
     
     // backButtonClickHandler
-    let backButtonClickHandler = input.backButtonClickTrigger
+    let navigateBack = input.backButtonClickTrigger
       .map { self.steps.accept(AppStep.FeatherIsCompleted) }
     
     return Output(
-      backButtonClickHandler: backButtonClickHandler,
-      dataSource: dataSource
+      dataSource: dataSource,
+      navigateBack: navigateBack
     )
   }
 

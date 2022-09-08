@@ -9,7 +9,16 @@ import RxFlow
 
 enum AppStep: Step {
   
-  // Logout Is Required
+  // App
+  case NavigateBack
+  
+  // Auth
+  case AuthIsRequired
+  case AuthIsCompleted
+  case CreateAccountIsRequired
+  case LogInIsRequired
+  
+  // Logout
   case LogoutIsRequired
   
   // Onboarding

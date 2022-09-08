@@ -41,13 +41,15 @@ class TaskListViewModel: Stepper {
   
   struct Output {
     let addTask: Driver<Void>
-    let changeStatus: Driver<Void>
+    let changeToCompleted: Driver<Void>
+    let changeToIdea: Driver<Void>
+    let changeToInProgress: Driver<Void>
     let hideAlert: Driver<Void>
     let hideCell: Driver<IndexPath>
     let navigateBack: Driver<Void>
     let openTask: Driver<Void>
     let removeTask: Driver<Void>
-    let reloadData: Driver<Void>
+    let reloadData: Driver<[IndexPath]>
     let setAlertText: Driver<String>
     let setDataSource: Driver<[TaskListSectionModel]>
     let setTitle: Driver<String>
@@ -78,7 +80,7 @@ class TaskListViewModel: Stepper {
           case .Idea:
             return task.status == .Idea
           case .Completed(let date):
-            return task.status == .Completed && Calendar.current.isDate(date, inSameDayAs: date)
+            return task.status == .Completed && Calendar.current.isDate(date, inSameDayAs: task.closed ?? Date())
           }
         }
       }
@@ -86,19 +88,6 @@ class TaskListViewModel: Stepper {
     
     // types
     let types = services.typesService.types.asDriver()
-    
-    let changeStatusTrigger = changeStatus.asDriver()
-    
-    let removeTaskIsRequired = changeStatusTrigger
-      .compactMap{ $0 }
-      .filter{ $0.1 == .Deleted }
-      .map{ $0.0 }
-
-    // navigateBack
-    let navigateBack = input.backButtonClickTrigger
-      .map { _ in
-        self.steps.accept(AppStep.TaskListIsCompleted)
-      }
     
     // dataSource
     let dataSource = Driver
@@ -115,15 +104,45 @@ class TaskListViewModel: Stepper {
         ]
       }
     
-    let changeStatus = changeStatusTrigger
+    let changeStatus = changeStatus
+      .asDriver()
       .compactMap{ $0 }
-      .filter{ $0.1 == .Idea || $0.1 == .Completed || $0.1 == .InProgress }
-      .withLatestFrom(dataSource) { data, dataSource -> Void in
-        let (indexPath, status, closed) = data
+
+    let changeToIdea = changeStatus
+      .filter{ $0.1 == .Idea }
+      .compactMap{ $0.0 }
+      .withLatestFrom(dataSource) { indexPath, dataSource -> Void in
         var task = dataSource[indexPath.section].items[indexPath.item].task
-        task.status = status
-        task.closed = closed
+        task.status = .Idea
         self.services.tasksService.saveTasksToCoreData(tasks: [task])
+      }
+    
+    let changeToInProgress = changeStatus
+      .filter{ $0.1 == .InProgress }
+      .compactMap{ $0.0 }
+      .withLatestFrom(dataSource) { indexPath, dataSource -> Void in
+        var task = dataSource[indexPath.section].items[indexPath.item].task
+        task.status = .InProgress
+        task.created = Date()
+        self.services.tasksService.saveTasksToCoreData(tasks: [task])
+      }
+    
+    let changeToCompleted = changeStatus
+      .filter{ $0.1 == .Completed }
+      .withLatestFrom(dataSource) { data, dataSource -> Void in
+        var task = dataSource[data.0.section].items[data.0.item].task
+        task.status = .Completed
+        task.closed = data.2
+        self.services.tasksService.saveTasksToCoreData(tasks: [task])
+      }
+    
+    let changeToRemoved = changeStatus
+      .filter{ $0.1 == .Deleted }
+
+    // navigateBack
+    let navigateBack = input.backButtonClickTrigger
+      .map { _ in
+        self.steps.accept(AppStep.TaskListIsCompleted)
       }
     
     // selection
@@ -135,8 +154,8 @@ class TaskListViewModel: Stepper {
       }
     
     // RemoveMode
-    let setRemoveModeRemoveTask = removeTaskIsRequired
-      .compactMap{ $0 }
+    let setRemoveModeRemoveTask = changeToRemoved
+      .compactMap{ $0.0 }
       .withLatestFrom(dataSource) { indexPath, dataSource -> RemoveMode in
         RemoveMode.Task(task: dataSource[indexPath.section].items[indexPath.item].task )
       }.asDriver()
@@ -150,31 +169,36 @@ class TaskListViewModel: Stepper {
     let removeMode = Driver
       .of(setRemoveModeRemoveTask, setRemoveModeRemoveAll)
       .merge()
-      .debug()
   
     // alert
     let alertText = removeMode
       .map { mode -> String in
-         if case .Tasks(_) = mode { return "Удалить ВСЕ задачи?" } else { return "Удалить задачу?" }
+         if case .Tasks(_) = mode {
+           return "Удалить ВСЕ задачи?" }
+        else {
+          return "Удалить задачу?" }
       }
     
-    let showAlert = removeMode.map{ _ -> Void in () }
+    let showAlert = removeMode
+      .map { _ -> Void in () }
+    
     let hideAlert = Driver
       .of(input.alertCancelButtonClick, input.alertDeleteButtonClick)
       .merge()
     
     let hideCell = hideAlert
-      .withLatestFrom(removeTaskIsRequired) { $1 }
+      .withLatestFrom(changeToRemoved) { $1.0 }
       .compactMap{ $0 }
-      .debug()
     
     let removeTask = input.alertDeleteButtonClick
       .withLatestFrom(removeMode) { _, mode in
         switch mode {
         case .Tasks(let tasks):
+          self.editingIndexPath = nil
           self.services.tasksService.removeTasksFromCoreData(tasks: tasks)
         case .Task(var task):
           task.status = .Deleted
+          self.editingIndexPath = nil
           self.services.tasksService.saveTasksToCoreData(tasks: [task])
           self.services.gameCurrencyService.removeGameCurrency(task: task)
         }
@@ -194,17 +218,25 @@ class TaskListViewModel: Stepper {
       .filter { $0 == .Deleted }
       .map{ _ in () }
     
-    let reloadData = Observable<Int>
+    let timer = Observable<Int>
       .timer(.seconds(0), period: .seconds(1), scheduler: MainScheduler.instance)
-      .debug()
       .asDriver(onErrorJustReturn: 0)
-      .filter{ _ in self.editingIndexPath == nil }
-      .map{ _ in () }
- 
+    
+    let reloadData = timer
+      .withLatestFrom(dataSource) { _, dataSource -> [IndexPath] in
+        dataSource.enumerated().flatMap { sectionIndex, section -> [IndexPath] in
+          section.items.enumerated().compactMap { itemIndex, item -> IndexPath? in
+            (IndexPath(item: itemIndex, section: sectionIndex) == self.editingIndexPath) ? nil : IndexPath(item: itemIndex, section: sectionIndex)
+          }
+        }
+    }
+     
 
     return Output(
       addTask: addTask,
-      changeStatus: changeStatus,
+      changeToCompleted: changeToCompleted,
+      changeToIdea: changeToIdea,
+      changeToInProgress: changeToInProgress,
       hideAlert: hideAlert,
       hideCell: hideCell,
       navigateBack: navigateBack,

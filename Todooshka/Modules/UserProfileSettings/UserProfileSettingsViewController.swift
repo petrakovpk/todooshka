@@ -62,9 +62,6 @@ class UserProfileSettingsViewController: UIViewController {
     bindViewModel()
   }
   
-  
-
-  
   //MARK: - Configure UI
   func configureUI() {
     

@@ -7,6 +7,7 @@
 
 
 import SpriteKit
+import SwiftUI
 
 class SKBirdNode: SKSpriteNode {
  
@@ -15,14 +16,14 @@ class SKBirdNode: SKSpriteNode {
   
   var branchPosition: CGPoint {
     CGPoint(
-      x: (Data.Bird.deltaFromBranch[clade.index]?.x ?? 0) + position.x,
-      y: (Data.Bird.deltaFromBranch[clade.index]?.y ?? 0) + position.y)
+      x: (Settings.Bird.deltaFromBranch[clade.index]?.x ?? 0) + position.x,
+      y: (Settings.Bird.deltaFromBranch[clade.index]?.y ?? 0) + position.y)
   }
   
    var nestPosition: CGPoint {
     CGPoint(
-      x: (Data.Bird.deltaFromNest[clade.index]?.x ?? 0) + position.x,
-      y: (Data.Bird.deltaFromNest[clade.index]?.y ?? 0) + position.y)
+      x: (Settings.Bird.deltaFromNest[clade.index]?.x ?? 0) + position.x,
+      y: (Settings.Bird.deltaFromNest[clade.index]?.y ?? 0) + position.y)
   }
 
   var wingsIsUp: Bool = false

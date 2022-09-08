@@ -14,8 +14,8 @@ class SKEggNode: SKSpriteNode {
   var isCracking: Bool = false
   var nestPosition: CGPoint {
     CGPoint(
-      x: (Data.Egg.deltaFromNest[index]?.x ?? 0) + parentPosition.x,
-      y: (Data.Egg.deltaFromNest[index]?.y ?? 0) + parentPosition.y
+      x: (Settings.Egg.deltaFromNest[index]?.x ?? 0) + parentPosition.x,
+      y: (Settings.Egg.deltaFromNest[index]?.y ?? 0) + parentPosition.y
     )
   }
   

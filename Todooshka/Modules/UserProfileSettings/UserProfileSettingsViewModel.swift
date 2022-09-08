@@ -40,21 +40,19 @@ class UserProfileSettingsViewModel: Stepper {
   }
   
   func transform(input: Input) -> Output {
-    
     // auth
     let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .logInIsRequired)
     let logOutIsRequired = SettingsItem(imageName: "logout", text: "Выйти из аккаунта", type: .logOutIsRequired)
-
     //data
     let saveDataIsRequired = SettingsItem(imageName: "box-add", text: "Сохранить данные", type: .saveDataIsRequired)
     let loadDataIsRequired = SettingsItem(imageName: "box-tick", text: "Загрузить данные", type: .loadDataIsRequired)
-    
     // deleted
     let deletedTaskTypeListIsRequired = SettingsItem(imageName: "trash", text: "Типы", type: .deletedTaskTypeListIsRequired)
     let deletedTaskListIsRequired = SettingsItem(imageName: "trash", text: "Задачи", type: .deletedTaskListIsRequired)
-    
     // security
     let removeAccount = SettingsItem(imageName: "remove", text: "Удалить аккаунт", type: .removeAccountIsRequired)
+    // help
+    let askSupport = SettingsItem(imageName: "message-notif", text: "Обратиться в поддержку", type: .askSupport)
     
     // dataSource
     let dataSource = Driver.just([
@@ -67,6 +65,9 @@ class UserProfileSettingsViewModel: Stepper {
       UserProfileSettingsSectionModel(
         header: "Удаленные данные",
         items: [deletedTaskTypeListIsRequired, deletedTaskListIsRequired]),
+      UserProfileSettingsSectionModel(
+        header: "Поддержка",
+        items: [askSupport]),
       UserProfileSettingsSectionModel(
         header: "Безопасность",
         items: [removeAccount])
@@ -81,6 +82,8 @@ class UserProfileSettingsViewModel: Stepper {
           self.steps.accept(AppStep.DeletedTaskListIsRequired)
         case .deletedTaskTypeListIsRequired:
           self.steps.accept(AppStep.DeletedTaskTypeListIsRequired)
+        case .logInIsRequired:
+          self.steps.accept(AppStep.AuthIsRequired)
         default:
           return
         }
@@ -98,7 +101,4 @@ class UserProfileSettingsViewModel: Stepper {
   func setOnboardedNotCompleted() {
     UserDefaults.standard.set(false, forKey: "isOnboardingCompleted")
   }
-  
-  
-  
 }

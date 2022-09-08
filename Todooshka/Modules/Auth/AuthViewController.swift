@@ -5,102 +5,103 @@
 //  Created by Петраков Павел Константинович on 23.08.2021.
 //
 
-import UIKit
-
-import RxSwift
-import RxCocoa
-
-import Firebase
 import AuthenticationServices
 import CryptoKit
+import Firebase
+import RxCocoa
+import RxSwift
+import UIKit
 
 class AuthViewController: UIViewController {
   
-  //MARK: - Properties
+  // MARK: - Public
   var viewModel: AuthViewModel!
-  private let disposeBag = DisposeBag()
   
+  //MARK: - Private
+  private let disposeBag = DisposeBag()
   private var currentNonce: String?
   
   //MARK: - UI Elements
-  lazy var headerLabel: UILabel = {
+  private let headerLabel: UILabel = {
     let label = UILabel()
     label.text = "TODOOSHKA"
     label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+    label.textColor = Theme.App.text
     return label
   }()
   
-  lazy var secondHeaderLabel: UILabel = {
+  private let secondHeaderLabel: UILabel = {
     let label = UILabel()
     label.text = "Войдите в аккаунт"
     label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+    label.textColor = Theme.App.text
     return label
   }()
   
-  lazy var headerDescriptionTextView: UITextView = {
+  private let headerDescriptionTextView: UITextView = {
     let textView = UITextView()
-    textView.text = "Brief description of onboarding that can be placed in two lines"
+    textView.text = "Авторизация позволит вам сохранять задачи в облаке"
     textView.isScrollEnabled = false
     textView.isSelectable = false
     textView.isEditable = false
     textView.font = UIFont.systemFont(ofSize: 15, weight: .regular)
     textView.textAlignment = .center
+    textView.backgroundColor = .clear
+    textView.textColor = Palette.SingleColors.SantasGray
     return textView
   }()
   
-  lazy var createButton: UIButton = {
+  private let createAccountButton: UIButton = {
     let button = UIButton(type: .custom)
+    button.cornerRadius = 25
     button.backgroundColor = .white
     button.setTitleColor(UIColor(red: 0.039, green: 0.047, blue: 0.137, alpha: 1), for: .normal)
-    
     let attrString = NSAttributedString(string: "Создать аккаунт через почту / телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
   
-  lazy var appleButton: UIButton = {
+  private let appleButton: UIButton = {
     let button = UIButton(type: .custom)
+    button.cornerRadius = 25
     button.backgroundColor = UIColor(red: 0.128, green: 0.13, blue: 0.154, alpha: 1)
     button.setTitleColor(.white, for: .normal)
-    
     let attrString = NSAttributedString(string: "Продолжить с Apple", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
   
-  lazy var googleButton: UIButton = {
+  private let googleButton: UIButton = {
     let button = UIButton(type: .custom)
     button.backgroundColor = UIColor(red: 0.937, green: 0.408, blue: 0.322, alpha: 1)
     button.setTitleColor(.white, for: .normal)
-    
+    button.cornerRadius = 25
     let attrString = NSAttributedString(string: "Продолжить с Google", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
   
-  lazy var skipButton: UIButton = {
+  private let skipButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setTitleColor(UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1), for: .normal)
-    
-    let attrString = NSAttributedString(string: "пропустить регистрацию", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
+    let attrString = NSAttributedString(string: "Продолжить без регистрации", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
   
-  lazy var loginButton: UIButton = {
+  private let loginButton: UIButton = {
     let button = UIButton(type: .custom)
     button.backgroundColor = .white
     button.setTitleColor(UIColor(red: 0.039, green: 0.047, blue: 0.137, alpha: 1), for: .normal)
-    
+    button.cornerRadius = 25
     let attrString = NSAttributedString(string: "Войти в аккаунт через почту / телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
   
-  lazy var privacyButton: UIButton = {
+  private let privacyButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setTitleColor(UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1), for: .normal)
-    
     let attrString = NSAttributedString(string: "Правила и условия", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
@@ -109,68 +110,123 @@ class AuthViewController: UIViewController {
   //MARK: - Lifecycle
   override func viewDidLoad() {
     configureUI()
-    configureColor()
+    bindViewModel()
   }
   
   //MARK: - Configure UI
   func configureUI() {
+    
+    // adding
     view.addSubview(headerLabel)
+    view.addSubview(secondHeaderLabel)
+    view.addSubview(headerDescriptionTextView)
+    view.addSubview(createAccountButton)
+    view.addSubview(appleButton)
+    view.addSubview(googleButton)
+    view.addSubview(skipButton)
+    view.addSubview(loginButton)
+    // view.addSubview(privacyButton)
+    
+    // view
+    view.backgroundColor = Theme.App.background
+    
+    // headerLabel
     headerLabel.anchor(top: view.topAnchor, topConstant: 84)
     headerLabel.anchorCenterXToSuperview()
     
-    view.addSubview(secondHeaderLabel)
+    // secondHeaderLabel
     secondHeaderLabel.anchor(top: headerLabel.bottomAnchor, topConstant: 31)
     secondHeaderLabel.anchorCenterXToSuperview()
     
-    view.addSubview(headerDescriptionTextView)
+    // headerDescriptionTextView
     headerDescriptionTextView.anchor(top: secondHeaderLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 15, leftConstant: 29, rightConstant: 29)
     headerDescriptionTextView.anchorCenterXToSuperview()
     
-    createButton.cornerRadius = 25
-    view.addSubview(createButton)
-    createButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 71, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    // createButton
+    createAccountButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 71, leftConstant: 16, rightConstant: 16, heightConstant: 50)
     
-    appleButton.cornerRadius = 25
-    view.addSubview(appleButton)
-    appleButton.anchor(top: createButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    // appleButton
+    appleButton.anchor(top: createAccountButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 50)
     
-    googleButton.cornerRadius = 25
-    view.addSubview(googleButton)
+    // googleButton
     googleButton.anchor(top: appleButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 50)
     
-    view.addSubview(skipButton)
+    // skipButton
     skipButton.anchor(top: googleButton.bottomAnchor, topConstant: 25)
     skipButton.anchorCenterXToSuperview()
     
-    loginButton.cornerRadius = 25
-    view.addSubview(loginButton)
+    // loginButton
     loginButton.anchor(top: skipButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 60, leftConstant: 16, rightConstant: 16, heightConstant: 50)
     
-    view.addSubview(privacyButton)
-    privacyButton.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, bottomConstant: 20)
-    privacyButton.anchorCenterXToSuperview()
+    // privacyButton
+  //  privacyButton.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, bottomConstant: 20)
+  //  privacyButton.anchorCenterXToSuperview()
   }
   
   //MARK: - Bind
-  func bindTo(with viewModel: AuthViewModel) {
-    self.viewModel = viewModel
+  func bindViewModel() {
     
-    createButton.rx.tap.bind{ viewModel.createButtonClick() }.disposed(by: disposeBag)
-    appleButton.rx.tap.bind { self.startSignInWithAppleFlow() }.disposed(by: disposeBag)
-    googleButton.rx.tap.bind { viewModel.googleButtonClick(viewController: self) }.disposed(by: disposeBag)
-    skipButton.rx.tap.bind{ viewModel.skipButtonClick() }.disposed(by: disposeBag)
-    loginButton.rx.tap.bind{ viewModel.loginButtonClick() }.disposed(by: disposeBag)
+    let input = AuthViewModel.Input(
+      appleButtonClickTrigger: appleButton.rx.tap.asDriver(),
+      createAccountButtonClickTrigger: createAccountButton.rx.tap.asDriver(),
+      googleButtonClickTrigger: googleButton.rx.tap.asDriver().map { _ in self },
+      logInButtonClickTrigger: loginButton.rx.tap.asDriver(),
+      skipButtonClickTrigger: skipButton.rx.tap.asDriver()
+    )
+    
+    let output = viewModel.transform(input: input)
+    
+    [
+      output.authWithApple.drive(signInWithAppleBinder),
+      output.authWithGoogle.drive(),
+      output.createAccount.drive(),
+      output.logIn.drive(),
+      output.skip.drive()
+    ]
+      .forEach{ $0.disposed(by: disposeBag) }
+
+    //    loginButton.rx.tap.bind{ viewModel.loginButtonClick() }.disposed(by: disposeBag)
   }
+  
+  var signInWithAppleBinder: Binder<String> {
+    return Binder(self, binding: { (vc, currentNonce) in
+      vc.currentNonce = currentNonce
+      
+      let appleIDProvider = ASAuthorizationAppleIDProvider()
+      let request = appleIDProvider.createRequest()
+      request.requestedScopes = [.fullName, .email]
+      request.nonce = self.sha256(currentNonce)
+      
+      let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+      authorizationController.delegate = self
+      authorizationController.presentationContextProvider = self
+      
+      // self
+      authorizationController.performRequests()
+      
+    })
+  }
+  
+  @available(iOS 13, *)
+  private func sha256(_ input: String) -> String {
+    let inputData = Data(input.utf8)
+    let hashedData = SHA256.hash(data: inputData)
+    let hashString = hashedData.compactMap {
+      return String(format: "%02x", $0)
+    }.joined()
+    
+    return hashString
+  }
+  
 }
 
-//MARK: - Apple Sign In delegate
+// MARK: - Apple Sign In delegate
 @available(iOS 13.0, *)
 extension AuthViewController: ASAuthorizationControllerDelegate {
   
   func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
     
     if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
-      
       guard let nonce = currentNonce else {
         fatalError("Invalid state: A login callback was received, but no login request was sent.")
       }
@@ -194,86 +250,11 @@ extension AuthViewController: ASAuthorizationControllerDelegate {
   func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
     // Handle error.
     print("Sign in with Apple errored: \(error)")
-    
   }
-  
 }
 
 extension AuthViewController: ASAuthorizationControllerPresentationContextProviding {
-  
   func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
     return self.view.window!
-  }
-  
-  private func randomNonceString(length: Int = 32) -> String {
-    precondition(length > 0)
-    let charset: Array<Character> =
-      Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
-    var result = ""
-    var remainingLength = length
-    
-    while remainingLength > 0 {
-      let randoms: [UInt8] = (0 ..< 16).map { _ in
-        var random: UInt8 = 0
-        let errorCode = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
-        if errorCode != errSecSuccess {
-          fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
-        }
-        return random
-      }
-      
-      randoms.forEach { random in
-        if remainingLength == 0 {
-          return
-        }
-        
-        if random < charset.count {
-          result.append(charset[Int(random)])
-          remainingLength -= 1
-        }
-      }
-    }
-    
-    return result
-  }
-  
-  
-  @available(iOS 13, *)
-  func startSignInWithAppleFlow() {
-    let nonce = randomNonceString()
-    currentNonce = nonce
-    let appleIDProvider = ASAuthorizationAppleIDProvider()
-    let request = appleIDProvider.createRequest()
-    request.requestedScopes = [.fullName, .email]
-    request.nonce = sha256(nonce)
-    
-    let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-    authorizationController.delegate = self
-    authorizationController.presentationContextProvider = self
-    authorizationController.performRequests()
-  }
-  
-  @available(iOS 13, *)
-  private func sha256(_ input: String) -> String {
-    let inputData = Data(input.utf8)
-    let hashedData = SHA256.hash(data: inputData)
-    let hashString = hashedData.compactMap {
-      return String(format: "%02x", $0)
-    }.joined()
-    
-    return hashString
-  }
-  
-}
-
-extension AuthViewController: ConfigureColorProtocol {
-  func configureColor() {
-    
-    view.backgroundColor = UIColor(named: "appBackground")
-    headerLabel.textColor = UIColor(named: "appText")
-    secondHeaderLabel.textColor = UIColor(named: "appText")
-    
-    headerDescriptionTextView.backgroundColor = .clear
-    headerDescriptionTextView.textColor = .santasGray
   }
 }

@@ -97,11 +97,11 @@ class TaskViewController: TDViewController {
   }()
   
   private let alertAnimationView: AnimationView = {
-    let animationView = AnimationView(name: "taskDone2")
+    let animationView = AnimationView(name: "taskDone2", configuration: LottieConfiguration(renderingEngine: .automatic))
     animationView.isHidden = true
     animationView.contentMode = .scaleAspectFill
-    animationView.loopMode = .repeat(3.0)
-    animationView.animationSpeed = 1.0
+  //  animationView.loopMode = .repeat(3.0)
+  //  animationView.animationSpeed = 1.0
     return animationView
   }()
   
