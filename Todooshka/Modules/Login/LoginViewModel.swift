@@ -35,8 +35,9 @@ class LoginViewModel: Stepper {
   let isNewUser: Bool
   let services: AppServices
   let steps = PublishRelay<Step>()
-  var style: LoginViewControllerStyle = .Email
-
+  
+  let loginViewControllerStyle = BehaviorRelay<LoginViewControllerStyle>(value: .Email)
+  
   // MARK: - Input
   struct Input {
     // prop
@@ -59,12 +60,13 @@ class LoginViewModel: Stepper {
   
   struct Output {
     let auth: Driver<Void>
-    let correctPhoneFormat: Driver<String>
+    let correctNumber: Driver<String>
     let errorText: Driver<String>
     let navigateBack: Driver<Void>
     let nextButtonIsEnabled: Driver<Bool>
     let sendEmailVerification: Driver<Void>
     let setLoginViewControllerStyle: Driver<LoginViewControllerStyle>
+    let setFocusOnRepeatPasswordTextField: Driver<Void>
     let updateUserData: Driver<Void>
   }
   
@@ -76,31 +78,40 @@ class LoginViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
+    let loginViewControllerStyle = loginViewControllerStyle.asDriver()
+    
+    // STYLE
     let next = Driver
-      .of (input.nextButtonClickTrigger,
-           input.emailTextFieldDidEndEditing,
-           input.passwordTextFieldDidEndEditing.filter{ self.style == .Password },
-           input.repeatPasswordTextFieldDidEndEditing.filter{ self.style == .RepeatPassword },
-           input.phoneTextFieldDidEndEditing,
-           input.OTPCodeTextFieldDidEndEditing
+      .of (
+        input.nextButtonClickTrigger,
+        input.emailTextFieldDidEndEditing,
+        input.passwordTextFieldDidEndEditing
+          .withLatestFrom(loginViewControllerStyle){ $1 }
+          .filter{ $0 == .Password }
+          .map{ _ in () },
+        input.repeatPasswordTextFieldDidEndEditing,
+        input.phoneTextFieldDidEndEditing,
+        input.OTPCodeTextFieldDidEndEditing
       ).merge()
     
-    let setEmailStyleWithButtonClick = input.emailButtonClickTrigger
+    let setEmailStyle = input.emailButtonClickTrigger
       .map { LoginViewControllerStyle.Email }
     
-    let setPhoneStyleWithButtonClick = input.phoneButtonClickTrigger
-      .map { LoginViewControllerStyle.Phone }
-
-    let setEmailOrPhoneStyleWithNavigationBack = input.backButtonClickTrigger
-      .compactMap { _ -> LoginViewControllerStyle? in
-        switch self.style {
+    let setPhoneStyle = input.phoneButtonClickTrigger
+      .map {  LoginViewControllerStyle.Phone }
+    
+    let setEmailOrPhoneStyleWithBack = input.backButtonClickTrigger
+      .withLatestFrom(loginViewControllerStyle) { _, style -> LoginViewControllerStyle? in
+        switch style {
         case .Password, .RepeatPassword: return .Email
         case .OTPCode: return .Phone
         default: return nil
         }
-      }
+      }.compactMap{ $0 }
+      .map{ $0 }
     
-    let correctPhoneFormat = input.phoneTextFieldText
+    // CORRECT
+    let correctNumber = input.phoneTextFieldText
       .map { phone -> String in
         let mask = "+X (XXX) XXX-XX-XX"
         let numbers = phone.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
@@ -123,10 +134,7 @@ class LoginViewModel: Stepper {
         return result
       }
     
-    let isPhoneValid = correctPhoneFormat
-      .map { $0.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression).count }
-      .map { $0 == 11 }
-    
+    // IS VALID
     let isEmailValid = input.emailTextFieldText
       .map { email -> Bool in
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
@@ -134,61 +142,20 @@ class LoginViewModel: Stepper {
         return emailPred.evaluate(with: email)
       }
     
-    let setRepeatPasswordStyleWithNextButtonClick = next
-      .withLatestFrom(isEmailValid)
-      .filter{ $0 }
-      .filter{ _ in self.style == .Email && self.isNewUser  }
-      .map { _ in LoginViewControllerStyle.RepeatPassword }
-    
-    let setPasswordStyleWithNextButtonClick = next
-      .withLatestFrom(isEmailValid)
-      .filter{ $0 }
-      .filter{ _ in self.style == .Email && self.isNewUser == false }
-      .map { _ in LoginViewControllerStyle.Password }
-    
-    let setOTPCodeStyleWithNextButtonClick = next
-      .withLatestFrom(isPhoneValid)
-      .filter{ $0 }
-      .filter { _ in self.style == .Phone }
-      .map { _ in LoginViewControllerStyle.OTPCode }
-
-    let loginViewControllerStyle = Driver.of(
-      setEmailStyleWithButtonClick,
-      setPhoneStyleWithButtonClick,
-      setEmailOrPhoneStyleWithNavigationBack,
-      setRepeatPasswordStyleWithNextButtonClick,
-      setPasswordStyleWithNextButtonClick,
-      setOTPCodeStyleWithNextButtonClick
-    )
-      .merge()
-      .startWith(.Email)
-      .distinctUntilChanged()
-      .do { style in self.style = style }
-    
-    let clearError = loginViewControllerStyle
-      .map { _ -> String in "" }
-    
-    let navigateBack = input.backButtonClickTrigger
-      .withLatestFrom(loginViewControllerStyle) { _, style in
-        switch style {
-        case .Phone, .Email: self.steps.accept(AppStep.NavigateBack)
-        default: return
-        }
-      }
-
-    
-    
-    
-
-    let isPasswordValid = input.passwordTextFieldText
-      .map { $0.count >= 8 }
-    
-    let isRepeatPasswordValid = input.repeatPasswordTextFieldText
-    .withLatestFrom(input.passwordTextFieldText) { $0 == $1 && $0 != "" }
+    let isPhoneValid = correctNumber
+      .map { $0.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression).count }
+      .map { $0 == 11 }
     
     let isOTPCodeValid = input.OTPCodeTextFieldText
       .map { $0.isEmpty == false }
     
+    let isPasswordValid = input.passwordTextFieldText
+      .map { $0.count >= 8 }
+    
+    let isRepeatPasswordValid = input.repeatPasswordTextFieldText
+      .withLatestFrom(input.passwordTextFieldText) { $0 == $1 && $0 != "" }
+    
+    // NEXT BUTTON IS ENABLED
     let nextButtonIsEnabled = Driver
       .combineLatest(loginViewControllerStyle, isPhoneValid, isEmailValid, isPasswordValid, isRepeatPasswordValid, isOTPCodeValid) { style, isPhoneValid, isEmailValid, isPasswordValid, isRepeatPasswordValid, isOTPCodeValid -> Bool in
         switch style {
@@ -205,25 +172,30 @@ class LoginViewModel: Stepper {
         }
       }.distinctUntilChanged()
     
+    // AUTH WITH EMAIL
     let signUpWithEmailAttr = Driver<SignUpWithEmailAttr>
       .combineLatest(input.emailTextFieldText, input.passwordTextFieldText) { SignUpWithEmailAttr(email: $0, password: $1) }
+    
+    // REGISTER
+    let setRepeatPasswordStyle = next
+      .withLatestFrom(loginViewControllerStyle)
+      .filter{ $0 == .Email && self.isNewUser }
+      .withLatestFrom(isEmailValid)
+      .filter{ $0 }
+      .map { _ in LoginViewControllerStyle.RepeatPassword }
     
     let createUserWithEmail = next
       .withLatestFrom(loginViewControllerStyle)
       .filter { $0 == .RepeatPassword }
+      .withLatestFrom(isPasswordValid)
+      .filter { $0 }
+      .withLatestFrom(isRepeatPasswordValid)
+      .filter { $0 }
       .withLatestFrom(signUpWithEmailAttr)
       .asObservable()
       .flatMapLatest { attr -> Observable<Result<AuthDataResult, Error>> in
         Auth.auth().rx.createUser(withEmail: attr.email, password: attr.password)
       }.asDriver(onErrorJustReturn: .failure(ErrorType.StupidError))
-    
-    let errorTextCreateUserWithEmail = createUserWithEmail
-      .map { result -> String in
-        switch result {
-        case .success(_): return ""
-        case .failure(let error): return error.localizedDescription
-        }
-      }
     
     let sendEmailVerification = createUserWithEmail
       .compactMap { result -> AuthDataResult? in
@@ -233,14 +205,6 @@ class LoginViewModel: Stepper {
       .flatMapLatest { result in
         result.user.rx.sendEmailVerification()
       }.asDriver(onErrorJustReturn: ())
-      
-    let errorTextUpdateUser = createUserWithEmail
-      .map { result -> String in
-        switch result {
-        case .success(_): return ""
-        case .failure(let error): return error.localizedDescription
-        }
-      }
     
     let signUpWithEmail = createUserWithEmail
       .map { result -> Void in
@@ -250,6 +214,14 @@ class LoginViewModel: Stepper {
         }
       }
     
+    // LOG IN WITH EMAIL
+    let setPasswordStyle = next
+      .withLatestFrom(loginViewControllerStyle)
+      .filter{ $0 == .Email && self.isNewUser == false }
+      .withLatestFrom(isEmailValid)
+      .filter{ $0 }
+      .map { _ in LoginViewControllerStyle.Password }
+    
     let signInWithEmailCheckUser = next
       .withLatestFrom(loginViewControllerStyle)
       .filter { $0 == .Password}
@@ -258,15 +230,6 @@ class LoginViewModel: Stepper {
       .flatMapLatest { attr -> Observable<Result<AuthDataResult, Error>> in
         Auth.auth().rx.signIn(withEmail: attr.email, password: attr.password)
       }.asDriver(onErrorJustReturn: .failure(ErrorType.StupidError))
-      .debug()
-    
-    let errorTextSignInWithEmail = signInWithEmailCheckUser
-      .map { result -> String in
-        switch result {
-        case .success(_): return ""
-        case .failure(let error): return error.localizedDescription
-        }
-      }
     
     let signInWithEmail = signInWithEmailCheckUser
       .map { result -> Void in
@@ -276,9 +239,15 @@ class LoginViewModel: Stepper {
         }
       }
     
-    let sendOTPCode = next
+    // AUTH WITH PHONE
+    let setOTPCodeStyle = next
       .withLatestFrom(loginViewControllerStyle)
       .filter{ $0 == .Phone }
+      .withLatestFrom(isPhoneValid)
+      .filter{ $0 }
+      .map { _ in LoginViewControllerStyle.OTPCode }
+    
+    let sendOTPCode = setOTPCodeStyle
       .withLatestFrom(input.phoneTextFieldText) {
         "+" + $1.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
       }.asObservable()
@@ -295,14 +264,6 @@ class LoginViewModel: Stepper {
     let signUpWithPhoneAttr = Driver
       .combineLatest(verificationID, input.OTPCodeTextFieldText) { SignUpWithPhoneAttr(verificationID: $0, verificationCode: $1) }
     
-    let errorTextSendingOTPCode = sendOTPCode
-      .map { result -> String in
-        switch result {
-        case .success(_): return ""
-        case .failure(let error): return error.localizedDescription
-        }
-      }.asDriver(onErrorJustReturn: "")
-    
     let checkVerificationCode = next
       .withLatestFrom(loginViewControllerStyle)
       .filter{ $0 == .OTPCode }
@@ -314,7 +275,16 @@ class LoginViewModel: Stepper {
       .flatMapLatest { credential -> Observable<Result<AuthDataResult, Error>>  in
         Auth.auth().rx.signInAndRetrieveData(with: credential)
       }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      
+    
+    let signInWithPhone = checkVerificationCode
+      .map { result -> Void in
+        switch result {
+        case .success(_): self.steps.accept(AppStep.AuthIsCompleted)
+        default: return
+        }
+      }
+    
+    // UPDATE DATA
     let updateUserData = Driver
       .of (createUserWithEmail, checkVerificationCode)
       .merge()
@@ -330,6 +300,78 @@ class LoginViewModel: Stepper {
       }.map { _ in () }
       .asDriver(onErrorJustReturn: ())
     
+    // AUT HANDLER
+    let auth = Driver
+      .of (
+        signUpWithEmail,
+        signInWithEmail,
+        signInWithPhone
+      ).merge()
+    
+    // STYLE HANDLER
+    let setLoginViewControllerStyle = Driver.of(
+      setEmailStyle,
+      setPhoneStyle,
+      setEmailOrPhoneStyleWithBack,
+      setRepeatPasswordStyle,
+      setPasswordStyle,
+      setOTPCodeStyle
+    )
+      .merge()
+      .startWith(.Email)
+      .do { style in self.loginViewControllerStyle.accept(style) }
+    
+    // SET FOCUS ON REPEAT PASSWORD
+    let setFocusOnRepeatPasswordTextField = input.passwordTextFieldDidEndEditing
+      .withLatestFrom(loginViewControllerStyle) { $1 }
+      .filter { $0 == .RepeatPassword }
+      .map { _ in () }
+      .asDriver()
+    
+    // BACK
+    let navigateBack = input.backButtonClickTrigger
+      .withLatestFrom(loginViewControllerStyle) { _, style in
+        if .Phone == style || .Email == style {
+          self.steps.accept(AppStep.NavigateBack)
+        }
+      }
+    
+    // ERROR
+    let clearError = loginViewControllerStyle
+      .map { _ -> String in "" }
+    
+    let errorTextCreateUserWithEmail = createUserWithEmail
+      .map { result -> String in
+        switch result {
+        case .success(_): return ""
+        case .failure(let error): return error.localizedDescription
+        }
+      }
+    
+    let errorTextUpdateUser = createUserWithEmail
+      .map { result -> String in
+        switch result {
+        case .success(_): return ""
+        case .failure(let error): return error.localizedDescription
+        }
+      }
+    
+    let errorTextSignInWithEmail = signInWithEmailCheckUser
+      .map { result -> String in
+        switch result {
+        case .success(_): return ""
+        case .failure(let error): return error.localizedDescription
+        }
+      }
+    
+    let errorTextSendingOTPCode = sendOTPCode
+      .map { result -> String in
+        switch result {
+        case .success(_): return ""
+        case .failure(let error): return error.localizedDescription
+        }
+      }.asDriver(onErrorJustReturn: "")
+    
     let errorTextCheckOTPCode = checkVerificationCode
       .map { result -> String in
         switch result {
@@ -337,15 +379,7 @@ class LoginViewModel: Stepper {
         case .failure(let error): return error.localizedDescription
         }
       }.asDriver(onErrorJustReturn: "")
-      
-    let signInWithPhone = checkVerificationCode
-      .map { result -> Void in
-        switch result {
-        case .success(_): self.steps.accept(AppStep.AuthIsCompleted)
-        default: return
-        }
-      }
-
+    
     let errorText = Driver
       .of( clearError,
            errorTextCreateUserWithEmail,
@@ -354,24 +388,54 @@ class LoginViewModel: Stepper {
            errorTextSendingOTPCode,
            errorTextCheckOTPCode
       ).merge()
+     
     
-    let auth = Driver
-      .of (
-        signUpWithEmail,
-        signInWithEmail,
-        signInWithPhone
-      ).merge()
-
     return Output(
       auth: auth,
-      correctPhoneFormat: correctPhoneFormat,
+      correctNumber: correctNumber,
       errorText: errorText,
       navigateBack: navigateBack,
       nextButtonIsEnabled: nextButtonIsEnabled,
       sendEmailVerification: sendEmailVerification,
-      setLoginViewControllerStyle: loginViewControllerStyle,
+      setLoginViewControllerStyle: setLoginViewControllerStyle,
+      setFocusOnRepeatPasswordTextField: setFocusOnRepeatPasswordTextField,
       updateUserData: updateUserData
     )
   }
 }
+
+
+
+
+//    let setRepeatPasswordStyleWithNextButtonClick = next
+//      .withLatestFrom(isEmailValid)
+//      .filter{ $0 }
+//      .filter{ _ in self.loginViewControllerStyle.value == .Email && self.isNewUser  }
+//      .map { _ in LoginViewControllerStyle.RepeatPassword }
+//
+//    let setPasswordStyleWithNextButtonClick = next
+//      .withLatestFrom(isEmailValid)
+//      .filter{ $0 }
+//      .filter{ _ in self.loginViewControllerStyle.value == .Email && self.isNewUser == false }
+//      .map { _ in LoginViewControllerStyle.Password }
+//
+//    let setOTPCodeStyleWithNextButtonClick = next
+//      .withLatestFrom(isPhoneValid)
+//      .filter{ $0 }
+//      .filter { _ in self.loginViewControllerStyle.value == .Phone }
+//      .map { _ in LoginViewControllerStyle.OTPCode }
+
+//    let loginViewControllerStyle = Driver.of(
+//      setEmailStyleWithButtonClick,
+//      setPhoneStyleWithButtonClick,
+//      setEmailOrPhoneStyleWithNavigationBack,
+//      setRepeatPasswordStyleWithNextButtonClick,
+//      setPasswordStyleWithNextButtonClick,
+//      setOTPCodeStyleWithNextButtonClick
+//    )
+//      .merge()
+//      .startWith(.Email)
+//      .distinctUntilChanged()
+//      .do { style in self.style = style }
+//
 

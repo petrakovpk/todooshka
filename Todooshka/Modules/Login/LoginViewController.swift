@@ -80,7 +80,7 @@ class LoginViewController: UIViewController {
   fileprivate let OTPCodeTextField = TDAuthTextField(customPlaceholder: "SMS код", imageName: "lock")
   
   fileprivate let nextButton: UIButton = {
-    let button = UIButton(type: .custom)
+    let button = UIButton(type: .system)
     button.cornerRadius = 48 / 2
     button.setTitle("Далее", for: .normal)
     return button
@@ -216,23 +216,24 @@ class LoginViewController: UIViewController {
       emailButtonClickTrigger: emailButton.rx.tap.asDriver(),
       nextButtonClickTrigger: nextButton.rx.tap.asDriver(),
       phoneButtonClickTrigger: phoneButton.rx.tap.asDriver(),
-      emailTextFieldDidEndEditing: emailTextField.rx.controlEvent(.editingDidEnd).asDriver() ,
-      passwordTextFieldDidEndEditing: passwordTextField.rx.controlEvent(.editingDidEnd).asDriver(),
-      repeatPasswordTextFieldDidEndEditing: repeatPasswordTextField.rx.controlEvent(.editingDidEnd).asDriver(),
-      phoneTextFieldDidEndEditing: phoneTextField.rx.controlEvent(.editingDidEnd).asDriver(),
-      OTPCodeTextFieldDidEndEditing: OTPCodeTextField.rx.controlEvent(.editingDidEnd).asDriver()
+      emailTextFieldDidEndEditing: emailTextField.rx.controlEvent(.editingDidEndOnExit).asDriver() ,
+      passwordTextFieldDidEndEditing: passwordTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
+      repeatPasswordTextFieldDidEndEditing: repeatPasswordTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
+      phoneTextFieldDidEndEditing: phoneTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
+      OTPCodeTextFieldDidEndEditing: OTPCodeTextField.rx.controlEvent(.editingDidEndOnExit).asDriver()
     )
     
     let output = viewModel.transform(input: input)
     
     [
       output.auth.drive(),
-      output.correctPhoneFormat.drive(phoneTextField.rx.text),
+      output.correctNumber.drive(phoneTextField.rx.text),
       output.errorText.drive(errorTextView.rx.text),
       output.navigateBack.drive(),
       output.nextButtonIsEnabled.drive(setNextButtonIsEnabledBinder),
       output.sendEmailVerification.drive(),
       output.setLoginViewControllerStyle.drive(loginViewControllerStyleBinder),
+      output.setFocusOnRepeatPasswordTextField.drive(setFocusOnRepeatPasswordTextFieldBinder),
       output.updateUserData.drive()
     ]
       .forEach{ $0.disposed(by: disposeBag) }
@@ -245,6 +246,13 @@ class LoginViewController: UIViewController {
       vc.nextButton.isEnabled = isEnabled
     })
   }
+  
+  var setFocusOnRepeatPasswordTextFieldBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.repeatPasswordTextField.becomeFirstResponder()
+    })
+  }
+  
   
   var loginViewControllerStyleBinder: Binder<LoginViewControllerStyle> {
     return Binder(self, binding: { (vc, loginViewControllerStyle) in
