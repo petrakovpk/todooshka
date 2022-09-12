@@ -65,6 +65,7 @@ class ChangeGenderViewController: TDViewController {
     
     let input = ChangeGenderViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      saveButtonClickTrigger: saveButton.rx.tap.asDriver(),
       selection: tableView.rx.itemSelected.asDriver()
     )
     
@@ -73,7 +74,8 @@ class ChangeGenderViewController: TDViewController {
     [
       outputs.dataSource.drive(tableView.rx.items(dataSource: dataSource)),
       outputs.itemSelected.drive(),
-      outputs.navigateBack.drive()
+      outputs.navigateBack.drive(),
+      outputs.save.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
@@ -82,7 +84,7 @@ class ChangeGenderViewController: TDViewController {
     tableView.dataSource = nil
     dataSource = RxTableViewSectionedReloadDataSource<ChangeGenderSectionModel> (configureCell: { _, tableView, indexPath, item in
       let cell = tableView.dequeueReusableCell(withIdentifier: ChangeGenderCell.reuseID, for: indexPath) as! ChangeGenderCell
-      cell.configure(text: item.text, isSelected: item.isSelected)
+      cell.configure(text: item.gender.rawValue, isSelected: item.isSelected)
       return cell
     }, titleForHeaderInSection: { dataSource, index in
       dataSource.sectionModels[index].header

@@ -677,6 +677,7 @@
 				9D42BF5228C090FB008F624F /* EggActionType.swift */,
 				6049C4ED27EC7960005A7150 /* EggType.swift */,
 				6053F857282014060047C204 /* ErrorType.swift */,
+				9D42C03728CF2269008F624F /* Gender.swift */,
 				600DA58A27FED471004A4634 /* Icon.swift */,
 				60FB0F3F27F61A9500430A23 /* ListType.swift */,
 				60AE65D627F5BFB100CFE7BB /* Result.swift */,
@@ -688,7 +689,6 @@
 				600DA59027FEFC6E004A4634 /* TaskTypeFlowAction.swift */,
 				600DA58C27FED7BB004A4634 /* TypeColor.swift */,
 				604D1F7C27ADB80500E05D09 /* TypeStatus.swift */,
-				9D42C03728CF2269008F624F /* Gender.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -1178,10 +1178,10 @@
 		9D42C04028CF283F008F624F /* ChangeGender */ = {
 			isa = PBXGroup;
 			children = (
+				9D42C04F28CF33A0008F624F /* ChangeGenderItem.swift */,
 				9D42C04D28CF3338008F624F /* ChangeGenderSectionModel.swift */,
 				9D42C04128CF2866008F624F /* ChangeGenderViewController.swift */,
 				9D42C04328CF2874008F624F /* ChangeGenderViewModel.swift */,
-				9D42C04F28CF33A0008F624F /* ChangeGenderItem.swift */,
 			);
 			path = ChangeGender;
 			sourceTree = "<group>";

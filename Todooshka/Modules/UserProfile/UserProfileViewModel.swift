@@ -51,7 +51,7 @@ class UserProfileViewModel: Stepper {
         UserProfileData(
           birthday: nil,
           email: data?["email"] as? String,
-          gender: nil,
+          gender: Gender(rawValue: data?["gender"] as? String ?? Gender.Other.rawValue),
           name: data?["name"] as? String,
           phone: data?["phone"] as? String)
       }

@@ -10,12 +10,11 @@ import RxDataSources
 struct ChangeGenderItem: IdentifiableType, Equatable  {
   
   var identity: String { return UUID().uuidString }
-  var text: String
-  var isSelected: Bool
   var gender: Gender
+  var isSelected: Bool
   
   static func == (lhs: ChangeGenderItem, rhs: ChangeGenderItem) -> Bool {
-    return lhs.text == rhs.text
+    return lhs.gender == rhs.gender
   }
 }
 

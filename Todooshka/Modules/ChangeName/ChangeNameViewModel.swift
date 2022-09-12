@@ -39,7 +39,6 @@ class ChangeNameViewModel: Stepper {
       .asDriver(onErrorJustReturn: nil)
       .compactMap{ $0 }
       
-    
     let data = currentUser
       .asObservable()
       .flatMapLatest { user in
