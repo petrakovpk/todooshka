@@ -177,8 +177,8 @@ class AuthViewController: UIViewController {
     let output = viewModel.transform(input: input)
     
     [
-      output.authWithApple.drive(signInWithAppleBinder),
-      output.authWithGoogle.drive(),
+      output.appleGetNonceString.drive(signInWithAppleBinder),
+      output.auth.drive(),
       output.createAccount.drive(),
       output.logIn.drive(),
       output.skip.drive()
@@ -243,7 +243,7 @@ extension AuthViewController: ASAuthorizationControllerDelegate {
                                                 idToken: idTokenString,
                                                 rawNonce: nonce)
       // Sign in with Firebase.
-      viewModel.logInWithCredential(credential: credential)
+      viewModel.credential.accept(credential)
     }
   }
   

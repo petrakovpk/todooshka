@@ -26,10 +26,10 @@ enum AppStep: Step {
   case OnboardingIsCompleted
   
   // Tab Bar
+  case CalendarIsRequired
   case TabBarIsRequired
   case MainTaskListIsRequired
-  case UserProfileIsRequired
-  
+ 
   // Task List
   case OverduedTaskListIsRequired
   case IdeaTaskListIsRequired
@@ -55,9 +55,9 @@ enum AppStep: Step {
   case ShowTaskIsRequired(task: Task)
   case TaskProcessingIsCompleted
 
-  // User Settings
-  case UserSettingsIsRequired
-  case UserSettingsIsCompleted
+  // Settings
+  case SettingsIsRequired
+  case SettingsIsCompleted
   
   // Remove Task
   case RemoveTaskIsRequired
@@ -82,4 +82,13 @@ enum AppStep: Step {
   // Diamond
   case DiamondIsRequired
   case DiamondIsCompleted
+  
+  // UserProfile
+  case UserProfileIsRequired
+  case ChangingNameIsRequired
+  case ChangingGenderIsRequired
+  case ChangingBirthdayIsRequired
+  case ChangingPhoneIsRequired
+  case ChangingEmailIsRequired
+  case ChangingPasswordIsRequired
 }

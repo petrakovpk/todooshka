@@ -56,6 +56,8 @@ class LoginViewModel: Stepper {
     let repeatPasswordTextFieldDidEndEditing: Driver<Void>
     let phoneTextFieldDidEndEditing: Driver<Void>
     let OTPCodeTextFieldDidEndEditing: Driver<Void>
+    let resetPasswordButtonClickTrigger: Driver<Void>
+    let sendOTPCodeButtonClickTriger: Driver<Void>
   }
   
   struct Output {
@@ -68,6 +70,8 @@ class LoginViewModel: Stepper {
     let setLoginViewControllerStyle: Driver<LoginViewControllerStyle>
     let setFocusOnRepeatPasswordTextField: Driver<Void>
     let updateUserData: Driver<Void>
+    let setResetPasswordButtonClickSuccess: Driver<String>
+    let setSendOTPCodeButtonClickSuccess: Driver<String>
   }
   
   //MARK: - Init
@@ -255,6 +259,23 @@ class LoginViewModel: Stepper {
         PhoneAuthProvider.provider().rx.verifyPhoneNumber(phone)
       }
     
+    let sendOTPCodeWithButton = input.sendOTPCodeButtonClickTriger
+      .withLatestFrom(input.phoneTextFieldText) {
+        "+" + $1.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+      }.asObservable()
+      .flatMapLatest { phone -> Observable<Result<String,Error>> in
+        PhoneAuthProvider.provider().rx.verifyPhoneNumber(phone)
+      }
+    
+    let setSendOTPCodeButtonClickSuccess = sendOTPCodeWithButton
+      .debug()
+      .compactMap { result -> String? in
+        switch result {
+        case .success(_): return "CМС с КОДОМ отправлено! Отправить повторно."
+        case .failure(_): return nil
+        }
+      }.asDriver(onErrorJustReturn: "")
+    
     let verificationID = sendOTPCode
       .compactMap { result -> String? in
         guard case .success(let verificationID) = result else { return nil }
@@ -307,6 +328,22 @@ class LoginViewModel: Stepper {
         signInWithEmail,
         signInWithPhone
       ).merge()
+    
+    // RESET PASSWORD
+    let resetPassword = input.resetPasswordButtonClickTrigger
+      .withLatestFrom(signUpWithEmailAttr) { $1 }
+      .asObservable()
+      .flatMapLatest { attr ->  Observable<Result<Void, Error>>  in
+        Auth.auth().rx.sendPasswordReset(withEmail: attr.email)
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+    
+    let setResetPasswordButtonClickSuccess = resetPassword
+      .compactMap { result -> String? in
+        switch result {
+        case .success(_): return "Письмо отправлено! Отправить повторно."
+        case .failure(_): return nil
+        }
+      }.asDriver()
     
     // STYLE HANDLER
     let setLoginViewControllerStyle = Driver.of(
@@ -364,6 +401,14 @@ class LoginViewModel: Stepper {
         }
       }
     
+    let resetPasswordError = resetPassword
+      .map { result -> String in
+        switch result {
+        case .success(_): return ""
+        case .failure(let error): return error.localizedDescription
+        }
+      }
+    
     let errorTextSendingOTPCode = sendOTPCode
       .map { result -> String in
         switch result {
@@ -380,13 +425,24 @@ class LoginViewModel: Stepper {
         }
       }.asDriver(onErrorJustReturn: "")
     
+    
+    let erroSendOTPCodeWithButton = sendOTPCodeWithButton
+      .map { result -> String in
+        switch result {
+        case .success(_): return ""
+        case .failure(let error): return error.localizedDescription
+        }
+      }.asDriver(onErrorJustReturn: "")
+    
     let errorText = Driver
       .of( clearError,
            errorTextCreateUserWithEmail,
            errorTextSignInWithEmail,
            errorTextUpdateUser,
            errorTextSendingOTPCode,
-           errorTextCheckOTPCode
+           errorTextCheckOTPCode,
+           resetPasswordError,
+           erroSendOTPCodeWithButton
       ).merge()
      
     
@@ -399,7 +455,9 @@ class LoginViewModel: Stepper {
       sendEmailVerification: sendEmailVerification,
       setLoginViewControllerStyle: setLoginViewControllerStyle,
       setFocusOnRepeatPasswordTextField: setFocusOnRepeatPasswordTextField,
-      updateUserData: updateUserData
+      updateUserData: updateUserData,
+      setResetPasswordButtonClickSuccess: setResetPasswordButtonClickSuccess,
+      setSendOTPCodeButtonClickSuccess: setSendOTPCodeButtonClickSuccess
     )
   }
 }

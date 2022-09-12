@@ -1,5 +1,5 @@
 //
-//  UserProfileFlow.swift
+//  CalendarFlow.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 17.05.2021.
@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-class UserProfileFlow: Flow {
+class CalendarFlow: Flow {
   
   var root: Presentable {
     return self.rootViewController
@@ -36,8 +36,8 @@ class UserProfileFlow: Flow {
       return navigateToAuthFlow()
       
       // User ProfileIe
-    case .UserProfileIsRequired:
-      return navigateToUserProfile()
+    case .CalendarIsRequired:
+      return navigateToCalendar()
       
       // Task
     case .CreateTaskIsRequired(let status, let date):
@@ -48,10 +48,10 @@ class UserProfileFlow: Flow {
       return navigateBack()
       
       // Task List
-    case .DeletedTaskListIsRequired:
-      return navigateToDeletedTaskList()
     case .CompletedTaskListIsRequired(let date):
       return navigateToCompletedTaskList(date: date)
+    case .DeletedTaskListIsRequired:
+      return navigateToDeletedTaskList()
     case .TaskListIsCompleted:
       return navigateBack()
       
@@ -68,9 +68,9 @@ class UserProfileFlow: Flow {
       return navigateBack()
       
       // User Settings
-    case .UserSettingsIsRequired:
+    case .SettingsIsRequired:
       return navigateToSettings()
-    case .UserSettingsIsCompleted:
+    case .SettingsIsCompleted:
       return navigateBack()
       
       // Shop
@@ -101,14 +101,35 @@ class UserProfileFlow: Flow {
     case .LogoutIsRequired:
       return endUserProfileFLow()
       
+    case .UserProfileIsRequired:
+      return navigateToUserProfile()
+      
+      // Navigate Back
+    case .NavigateBack:
+      return navigateBack()
+      
+      // Changing
+    case .ChangingNameIsRequired:
+      return navigateToChangingName()
+    case .ChangingGenderIsRequired:
+      return navigateToChangingGender()
+    case .ChangingBirthdayIsRequired:
+      return navigateToChangingBirthday()
+    case .ChangingEmailIsRequired:
+      return navigateToChangingEmail()
+    case .ChangingPhoneIsRequired:
+      return navigateToChangingPhone()
+    case .ChangingPasswordIsRequired:
+      return navigateToChangingPassword()
+      
     default:
       return .none
     }
   }
   
-  private func navigateToUserProfile() -> FlowContributors {
-    let viewController = UserProfileViewController()
-    let userProfileViewModel = UserProfileViewModel(services: services)
+  private func navigateToCalendar() -> FlowContributors {
+    let viewController = CalendarViewController()
+    let userProfileViewModel = CalendarViewModel(services: services)
     let branchSceneModel = BranchSceneModel(services: services)
     viewController.viewModel = userProfileViewModel
     viewController.sceneModel = branchSceneModel
@@ -117,8 +138,8 @@ class UserProfileFlow: Flow {
   }
   
   private func navigateToSettings() -> FlowContributors {
-    let viewController = UserProfileSettingsViewController()
-    let viewModel = UserProfileSettingsViewModel(services: services)
+    let viewController = SettingsViewController()
+    let viewModel = SettingsViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
@@ -207,6 +228,14 @@ class UserProfileFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
+  private func navigateToUserProfile() -> FlowContributors {
+    let viewController = UserProfileViewController()
+    let viewModel = UserProfileViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
   private func navigateBack() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .none
@@ -216,6 +245,55 @@ class UserProfileFlow: Flow {
     rootViewController.popViewController(animated: true)
     return .end(forwardToParentFlowWithStep: AppStep.LogoutIsRequired)
   }
+  
+  private func navigateToChangingName() -> FlowContributors {
+    let viewController = ChangeNameViewContoller()
+    let viewModel = ChangeNameViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToChangingGender() -> FlowContributors {
+    let viewController = ChangeGenderViewController()
+    let viewModel = ChangeGenderViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToChangingBirthday() -> FlowContributors {
+    let viewController = ChangeBirthdayViewController()
+    let viewModel = ChangeBirthdayViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToChangingPhone() -> FlowContributors {
+    let viewController = ChangePhoneViewController()
+    let viewModel = ChangePhoneViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToChangingEmail() -> FlowContributors {
+    let viewController = ChangeEmailViewController()
+    let viewModel = ChangeEmailViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToChangingPassword() -> FlowContributors {
+    let viewController = ChangePasswordViewController()
+    let viewModel = ChangePasswordViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
   
   private func navigateToAuthFlow() -> FlowContributors {
     

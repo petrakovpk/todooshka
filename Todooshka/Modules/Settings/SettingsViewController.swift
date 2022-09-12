@@ -1,24 +1,24 @@
 //
-//  UserProfileSettingsViewController.swift
+//  SettingsViewController.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 14.06.2021.
 //
 
-import UIKit
-import RxFlow
-import RxSwift
 import RxCocoa
 import RxDataSources
+import RxFlow
+import RxSwift
+import UIKit
 
-class UserProfileSettingsViewController: UIViewController {
+class SettingsViewController: UIViewController {
   
   //MARK: - Properties
   let disposeBag = DisposeBag()
   
   var tableView: UITableView!
-  var viewModel: UserProfileSettingsViewModel!
-  var dataSource: RxTableViewSectionedReloadDataSource<UserProfileSettingsSectionModel>!
+  var viewModel: SettingsViewModel!
+  var dataSource: RxTableViewSectionedReloadDataSource<SettingsCellSectionModel>!
   
   //MARK: - UI Elements
   private let backButton = UIButton(type: .custom)
@@ -99,7 +99,7 @@ class UserProfileSettingsViewController: UIViewController {
     
     // tableView
     tableView.backgroundColor = .clear
-    tableView.register(UserProfileSettingsCell.self, forCellReuseIdentifier: UserProfileSettingsCell.reuseID)
+    tableView.register(SettingsCell.self, forCellReuseIdentifier: SettingsCell.reuseID)
     tableView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
   }
   
@@ -142,7 +142,7 @@ class UserProfileSettingsViewController: UIViewController {
   //MARK: - Bind To
   func bindViewModel() {
 
-    let input = UserProfileSettingsViewModel.Input(
+    let input = SettingsViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       selection: tableView.rx.itemSelected.asDriver()
     )
@@ -159,15 +159,13 @@ class UserProfileSettingsViewController: UIViewController {
   
   func configureDataSource() {
     tableView.dataSource = nil
-    dataSource = RxTableViewSectionedReloadDataSource<UserProfileSettingsSectionModel> (configureCell: { _, tableView, indexPath, item in
-      let cell = tableView.dequeueReusableCell(withIdentifier: UserProfileSettingsCell.reuseID, for: indexPath) as! UserProfileSettingsCell
+    dataSource = RxTableViewSectionedReloadDataSource<SettingsCellSectionModel> (configureCell: { _, tableView, indexPath, item in
+      let cell = tableView.dequeueReusableCell(withIdentifier: SettingsCell.reuseID, for: indexPath) as! SettingsCell
       cell.configure(imageName: item.imageName, text: item.text)
       return cell
     },  titleForHeaderInSection: { dataSource, index in
       return dataSource.sectionModels[index].header
     })
-    
-    
   }
   
 }

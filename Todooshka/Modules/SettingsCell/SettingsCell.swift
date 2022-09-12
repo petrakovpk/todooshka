@@ -1,5 +1,5 @@
 //
-//  UserProfileSettingsCell.swift
+//  SettingsCell.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 14.06.2021.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class UserProfileSettingsCell: UITableViewCell {
+class SettingsCell: UITableViewCell {
   
   //MARK: - Properties
   static var reuseID: String = "UserProfileSettingsCell"
@@ -24,18 +24,15 @@ class UserProfileSettingsCell: UITableViewCell {
   
   //MARK: - Configure
   func configure(imageName: String, text: String ) {
-    
     backgroundColor = .clear
     cornerRadius = height / 2
     layer.borderWidth = 0
-    //layer.borderColor = UIColor(red: 0.094, green: 0.106, blue: 0.235, alpha: 1).cgColor
     
     imageView?.image = UIImage(named: imageName)?.template
     imageView?.tintColor = Theme.App.text
     textLabel?.text = text
     textLabel?.textColor =  Theme.App.text
   }
-  
 }
 
 

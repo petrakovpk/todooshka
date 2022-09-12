@@ -1,37 +1,34 @@
 //
-//  UserProfileSettingsViewModel.swift
+//  SettingsViewModel.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 14.06.2021.
 //
 
-
+import CoreData
+import FirebaseAuth
 import RxFlow
 import RxSwift
 import RxCocoa
 import UIKit
-import CoreData
 
-
-class UserProfileSettingsViewModel: Stepper {
+class SettingsViewModel: Stepper {
   
+  let services: AppServices
   let steps = PublishRelay<Step>()
-  let dataSource = BehaviorRelay<[UserProfileSettingsSectionModel]>(value: [])
   
-  public let services: AppServices
-  private let disposeBag = DisposeBag()
-  let showAlert = BehaviorRelay<Bool>(value: false)
+  private let dataSource = BehaviorRelay<[SettingsCellSectionModel]>(value: [])
+  private let showAlert = BehaviorRelay<Bool>(value: false)
   
   struct Input {
     let backButtonClickTrigger: Driver<Void>
     let selection: Driver<IndexPath>
-    
   }
   
   struct Output {
     let backButtonClick: Driver<Void>
     let itemSelected: Driver<Void>
-    let dataSource: Driver<[UserProfileSettingsSectionModel]>
+    let dataSource: Driver<[SettingsCellSectionModel]>
   }
   
   //MARK: - Init
@@ -40,9 +37,12 @@ class UserProfileSettingsViewModel: Stepper {
   }
   
   func transform(input: Input) -> Output {
+    
+    let currentUser = Auth.auth().rx.stateDidChange.asDriver(onErrorJustReturn: nil)
+    
     // auth
     let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .logInIsRequired)
-    let logOutIsRequired = SettingsItem(imageName: "logout", text: "Выйти из аккаунта", type: .logOutIsRequired)
+    let userProfileIsRequired = SettingsItem(imageName: "user-square", text: Auth.auth().currentUser?.displayName ?? "Герой без имени" , type: .userProfileIsRequiared)
     //data
     let saveDataIsRequired = SettingsItem(imageName: "box-add", text: "Сохранить данные", type: .saveDataIsRequired)
     let loadDataIsRequired = SettingsItem(imageName: "box-tick", text: "Загрузить данные", type: .loadDataIsRequired)
@@ -55,24 +55,25 @@ class UserProfileSettingsViewModel: Stepper {
     let askSupport = SettingsItem(imageName: "message-notif", text: "Обратиться в поддержку", type: .askSupport)
     
     // dataSource
-    let dataSource = Driver.just([
-      UserProfileSettingsSectionModel(
-        header: "Аккаунт",
-        items: [logInIsRequired, logOutIsRequired]),
-      UserProfileSettingsSectionModel(
-        header: "Облако",
-        items: [saveDataIsRequired, loadDataIsRequired]),
-      UserProfileSettingsSectionModel(
-        header: "Удаленные данные",
-        items: [deletedTaskTypeListIsRequired, deletedTaskListIsRequired]),
-      UserProfileSettingsSectionModel(
-        header: "Поддержка",
-        items: [askSupport]),
-      UserProfileSettingsSectionModel(
-        header: "Безопасность",
-        items: [removeAccount])
-      
-    ])
+    let dataSource = currentUser
+      .map {[
+        SettingsCellSectionModel(
+          header: "Аккаунт",
+          items: [$0 == nil ? logInIsRequired : userProfileIsRequired]),
+        SettingsCellSectionModel(
+          header: "Облако",
+          items: [saveDataIsRequired, loadDataIsRequired]),
+        SettingsCellSectionModel(
+          header: "Удаленные данные",
+          items: [deletedTaskTypeListIsRequired, deletedTaskListIsRequired]),
+        SettingsCellSectionModel(
+          header: "Поддержка",
+          items: [askSupport]),
+        SettingsCellSectionModel(
+          header: "Безопасность",
+          items: [removeAccount])
+      ]}
+
     
     let itemSelected = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource in
@@ -84,12 +85,15 @@ class UserProfileSettingsViewModel: Stepper {
           self.steps.accept(AppStep.DeletedTaskTypeListIsRequired)
         case .logInIsRequired:
           self.steps.accept(AppStep.AuthIsRequired)
+        case .userProfileIsRequiared:
+          self.steps.accept(AppStep.UserProfileIsRequired)
         default:
           return
         }
       }
     
-    let backButtonClick = input.backButtonClickTrigger.map { self.steps.accept(AppStep.UserSettingsIsCompleted) }
+    let backButtonClick = input.backButtonClickTrigger
+      .map { self.steps.accept(AppStep.NavigateBack) }
     
     return Output(
       backButtonClick: backButtonClick,

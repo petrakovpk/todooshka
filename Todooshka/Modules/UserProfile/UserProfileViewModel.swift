@@ -2,221 +2,105 @@
 //  UserProfileViewModel.swift
 //  Todooshka
 //
-//  Created by Петраков Павел Константинович on 17.05.2021.
+//  Created by Pavel Petakov on 09.09.2022.
 //
 
+import Firebase
 import RxFlow
 import RxSwift
 import RxCocoa
-import CoreData
-
-enum DataSourceType {
-  case Initial, Past, Future
-}
 
 class UserProfileViewModel: Stepper {
   
-  // MARK: - Typealias
-  public typealias DisplayCollectionViewCellEvent = (cell: UICollectionViewCell, at: IndexPath)
-  
-  // MARK: - Public properties
-  public let steps = PublishRelay<Step>()
-  
-  // MARK: - Private properties
   let services: AppServices
-  
-  // Calendar
- // private let selectedDate = BehaviorRelay<Date>(value: Date())
-  private let selectedMonthComponents = BehaviorRelay<[Int]>(value: [-2,-1,0,1])
-  private var dataSourceType: DataSourceType = .Initial
-  
+  let steps = PublishRelay<Step>()
+
   struct Input {
-    // buttons
-    let settingsButtonClickTrigger: Driver<Void>
-    let shopButtonClickTrigger: Driver<Void>
-    // game currency
-    let featherBackgroundViewClickTrigger: Driver<Void>
-    let diamondBackgroundViewClickTrigger: Driver<Void>
-    // selection
+    let backButtonClickTrigger: Driver<Void>
+    let logOutButtonClickTrigger: Driver<Void>
     let selection: Driver<IndexPath>
-    // willDisplayCell
-    let willDisplayCell: Driver<DisplayCollectionViewCellEvent>
   }
   
   struct Output {
-    // buttons
-    let settingsButtonClickHandler: Driver<Void>
-    let shopButtonClickHandler: Driver<Void>
-    // score
-    let featherScoreLabel: Driver<String>
-    let diamondScoreLabel: Driver<String>
-    let featherBackgroundViewClickHandler: Driver<Void>
-    let diamondBackgroundViewClickHandler: Driver<Void>
-    // selection
-    let selectionHandler: Driver<Void>
-    // dataSource
-    let dataSource: Driver<[CalendarSectionModel]>
-    let willDisplayCell: Driver<Void>
-    let scrollToCurrentMonth: Driver<(trigger: Bool, withAnimation: Bool)>
+    let dataSource: Driver<[UserProfileSectionModel]>
+    let itemSelected: Driver<Void>
+    let logOut: Driver<Void>
+    let navigateBack: Driver<Void>
+    let title: Driver<String>
   }
   
-  func appendPastData() {
-    self.selectedMonthComponents.accept(
-      [self.selectedMonthComponents.value.min()! - 1] +
-      self.selectedMonthComponents.value)
-  }
-  
-  func appendFutureData() {
-    self.selectedMonthComponents.accept(
-      self.selectedMonthComponents.value +
-      [self.selectedMonthComponents.value.max()! + 1])
-  }
-  
-  // MARK: - Init
+  //MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
   
-  //MARK: - Transform
   func transform(input: Input) -> Output {
     
-    // caledar
-    let selectedDate = services.preferencesService.selectedDate.asDriver()
-    let selectedMonthComponents = selectedMonthComponents.asDriver()
+    let currentUser = Auth.auth().rx.stateDidChange
+      .asDriver(onErrorJustReturn: nil)
     
-    // completed tasks
-    let completedTasks = services.tasksService
-      .tasks
-      .map { $0.filter {
-        $0.status == .Completed && $0.closed != nil
-      }}
-      .asDriver(onErrorJustReturn: [])
+    let dataSource = Driver<[UserProfileSectionModel]>.of([
+      UserProfileSectionModel(header: "Личная информация", items: [
+        UserProfileItem(type: .Name, leftText: "Имя", rightText: "Павел Петраков"),
+        UserProfileItem(type: .Gender, leftText: "Пол", rightText: "Мужской"),
+        UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: "21.11.1991")]),
+      
+      UserProfileSectionModel(header: "Вход в приложение", items: [
+        UserProfileItem(type: .Phone, leftText: "Телефон", rightText: "+7 926 617 56 03"),
+        UserProfileItem(type: .Email, leftText: "Email", rightText: "petrakovpk@gmail.com"),
+        UserProfileItem(type: .Password, leftText: "Пароль", rightText: "сменить пароль")]),
+      
+      UserProfileSectionModel(header: "История покупок", items: [])
+    ])
     
-    // dataSource
-    let dataSource = Driver<([CalendarSectionModel])>
-      .combineLatest(selectedMonthComponents, selectedDate, completedTasks) { selectedMonthComponents, selectedDate, completedTasks -> [CalendarSectionModel] in
-        selectedMonthComponents.map { monthComponent -> CalendarSectionModel in
-          let date = Date().adding(.month, value: monthComponent)
-          let daysInMonth = Calendar.current.numberOfDaysInMonth(for: date)
-          var items: [CalendarDay] = []
-          
-          let addDaysBeforeStartOfMonth = self.addDaysBeforeStartOfMonth(date: date)
-          
-          if addDaysBeforeStartOfMonth > 0 {
-            for _ in 0 ... addDaysBeforeStartOfMonth - 1 {
-              items.append(CalendarDay(
-                date: date,
-                isSelected: false,
-                completedTasksCount: 0,
-                isEnabled: false))
-            }
-          }
-          
-          for dayComponent in 0 ... daysInMonth - 1 {
-            let day = date.startOfMonth.adding(.day, value: dayComponent)
-            items.append(CalendarDay(
-              date: day,
-              isSelected: Calendar.current.isDate(day, inSameDayAs: selectedDate),
-              completedTasksCount: completedTasks.filter { Calendar.current.isDate($0.closed!, inSameDayAs: day) }.count,
-              isEnabled: true))
-          }
-          
-          return CalendarSectionModel(
-            type: .Month,
-            year: date.year,
-            month: date.month,
-            items: items)
-        }
-      }
-      .asDriver()
-    
-    let scrollToCurrentMonth = services.preferencesService
-      .scrollToCurrentMonthTrigger
-      .asDriver()
-    
-    // selection
-    let selectionHandler = input.selection
-      .withLatestFrom(dataSource) { indexPath, dataSource -> CalendarDay? in
-        if dataSource[indexPath.section].type == .Year || dataSource[indexPath.section].items[indexPath.item].isEnabled == false { return nil }
-        return dataSource[indexPath.section].items[indexPath.item]
-      }.compactMap { $0 }
-      .withLatestFrom(selectedDate) { calendarDay, selectedDate in
-        if calendarDay.date == selectedDate {
-          self.steps.accept(AppStep.CompletedTaskListIsRequired(date: calendarDay.date))
-          return
-        } else {
-          self.services.preferencesService.selectedDate.accept(calendarDay.date)
-          self.services.actionService.runBranchSceneActionsTrigger.accept(())
-        }
-        
-      }
-   
-    // score
-    let featherScoreLabel = services.gameCurrencyService.gameCurrency
-      .map { $0.filter {
-        $0.currency == .Feather }
-      .count
-        .string }
-      .asDriver(onErrorJustReturn: "")
-    
-    let diamondScoreLabel = services.gameCurrencyService.gameCurrency
-      .map { $0.filter {
-        $0.currency == .Diamond }
-      .count
-        .string }
-      .asDriver(onErrorJustReturn: "")
-    
-    // buttons
-    let featherBackgroundViewClickHandler = input.featherBackgroundViewClickTrigger
-      .do { _ in self.steps.accept(AppStep.FeatherIsRequired) }
-    
-    let diamondBackgroundViewClickHandler = input.diamondBackgroundViewClickTrigger
-      .do { _ in self.steps.accept(AppStep.DiamondIsRequired) }
-    
-    let settingsButtonClicked = input.settingsButtonClickTrigger
-      .do { _ in self.steps.accept(AppStep.UserSettingsIsRequired) }
-    
-    let shopButtonClicked = input.shopButtonClickTrigger
-      .do { _ in self.steps.accept(AppStep.ShopIsRequired) }
-    
-    let willDisplayCell = input.willDisplayCell
-      .map { event -> Int in
-        event.at.section
-      }.distinctUntilChanged()
-      .withLatestFrom(dataSource) { section, dataSource -> Void in
-        if section == dataSource.count - 1 {
-          self.appendFutureData()
+    let itemSelected = input.selection
+      .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
+      .map { item in
+        switch item.type {
+        case .Name:
+          self.steps.accept(AppStep.ChangingNameIsRequired)
+        case .Gender:
+          self.steps.accept(AppStep.ChangingGenderIsRequired)
+        case .Birthday:
+          self.steps.accept(AppStep.ChangingBirthdayIsRequired)
+        case .Phone:
+          self.steps.accept(AppStep.ChangingPhoneIsRequired)
+        case .Email:
+          self.steps.accept(AppStep.ChangingEmailIsRequired)
+        case .Password:
+          self.steps.accept(AppStep.ChangingPasswordIsRequired)
         }
       }
     
+    let title = currentUser
+      .map { $0?.displayName ?? "Герой без имени" }
+      .asDriver(onErrorJustReturn: "Герой без имени")
     
+    let navigateBackIfUserLoggedOff = currentUser
+      .filter { $0 == nil }
+      .map{ _ in () }
+    
+    let logOut = input.logOutButtonClickTrigger
+      .do{ _ in
+        do {
+          try Auth.auth().signOut()
+        } catch let signOutError as NSError {
+          print("Error signing out: %@", signOutError)
+        }
+      }
+    
+    let navigateBack = Driver
+      .of(navigateBackIfUserLoggedOff, input.backButtonClickTrigger)
+      .merge()
+      .map{ self.steps.accept(AppStep.NavigateBack) }
+
     return Output(
-      // buttons
-      settingsButtonClickHandler: settingsButtonClicked,
-      shopButtonClickHandler: shopButtonClicked,
-      //  пфьу сгккутсн
-      featherScoreLabel: featherScoreLabel,
-      diamondScoreLabel: diamondScoreLabel,
-      featherBackgroundViewClickHandler: featherBackgroundViewClickHandler,
-      diamondBackgroundViewClickHandler: diamondBackgroundViewClickHandler,
-      // selection
-      selectionHandler: selectionHandler,
-      // dataSource
       dataSource: dataSource,
-      willDisplayCell: willDisplayCell,
-      scrollToCurrentMonth: scrollToCurrentMonth
+      itemSelected: itemSelected,
+      logOut: logOut,
+      navigateBack: navigateBack,
+      title: title
     )
-  }
-  
-  func addDaysBeforeStartOfMonth(date: Date) -> Int {
-    switch date.weekday {
-    case 1:
-      return 6
-    case 2 ... 7:
-      return date.weekday - 2
-    default:
-      return -1
-    }
   }
 }
 

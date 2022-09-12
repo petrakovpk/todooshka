@@ -1,5 +1,5 @@
 //
-//  UserProfileSettingsSectionModel.swift
+//  SettingsCellSectionModel.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 14.06.2021.
@@ -8,7 +8,7 @@
 import UIKit
 import RxDataSources
 
-struct UserProfileSettingsSectionModel: AnimatableSectionModelType {
+struct SettingsCellSectionModel: AnimatableSectionModelType {
   
   var identity: String {
     return header
@@ -22,7 +22,7 @@ struct UserProfileSettingsSectionModel: AnimatableSectionModelType {
     self.items = items
   }
   
-  init(original: UserProfileSettingsSectionModel, items: [SettingsItem]) {
+  init(original: SettingsCellSectionModel, items: [SettingsItem]) {
     self = original
     self.items = items
   }

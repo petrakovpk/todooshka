@@ -422,15 +422,15 @@ extension Reactive where Base: Auth {
    
    
    */
-  public func sendPasswordReset(withEmail email: String) -> Observable<Void> {
+  public func sendPasswordReset(withEmail email: String) -> Observable<Result<Void, Error>> {
     return Observable.create { observer in
       self.base.sendPasswordReset(withEmail: email) { error in
-        guard let error = error else {
-          observer.onNext(())
+        if let error = error {
+          observer.onNext(.failure(error))
+        } else {
+          observer.onNext(.success(()))
           observer.onCompleted()
-          return
         }
-        observer.onError(error)
       }
       return Disposables.create()
     }

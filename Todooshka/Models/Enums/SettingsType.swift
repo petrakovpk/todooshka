@@ -8,7 +8,7 @@
 enum SettingsType {
   // auth
   case logInIsRequired
-  case logOutIsRequired
+  case userProfileIsRequiared
   // load
   case saveDataIsRequired
   case loadDataIsRequired
