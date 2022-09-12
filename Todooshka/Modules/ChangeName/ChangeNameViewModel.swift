@@ -35,11 +35,11 @@ class ChangeNameViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    let currentUser = Auth.auth().rx.stateDidChange
+    let user = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
       .compactMap{ $0 }
       
-    let data = currentUser
+    let data = user
       .asObservable()
       .flatMapLatest { user in
         DB_USERS_REF.child(user.uid).child("PERSONAL").rx.observeSingleEvent(.value)
@@ -60,7 +60,7 @@ class ChangeNameViewModel: Stepper {
       .map { _ in self.steps.accept(AppStep.NavigateBack) }
     
     let save = Driver
-      .combineLatest(didEndEdiditing, input.nameTextFieldText, currentUser) { ($1,$2) }
+      .combineLatest(didEndEdiditing, input.nameTextFieldText, user) { ($1,$2) }
       .asObservable()
       .flatMapLatest { (name, user) in
         DB_USERS_REF.child(user.uid).child("PERSONAL").rx.updateChildValues(["name": name])

@@ -8,7 +8,7 @@
 import Foundation
 
 struct UserProfileData {
-  let birthday: Date?
+  let birthday: String?
   let email: String?
   let gender: Gender?
   let name: String?

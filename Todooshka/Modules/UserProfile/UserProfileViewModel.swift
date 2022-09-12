@@ -48,8 +48,14 @@ class UserProfileViewModel: Stepper {
         guard let value = snapshot.value as? NSDictionary else { return nil }
         return value
       }.map { data -> UserProfileData in
-        UserProfileData(
-          birthday: nil,
+        var birthday = "Не указано"
+        
+        if let timeInterval = data?["birthday"] as? Double {
+          birthday = Date(timeIntervalSince1970: timeInterval).string(withFormat: "dd MMMM yyyy")
+        }
+
+        return UserProfileData(
+          birthday: birthday,
           email: data?["email"] as? String,
           gender: Gender(rawValue: data?["gender"] as? String ?? Gender.Other.rawValue),
           name: data?["name"] as? String,
@@ -62,7 +68,7 @@ class UserProfileViewModel: Stepper {
           UserProfileSectionModel(header: "Личная информация", items: [
             UserProfileItem(type: .Name, leftText: "Имя", rightText: data.name ?? "" ),
             UserProfileItem(type: .Gender, leftText: "Пол", rightText: data.gender?.rawValue ?? "" ),
-            UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: data.birthday?.string(withFormat: "dd MMMM yyyy") ?? "" )]),
+            UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: data.birthday ?? "" )]),
           
           UserProfileSectionModel(header: "Вход в приложение", items: [
             UserProfileItem(type: .Phone, leftText: "Телефон", rightText: ""),

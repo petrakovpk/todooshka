@@ -65,13 +65,18 @@ class ChangeBirthdayViewController: TDViewController {
   func bindViewModel() {
     
     let input = ChangeBirthdayViewModel.Input(
-      backButtonClickTrigger: backButton.rx.tap.asDriver()
+      backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      datePicker: picker.rx.value.asDriver(),
+      saveButtonClickTrigger: saveButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.navigateBack.drive()
+      outputs.dateText.drive(label.rx.text),
+      outputs.navigateBack.drive(),
+      outputs.datePickerValue.drive(picker.rx.date),
+      outputs.save.drive(),
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
