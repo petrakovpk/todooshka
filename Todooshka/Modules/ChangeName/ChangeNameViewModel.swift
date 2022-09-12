@@ -5,6 +5,7 @@
 //  Created by Pavel Petakov on 12.09.2022.
 //
 
+import Firebase
 import RxFlow
 import RxSwift
 import RxCocoa
@@ -16,10 +17,15 @@ class ChangeNameViewModel: Stepper {
 
   struct Input {
     let backButtonClickTrigger: Driver<Void>
+    let nameTextFieldEditingDidEndOnExit: Driver<Void>
+    let nameTextFieldText: Driver<String>
+    let saveButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
+    let name: Driver<String>
     let navigateBack: Driver<Void>
+    let save: Driver<Void>
   }
   
   //MARK: - Init
@@ -29,11 +35,43 @@ class ChangeNameViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    let navigateBack = input.backButtonClickTrigger
+    let currentUser = Auth.auth().rx.stateDidChange
+      .asDriver(onErrorJustReturn: nil)
+      .compactMap{ $0 }
+      
+    
+    let data = currentUser
+      .asObservable()
+      .flatMapLatest { user in
+        DB_USERS_REF.child(user.uid).child("PERSONAL").rx.observeSingleEvent(.value)
+      }.compactMap { snapshot -> NSDictionary? in
+        snapshot.value as? NSDictionary ?? nil
+      }
+    
+    let name = data
+      .map { data -> String in data["name"] as? String ?? "" }
+      .asDriver(onErrorJustReturn: "")
+      .startWith("")
+    
+    let didEndEdiditing = Driver.of(input.nameTextFieldEditingDidEndOnExit, input.saveButtonClickTrigger).merge()
+    
+    let navigateBack = Driver
+      .of(input.backButtonClickTrigger, didEndEdiditing)
+      .merge()
       .map { _ in self.steps.accept(AppStep.NavigateBack) }
     
+    let save = Driver
+      .combineLatest(didEndEdiditing, input.nameTextFieldText, currentUser) { ($1,$2) }
+      .asObservable()
+      .flatMapLatest { (name, user) in
+        DB_USERS_REF.child(user.uid).child("PERSONAL").rx.updateChildValues(["name": name])
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .map{ _ in ()}
+
     return Output(
-      navigateBack: navigateBack
+      name: name,
+      navigateBack: navigateBack,
+      save: save
     )
   }
   

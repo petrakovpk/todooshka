@@ -271,6 +271,7 @@ class LoginViewController: UIViewController {
   
   var setSendOTPCodeButtonClickSuccessBinder: Binder<String> {
     return Binder(self, binding: { (vc, text) in
+      print("1234 УРА", text)
       vc.sendOTPCodeButton.setTitle(text, for: .normal)
     })
   }

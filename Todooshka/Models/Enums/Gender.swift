@@ -7,8 +7,8 @@
 
 import RxDataSources
 
-enum Gender {
-  case Male
-  case Female
-  case Other
+enum Gender: String {
+  case Male = "Мужской"
+  case Female = "Женский"
+  case Other = "Не хочу говорить"
 }

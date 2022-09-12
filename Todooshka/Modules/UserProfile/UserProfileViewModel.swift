@@ -39,20 +39,40 @@ class UserProfileViewModel: Stepper {
     let currentUser = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
     
-    let dataSource = Driver<[UserProfileSectionModel]>.of([
-      UserProfileSectionModel(header: "Личная информация", items: [
-        UserProfileItem(type: .Name, leftText: "Имя", rightText: "Павел Петраков"),
-        UserProfileItem(type: .Gender, leftText: "Пол", rightText: "Мужской"),
-        UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: "21.11.1991")]),
-      
-      UserProfileSectionModel(header: "Вход в приложение", items: [
-        UserProfileItem(type: .Phone, leftText: "Телефон", rightText: "+7 926 617 56 03"),
-        UserProfileItem(type: .Email, leftText: "Email", rightText: "petrakovpk@gmail.com"),
-        UserProfileItem(type: .Password, leftText: "Пароль", rightText: "сменить пароль")]),
-      
-      UserProfileSectionModel(header: "История покупок", items: [])
-    ])
+    let data = currentUser
+      .compactMap{ $0 }
+      .asObservable()
+      .flatMapLatest { user -> Observable<DataSnapshot> in
+        Database.database().reference().child("USERS").child(user.uid).child("PERSONAL").rx.observeEvent(.value)
+      }.map { snapshot -> NSDictionary? in
+        guard let value = snapshot.value as? NSDictionary else { return nil }
+        return value
+      }.map { data -> UserProfileData in
+        UserProfileData(
+          birthday: nil,
+          email: data?["email"] as? String,
+          gender: nil,
+          name: data?["name"] as? String,
+          phone: data?["phone"] as? String)
+      }
     
+    let dataSource = data
+      .map { data -> [UserProfileSectionModel] in
+        [
+          UserProfileSectionModel(header: "Личная информация", items: [
+            UserProfileItem(type: .Name, leftText: "Имя", rightText: data.name ?? "" ),
+            UserProfileItem(type: .Gender, leftText: "Пол", rightText: data.gender?.rawValue ?? "" ),
+            UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: data.birthday?.string(withFormat: "dd MMMM yyyy") ?? "" )]),
+          
+          UserProfileSectionModel(header: "Вход в приложение", items: [
+            UserProfileItem(type: .Phone, leftText: "Телефон", rightText: ""),
+            UserProfileItem(type: .Email, leftText: "Email", rightText: ""),
+            UserProfileItem(type: .Password, leftText: "Пароль", rightText: "Cменить пароль")]),
+          
+          UserProfileSectionModel(header: "История покупок", items: [])
+        ]
+      }.asDriver(onErrorJustReturn: [])
+
     let itemSelected = input.selection
       .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
       .map { item in

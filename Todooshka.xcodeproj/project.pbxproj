@@ -939,8 +939,8 @@
 		60AE9DC52652FC5E00E51531 /* UserProfile */ = {
 			isa = PBXGroup;
 			children = (
-				9D42C03528CF0FA8008F624F /* UserProfileItem.swift */,
 				9D42C03928CF22AB008F624F /* UserProfileData.swift */,
+				9D42C03528CF0FA8008F624F /* UserProfileItem.swift */,
 				9D42C03128CF0E98008F624F /* UserProfileSectionModel.swift */,
 				9D42C01E28CB426A008F624F /* UserProfileViewController.swift */,
 				9D42C02028CB4272008F624F /* UserProfileViewModel.swift */,

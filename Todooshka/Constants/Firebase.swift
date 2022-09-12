@@ -20,6 +20,7 @@ let DB_REF = Database.database().reference()
 let FIRESTORE_REF = Firestore.firestore()
 let STORAGE_REF = Storage.storage().reference()
 
-//MARK: - DB Childs
-let USER_REF = DB_REF.child("USERS")
+// MARK: - DB Childs
+let DB_USERS_REF = DB_REF.child("USERS")
+
 
