@@ -28,12 +28,12 @@ extension Reactive where Base: DatabaseQuery {
      * @param cancelBlock The block that should be called if this client no longer has permission to receive these events
      * @return A handle used to unregister this block later using removeObserverWithHandle:
      */
-    public func observeEvent(_ eventType: DataEventType) -> Observable<DataSnapshot> {
+    public func observeEvent(_ eventType: DataEventType) -> Observable<Result<DataSnapshot,Error>> {
         return Observable.create { observer in
             let handle = self.base.observe(eventType, with: { snapshot in
-                observer.onNext(snapshot)
+              observer.onNext(.success(snapshot))
             }, withCancel: { error in
-                observer.onError(error)
+              observer.onNext(.failure(error))
             })
             return Disposables.create {
                 self.base.removeObserver(withHandle: handle)

@@ -42,6 +42,11 @@ class UserProfileViewController: UIViewController {
     bindViewModel()
   }
   
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    viewModel.reloadData.accept(())
+  }
+  
   // MARK: - Configure UI
   func configureUI() {
     

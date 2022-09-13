@@ -12,8 +12,10 @@ import RxCocoa
 
 class UserProfileViewModel: Stepper {
   
+  let reloadData = BehaviorRelay<Void>(value: ())
   let services: AppServices
   let steps = PublishRelay<Step>()
+  
 
   struct Input {
     let backButtonClickTrigger: Driver<Void>
@@ -36,40 +38,54 @@ class UserProfileViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    let user = Auth.auth().rx.stateDidChange
+    let reload = reloadData.asDriver()
+    let userListener = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
     
-    let data = user
-      .compactMap{ $0 }
+    let user = Driver
+      .combineLatest(reload, userListener.compactMap{ $0 }) { $1 }
+
+    let snapshot = user
       .asObservable()
-      .flatMapLatest { user -> Observable<DataSnapshot> in
+      .flatMapLatest { user -> Observable<Result<DataSnapshot,Error>> in
         Database.database().reference().child("USERS").child(user.uid).child("PERSONAL").rx.observeEvent(.value)
-      }.compactMap { snapshot -> NSDictionary? in
-        guard let value = snapshot.value as? NSDictionary else { return nil }
-        return value
-      }.map { data -> UserProfileData in
-        var birthday = "Не указано"
-        
-        if let timeInterval = data["birthday"] as? Double {
-          birthday = Date(timeIntervalSince1970: timeInterval).string(withFormat: "dd MMMM yyyy")
-        }
-        
-        return UserProfileData(
-          birthday: birthday,
-          email: "",
-          gender: Gender(rawValue: data["gender"] as? String ?? Gender.Other.rawValue) ?? Gender.Other,
-          name: data["name"] as? String ?? "Главный герой",
-          phone: ""
-        )}.withLatestFrom(user) { userProfileData, user -> UserProfileData in
-          UserProfileData(
-            birthday: userProfileData.birthday,
-            email: user?.email ?? "",
-            gender: userProfileData.gender ,
-            name: userProfileData.name,
-            phone: user?.phoneNumber ?? "")
-        }.startWith(UserProfileData(birthday: "", email: "", gender: Gender.Other, name: "", phone: ""))
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
-    let dataSource = data
+    let dict = snapshot
+      .compactMap({ result -> NSDictionary? in
+        guard case .success(let snapshot) = result,
+              let value = snapshot.value as? NSDictionary else { return nil }
+        return value
+      })
+    
+    let birthday = dict
+      .compactMap { $0["birthday"] as? Double }
+      .map { Date(timeIntervalSince1970: $0) }
+      .map { $0.string(withFormat: "dd MMMM yyyy") }
+      .startWith("")
+    
+    let gender = dict
+      .compactMap{ $0["gender"] as? String }
+      .compactMap{ Gender(rawValue: $0) }
+      .startWith(Gender.Other)
+    
+    let name = dict
+      .compactMap{ $0["name"] as? String }
+      .startWith("Главный герой")
+    
+    let email = user
+      .compactMap{ $0.email }
+      .startWith("")
+    
+    let phoneNumber = user
+      .compactMap{ $0.phoneNumber }
+      .startWith("")
+    
+    let userProfileData = Driver.combineLatest(name, birthday, gender, phoneNumber, email) { name, birthday, gender, phoneNumber, email -> UserProfileData in
+        UserProfileData(birthday: birthday, email: email, gender: gender, name: name, phone: phoneNumber)
+      }
+    
+    let dataSource = userProfileData
       .map { data -> [UserProfileSectionModel] in
         [
           UserProfileSectionModel(header: "Личная информация", items: [
@@ -106,10 +122,10 @@ class UserProfileViewModel: Stepper {
       }
     
     let title = user
-      .map { $0?.displayName ?? "Герой без имени" }
-      .asDriver(onErrorJustReturn: "Герой без имени")
+      .map { $0.displayName ?? "Герой без имени" }
+      .asDriver(onErrorJustReturn: "")
     
-    let navigateBackIfUserLoggedOff = user
+    let navigateBackIfUserLoggedOff = userListener
       .filter { $0 == nil }
       .map{ _ in () }
     

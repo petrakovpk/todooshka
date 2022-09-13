@@ -10,15 +10,22 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-class ChangeEmailViewController: TDViewController {
+class SetEmailViewController: TDViewController {
   
   // MARK: - Rx
   private let disposeBag = DisposeBag()
   
   // MARK: - MVVM
-  public var viewModel: ChangeEmailViewModel!
+  public var viewModel: SetEmailViewModel!
   
   // MARK: - UI Elemenets
+  private let emailLabel: UILabel = {
+    let label = UILabel()
+    label.textAlignment = .left
+    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+    return label
+  }()
+  
   private let emailTextField = TDAuthTextField(type: .Phone)
   
   // MARK: - Lifecycle
@@ -30,30 +37,31 @@ class ChangeEmailViewController: TDViewController {
   
   // MARK: - Configure UI
   func configureUI() {
-    // settings
-    saveButton.isHidden = false
-    
     // adding
-
+    view.addSubviews([
+      emailLabel,
+      emailTextField
+    ])
     
     //  header
-    titleLabel.text = "Сменить имя"
+    titleLabel.text = "Email"
     
-    // textField
-
+    // emailLabel
+    emailLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16)
   }
   
   
   // MARK: - Bind ViewModel
   func bindViewModel() {
     
-    let input = ChangeEmailViewModel.Input(
+    let input = SetEmailViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
     
     [
+      outputs.emailLabelText.drive(emailLabel.rx.text),
       outputs.navigateBack.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })

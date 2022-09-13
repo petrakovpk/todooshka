@@ -279,8 +279,8 @@ class CalendarFlow: Flow {
   }
   
   private func navigateToChangingEmail() -> FlowContributors {
-    let viewController = ChangeEmailViewController()
-    let viewModel = ChangeEmailViewModel(services: services)
+    let viewController = SetEmailViewController()
+    let viewModel = SetEmailViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

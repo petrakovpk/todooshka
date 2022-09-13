@@ -15,10 +15,6 @@ enum PhoneSetMode {
   case NotSet
 }
 
-enum SetPhoneViewModelMode {
-  case Phone
-  case OTPCode
-}
 
 class SetPhoneViewModel: Stepper {
   
@@ -56,18 +52,21 @@ class SetPhoneViewModel: Stepper {
     
     let reload = reload.asDriver()
     
-    let user = Auth.auth().rx.stateDidChange
-      .asDriver(onErrorJustReturn: nil)
+    let user = reload
+      .asObservable()
+      .flatMapLatest { _ -> Observable<User?>  in
+        Auth.auth().rx.stateDidChange
+      }.asDriver(onErrorJustReturn: nil)
       .compactMap{ $0 }
     
     let phoneSetMode = Driver.combineLatest(reload, user) { _, user -> PhoneSetMode in
       user.phoneNumber == nil ? PhoneSetMode.NotSet: PhoneSetMode.Set
     }
     
-    let phoneNumber = Driver.combineLatest(reload, user) { _, user -> String? in
-      user.phoneNumber
-    }.compactMap{ $0 }
-    
+    let phoneNumber = Driver
+      .combineLatest(reload, user) { $1.phoneNumber ?? "" }
+      .debug()
+
     // CORRECT
     let correctPhoneNumber = Driver
       .of(input.phoneTextFieldText, phoneNumber)
@@ -122,7 +121,7 @@ class SetPhoneViewModel: Stepper {
       .map { $0.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression).count }
       .map { $0 == 11 }
     
-    let isOTPCodeValid = input.OTPCodeTextFieldText
+    let isOTPCodeValid = correctOTPCode
       .map{ $0.count == 6 }
     
     // IS ENABLED
@@ -153,7 +152,7 @@ class SetPhoneViewModel: Stepper {
       }.asDriver(onErrorJustReturn: ErrorType.DriverError)
         
     let signUpWithPhoneAttr = Driver
-      .combineLatest(verificationID, input.OTPCodeTextFieldText) { SignUpWithPhoneAttr(verificationID: $0, verificationCode: $1) }
+      .combineLatest(verificationID, correctOTPCode) { SignUpWithPhoneAttr(verificationID: $0, verificationCode: $1) }
       .debug()
     
     let credential = input.checkOTPCodeButtonClickTrigger
@@ -180,12 +179,25 @@ class SetPhoneViewModel: Stepper {
         return error
       }
     
+    let clearError = Driver
+      .of(
+        credential.map{ _ in ""},
+        successLink.map{ _ in ""}
+      ).merge()
+      .asDriver()
+    
     let errorText = Driver
-      .of (
+      .of(
         errorSendOTPCode,
         errorLink
       ).merge()
       .map{ $0.localizedDescription }
+    
+    let errorFinal = Driver
+      .of(
+        errorText,
+        clearError
+      ).merge()
     
     let navigateBack = input.backButtonClickTrigger
       .map { _ in self.steps.accept(AppStep.NavigateBack) }
@@ -194,7 +206,7 @@ class SetPhoneViewModel: Stepper {
       checkOTPCodeButtonIsEnabled: isOTPCodeValid,
       correctOTPCode: correctOTPCode,
       correctPhoneNumber: correctPhoneNumber,
-      errorText: errorText,
+      errorText: errorFinal,
       phoneSetMode: phoneSetMode,
       sendCodeButtonIsEnabled: sendCodeButtonIsEnabled,
       successLink: successLink,

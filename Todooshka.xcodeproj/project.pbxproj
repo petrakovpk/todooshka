@@ -226,12 +226,12 @@
 		9D42C04E28CF3338008F624F /* ChangeGenderSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C04D28CF3338008F624F /* ChangeGenderSectionModel.swift */; };
 		9D42C05028CF33A0008F624F /* ChangeGenderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C04F28CF33A0008F624F /* ChangeGenderItem.swift */; };
 		9D42C05328CF3514008F624F /* ChangeGenderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05228CF3514008F624F /* ChangeGenderCell.swift */; };
-		9D42C05528CF4F67008F624F /* ChangeEmailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05428CF4F67008F624F /* ChangeEmailViewModel.swift */; };
+		9D42C05528CF4F67008F624F /* SetEmailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05428CF4F67008F624F /* SetEmailViewModel.swift */; };
 		9D42C05728CF4F8B008F624F /* ChangePasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05628CF4F8B008F624F /* ChangePasswordViewModel.swift */; };
 		9D42C05928CF4F9B008F624F /* SetPhoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05828CF4F9B008F624F /* SetPhoneViewModel.swift */; };
 		9D42C05B28CF4FD9008F624F /* ChangePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05A28CF4FD9008F624F /* ChangePasswordViewController.swift */; };
 		9D42C05D28CF4FFB008F624F /* SetPhoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05C28CF4FFB008F624F /* SetPhoneViewController.swift */; };
-		9D42C05F28CF5427008F624F /* ChangeEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05E28CF5427008F624F /* ChangeEmailViewController.swift */; };
+		9D42C05F28CF5427008F624F /* SetEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05E28CF5427008F624F /* SetEmailViewController.swift */; };
 		9D42C06128D04E45008F624F /* AuthTextFieldType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C06028D04E45008F624F /* AuthTextFieldType.swift */; };
 		9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */; };
 		9D6B6B12284FEC46000ABAE7 /* BranchSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */; };
@@ -450,12 +450,12 @@
 		9D42C04D28CF3338008F624F /* ChangeGenderSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeGenderSectionModel.swift; sourceTree = "<group>"; };
 		9D42C04F28CF33A0008F624F /* ChangeGenderItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeGenderItem.swift; sourceTree = "<group>"; };
 		9D42C05228CF3514008F624F /* ChangeGenderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeGenderCell.swift; sourceTree = "<group>"; };
-		9D42C05428CF4F67008F624F /* ChangeEmailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewModel.swift; sourceTree = "<group>"; };
+		9D42C05428CF4F67008F624F /* SetEmailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetEmailViewModel.swift; sourceTree = "<group>"; };
 		9D42C05628CF4F8B008F624F /* ChangePasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordViewModel.swift; sourceTree = "<group>"; };
 		9D42C05828CF4F9B008F624F /* SetPhoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPhoneViewModel.swift; sourceTree = "<group>"; };
 		9D42C05A28CF4FD9008F624F /* ChangePasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordViewController.swift; sourceTree = "<group>"; };
 		9D42C05C28CF4FFB008F624F /* SetPhoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPhoneViewController.swift; sourceTree = "<group>"; };
-		9D42C05E28CF5427008F624F /* ChangeEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewController.swift; sourceTree = "<group>"; };
+		9D42C05E28CF5427008F624F /* SetEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetEmailViewController.swift; sourceTree = "<group>"; };
 		9D42C06028D04E45008F624F /* AuthTextFieldType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTextFieldType.swift; sourceTree = "<group>"; };
 		9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSceneModel.swift; sourceTree = "<group>"; };
@@ -859,12 +859,10 @@
 				9DFE70422899642800589DC5 /* Calendar */,
 				60C8343A26D7FC4C006E4FBE /* CalendarCell */,
 				9D42C04528CF29AE008F624F /* ChangeBirthday */,
-				9D42C04B28CF29E4008F624F /* ChangeEmail */,
 				9D42C04028CF283F008F624F /* ChangeGender */,
 				9D42C05128CF3502008F624F /* ChangeGenderItem */,
 				9D42C03B28CF22F8008F624F /* ChangeName */,
 				9D42C04C28CF29EA008F624F /* ChangePassword */,
-				9D42C04A28CF29D7008F624F /* SetPhone */,
 				60C8343D26D80615006E4FBE /* ConfirmRemoveTask */,
 				6053F86228213BD00047C204 /* DeletedTaskTypeList */,
 				9DE960832861068A00E5981A /* Diamond */,
@@ -878,6 +876,8 @@
 				60D5662926CC2C8000D865DD /* OnboardingCell */,
 				9D42BF6B28C76A5A008F624F /* Password */,
 				60A2F49526EE52DB00C328C1 /* RemoveConfirmation */,
+				9D42C04B28CF29E4008F624F /* SetEmail */,
+				9D42C04A28CF29D7008F624F /* SetPhone */,
 				6022899C267B55F900E9429A /* Settings */,
 				6087D57D26E1F6C8008F018F /* SettingsCell */,
 				60FFF65527A9A5A800290331 /* Shop */,
@@ -1207,13 +1207,13 @@
 			path = SetPhone;
 			sourceTree = "<group>";
 		};
-		9D42C04B28CF29E4008F624F /* ChangeEmail */ = {
+		9D42C04B28CF29E4008F624F /* SetEmail */ = {
 			isa = PBXGroup;
 			children = (
-				9D42C05E28CF5427008F624F /* ChangeEmailViewController.swift */,
-				9D42C05428CF4F67008F624F /* ChangeEmailViewModel.swift */,
+				9D42C05E28CF5427008F624F /* SetEmailViewController.swift */,
+				9D42C05428CF4F67008F624F /* SetEmailViewModel.swift */,
 			);
-			path = ChangeEmail;
+			path = SetEmail;
 			sourceTree = "<group>";
 		};
 		9D42C04C28CF29EA008F624F /* ChangePassword */ = {
@@ -1492,7 +1492,7 @@
 				9DE96087286106AB00E5981A /* FeatherViewModel.swift in Sources */,
 				60AE9DB72652F72C00E51531 /* PreferencesService.swift in Sources */,
 				602EA052274E67F000525D6C /* TDAuthTextField.swift in Sources */,
-				9D42C05528CF4F67008F624F /* ChangeEmailViewModel.swift in Sources */,
+				9D42C05528CF4F67008F624F /* SetEmailViewModel.swift in Sources */,
 				603EC53B26E8913500B39FB7 /* TaskTypeListCollectionViewCellModel.swift in Sources */,
 				60ED958427B53084005ACC33 /* TaskCoreData+CoreDataClass.swift in Sources */,
 				9D42C03A28CF22AB008F624F /* UserProfileData.swift in Sources */,
@@ -1522,7 +1522,7 @@
 				60F0719526DA70740048AB71 /* UIViewControllers.swift in Sources */,
 				60AE9DB02652F5B600E51531 /* AppFlow.swift in Sources */,
 				60ED958127B53084005ACC33 /* TypeCoreData+CoreDataProperties.swift in Sources */,
-				9D42C05F28CF5427008F624F /* ChangeEmailViewController.swift in Sources */,
+				9D42C05F28CF5427008F624F /* SetEmailViewController.swift in Sources */,
 				604257672677AAA0005A518C /* SettingsViewController.swift in Sources */,
 				9D42C04E28CF3338008F624F /* ChangeGenderSectionModel.swift in Sources */,
 				607BCB6226E62E59000A8248 /* TaskTypeViewModel.swift in Sources */,
