@@ -8,9 +8,9 @@
 import Foundation
 
 struct UserProfileData {
-  let birthday: String?
-  let email: String?
-  let gender: Gender?
-  let name: String?
-  let phone: String?
+  var birthday: String
+  var email: String
+  var gender: Gender
+  var name: String
+  var phone: String
 }

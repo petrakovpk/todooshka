@@ -74,11 +74,11 @@ class LoginViewController: UIViewController {
     return button
   }()
   
-  fileprivate let emailTextField = TDAuthTextField(customPlaceholder: "Email", imageName: "sms")
-  fileprivate let passwordTextField = TDAuthTextField(customPlaceholder: "Password", imageName: "lock")
-  fileprivate let repeatPasswordTextField = TDAuthTextField(customPlaceholder: "Repeat Password", imageName: "lock")
-  fileprivate let phoneTextField = TDAuthTextField(customPlaceholder: "Номер телефона", imageName: "call")
-  fileprivate let OTPCodeTextField = TDAuthTextField(customPlaceholder: "SMS код", imageName: "lock")
+  fileprivate let emailTextField = TDAuthTextField(type: .Email)
+  fileprivate let passwordTextField = TDAuthTextField(type: .Password)
+  fileprivate let repeatPasswordTextField = TDAuthTextField(type: .RepeatPassword)
+  fileprivate let phoneTextField = TDAuthTextField(type: .Phone)
+  fileprivate let OTPCodeTextField = TDAuthTextField(type: .OTPCode)
   
   fileprivate let resetPasswordButton: UIButton = {
     let button = UIButton(type: .system)
@@ -186,12 +186,11 @@ class LoginViewController: UIViewController {
     rightDividerView.anchor(top: phoneButton.bottomAnchor, left: phoneButton.leftAnchor, right: view.rightAnchor, heightConstant: 1)
     
     // emailTextField
-    emailTextField.returnKeyType = .done
+    
     emailTextField.anchor(top: emailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 54)
     
     // passwordTextField
-    passwordTextField.isSecureTextEntry = true
-    passwordTextField.returnKeyType = .done
+   
     passwordTextField.anchor(top: emailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 54)
     
     // resetPasswordButton
@@ -201,17 +200,15 @@ class LoginViewController: UIViewController {
     sendOTPCodeButton.anchor(top: passwordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 54)
     
     // phoneTextField
-    phoneTextField.keyboardType = .numberPad
-    phoneTextField.placeholder = "+X (XXX) XXX XX XX"
+    
     phoneTextField.anchor(top: emailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 54)
     
     // codeTextField
-    OTPCodeTextField.keyboardType = .numberPad
+    
     OTPCodeTextField.anchor(top: emailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 54)
     
     // repeatPasswordTextField
-    repeatPasswordTextField.isSecureTextEntry = true
-    repeatPasswordTextField.returnKeyType = .done
+    
     repeatPasswordTextField.anchor(top: emailTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 54)
     
     // nextButton
@@ -271,7 +268,6 @@ class LoginViewController: UIViewController {
   
   var setSendOTPCodeButtonClickSuccessBinder: Binder<String> {
     return Binder(self, binding: { (vc, text) in
-      print("1234 УРА", text)
       vc.sendOTPCodeButton.setTitle(text, for: .normal)
     })
   }
@@ -362,6 +358,7 @@ class LoginViewController: UIViewController {
         vc.resetPasswordButton.isHidden = true
         vc.sendOTPCodeButton.isHidden = false 
         vc.OTPCodeTextField.becomeFirstResponder()
+        vc.OTPCodeTextField.clear()
         vc.sendOTPCodeButton.setTitle("Отправить код повторно", for: .normal)
       }
     })

@@ -73,7 +73,9 @@ class ChangeBirthdayViewModel: Stepper {
       }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .map{ _ in () }
     
-    let navigateBack = input.backButtonClickTrigger
+    let navigateBack = Driver
+      .of(input.backButtonClickTrigger, input.saveButtonClickTrigger)
+      .merge()
       .map { _ in self.steps.accept(AppStep.NavigateBack) }
     
     return Output(

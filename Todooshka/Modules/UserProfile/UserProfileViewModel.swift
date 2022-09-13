@@ -36,43 +36,50 @@ class UserProfileViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    let currentUser = Auth.auth().rx.stateDidChange
+    let user = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
     
-    let data = currentUser
+    let data = user
       .compactMap{ $0 }
       .asObservable()
       .flatMapLatest { user -> Observable<DataSnapshot> in
         Database.database().reference().child("USERS").child(user.uid).child("PERSONAL").rx.observeEvent(.value)
-      }.map { snapshot -> NSDictionary? in
+      }.compactMap { snapshot -> NSDictionary? in
         guard let value = snapshot.value as? NSDictionary else { return nil }
         return value
       }.map { data -> UserProfileData in
         var birthday = "Не указано"
         
-        if let timeInterval = data?["birthday"] as? Double {
+        if let timeInterval = data["birthday"] as? Double {
           birthday = Date(timeIntervalSince1970: timeInterval).string(withFormat: "dd MMMM yyyy")
         }
-
+        
         return UserProfileData(
           birthday: birthday,
-          email: data?["email"] as? String,
-          gender: Gender(rawValue: data?["gender"] as? String ?? Gender.Other.rawValue),
-          name: data?["name"] as? String,
-          phone: data?["phone"] as? String)
-      }
+          email: "",
+          gender: Gender(rawValue: data["gender"] as? String ?? Gender.Other.rawValue) ?? Gender.Other,
+          name: data["name"] as? String ?? "Главный герой",
+          phone: ""
+        )}.withLatestFrom(user) { userProfileData, user -> UserProfileData in
+          UserProfileData(
+            birthday: userProfileData.birthday,
+            email: user?.email ?? "",
+            gender: userProfileData.gender ,
+            name: userProfileData.name,
+            phone: user?.phoneNumber ?? "")
+        }.startWith(UserProfileData(birthday: "", email: "", gender: Gender.Other, name: "", phone: ""))
     
     let dataSource = data
       .map { data -> [UserProfileSectionModel] in
         [
           UserProfileSectionModel(header: "Личная информация", items: [
-            UserProfileItem(type: .Name, leftText: "Имя", rightText: data.name ?? "" ),
-            UserProfileItem(type: .Gender, leftText: "Пол", rightText: data.gender?.rawValue ?? "" ),
-            UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: data.birthday ?? "" )]),
+            UserProfileItem(type: .Name, leftText: "Имя", rightText: data.name),
+            UserProfileItem(type: .Gender, leftText: "Пол", rightText: data.gender.rawValue ),
+            UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: data.birthday )]),
           
           UserProfileSectionModel(header: "Вход в приложение", items: [
-            UserProfileItem(type: .Phone, leftText: "Телефон", rightText: ""),
-            UserProfileItem(type: .Email, leftText: "Email", rightText: ""),
+            UserProfileItem(type: .Phone, leftText: "Телефон", rightText: data.phone),
+            UserProfileItem(type: .Email, leftText: "Email", rightText: data.email),
             UserProfileItem(type: .Password, leftText: "Пароль", rightText: "Cменить пароль")]),
           
           UserProfileSectionModel(header: "История покупок", items: [])
@@ -98,11 +105,11 @@ class UserProfileViewModel: Stepper {
         }
       }
     
-    let title = currentUser
+    let title = user
       .map { $0?.displayName ?? "Герой без имени" }
       .asDriver(onErrorJustReturn: "Герой без имени")
     
-    let navigateBackIfUserLoggedOff = currentUser
+    let navigateBackIfUserLoggedOff = user
       .filter { $0 == nil }
       .map{ _ in () }
     

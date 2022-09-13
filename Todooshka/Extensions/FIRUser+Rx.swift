@@ -320,13 +320,13 @@ extension Reactive where Base: User {
      
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all FIRUser methods.
      */
-    public func linkAndRetrieveData(with credential: AuthCredential) -> Observable<AuthDataResult> {
+    public func linkAndRetrieveData(with credential: AuthCredential) -> Observable<Result<AuthDataResult, Error>> {
         return Observable.create { observer in
             self.base.link(with: credential) { result, error in
                 if let error = error {
-                    observer.onError(error)
+                  observer.onNext(.failure(error))
                 } else if let result = result {
-                    observer.onNext(result)
+                  observer.onNext(.success(result))
                     observer.onCompleted()
                 }
             }

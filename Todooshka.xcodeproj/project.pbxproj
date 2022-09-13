@@ -228,10 +228,11 @@
 		9D42C05328CF3514008F624F /* ChangeGenderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05228CF3514008F624F /* ChangeGenderCell.swift */; };
 		9D42C05528CF4F67008F624F /* ChangeEmailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05428CF4F67008F624F /* ChangeEmailViewModel.swift */; };
 		9D42C05728CF4F8B008F624F /* ChangePasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05628CF4F8B008F624F /* ChangePasswordViewModel.swift */; };
-		9D42C05928CF4F9B008F624F /* ChangePhoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05828CF4F9B008F624F /* ChangePhoneViewModel.swift */; };
+		9D42C05928CF4F9B008F624F /* SetPhoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05828CF4F9B008F624F /* SetPhoneViewModel.swift */; };
 		9D42C05B28CF4FD9008F624F /* ChangePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05A28CF4FD9008F624F /* ChangePasswordViewController.swift */; };
-		9D42C05D28CF4FFB008F624F /* ChangePhoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05C28CF4FFB008F624F /* ChangePhoneViewController.swift */; };
+		9D42C05D28CF4FFB008F624F /* SetPhoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05C28CF4FFB008F624F /* SetPhoneViewController.swift */; };
 		9D42C05F28CF5427008F624F /* ChangeEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05E28CF5427008F624F /* ChangeEmailViewController.swift */; };
+		9D42C06128D04E45008F624F /* AuthTextFieldType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C06028D04E45008F624F /* AuthTextFieldType.swift */; };
 		9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */; };
 		9D6B6B12284FEC46000ABAE7 /* BranchSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */; };
 		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
@@ -451,10 +452,11 @@
 		9D42C05228CF3514008F624F /* ChangeGenderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeGenderCell.swift; sourceTree = "<group>"; };
 		9D42C05428CF4F67008F624F /* ChangeEmailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewModel.swift; sourceTree = "<group>"; };
 		9D42C05628CF4F8B008F624F /* ChangePasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordViewModel.swift; sourceTree = "<group>"; };
-		9D42C05828CF4F9B008F624F /* ChangePhoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePhoneViewModel.swift; sourceTree = "<group>"; };
+		9D42C05828CF4F9B008F624F /* SetPhoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPhoneViewModel.swift; sourceTree = "<group>"; };
 		9D42C05A28CF4FD9008F624F /* ChangePasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordViewController.swift; sourceTree = "<group>"; };
-		9D42C05C28CF4FFB008F624F /* ChangePhoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePhoneViewController.swift; sourceTree = "<group>"; };
+		9D42C05C28CF4FFB008F624F /* SetPhoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPhoneViewController.swift; sourceTree = "<group>"; };
 		9D42C05E28CF5427008F624F /* ChangeEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewController.swift; sourceTree = "<group>"; };
+		9D42C06028D04E45008F624F /* AuthTextFieldType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTextFieldType.swift; sourceTree = "<group>"; };
 		9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSceneModel.swift; sourceTree = "<group>"; };
 		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
@@ -667,6 +669,7 @@
 		604D1F7827ADB0E200E05D09 /* Enums */ = {
 			isa = PBXGroup;
 			children = (
+				9D42C06028D04E45008F624F /* AuthTextFieldType.swift */,
 				60E970352823F13700577484 /* BirdActionType.swift */,
 				6053F86C2822DAE90047C204 /* BirdState.swift */,
 				600935672804708E0028C9AA /* BirdStyle.swift */,
@@ -861,7 +864,7 @@
 				9D42C05128CF3502008F624F /* ChangeGenderItem */,
 				9D42C03B28CF22F8008F624F /* ChangeName */,
 				9D42C04C28CF29EA008F624F /* ChangePassword */,
-				9D42C04A28CF29D7008F624F /* ChangePhone */,
+				9D42C04A28CF29D7008F624F /* SetPhone */,
 				60C8343D26D80615006E4FBE /* ConfirmRemoveTask */,
 				6053F86228213BD00047C204 /* DeletedTaskTypeList */,
 				9DE960832861068A00E5981A /* Diamond */,
@@ -1195,13 +1198,13 @@
 			path = ChangeBirthday;
 			sourceTree = "<group>";
 		};
-		9D42C04A28CF29D7008F624F /* ChangePhone */ = {
+		9D42C04A28CF29D7008F624F /* SetPhone */ = {
 			isa = PBXGroup;
 			children = (
-				9D42C05C28CF4FFB008F624F /* ChangePhoneViewController.swift */,
-				9D42C05828CF4F9B008F624F /* ChangePhoneViewModel.swift */,
+				9D42C05C28CF4FFB008F624F /* SetPhoneViewController.swift */,
+				9D42C05828CF4F9B008F624F /* SetPhoneViewModel.swift */,
 			);
-			path = ChangePhone;
+			path = SetPhone;
 			sourceTree = "<group>";
 		};
 		9D42C04B28CF29E4008F624F /* ChangeEmail */ = {
@@ -1419,12 +1422,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				60A2F49426EE4E5B00C328C1 /* TaskTypeListCollectionReusableViewCell.swift in Sources */,
-				9D42C05928CF4F9B008F624F /* ChangePhoneViewModel.swift in Sources */,
+				9D42C05928CF4F9B008F624F /* SetPhoneViewModel.swift in Sources */,
 				60ED958327B53084005ACC33 /* TaskCoreData+CoreDataProperties.swift in Sources */,
 				9D42C03228CF0E98008F624F /* UserProfileSectionModel.swift in Sources */,
 				9D42C03D28CF245F008F624F /* ChangeNameViewContoller.swift in Sources */,
 				600DA58B27FED471004A4634 /* Icon.swift in Sources */,
 				6006F82927AA6BF100E5AE9E /* ShopCollectionViewCell.swift in Sources */,
+				9D42C06128D04E45008F624F /* AuthTextFieldType.swift in Sources */,
 				60227A0827AD299200DA7572 /* TasksService.swift in Sources */,
 				60FA513F26D806BA007B3B36 /* ConfirmRemoveTaskViewController.swift in Sources */,
 				60FFF65727A9A5D800290331 /* ShopViewController.swift in Sources */,
@@ -1433,7 +1437,7 @@
 				9D42C01F28CB426A008F624F /* UserProfileViewController.swift in Sources */,
 				6006F83827AA8EEA00E5AE9E /* BirdViewModel.swift in Sources */,
 				60FA514126D806CC007B3B36 /* ConfirmRemoveTaskViewModel.swift in Sources */,
-				9D42C05D28CF4FFB008F624F /* ChangePhoneViewController.swift in Sources */,
+				9D42C05D28CF4FFB008F624F /* SetPhoneViewController.swift in Sources */,
 				60ED958F27B5A2EA005ACC33 /* BirdService.swift in Sources */,
 				60819A172705A49F0067AF05 /* TDViewController.swift in Sources */,
 				60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */,

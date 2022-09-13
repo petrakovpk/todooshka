@@ -19,6 +19,7 @@ class ChangeEmailViewController: TDViewController {
   public var viewModel: ChangeEmailViewModel!
   
   // MARK: - UI Elemenets
+  private let emailTextField = TDAuthTextField(type: .Phone)
   
   // MARK: - Lifecycle
   override func viewDidLoad() {

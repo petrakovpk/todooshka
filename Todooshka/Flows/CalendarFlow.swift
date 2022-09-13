@@ -271,8 +271,8 @@ class CalendarFlow: Flow {
   }
   
   private func navigateToChangingPhone() -> FlowContributors {
-    let viewController = ChangePhoneViewController()
-    let viewModel = ChangePhoneViewModel(services: services)
+    let viewController = SetPhoneViewController()
+    let viewModel = SetPhoneViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

@@ -255,7 +255,7 @@ class LoginViewModel: Stepper {
       .withLatestFrom(input.phoneTextFieldText) {
         "+" + $1.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
       }.asObservable()
-      .flatMapLatest { phone -> Observable<Result<String,Error>> in
+      .flatMapLatest { phone  in
         PhoneAuthProvider.provider().rx.verifyPhoneNumber(phone)
       }
     
