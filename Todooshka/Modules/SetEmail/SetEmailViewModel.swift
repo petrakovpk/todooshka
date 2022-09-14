@@ -126,7 +126,7 @@ class SetEmailViewModel: Stepper {
       .asObservable()
       .flatMapLatest{ (user, email) -> Observable<Result<Void, Error>>  in
         user.rx.updateEmail(to: email)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      }.debug().asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
     let setNewEmailTryError = setNewEmailTry
       .compactMap { result -> Error? in
@@ -146,6 +146,7 @@ class SetEmailViewModel: Stepper {
     let setError = Driver
       .of(sendEmailVerificationError, setNewEmailTryError)
       .merge()
+      .debug()
       .map{ $0.localizedDescription }
     
     let clearEror = Driver
@@ -153,7 +154,9 @@ class SetEmailViewModel: Stepper {
       .merge()
       .map{ "" }
     
-    let errorText = Driver.of(setError, clearEror).merge()
+    let errorText = Driver
+      .of(setError, clearEror)
+      .merge()
     
     return Output(
       emailLabelText: emailLabelText,

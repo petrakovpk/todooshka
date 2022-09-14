@@ -135,7 +135,8 @@ class SetEmailViewController: TDViewController {
       outputs.sendEmailVerification.drive(),
       outputs.sendVerificationEmailButtonIsEnabled.drive(sendVerificationEmailButtonIsEnabledBinder),
       outputs.setNewEmailButtonIsEnabled.drive(setNewEmailButtonIsEnabledBinder),
-      outputs.setNewEmail.drive(setNewEmailBinder)
+      outputs.setNewEmail.drive(setNewEmailBinder),
+      outputs.errorText.drive(errorTextView.rx.text)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }

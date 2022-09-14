@@ -130,7 +130,7 @@ class SetPhoneViewController: TDViewController {
       outputs.sendCodeButtonIsEnabled.drive(sendCodeButtonIsEnabledBinder),
       outputs.successLink.drive(successLinkBinder),
       outputs.navigateBack.drive(),
-      outputs.errorText.drive(errorTextView.rx.text)
+      
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
