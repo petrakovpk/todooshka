@@ -12,13 +12,26 @@ class TDViewController: UIViewController {
   //MARK: - UI Elements
   public let titleLabel = UILabel()
   public let headerView = UIView()
-  public let backButton = UIButton(type: .custom)
+  
+  public let backButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
+    button.tintColor = Theme.App.text
+    return button
+  }()
   
   public let saveButton: UIButton = {
-    let button = UIButton(type: .custom)
+    let button = UIButton(type: .system)
     button.setImage(UIImage(named: "tick-round")?.original, for: .normal)
-    button.semanticContentAttribute = .forceRightToLeft
-    button.layer.isHidden = true
+    button.isHidden = true
+    return button
+  }()
+  
+  public let refreshButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.setImage(UIImage(named: "rotate-right")?.template, for: .normal)
+    button.tintColor = Theme.App.text
+    button.isHidden = true
     return button
   }()
   
@@ -35,18 +48,23 @@ class TDViewController: UIViewController {
   private func configureHeader() {
     
     //adding
-    view.addSubview(safeAreaHeaderView)
-    view.addSubview(headerView)
+    view.addSubviews([
+      safeAreaHeaderView,
+      headerView
+    ])
     
     // view
     view.backgroundColor = Theme.App.background
     
     // headerView
-    headerView.addSubview(backButton)
-    headerView.addSubview(saveButton)
-    headerView.addSubview(titleLabel)
-    headerView.addSubview(dividerView)
-    
+    headerView.addSubviews([
+      backButton,
+      saveButton,
+      titleLabel,
+      dividerView,
+      refreshButton
+    ])
+
     // safeAreaHeaderView
     safeAreaHeaderView.backgroundColor = Theme.App.Header.background
     safeAreaHeaderView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor)
@@ -56,11 +74,14 @@ class TDViewController: UIViewController {
     headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: 55.adjusted)
     
     // backButton
-    backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
+    
     backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
     // saveButton
     saveButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
+    
+    // refreshButton
+    refreshButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
     // titleLabel
     titleLabel.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
@@ -71,8 +92,5 @@ class TDViewController: UIViewController {
     // dividerView
     dividerView.backgroundColor = Theme.App.Header.dividerBackground
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
-    
-    // backButton
-    backButton.imageView?.tintColor = Theme.App.text
   }
 }

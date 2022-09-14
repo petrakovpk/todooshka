@@ -41,16 +41,27 @@ class SetEmailViewController: TDViewController {
     return label
   }()
   
-  private let changeEmailButton: UIButton = {
+  private let setNewEmailButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 13
     button.setTitle("Установить новый email", for: .normal)
     return button
   }()
   
-  
   private let currentEmailTextField = TDAuthTextField(type: .Email)
   private let newEmailTextField = TDAuthTextField(type: .Email)
+  
+  private let errorTextView: UITextView = {
+    let textView = UITextView()
+    textView.textAlignment = .center
+    textView.isEditable = false
+    textView.isSelectable = false
+    textView.font = UIFont.systemFont(ofSize: 12, weight: .light)
+    textView.textColor = UIColor(red: 0.937, green: 0.408, blue: 0.322, alpha: 1)
+    textView.backgroundColor = .clear
+    return textView
+  }()
+  
   
   // MARK: - Lifecycle
   override func viewDidLoad() {
@@ -61,6 +72,10 @@ class SetEmailViewController: TDViewController {
   
   // MARK: - Configure UI
   func configureUI() {
+    
+    // settings
+    refreshButton.isHidden = false
+    
     // adding
     view.addSubviews([
       currentEmailLabel,
@@ -68,7 +83,8 @@ class SetEmailViewController: TDViewController {
       sendVerificationEmailButton,
       newEmailLabel,
       newEmailTextField,
-      changeEmailButton
+      setNewEmailButton,
+      errorTextView
     ])
     
     //  header
@@ -91,7 +107,10 @@ class SetEmailViewController: TDViewController {
     newEmailTextField.anchor(top: newEmailLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
 
     // changeEmailButton
-    changeEmailButton.anchor(top: newEmailTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16,  heightConstant: 50)
+    setNewEmailButton.anchor(top: newEmailTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16,  heightConstant: 50)
+    
+    // errorTextView
+    errorTextView.anchor(top: setNewEmailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
   }
   
   
@@ -100,8 +119,11 @@ class SetEmailViewController: TDViewController {
     
     let input = SetEmailViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      emailTextFieldText: currentEmailTextField.rx.text.orEmpty.asDriver(),
-      sendVerificationEmailButtonClick: sendVerificationEmailButton.rx.tap.asDriver()
+      currentEmailTextFieldText: currentEmailTextField.rx.text.orEmpty.asDriver(),
+      newEmailTextFieldText: newEmailTextField.rx.text.orEmpty.asDriver(),
+      refreshButtonClickTrigger: refreshButton.rx.tap.asDriver(),
+      sendVerificationEmailButtonClick: sendVerificationEmailButton.rx.tap.asDriver(),
+      setNewEmailButtonClickTrigger: setNewEmailButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
@@ -111,7 +133,9 @@ class SetEmailViewController: TDViewController {
       outputs.emailTextFieldText.drive(currentEmailTextField.rx.text),
       outputs.navigateBack.drive(),
       outputs.sendEmailVerification.drive(),
-      outputs.sendVerificationEmailButtonIsEnabled.drive(sendVerificationEmailButtonIsEnabledBinder)
+      outputs.sendVerificationEmailButtonIsEnabled.drive(sendVerificationEmailButtonIsEnabledBinder),
+      outputs.setNewEmailButtonIsEnabled.drive(setNewEmailButtonIsEnabledBinder),
+      outputs.setNewEmail.drive(setNewEmailBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
@@ -123,5 +147,21 @@ class SetEmailViewController: TDViewController {
       vc.sendVerificationEmailButton.isEnabled = isEnabled
     })
   }
+  
+  var setNewEmailButtonIsEnabledBinder: Binder<Bool> {
+    return Binder(self, binding: { (vc, isEnabled) in
+      vc.setNewEmailButton.backgroundColor = isEnabled ? Palette.SingleColors.BlueRibbon : Palette.DualColors.Mischka_205_205_223_
+      vc.setNewEmailButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.setNewEmailButton.isEnabled = isEnabled
+    })
+  }
+  
+  var setNewEmailBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.newEmailTextField.clear()
+      vc.newEmailTextField.insertText("")
+    })
+  }
+  
 }
 
