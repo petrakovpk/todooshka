@@ -15,8 +15,7 @@ enum AppStep: Step {
   // Auth
   case AuthIsRequired
   case AuthIsCompleted
-  case CreateAccountIsRequired
-  case LogInIsRequired
+  case AuthWithEmailOrPhoneInIsRequired
   
   // Logout
   case LogoutIsRequired

@@ -28,17 +28,17 @@ class AuthViewModel: Stepper {
   
   struct Input {
     let appleButtonClickTrigger: Driver<Void>
-    let createAccountButtonClickTrigger: Driver<Void>
+    let emailOrPhoneAccountButtonClickTrigger: Driver<Void>
     let googleButtonClickTrigger: Driver<UIViewController>
-    let logInButtonClickTrigger: Driver<Void>
+  //  let logInButtonClickTrigger: Driver<Void>
     let skipButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
     let appleGetNonceString: Driver<String>
     let auth: Driver<Void>
-    let createAccount: Driver<Void>
-    let logIn: Driver<Void>
+    let authWithEmailOrPhone: Driver<Void>
+   // let logIn: Driver<Void>
     let skip: Driver<Void>
   }
   
@@ -104,11 +104,11 @@ class AuthViewModel: Stepper {
       .asDriver(onErrorJustReturn: ())
 
     
-    let createAccount = input.createAccountButtonClickTrigger
-      .map { self.steps.accept(AppStep.CreateAccountIsRequired) }
+    let authWithEmailOrPhone = input.emailOrPhoneAccountButtonClickTrigger
+      .map { self.steps.accept(AppStep.AuthWithEmailOrPhoneInIsRequired) }
     
-    let logIn = input.logInButtonClickTrigger
-      .map { self.steps.accept(AppStep.LogInIsRequired) }
+//    let logIn = input.logInButtonClickTrigger
+//      .map { self.steps.accept(AppStep.LogInIsRequired) }
     
     let skip = input.skipButtonClickTrigger
       .map { self.steps.accept(AppStep.AuthIsCompleted) }
@@ -116,8 +116,8 @@ class AuthViewModel: Stepper {
     return Output(
       appleGetNonceString: appleGetNonceString,
       auth: updateUserData,
-      createAccount: createAccount,
-      logIn: logIn,
+      authWithEmailOrPhone: authWithEmailOrPhone,
+     // logIn: logIn,
       skip: skip
     )
   }

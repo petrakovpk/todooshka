@@ -51,12 +51,12 @@ class AuthViewController: UIViewController {
     return textView
   }()
   
-  private let createAccountButton: UIButton = {
+  private let emailOrPhoneAccountButton: UIButton = {
     let button = UIButton(type: .custom)
     button.cornerRadius = 25
     button.backgroundColor = .white
     button.setTitleColor(UIColor(red: 0.039, green: 0.047, blue: 0.137, alpha: 1), for: .normal)
-    let attrString = NSAttributedString(string: "Создать аккаунт через почту / телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
+    let attrString = NSAttributedString(string: "Войти через почту / телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
@@ -89,15 +89,15 @@ class AuthViewController: UIViewController {
     return button
   }()
   
-  private let loginButton: UIButton = {
-    let button = UIButton(type: .custom)
-    button.backgroundColor = .white
-    button.setTitleColor(UIColor(red: 0.039, green: 0.047, blue: 0.137, alpha: 1), for: .normal)
-    button.cornerRadius = 25
-    let attrString = NSAttributedString(string: "Войти в аккаунт через почту / телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
-    button.setAttributedTitle(attrString, for: .normal)
-    return button
-  }()
+//  private let loginButton: UIButton = {
+//    let button = UIButton(type: .custom)
+//    button.backgroundColor = .white
+//    button.setTitleColor(UIColor(red: 0.039, green: 0.047, blue: 0.137, alpha: 1), for: .normal)
+//    button.cornerRadius = 25
+//    let attrString = NSAttributedString(string: "Войти в аккаунт через почту / телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
+//    button.setAttributedTitle(attrString, for: .normal)
+//    return button
+//  }()
   
   private let privacyButton: UIButton = {
     let button = UIButton(type: .custom)
@@ -120,11 +120,11 @@ class AuthViewController: UIViewController {
     view.addSubview(headerLabel)
     view.addSubview(secondHeaderLabel)
     view.addSubview(headerDescriptionTextView)
-    view.addSubview(createAccountButton)
+    view.addSubview(emailOrPhoneAccountButton)
     view.addSubview(appleButton)
     view.addSubview(googleButton)
     view.addSubview(skipButton)
-    view.addSubview(loginButton)
+    // view.addSubview(loginButton)
     // view.addSubview(privacyButton)
     
     // view
@@ -143,10 +143,10 @@ class AuthViewController: UIViewController {
     headerDescriptionTextView.anchorCenterXToSuperview()
     
     // createButton
-    createAccountButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 71, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    emailOrPhoneAccountButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 71, leftConstant: 16, rightConstant: 16, heightConstant: 50)
     
     // appleButton
-    appleButton.anchor(top: createAccountButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    appleButton.anchor(top: emailOrPhoneAccountButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 50)
     
     // googleButton
     googleButton.anchor(top: appleButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 50)
@@ -156,7 +156,7 @@ class AuthViewController: UIViewController {
     skipButton.anchorCenterXToSuperview()
     
     // loginButton
-    loginButton.anchor(top: skipButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 60, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+   // loginButton.anchor(top: skipButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 60, leftConstant: 16, rightConstant: 16, heightConstant: 50)
     
     // privacyButton
   //  privacyButton.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, bottomConstant: 20)
@@ -168,9 +168,8 @@ class AuthViewController: UIViewController {
     
     let input = AuthViewModel.Input(
       appleButtonClickTrigger: appleButton.rx.tap.asDriver(),
-      createAccountButtonClickTrigger: createAccountButton.rx.tap.asDriver(),
+      emailOrPhoneAccountButtonClickTrigger: emailOrPhoneAccountButton.rx.tap.asDriver(),
       googleButtonClickTrigger: googleButton.rx.tap.asDriver().map { _ in self },
-      logInButtonClickTrigger: loginButton.rx.tap.asDriver(),
       skipButtonClickTrigger: skipButton.rx.tap.asDriver()
     )
     
@@ -179,13 +178,10 @@ class AuthViewController: UIViewController {
     [
       output.appleGetNonceString.drive(signInWithAppleBinder),
       output.auth.drive(),
-      output.createAccount.drive(),
-      output.logIn.drive(),
+      output.authWithEmailOrPhone.drive(),
       output.skip.drive()
     ]
       .forEach{ $0.disposed(by: disposeBag) }
-
-    //    loginButton.rx.tap.bind{ viewModel.loginButtonClick() }.disposed(by: disposeBag)
   }
   
   var signInWithAppleBinder: Binder<String> {

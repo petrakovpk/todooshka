@@ -34,10 +34,8 @@ class AuthFlow: Flow {
       return navigateToAuthScreen()
     case .AuthIsCompleted:
       return dismissAuthScreen()
-    case .CreateAccountIsRequired:
-      return navigateToCreateAccountScreen(isNewUser: true)
-    case .LogInIsRequired:
-      return navigateToCreateAccountScreen(isNewUser: false)
+    case .AuthWithEmailOrPhoneInIsRequired:
+      return navigateToAuthWithEmailOrPhoneAccountScreen()
     case .NavigateBack:
       return navigateBack()
     default:
@@ -54,9 +52,9 @@ class AuthFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToCreateAccountScreen(isNewUser: Bool) -> FlowContributors {
+  private func navigateToAuthWithEmailOrPhoneAccountScreen() -> FlowContributors {
     let viewController = LoginViewController()
-    let viewModel = LoginViewModel(services: services, isNewUser: isNewUser)
+    let viewModel = LoginViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)

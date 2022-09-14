@@ -32,7 +32,7 @@ struct SignUpWithPhoneAttr {
 class LoginViewModel: Stepper {
   
   //MARK: - Properties
-  let isNewUser: Bool
+//  let isNewUser: Bool
   let services: AppServices
   let steps = PublishRelay<Step>()
   
@@ -66,7 +66,7 @@ class LoginViewModel: Stepper {
     let errorText: Driver<String>
     let navigateBack: Driver<Void>
     let nextButtonIsEnabled: Driver<Bool>
-    let sendEmailVerification: Driver<Void>
+    let sendEmailVerification: Driver<Result<Void,Error>>
     let setLoginViewControllerStyle: Driver<LoginViewControllerStyle>
     let setFocusOnRepeatPasswordTextField: Driver<Void>
     let updateUserData: Driver<Void>
@@ -75,9 +75,9 @@ class LoginViewModel: Stepper {
   }
   
   //MARK: - Init
-  init(services: AppServices, isNewUser: Bool) {
+  init(services: AppServices) {
     self.services = services
-    self.isNewUser = isNewUser
+  //  self.isNewUser = isNewUser
   }
   
   func transform(input: Input) -> Output {
@@ -180,14 +180,24 @@ class LoginViewModel: Stepper {
     let signUpWithEmailAttr = Driver<SignUpWithEmailAttr>
       .combineLatest(input.emailTextFieldText, input.passwordTextFieldText) { SignUpWithEmailAttr(email: $0, password: $1) }
     
-    // REGISTER
-    let setRepeatPasswordStyle = next
+    let setPasswordOrRepeatPasswordStyle = next
       .withLatestFrom(loginViewControllerStyle)
-      .filter{ $0 == .Email && self.isNewUser }
+      .filter{ $0 == .Email }
       .withLatestFrom(isEmailValid)
       .filter{ $0 }
-      .map { _ in LoginViewControllerStyle.RepeatPassword }
+      .withLatestFrom(signUpWithEmailAttr)
+      .asObservable()
+      .flatMapLatest { attr -> Observable<[String]> in
+        print("1234", attr)
+        return Auth.auth().rx.fetchProviders(forEmail: attr.email)
+      }.debug()
+      .asDriver(onErrorJustReturn: [])
+      .map { providers -> LoginViewControllerStyle  in
+        providers.isEmpty ? .RepeatPassword : .Password
+      }
     
+    // REGISTER
+
     let createUserWithEmail = next
       .withLatestFrom(loginViewControllerStyle)
       .filter { $0 == .RepeatPassword }
@@ -206,9 +216,9 @@ class LoginViewModel: Stepper {
         guard case .success(let authDataResult) = result else { return nil }
         return authDataResult
       }.asObservable()
-      .flatMapLatest { result in
+      .flatMapLatest { result -> Observable<Result<Void,Error>> in
         result.user.rx.sendEmailVerification()
-      }.asDriver(onErrorJustReturn: ())
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
     let signUpWithEmail = createUserWithEmail
       .map { result -> Void in
@@ -217,15 +227,7 @@ class LoginViewModel: Stepper {
         default: return
         }
       }
-    
-    // LOG IN WITH EMAIL
-    let setPasswordStyle = next
-      .withLatestFrom(loginViewControllerStyle)
-      .filter{ $0 == .Email && self.isNewUser == false }
-      .withLatestFrom(isEmailValid)
-      .filter{ $0 }
-      .map { _ in LoginViewControllerStyle.Password }
-    
+
     let signInWithEmailCheckUser = next
       .withLatestFrom(loginViewControllerStyle)
       .filter { $0 == .Password}
@@ -350,8 +352,9 @@ class LoginViewModel: Stepper {
       setEmailStyle,
       setPhoneStyle,
       setEmailOrPhoneStyleWithBack,
-      setRepeatPasswordStyle,
-      setPasswordStyle,
+      setPasswordOrRepeatPasswordStyle,
+//      setRepeatPasswordStyle,
+//      setPasswordStyle,
       setOTPCodeStyle
     )
       .merge()

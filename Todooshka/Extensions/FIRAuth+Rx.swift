@@ -4,26 +4,28 @@
 //
 //  Created by Arnaud Dorgans on 29/08/2018.
 //
+
+import RxCocoa
 import RxSwift
 import FirebaseAuth
 
 extension Reactive where Base: Auth {
-  
+
   /**
    @brief Sets the currentUser on the calling Auth instance to the provided user object.
    @param  user The user object to be set as the current user of the calling Auth instance.
    @param completion Optionally; a block invoked after the user of the calling Auth instance has
    been updated or an error was encountered.
    */
-  public func updateCurrentUser(_ user: User) -> Observable<Void> {
+  public func updateCurrentUser(_ user: User) -> Observable<Result<Void,Error>> {
     return Observable.create { observer in
       self.base.updateCurrentUser(user) { error in
         guard let error = error else {
-          observer.onNext(())
+          observer.onNext(.success(()))
           observer.onCompleted()
           return
         }
-        observer.onError(error)
+        observer.onNext(.failure(error))
       }
       return Disposables.create()
     }

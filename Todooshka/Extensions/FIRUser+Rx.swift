@@ -38,15 +38,15 @@ extension Reactive where Base: User {
      
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all FIRUser methods.
      */
-    public func updateEmail(to email: String) -> Observable<Void> {
+    public func updateEmail(to email: String) -> Observable<Result<Void, Error>> {
         return Observable.create { observer in
             self.base.updateEmail(to: email) { error in
                 guard let error = error else {
-                    observer.onNext(())
+                  observer.onNext(.success(()))
                     observer.onCompleted()
                     return
                 }
-                observer.onError(error)
+              observer.onNext(.failure(error))
             }
             return Disposables.create()
         }
@@ -134,15 +134,15 @@ extension Reactive where Base: User {
      
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all API methods.
      */
-    public func reload() -> Observable<Void> {
+    public func reload() -> Observable<Result<Void,Error>> {
         return Observable.create { observer in
             self.base.reload { error in
                 guard let error = error else {
-                    observer.onNext(())
+                  observer.onNext(.success(()))
                     observer.onCompleted()
                     return
                 }
-                observer.onError(error)
+              observer.onNext(.failure(error))
             }
             return Disposables.create()
         }
@@ -384,15 +384,15 @@ extension Reactive where Base: User {
      
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all FIRUser methods.
      */
-    public func sendEmailVerification() -> Observable<Void> {
+    public func sendEmailVerification() -> Observable<Result<Void,Error>> {
         return Observable.create { observer in
             self.base.sendEmailVerification { error in
                 guard let error = error else {
-                    observer.onNext(())
+                  observer.onNext(.success(()))
                     observer.onCompleted()
                     return
                 }
-                observer.onError(error)
+              observer.onNext(.failure(error))
             }
             return Disposables.create()
         }

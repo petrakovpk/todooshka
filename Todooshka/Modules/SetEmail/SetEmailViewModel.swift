@@ -17,11 +17,16 @@ class SetEmailViewModel: Stepper {
 
   struct Input {
     let backButtonClickTrigger: Driver<Void>
+    let emailTextFieldText: Driver<String>
+    let sendVerificationEmailButtonClick: Driver<Void>
   }
   
   struct Output {
     let emailLabelText: Driver<String>
+    let emailTextFieldText: Driver<String>
     let navigateBack: Driver<Void>
+    let sendEmailVerification: Driver<Result<Void,Error>>
+    let sendVerificationEmailButtonIsEnabled: Driver<Bool>
   }
   
   //MARK: - Init
@@ -31,25 +36,57 @@ class SetEmailViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    let user = Auth.auth().rx.stateDidChange
-      .asDriver(onErrorJustReturn: nil)
-      .compactMap{ $0 }
+    let user = Driver<User?>
+      .of(Auth.auth().currentUser)
+      .compactMap { $0 }
     
     let email = user
-      .map{ $0.email }
+      .compactMap{ $0.email }
     
     let isEmailVerified = user
       .map{ $0.isEmailVerified }
+      .debug()
     
     let emailLabelText = isEmailVerified
-      .map{ $0 ? "У вас уже есть подвтержденный email" : "Введите Email и подтвердите его" }
-     
+      .map{ $0 ? "Ваш основной email (подтвержден)" : "Ваш основной email (не подтвержден)" }
+
+    let emailTextFieldText = email
+    
+    // IS VALID
+    let isEmailValid = Driver.of(input.emailTextFieldText, email)
+      .merge()
+      .map { email -> Bool in
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPred = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
+        return emailPred.evaluate(with: email)
+      }
+    
+    let sendEmailVerification = input.sendVerificationEmailButtonClick
+      .withLatestFrom(isEmailValid) { $1 }
+      .filter{ $0 }
+      .withLatestFrom(input.emailTextFieldText) { $1 }
+      .debug()
+      .withLatestFrom(user){ ($0, $1) }.asObservable()
+      .flatMapLatest { (email, user) -> Observable<Result<Void,Error>>  in
+        user.rx.sendEmailVerification()
+      }.debug()
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      
+    
+    let sendVerificationEmailButtonIsEnabled = Driver
+      .combineLatest(isEmailVerified, isEmailValid) { isEmailVerified, isEmailValid -> Bool in
+        isEmailValid && isEmailVerified == false
+    }
+    
     let navigateBack = input.backButtonClickTrigger
       .map { _ in self.steps.accept(AppStep.NavigateBack) }
     
     return Output(
       emailLabelText: emailLabelText,
-      navigateBack: navigateBack
+      emailTextFieldText: emailTextFieldText,
+      navigateBack: navigateBack,
+      sendEmailVerification: sendEmailVerification,
+      sendVerificationEmailButtonIsEnabled: sendVerificationEmailButtonIsEnabled
     )
   }
 }
