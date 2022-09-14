@@ -42,12 +42,12 @@ class ChangePasswordViewModel: Stepper {
     let passwordIsValid = input.passwordTextFieldText
       .map{ $0.count >= 8 }
     
-    let repeatPasswordIsValid = input.repeatPasswordTextFieldText
-      .withLatestFrom(input.passwordTextFieldText) { $0 == $1 }
-      .filter{ $0 }
-      .withLatestFrom(passwordIsValid) { $1 }
-      .filter{ $0 }
-      
+    let repeatPasswordIsValid = Driver
+      .combineLatest(input.passwordTextFieldText, input.repeatPasswordTextFieldText, passwordIsValid) {
+         password, repeatPassword, passwordIsValid -> Bool in
+        password == repeatPassword && passwordIsValid
+      }
+
     let setPasswordButtonIsEnabled = repeatPasswordIsValid
     
     let setPassword = input.setPasswordButtonClickTrigger

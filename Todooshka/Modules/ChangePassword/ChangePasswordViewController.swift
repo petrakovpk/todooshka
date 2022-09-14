@@ -78,10 +78,10 @@ class ChangePasswordViewController: TDViewController {
     
     // passwordTextField
     newPasswordTextField.becomeFirstResponder()
-    newPasswordTextField.anchor(top: textView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40)
+    newPasswordTextField.anchor(top: textView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 50)
     
     // repeatPasswordTextField
-    repeatNewPasswordTextField.anchor(top: newPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40)
+    repeatNewPasswordTextField.anchor(top: newPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 50)
     
     // setPasswordButton
     setPasswordButton.anchor(top: repeatNewPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
@@ -107,7 +107,7 @@ class ChangePasswordViewController: TDViewController {
       outputs.errorText.drive(errorTextView.rx.text),
       outputs.navigateBack.drive(),
       outputs.setPasswordButtonIsEnabled.drive(setPasswordButtonIsEnabledBinder),
-      outputs.setPassword.drive()
+      outputs.setPassword.drive(setPasswordBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
@@ -117,6 +117,15 @@ class ChangePasswordViewController: TDViewController {
       vc.setPasswordButton.backgroundColor = isEnabled ? Palette.SingleColors.BlueRibbon : Palette.DualColors.Mischka_205_205_223_
       vc.setPasswordButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
       vc.setPasswordButton.isEnabled = isEnabled
+    })
+  }
+  
+  var setPasswordBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.newPasswordTextField.clear()
+      vc.repeatNewPasswordTextField.clear()
+      vc.newPasswordTextField.insertText("")
+      vc.repeatNewPasswordTextField.insertText("")
     })
   }
 }
