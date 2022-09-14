@@ -62,7 +62,6 @@ class SetEmailViewController: TDViewController {
     return textView
   }()
   
-  
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()

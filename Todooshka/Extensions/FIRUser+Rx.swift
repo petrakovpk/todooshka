@@ -73,15 +73,15 @@ extension Reactive where Base: User {
      
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all FIRUser methods.
      */
-    public func updatePassword(to password: String) -> Observable<Void> {
+    public func updatePassword(to password: String) -> Observable<Result<Void,Error>> {
         return Observable.create { observer in
             self.base.updatePassword(to: password) { error in
                 guard let error = error else {
-                    observer.onNext(())
+                  observer.onNext(.success(()))
                     observer.onCompleted()
                     return
                 }
-                observer.onError(error)
+              observer.onNext(.failure(error))
             }
             return Disposables.create()
         }

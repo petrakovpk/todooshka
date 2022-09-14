@@ -23,30 +23,30 @@ class ChangePasswordViewController: TDViewController {
     let textView = UITextView()
     textView.isEditable = false
     textView.isSelectable = false
-    textView.text = "Пароль должен содержать не менее 8 символов"
+    textView.text = "Введите новый пароль (не менее 8 символов)"
     textView.backgroundColor = .clear
     return textView
   }()
   
-  private let passwordTextField: UITextField = {
-    let textField = UITextField()
-    textField.placeholder = "Новый пароль"
-    textField.isSecureTextEntry = true
-    textField.cornerRadius = 5
-    textField.borderWidth = 1
-    textField.borderColor = Theme.App.text
-    textField.backgroundColor = Theme.App.background
-    return textField
+  private let newPasswordTextField = TDAuthTextField(type: .Password)
+  private let repeatNewPasswordTextField = TDAuthTextField(type: .RepeatPassword)
+  
+  private let setPasswordButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 13
+    button.setTitle("Установить пароль", for: .normal)
+    return button
   }()
   
-  private let repeatPasswordTextField: UITextField = {
-    let textField = UITextField()
-    textField.placeholder = "Повторите новый пароль"
-    textField.isSecureTextEntry = true
-    textField.cornerRadius = 5
-    textField.borderWidth = 1
-    textField.borderColor = Theme.App.text
-    return textField
+  private let errorTextView: UITextView = {
+    let textView = UITextView()
+    textView.textAlignment = .center
+    textView.isEditable = false
+    textView.isSelectable = false
+    textView.font = UIFont.systemFont(ofSize: 12, weight: .light)
+    textView.textColor = UIColor(red: 0.937, green: 0.408, blue: 0.322, alpha: 1)
+    textView.backgroundColor = .clear
+    return textView
   }()
   
   // MARK: - Lifecycle
@@ -62,22 +62,32 @@ class ChangePasswordViewController: TDViewController {
     saveButton.isHidden = false
     
     // adding
-    view.addSubview(textView)
-    view.addSubview(passwordTextField)
-    view.addSubview(repeatPasswordTextField)
+    view.addSubviews([
+      textView,
+      newPasswordTextField,
+      repeatNewPasswordTextField,
+      setPasswordButton,
+      errorTextView
+    ])
     
     //  header
     titleLabel.text = "Сменить пароль"
     
     // textView
-    textView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 30)
+    textView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 30)
     
     // passwordTextField
-    passwordTextField.becomeFirstResponder()
-    passwordTextField.anchor(top: textView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 40)
+    newPasswordTextField.becomeFirstResponder()
+    newPasswordTextField.anchor(top: textView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40)
     
     // repeatPasswordTextField
-    repeatPasswordTextField.anchor(top: passwordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40)
+    repeatNewPasswordTextField.anchor(top: newPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40)
+    
+    // setPasswordButton
+    setPasswordButton.anchor(top: repeatNewPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    
+    // errorTextView
+    errorTextView.anchor(top: setPasswordButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
   }
   
   
@@ -85,14 +95,28 @@ class ChangePasswordViewController: TDViewController {
   func bindViewModel() {
     
     let input = ChangePasswordViewModel.Input(
-      backButtonClickTrigger: backButton.rx.tap.asDriver()
+      backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      passwordTextFieldText: newPasswordTextField.rx.text.orEmpty.asDriver(),
+      repeatPasswordTextFieldText: repeatNewPasswordTextField.rx.text.orEmpty.asDriver(),
+      setPasswordButtonClickTrigger: setPasswordButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.navigateBack.drive()
+      outputs.errorText.drive(errorTextView.rx.text),
+      outputs.navigateBack.drive(),
+      outputs.setPasswordButtonIsEnabled.drive(setPasswordButtonIsEnabledBinder),
+      outputs.setPassword.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
+  }
+  
+  var setPasswordButtonIsEnabledBinder: Binder<Bool> {
+    return Binder(self, binding: { (vc, isEnabled) in
+      vc.setPasswordButton.backgroundColor = isEnabled ? Palette.SingleColors.BlueRibbon : Palette.DualColors.Mischka_205_205_223_
+      vc.setPasswordButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.setPasswordButton.isEnabled = isEnabled
+    })
   }
 }
