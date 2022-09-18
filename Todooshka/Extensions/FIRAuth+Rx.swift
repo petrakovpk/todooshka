@@ -5,9 +5,10 @@
 //  Created by Arnaud Dorgans on 29/08/2018.
 //
 
+import FirebaseAuth
 import RxCocoa
 import RxSwift
-import FirebaseAuth
+
 
 extension Reactive where Base: Auth {
 

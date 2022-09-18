@@ -44,8 +44,8 @@ class SettingsViewModel: Stepper {
     let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .logInIsRequired)
     let userProfileIsRequired = SettingsItem(imageName: "user-square", text: Auth.auth().currentUser?.displayName ?? "Герой без имени" , type: .userProfileIsRequiared)
     //data
-    let saveDataIsRequired = SettingsItem(imageName: "box-add", text: "Сохранить данные", type: .saveDataIsRequired)
-    let loadDataIsRequired = SettingsItem(imageName: "box-tick", text: "Загрузить данные", type: .loadDataIsRequired)
+    let syncDataIsRequired = SettingsItem(imageName: "box-tick", text: "Синхронизировать данные", type: .syncDataIsRequired)
+  //  let loadDataIsRequired = SettingsItem(imageName: "box-tick", text: "Загрузить данные", type: .loadDataIsRequired)
     // deleted
     let deletedTaskTypeListIsRequired = SettingsItem(imageName: "trash", text: "Типы", type: .deletedTaskTypeListIsRequired)
     let deletedTaskListIsRequired = SettingsItem(imageName: "trash", text: "Задачи", type: .deletedTaskListIsRequired)
@@ -62,7 +62,7 @@ class SettingsViewModel: Stepper {
           items: [$0 == nil ? logInIsRequired : userProfileIsRequired]),
         SettingsCellSectionModel(
           header: "Облако",
-          items: [saveDataIsRequired, loadDataIsRequired]),
+          items: [syncDataIsRequired]),
         SettingsCellSectionModel(
           header: "Удаленные данные",
           items: [deletedTaskTypeListIsRequired, deletedTaskListIsRequired]),
@@ -87,6 +87,8 @@ class SettingsViewModel: Stepper {
           self.steps.accept(AppStep.AuthIsRequired)
         case .userProfileIsRequiared:
           self.steps.accept(AppStep.UserProfileIsRequired)
+        case .syncDataIsRequired:
+          self.steps.accept(AppStep.SyncDataIsRequired)
         default:
           return
         }

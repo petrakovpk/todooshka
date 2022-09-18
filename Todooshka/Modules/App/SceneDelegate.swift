@@ -5,6 +5,7 @@
 //  Created by Петраков Павел Константинович on 17.05.2021.
 //
 
+import Lottie
 import UIKit
 import SwiftUI
 import RxFlow
@@ -20,25 +21,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   // serrvices
   let actionService = ActionService()
-  let authService = AuthService()
   let birdService = BirdService()
   let birdTypeService = BirdTypeService()
   let gameCurrencyService = GameCurrencyService()
   let preferencesService = PreferencesService()
-  let tasksService = TasksService()
-  let typesService = TypesService()
+  let dataService = DataService()
   let tabBarService = TabBarService()
   
   lazy var appServices = {
     return AppServices(
       actionService: actionService,
-      authService: authService,
       birdService: birdService,
       birdTypeService: birdTypeService,
+      dataService: dataService,
       gameCurrencyService: gameCurrencyService,
-      preferencesService: preferencesService,
-      tasksService: tasksService,
-      typesService: typesService,
+      preferencesService: preferencesService,      
       tabBarService: tabBarService
     )
   }()
@@ -47,8 +44,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
     // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-    
-    // UserDefaults.standard.setValue(false, forKey: "isOnboardingCompleted")
     
     guard let scene = (scene as? UIWindowScene) else { return }
     window = UIWindow.init(windowScene: scene)
@@ -71,6 +66,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
         
     UNUserNotificationCenter.current().delegate = self
+    
 
   }
   

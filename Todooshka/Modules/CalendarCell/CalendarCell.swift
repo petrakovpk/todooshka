@@ -39,7 +39,7 @@ class CalendarCell: UICollectionViewCell {
     
     // contentView
     contentView.cornerRadius = bounds.width / 2
-    contentView.layer.borderColor = Theme.UserProfile.Calendar.Cell.border?.cgColor
+    contentView.layer.borderColor = Theme.UserProfile.Calendar.Cell.border.cgColor
     
     // dateLabel
     dateLabel.anchorCenterYToSuperview()

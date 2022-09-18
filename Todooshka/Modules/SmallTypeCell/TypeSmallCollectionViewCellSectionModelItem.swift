@@ -8,13 +8,14 @@
 import RxDataSources
 
 struct TypeSmallCollectionViewCellSectionModelItem: IdentifiableType, Equatable {
-  let type: TaskType
+  
+  let kindOfTask: KindOfTask
   let isSelected: Bool
   let isEnabled: Bool
   
   //MARK: - Identity
   var identity: String {
-    return type.UID
+    return kindOfTask.UID
   }
   
   // MARK: - Equatable

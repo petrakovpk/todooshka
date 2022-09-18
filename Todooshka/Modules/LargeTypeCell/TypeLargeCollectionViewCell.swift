@@ -68,23 +68,23 @@ class TypeLargeCollectionViewCell: UICollectionViewCell {
   }
   
   // MARK: - Configure
-  func configure(type: TaskType, isSelected: Bool) {
+  func configure(kindOfTask: KindOfTask, isSelected: Bool) {
 
     // textView
-    textView.text = type.text
+    textView.text = kindOfTask.text
     textView.textColor = isSelected ? Theme.Task.TypeLargeCollectionViewCell.selectedText : Theme.App.text
     
     // imageView
-    imageView.image = type.icon.image
-    imageView.tintColor = isSelected ? .white : type.color.uiColor
+    imageView.image = kindOfTask.icon.image
+    imageView.tintColor = isSelected ? .white : kindOfTask.color
     
     // shapeLayer
     shapeLayer.shadowOpacity = isSelected ? 1 : 0
     shapeLayer.shadowRadius = isSelected ? 7 : 0
     shapeLayer.shadowPath = isSelected ? shapeLayer.path : nil
     shapeLayer.shadowOffset = isSelected ? CGSize(width: 0, height: 4) : CGSize(width: 0, height: 0)
-    shapeLayer.shadowColor = isSelected ? Theme.Task.TypeLargeCollectionViewCell.selectedBackground?.cgColor : UIColor.clear.cgColor
-    shapeLayer.fillColor = isSelected ? Theme.Task.TypeLargeCollectionViewCell.selectedBackground?.cgColor : Theme.Task.TypeLargeCollectionViewCell.unselectedBackground?.cgColor
+    shapeLayer.shadowColor = isSelected ? Theme.Task.TypeLargeCollectionViewCell.selectedBackground.cgColor : UIColor.clear.cgColor
+    shapeLayer.fillColor = isSelected ? Theme.Task.TypeLargeCollectionViewCell.selectedBackground.cgColor : Theme.Task.TypeLargeCollectionViewCell.unselectedBackground?.cgColor
   }
 }
 

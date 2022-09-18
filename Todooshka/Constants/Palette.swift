@@ -10,23 +10,23 @@ import UIKit
 struct Palette {
   
   struct SingleColors {
-    static let Amethyst = UIColor(named: "Amethyst")
-    static let BlueRibbon = UIColor(named: "BlueRibbon")
-    static let BlushPink = UIColor(named: "BlushPink")
-    static let BrandyPunch = UIColor(named: "BrandyPunch")
-    static let BrightSun = UIColor(named: "BrightSun")
-    static let BrinkPink = UIColor(named: "BrinkPink")
-    static let Cerise = UIColor(named: "Cerise")
-    static let Corduroy = UIColor(named: "Corduroy")
-    static let Jaffa = UIColor(named: "Jaffa")
-    static let Malibu = UIColor(named: "Malibu")
-    static let Orange = UIColor(named: "Orange")
-    static let Portage = UIColor(named: "Portage")
-    static let PurpleHeart = UIColor(named: "PurpleHeart")
-    static let SantasGray = UIColor(named: "SantasGray")
-    static let SeaGreen = UIColor(named: "SeaGreen")
-    static let Shamrock = UIColor(named: "Shamrock")
-    static let Turquoise = UIColor(named: "Turquoise")
+    static let Amethyst = UIColor(named: "Amethyst")!
+    static let BlueRibbon = UIColor(named: "BlueRibbon")!
+    static let BlushPink = UIColor(named: "BlushPink")!
+    static let BrandyPunch = UIColor(named: "BrandyPunch")!
+    static let BrightSun = UIColor(named: "BrightSun")!
+    static let BrinkPink = UIColor(named: "BrinkPink")!
+    static let Cerise = UIColor(named: "Cerise")!
+    static let Corduroy = UIColor(named: "Corduroy")!
+    static let Jaffa = UIColor(named: "Jaffa")!
+    static let Malibu = UIColor(named: "Malibu")!
+    static let Orange = UIColor(named: "Orange")!
+    static let Portage = UIColor(named: "Portage")!
+    static let PurpleHeart = UIColor(named: "PurpleHeart")!
+    static let SantasGray = UIColor(named: "SantasGray")!
+    static let SeaGreen = UIColor(named: "SeaGreen")!
+    static let Shamrock = UIColor(named: "Shamrock")!
+    static let Turquoise = UIColor(named: "Turquoise")!
   }
  
   struct DualColors {

@@ -9,9 +9,9 @@ enum SettingsType {
   // auth
   case logInIsRequired
   case userProfileIsRequiared
-  // load
-  case saveDataIsRequired
-  case loadDataIsRequired
+  // sync
+  case syncDataIsRequired
+//  case loadDataIsRequired
   // deleted
   case deletedTaskListIsRequired
   case deletedTaskTypeListIsRequired

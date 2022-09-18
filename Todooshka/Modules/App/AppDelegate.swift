@@ -6,7 +6,7 @@
 //
 
 import CoreData
-import FirebaseCore
+import Firebase
 import GoogleSignIn
 import Lottie
 import SwifterSwift
@@ -24,18 +24,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate  {
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     
-    // Lottie
-    LottieConfiguration.shared.renderingEngine = .automatic
-    
     // Initializing the AppMetrica SDK.
     let configuration = YMMYandexMetricaConfiguration.init(apiKey: "36538b4c-0eb1-408f-b8e5-c8786424d033")
     configuration?.sessionTimeout = 15
     //    YMMYandexMetrica.activate(with: configuration!)
     
+    
     FirebaseApp.configure()
-  //  LottieConfiguration.shared.renderingEngine = .automatic
-    // Auth.auth().languageCode = "ru";
-    //    Database.database().isPersistenceEnabled = true
+    
+    Auth.auth().languageCode = "ru"
+    Database.database().isPersistenceEnabled = true
+
 #if DEBUG
     UIApplication.shared.isIdleTimerDisabled = true
 #endif

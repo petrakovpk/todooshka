@@ -8,12 +8,12 @@
 import RxDataSources
 
 struct TypeLargeCollectionViewCellSectionModelItem: IdentifiableType, Equatable {
-  let type: TaskType
+  let kindOfTask: KindOfTask
   let isSelected: Bool
   
   //MARK: - Identity
   var identity: String {
-    return type.UID
+    return kindOfTask.UID
   }
   
   // MARK: - Equatable

@@ -24,6 +24,9 @@ enum AppStep: Step {
   case OnboardingIsRequired
   case OnboardingIsCompleted
   
+  // Sync
+  case SyncDataIsRequired
+  
   // Tab Bar
   case CalendarIsRequired
   case TabBarIsRequired
@@ -44,10 +47,9 @@ enum AppStep: Step {
   case DeletedTaskTypeListIsRequired
   case DeletedTaskTypeListIsCompleted
   
-  // Task Type
-  case CreateTaskTypeIsRequired
-  case ShowTaskTypeIsRequired(type: TaskType)
-  case TaskTypeProcessingIsCompleted
+  // KindOfTask
+  case CreateKindOfTaskIsRequired
+  case ShowKindOfTaskIsRequired(kindOfTask: KindOfTask)
 
   // Task
   case CreateTaskIsRequired(status: TaskStatus, createdDate: Date?)

@@ -85,7 +85,7 @@ class CalendarViewModel: Stepper {
     let selectedMonthComponents = selectedMonthComponents.asDriver()
     
     // completed tasks
-    let completedTasks = services.tasksService
+    let completedTasks = services.dataService
       .tasks
       .map { $0.filter {
         $0.status == .Completed && $0.closed != nil

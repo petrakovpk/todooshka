@@ -11,7 +11,7 @@ import RxCocoa
 import RxDataSources
 import SwipeCellKit
 
-class TaskListViewController: UIViewController {
+class TaskListViewController: TDViewController {
   
   // MARK: - Properties
   let disposeBag = DisposeBag()
@@ -19,14 +19,6 @@ class TaskListViewController: UIViewController {
   var collectionView: UICollectionView!
   var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>!
   var viewModel: TaskListViewModel!
-  
-  //MARK: - UI Elements
-  private let headerView = UIView()
-  private let backButton = UIButton(type: .custom)
-  private let removeAllDeletedTasksButton = UIButton(type: .custom)
-  private let addTaskButton = UIButton(type: .custom)
-  private let titleLabel = UILabel()
-  private let dividerView = UIView()
   
   // alert
   private let alertView: UIView = {
@@ -68,10 +60,9 @@ class TaskListViewController: UIViewController {
     return button
   }()
   
-  
-  
   //MARK: - Lifecycle
   override func viewDidLoad() {
+    super.viewDidLoad()
     configureUI()
     configureAlert()
     configureDataSource()
@@ -80,48 +71,15 @@ class TaskListViewController: UIViewController {
   
   //MARK: - Configure UI
   func configureUI() {
+
+    // collection view
     collectionView = UICollectionView(frame: view.bounds , collectionViewLayout: createCompositionalLayout())
-    
+  
     view.addSubview(collectionView)
-    view.addSubview(headerView)
-    headerView.addSubview(titleLabel)
-    headerView.addSubview(backButton)
-    headerView.addSubview(addTaskButton)
-    headerView.addSubview(removeAllDeletedTasksButton)
-    headerView.addSubview(dividerView)
     
     // view
     view.backgroundColor = Theme.App.background
-    
-    // headerView
-    headerView.backgroundColor = UIColor(named: "navigationHeaderViewBackgroundColor")
-    headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
-    
-    // addTaskButton
-    addTaskButton.isHidden = true
-    addTaskButton.setImage(UIImage(named: "plus-custom"), for: .normal)
-    addTaskButton.cornerRadius = addTaskButton.bounds.width / 2
-    addTaskButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
-    // removeAllButton
-    removeAllDeletedTasksButton.isHidden = true 
-    removeAllDeletedTasksButton.setImage(UIImage(named: "trash-custom")?.original, for: .normal)
-    removeAllDeletedTasksButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
-    // titleLabel
-    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-    titleLabel.anchorCenterXToSuperview()
-    titleLabel.anchor(bottom: headerView.bottomAnchor, bottomConstant: 20)
-    
-    // backButton
-    backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
-    backButton.imageView?.tintColor = Theme.App.text
-    backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
-    // dividerView
-    dividerView.backgroundColor = UIColor(named: "navigationDividerViewBackgroundColor")
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
-    
+
     // collectionView
     collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
     collectionView.register(TaskReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskReusableView.reuseID)
@@ -196,9 +154,9 @@ class TaskListViewController: UIViewController {
       // back
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       // add
-      addTaskButtonClickTrigger: addTaskButton.rx.tap.asDriver(),
+      addTaskButtonClickTrigger: addButton.rx.tap.asDriver(),
       // remove all
-      removeAllDeletedTasksButtonClickTrigger: removeAllDeletedTasksButton.rx.tap.asDriver()
+      removeAllButtonClickTrigger: removeAllButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
@@ -217,7 +175,8 @@ class TaskListViewController: UIViewController {
       outputs.setDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.showAlert.drive(showAlertBinder),
       outputs.showAddTaskButton.drive(showAddTaskButtonBinder),
-      outputs.showRemovaAllButton.drive(showRemovaAllButtonBinder)
+      outputs.showRemovaAllButton.drive(showRemovaAllButtonBinder),
+      outputs.title.drive(titleLabel.rx.text)
     ]
       .forEach({ $0?.disposed(by: disposeBag) })
     
@@ -246,25 +205,25 @@ class TaskListViewController: UIViewController {
   
   var showAddTaskButtonBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
-      vc.addTaskButton.isHidden = false
+      vc.addButton.isHidden = false
     })
   }
   
   var showRemovaAllButtonBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
-      vc.removeAllDeletedTasksButton.isHidden = false
+      vc.removeAllButton.isHidden = false
     })
   }
   
   var addTaskButtonIsHiddenBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isHidden) in
-      vc.addTaskButton.isHidden = isHidden
+      vc.addButton.isHidden = isHidden
     })
   }
   
   var removeAllDeletedTasksButtonIsHiddenBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isHidden) in
-      vc.removeAllDeletedTasksButton.isHidden = isHidden
+      vc.removeAllButton.isHidden = isHidden
     })
   }
   
@@ -274,7 +233,7 @@ class TaskListViewController: UIViewController {
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
       cell.configure(with: dataSource[indexPath.section].mode)
       cell.configure(with: item.task)
-      cell.configure(with: item.type)
+      cell.configure(with: item.kindOfTask)
       cell.delegate = self
       cell.repeatButton.rx.tap.map{ _ -> IndexPath in indexPath }.asDriver(onErrorJustReturn: nil).drive(self.repeatButtonBinder).disposed(by: cell.disposeBag)
       return cell

@@ -5,12 +5,13 @@
 //  Created by Петраков Павел Константинович on 22.05.2021.
 //
 
+import CoreData
 import RxFlow
 import RxSwift
 import RxCocoa
 
 struct TaskAttr {
-  let type: TaskType
+  let type: KindOfTask
   let text: String
   let description: String
 }
@@ -20,8 +21,13 @@ class TaskViewModel: Stepper {
   private let disposeBag = DisposeBag()
   
   //MARK: - Properties
+  let appDelegate = UIApplication.shared.delegate as! AppDelegate
+  var managedContext: NSManagedObjectContext {
+    return self.appDelegate.persistentContainer.viewContext
+  }
+ 
   var task: Task
-  var status: TaskStatus?
+  var status: TaskStatus = .InProgress
   let taskIsNew: Bool
   let steps = PublishRelay<Step>()
   let services: AppServices
@@ -52,7 +58,7 @@ class TaskViewModel: Stepper {
     let descriptionTextViewData: Driver<(text: String, isPlaceholder: Bool)>
     // collectionView
     let dataSource: Driver<[TypeLargeCollectionViewCellSectionModel]>
-    let selection: Driver<TaskType>
+    let selection: Driver<KindOfTask>
     // buttons
     let configureTaskTypesButtonClick: Driver<Void>
     // back
@@ -61,7 +67,7 @@ class TaskViewModel: Stepper {
     let showAlert: Driver<Void>
     let hideAlert: Driver<Void>
     // save
-    let saveTask: Driver<Task>
+    let saveTask: Driver<Result<Void,Error>>
     // point
     let getPoint: Driver<Task>
     // is task is New?
@@ -77,7 +83,7 @@ class TaskViewModel: Stepper {
         UID: UUID().uuidString,
         text: "",
         description: nil,
-        type: TaskType.Standart.Empty,
+        kindOfTask: KindOfTask.Standart.Empty,
         status: .Draft,
         created: Date(),
         closed: closed)
@@ -96,7 +102,7 @@ class TaskViewModel: Stepper {
     let taskIsNew = Driver<Bool>.just(self.taskIsNew)
     
     // task from CoreData
-    let task = services.tasksService.tasks
+    let task = services.dataService.tasks
       .map {
         $0.first {
           $0.UID == self.task.UID
@@ -128,7 +134,7 @@ class TaskViewModel: Stepper {
     
     
     // types
-    let types = services.typesService.types
+    let kindsOfTask = services.dataService.kindsOfTask
       .map {
         $0.filter {
           $0.status == .active
@@ -137,13 +143,13 @@ class TaskViewModel: Stepper {
       .asDriver(onErrorJustReturn: [])
     
     // dataSource
-    let dataSource = Driver.combineLatest(task, types) { task, types -> [TypeLargeCollectionViewCellSectionModel] in
+    let dataSource = Driver.combineLatest(task, kindsOfTask) { task, kindsOfTask -> [TypeLargeCollectionViewCellSectionModel] in
       [TypeLargeCollectionViewCellSectionModel(
         header: "",
-        items: types.map {
+        items: kindsOfTask.map {
           TypeLargeCollectionViewCellSectionModelItem(
-            type: $0,
-            isSelected: $0.UID == task.typeUID
+            kindOfTask: $0,
+            isSelected: $0.UID == task.kindOfTaskUID
           )
         }
       )]
@@ -152,9 +158,11 @@ class TaskViewModel: Stepper {
     
     // selection
     let selection = input.selection
-      .withLatestFrom(dataSource) { indexPath, dataSource -> TaskType in
-        return dataSource[indexPath.section].items[indexPath.item].type }
-      .startWith(self.task.type(withTypeService: services) ?? TaskType.Standart.Empty)
+      .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTask in
+         dataSource[indexPath.section].items[indexPath.item].kindOfTask }
+      .startWith(KindOfTask.Standart.Empty)
+     
+     // .startWith(self.task.type(withTypeService: services) ?? KindOfTask.Standart.Empty)
     
     let completeTask = input.completeButtonClickTrigger
       .map { true }
@@ -162,12 +170,12 @@ class TaskViewModel: Stepper {
     
     // task
     let changedTask = Driver<Task>
-      .combineLatest(task, text, descriptionTextViewText, selection, completeTask) { (task, text, description, type, completeTask) -> Task in
-        return Task(
+      .combineLatest(task, text, descriptionTextViewText, selection, completeTask) { (task, text, description, kindOfTask, completeTask) -> Task in
+        Task(
           UID: task.UID,
           text: text,
           description: description.isEmpty ? nil : description,
-          type: type,
+          kindOfTask: kindOfTask,
           status: completeTask ? .Completed : task.status,
           created: task.created,
           closed: completeTask ? Date() : task.closed
@@ -196,18 +204,20 @@ class TaskViewModel: Stepper {
     let save = saveTrigger
       .withLatestFrom(changedTask) { $1 }
       .distinctUntilChanged()
+      .change(with: self.status)
       .asObservable()
-      .changeTaskStatus(status: self.status)
-      .saveTask(service: services)
-      .asDriver(onErrorJustReturn: .emptyTask)
+      .flatMapLatest({ task -> Observable<Result<Void, Error>> in
+        self.managedContext.rx.update(task)
+      })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
     // добавляем пойнт
     let getPoint = input.completeButtonClickTrigger
       .withLatestFrom(changedTask) { $1 }
       .asDriver()
-      .do { task in
-        self.services.gameCurrencyService.createGameCurrency(task: task)
-      }
+//      .do { task in
+//        self.services.gameCurrencyService.createGameCurrency(task: task)
+//      }
     
     // navigateBack
     let navigateBack = Driver

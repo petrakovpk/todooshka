@@ -10,8 +10,8 @@ import RxDataSources
 struct TaskListSectionItem: IdentifiableType, Equatable {
   
   let task: Task
-  let type: TaskType
+  let kindOfTask: KindOfTask
   
-  var identity: String { task.UID + type.UID }
+  var identity: String { task.UID + kindOfTask.UID }
   
 }

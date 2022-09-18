@@ -47,7 +47,7 @@ class TabBarViewModel: Stepper {
     let createTask = input.createTaskButtonClickTrigger
       .do { _ in self.steps.accept(AppStep.CreateTaskIsRequired(status: .InProgress, createdDate: nil)) }
     
-    let tasks = services.tasksService.tasks.asDriver()
+    let tasks = services.dataService.tasks.asDriver()
     let selectedDate = services.preferencesService.selectedDate.asDriver()
     
     // MARK: - DataSource
@@ -63,7 +63,7 @@ class TabBarViewModel: Stepper {
           .sorted{ $0.closed! < $1.closed! }
         
         for (eggN, task) in completedTasks.enumerated() where completedTasks.count >= 1 && eggN <= 7 {
-          result[eggN + 1] = .Crack(typeUID: task.typeUID)
+          result[eggN + 1] = .Crack(typeUID: task.kindOfTaskUID)
         }
         
         // Добавляем not cracked задачи
@@ -100,7 +100,7 @@ class TabBarViewModel: Stepper {
           .sorted{ $0.closed! < $1.closed! }
         
         for (birdN, task) in completedTasks.enumerated() where completedTasks.count >= 1 && birdN <= 7 {
-          let style = self.services.birdService.birds.value.first(where: { $0.typesUID.contains(task.typeUID) })?.style ?? .Simple
+          let style = self.services.birdService.birds.value.first(where: { $0.typesUID.contains(task.kindOfTaskUID) })?.style ?? .Simple
           result[birdN + 1] = .Sitting(style: style, closed: task.closed!)
         }
         

@@ -40,7 +40,7 @@ class BirdViewController: UIViewController {
     let view = UIView()
     view.layer.cornerRadius = 15
     view.layer.borderWidth = 1.0
-    view.layer.borderColor = Palette.SingleColors.BlueRibbon?.cgColor
+    view.layer.borderColor = Palette.SingleColors.BlueRibbon.cgColor
     return view
   }()
 
@@ -276,7 +276,7 @@ class BirdViewController: UIViewController {
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TypeSmallCollectionViewCellSectionModel>(
       configureCell: {(_, collectionView, indexPath, item) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TypeSmallCollectionViewCell.reuseID, for: indexPath) as! TypeSmallCollectionViewCell
-        cell.configure(with: item.type, isSelected: item.isSelected, isEnabled: item.isEnabled)
+        cell.configure(with: item.kindOfTask, isSelected: item.isSelected, isEnabled: item.isEnabled)
         return cell
       })
   }

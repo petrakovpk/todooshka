@@ -65,7 +65,7 @@ class BirdViewModel: Stepper {
     // back
     let back: Driver<Void>
     // selection
-    let selection: Driver<TaskType>
+    let selection: Driver<KindOfTask>
     // buy
     let buy: Driver<Void>
     
@@ -93,7 +93,7 @@ class BirdViewModel: Stepper {
     let price = Driver<String>.of(self.bird.price.string)
     
     // types
-    let types = services.typesService.types.asDriver()
+    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
     
     // bird
     let bird = services.birdService.birds
@@ -105,13 +105,13 @@ class BirdViewModel: Stepper {
       .asDriver(onErrorJustReturn: self.bird)
         
     // dataSource
-    let dataSource = Driver.combineLatest(bird, types) { bird, types -> [TypeSmallCollectionViewCellSectionModel] in
+    let dataSource = Driver.combineLatest(bird, kindsOfTask) { bird, kindsOfTask -> [TypeSmallCollectionViewCellSectionModel] in
       [TypeSmallCollectionViewCellSectionModel(
         header: "",
-        items: types.map { type -> TypeSmallCollectionViewCellSectionModelItem in
+        items: kindsOfTask.map { kindOfTask -> TypeSmallCollectionViewCellSectionModelItem in
           TypeSmallCollectionViewCellSectionModelItem(
-            type: type,
-            isSelected: bird.isBought && bird.typesUID.contains(where: { $0 == type.UID }),
+            kindOfTask: kindOfTask,
+            isSelected: bird.isBought && bird.typesUID.contains(where: { $0 == kindOfTask.UID }),
             isEnabled: bird.isBought)
         }
       )]
@@ -138,11 +138,11 @@ class BirdViewModel: Stepper {
     
     // selection
     let selection = input.selection
-      .withLatestFrom(dataSource) { indexPath, dataSource -> TaskType in
-        return dataSource[indexPath.section].items[indexPath.item].type }
-      .withLatestFrom(bird) { type, bird -> TaskType in
+      .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTask in
+        return dataSource[indexPath.section].items[indexPath.item].kindOfTask }
+      .withLatestFrom(bird) { type, bird -> KindOfTask in
         guard bird.isBought else { return type }
-        self.services.birdService.linkBirdToTypeUID(bird: bird, type: type)
+//        self.services.birdService.linkBirdToTypeUID(bird: bird, type: type)
         return type
       }
     
@@ -168,7 +168,7 @@ class BirdViewModel: Stepper {
     let buy = input.alertBuyButtonClick.withLatestFrom(gameCurrency) { _, gameCurrency in
       var bird  = self.bird
       bird.isBought = true
-      self.services.birdService.saveBirdToCoreData(bird: bird)
+     // self.services.birdService.saveBirdToCoreData(bird: bird)
       for gameCurrencyForRemoving in gameCurrency {
         self.services.gameCurrencyService.removeGameCurrencyFromCoreData(gameCurrency: gameCurrencyForRemoving)
       }

@@ -35,10 +35,11 @@ class TaskTypeIconCollectionViewCellModel: Stepper {
     let image = Driver.just(self.icon.image)
     
     // isSelected
-    let isSelected = services.typesService.selectedTypeIcon
-      .map { $0 == self.icon }
-      .asDriver(onErrorJustReturn: false)
-    
+    let isSelected = Driver.of(true)
+//    let isSelected = services.typesService.selectedTypeIcon
+//      .map { $0 == self.icon }
+//      .asDriver(onErrorJustReturn: false)
+//
     return Output(
       image: image,
       isSelected: isSelected

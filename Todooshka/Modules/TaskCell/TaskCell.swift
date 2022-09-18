@@ -286,9 +286,9 @@ class TaskCell: SwipeCollectionViewCell {
     configureLineLayout(with: task.timeLeftPercent)
   }
   
-  func configure(with type: TaskType) {
-    taskTypeImageView.image = type.icon.image
-    taskTypeImageView.tintColor = type.color.uiColor
+  func configure(with kindOfTask: KindOfTask) {
+    taskTypeImageView.image = kindOfTask.icon.image
+    taskTypeImageView.tintColor = kindOfTask.color
   }
   
   // MARK: - Configure UI

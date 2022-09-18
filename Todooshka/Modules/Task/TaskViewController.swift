@@ -97,7 +97,7 @@ class TaskViewController: TDViewController {
   }()
   
   private let alertAnimationView: AnimationView = {
-    let animationView = AnimationView(name: "taskDone2", configuration: LottieConfiguration(renderingEngine: .automatic))
+    let animationView = AnimationView(name: "taskDone2")
     animationView.isHidden = true
     animationView.contentMode = .scaleAspectFill
   //  animationView.loopMode = .repeat(3.0)
@@ -321,7 +321,7 @@ class TaskViewController: TDViewController {
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TypeLargeCollectionViewCellSectionModel>(
       configureCell: {(_, collectionView, indexPath, item) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TypeLargeCollectionViewCell.reuseID, for: indexPath) as! TypeLargeCollectionViewCell
-        cell.configure(type: item.type, isSelected: item.isSelected)
+        cell.configure(kindOfTask: item.kindOfTask, isSelected: item.isSelected)
         return cell
       })
   }

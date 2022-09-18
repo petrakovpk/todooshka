@@ -40,6 +40,19 @@ extension Reactive where Base: DatabaseQuery {
             }
         }
     }
+  
+  public func observeEvent(_ eventType: DataEventType) -> Observable<DataSnapshot> {
+      return Observable.create { observer in
+          let handle = self.base.observe(eventType, with: { snapshot in
+            observer.onNext(snapshot)
+          }, withCancel: { error in
+            observer.onError(error)
+          })
+          return Disposables.create {
+              self.base.removeObserver(withHandle: handle)
+          }
+      }
+  }
     
     /**
      * observeEventType:andPreviousSiblingKeyWithBlock: is used to listen for data changes at a particular location.

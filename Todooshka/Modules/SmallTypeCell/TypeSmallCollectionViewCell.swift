@@ -70,22 +70,22 @@ class TypeSmallCollectionViewCell: UICollectionViewCell {
   }
   
   // MARK: - Configure
-  func configure(with type: TaskType, isSelected: Bool, isEnabled: Bool) {
+  func configure(with kindOfTask: KindOfTask, isSelected: Bool, isEnabled: Bool) {
 
     // contentView
     contentView.borderWidth = isSelected ? 2.0 : 0.0
     contentView.borderColor = isSelected ? Palette.SingleColors.BlueRibbon : nil
     
     // textView
-    textView.text = type.text
+    textView.text = kindOfTask.text
     textView.textColor = Theme.App.text // isSelected ? Theme.TypeSmallCollectionViewCell.selectedText : Theme.App.text
     
     // taskTypeImageView
-    imageView.image = type.icon.image
-    imageView.tintColor = type.color.uiColor
+    imageView.image = kindOfTask.icon.image
+    imageView.tintColor = kindOfTask.color
     
     // shapeLayer
-    shapeLayer.fillColor = isEnabled ? (isSelected ? Theme.Bird.TypeSmallCollectionViewCell.unselectedBackground?.cgColor : Theme.Bird.TypeSmallCollectionViewCell.unselectedBackground?.cgColor) : Palette.SingleColors.SantasGray?.withAlphaComponent(0.3).cgColor
+    shapeLayer.fillColor = isEnabled ? (isSelected ? Theme.Bird.TypeSmallCollectionViewCell.unselectedBackground?.cgColor : Theme.Bird.TypeSmallCollectionViewCell.unselectedBackground?.cgColor) : Palette.SingleColors.SantasGray.withAlphaComponent(0.3).cgColor
   }
 }
 

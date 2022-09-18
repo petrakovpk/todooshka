@@ -16,7 +16,7 @@ class TaskTypeColorCollectionViewCellModel: Stepper {
   let steps = PublishRelay<Step>()
   
   private let services: AppServices
-  private let color: TypeColor
+  private let color: UIColor
   
   struct Output {
     let color: Driver<UIColor>
@@ -24,7 +24,7 @@ class TaskTypeColorCollectionViewCellModel: Stepper {
   }
 
   //MARK: - Init
-  init(services: AppServices, color: TypeColor) {
+  init(services: AppServices, color: UIColor) {
     self.services = services
     self.color = color
   }
@@ -32,12 +32,13 @@ class TaskTypeColorCollectionViewCellModel: Stepper {
   func transform() -> Output {
     
     // color
-    let color = Driver<UIColor>.just(self.color.uiColor)
+    let color = Driver<UIColor>.just(self.color)
     
     // isSelected
-    let isSelected = services.typesService.selectedTypeColor
-      .map { $0 == self.color }
-      .asDriver(onErrorJustReturn: false)
+    let isSelected = Driver.just(true)
+//    let isSelected = services.typesService.selectedTypeColor
+//      .map { $0 == self.color }
+//      .asDriver(onErrorJustReturn: false)
     
     return Output (
       color: color,

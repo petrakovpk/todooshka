@@ -34,7 +34,8 @@ class FeatherViewModel: Stepper {
   func transform(input: Input) -> Output {
     
     // tasks
-    let tasks = services.tasksService.tasks
+    let tasks = services.dataService
+      .tasks
       .map {
         $0.filter {
           $0.status == .Completed ? true : false
@@ -43,16 +44,17 @@ class FeatherViewModel: Stepper {
       }
       .asDriver(onErrorJustReturn: [])
     
-    let types = services.typesService.types.asDriver()
+    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
     
-    let taskListSectionItems = Driver<[TaskListSectionItem]>.combineLatest(tasks,types) { tasks, types -> [TaskListSectionItem] in
-      tasks.map { task in
-        TaskListSectionItem(
-          task: task,
-          type: types.first(where: { $0.UID == task.typeUID }) ?? TaskType.Standart.Empty
-        )
+    let taskListSectionItems = Driver<[TaskListSectionItem]>
+      .combineLatest(tasks,kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+        tasks.map { task in
+          TaskListSectionItem(
+            task: task,
+            kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Empty
+          )
+        }
       }
-    }
     
 
     // dataSource

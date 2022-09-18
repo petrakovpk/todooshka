@@ -36,7 +36,7 @@ class TaskListViewModel: Stepper {
     // add
     let addTaskButtonClickTrigger: Driver<Void>
     // remove all
-    let removeAllDeletedTasksButtonClickTrigger: Driver<Void>
+    let removeAllButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
@@ -52,7 +52,7 @@ class TaskListViewModel: Stepper {
     let reloadData: Driver<[IndexPath]>
     let setAlertText: Driver<String>
     let setDataSource: Driver<[TaskListSectionModel]>
-    let setTitle: Driver<String>
+    let title: Driver<String>
     let showAlert: Driver<Void>
     let showAddTaskButton: Driver<Void>
     let showRemovaAllButton: Driver<Void>
@@ -67,7 +67,7 @@ class TaskListViewModel: Stepper {
   func transform(input: Input) -> Output {
     
     // tasks
-    let tasks = services.tasksService.tasks
+    let tasks = services.dataService.tasks
       .map {
         $0.filter { task in
           switch self.mode {
@@ -86,23 +86,19 @@ class TaskListViewModel: Stepper {
       }
       .asDriver(onErrorJustReturn: [])
     
-    // types
-    let types = services.typesService.types.asDriver()
+    // kindsOfTask
+    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
     
     // dataSource
     let dataSource = Driver
-      .combineLatest(tasks, types) { tasks, types -> [TaskListSectionItem] in
+      .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
         tasks.map { task in
           TaskListSectionItem(
             task: task,
-            type: types.first(where: { $0.UID == task.typeUID }) ?? TaskType.Standart.Empty
+            kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Empty
           )
         }
-      }.map {
-        [
-          TaskListSectionModel(header: "", mode: self.mode == .Main ? TaskCellMode.WithTimer : TaskCellMode.WithRepeatButton , items: $0)
-        ]
-      }
+      }.map {[ TaskListSectionModel(header: "", mode: self.mode == .Main ? TaskCellMode.WithTimer : TaskCellMode.WithRepeatButton , items: $0) ]}
     
     let changeStatus = changeStatus
       .asDriver()
@@ -111,11 +107,11 @@ class TaskListViewModel: Stepper {
     let changeToIdea = changeStatus
       .filter{ $0.1 == .Idea }
       .compactMap{ $0.0 }
-      .withLatestFrom(dataSource) { indexPath, dataSource -> Void in
-        var task = dataSource[indexPath.section].items[indexPath.item].task
-        task.status = .Idea
-        self.services.tasksService.saveTasksToCoreData(tasks: [task])
+      .withLatestFrom(dataSource) { indexPath, dataSource -> Task in
+        dataSource[indexPath.section].items[indexPath.item].task
       }
+//        self.services.tasksService.saveTasksToCoreData(tasks: [task])
+      
     
     let changeToInProgress = changeStatus
       .filter{ $0.1 == .InProgress }
@@ -124,7 +120,7 @@ class TaskListViewModel: Stepper {
         var task = dataSource[indexPath.section].items[indexPath.item].task
         task.status = .InProgress
         task.created = Date()
-        self.services.tasksService.saveTasksToCoreData(tasks: [task])
+   //     self.services.tasksService.saveTasksToCoreData(tasks: [task])
       }
     
     let changeToCompleted = changeStatus
@@ -133,7 +129,7 @@ class TaskListViewModel: Stepper {
         var task = dataSource[data.0.section].items[data.0.item].task
         task.status = .Completed
         task.closed = data.2
-        self.services.tasksService.saveTasksToCoreData(tasks: [task])
+     //   self.services.tasksService.saveTasksToCoreData(tasks: [task])
       }
     
     let changeToRemoved = changeStatus
@@ -160,7 +156,7 @@ class TaskListViewModel: Stepper {
         RemoveMode.Task(task: dataSource[indexPath.section].items[indexPath.item].task )
       }.asDriver()
     
-    let setRemoveModeRemoveAll = input.removeAllDeletedTasksButtonClickTrigger
+    let setRemoveModeRemoveAll = input.removeAllButtonClickTrigger
       .withLatestFrom(tasks) { _, tasks -> RemoveMode in
         RemoveMode.Tasks(tasks: tasks.filter{ $0.status == .Deleted } )
       }
@@ -195,11 +191,11 @@ class TaskListViewModel: Stepper {
         switch mode {
         case .Tasks(let tasks):
           self.editingIndexPath = nil
-          self.services.tasksService.removeTasksFromCoreData(tasks: tasks)
+        //  self.services.tasksService.removeTasksFromCoreData(tasks: tasks)
         case .Task(var task):
           task.status = .Deleted
           self.editingIndexPath = nil
-          self.services.tasksService.saveTasksToCoreData(tasks: [task])
+      //    self.services.tasksService.saveTasksToCoreData(tasks: [task])
           self.services.gameCurrencyService.removeGameCurrency(task: task)
         }
       }
@@ -208,7 +204,7 @@ class TaskListViewModel: Stepper {
       .map { _ in self.steps.accept(AppStep.CreateTaskIsRequired(status: .Idea, createdDate: Date())) }
     
     // title
-     let setTitle = Driver.just(self.getTitle(with: self.mode))
+     let title = Driver.just(self.getTitle(with: self.mode))
     
     let showAddTaskButton = Driver.of(self.mode)
       .filter { $0 == .Idea }
@@ -230,7 +226,6 @@ class TaskListViewModel: Stepper {
           }
         }
     }
-     
 
     return Output(
       addTask: addTask,
@@ -245,7 +240,7 @@ class TaskListViewModel: Stepper {
       reloadData: reloadData,
       setAlertText: alertText,
       setDataSource: dataSource,
-      setTitle: setTitle,
+      title: title,
       showAlert: showAlert,
       showAddTaskButton: showAddTaskButton,
       showRemovaAllButton: showRemovaAllButton
@@ -254,7 +249,7 @@ class TaskListViewModel: Stepper {
   
   // Helpers
   func viewWillAppear() {
-    services.tasksService.reloadDataSource.accept(())
+  //  services.tasksService.reloadDataSource.accept(())
   }
 
   func getTitle(with mode: TaskListMode) -> String {

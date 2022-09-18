@@ -108,6 +108,10 @@ class CalendarFlow: Flow {
     case .NavigateBack:
       return navigateBack()
       
+      // SyncIsRequired
+    case .SyncDataIsRequired:
+      return navigateToSyncData()
+      
       // Changing
     case .ChangingNameIsRequired:
       return navigateToChangingName()
@@ -164,21 +168,29 @@ class CalendarFlow: Flow {
   }
   
   private func navigateToDeletedTaskTypeList() -> FlowContributors {
-    let viewController = DeletedTaskTypesListViewController()
-    let viewModel = DeletedTaskTypesListViewModel(services: services)
-    viewController.bindTo(with: viewModel)
-    rootViewController.pushViewController(viewController, animated: true)
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
-  
-  private func navigateToTaskTypesList() -> FlowContributors {
-    let viewController = TaskTypesListViewController()
-    let viewModel = TaskTypesListViewModel(services: services)
+    let viewController = KindOfTaskListDeletedViewController()
+    let viewModel = KindOfTaskListDeletedViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
+  private func navigateToTaskTypesList() -> FlowContributors {
+    let viewController = KindOfTaskListViewController()
+    let viewModel = KindOfTaskListViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToSyncData() -> FlowContributors {
+    let viewController = SyncDataViewController()
+    let viewModel = SyncDataViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
     let viewController = TaskListViewController()
     let viewModel = TaskListViewModel(services: services, mode: .Idea)

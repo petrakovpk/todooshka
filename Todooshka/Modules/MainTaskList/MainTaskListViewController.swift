@@ -34,7 +34,7 @@ class MainTaskListViewController: UIViewController {
     return label
   }()
   
-  private let animationView = AnimationView(name: "task_animation", configuration: LottieConfiguration(renderingEngine: .automatic) )
+  private let animationView = AnimationView(name: "task_animation")
   
   private let expandImageView: UIImageView = {
     let imageView = UIImageView()
@@ -222,7 +222,7 @@ class MainTaskListViewController: UIViewController {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
         cell.configure(with: dataSource[indexPath.section].mode)
         cell.configure(with: item.task)
-        cell.configure(with: item.type)
+        cell.configure(with: item.kindOfTask)
         cell.delegate = self
         return cell
       })
@@ -296,7 +296,7 @@ class MainTaskListViewController: UIViewController {
       // add
       addTaskButtonClickTrigger: Driver<Void>.of(),
       // remove all
-      removeAllDeletedTasksButtonClickTrigger: Driver<Void>.of()
+      removeAllButtonClickTrigger: Driver<Void>.of()
     )
     
     let outputs = listViewModel.transform(input: input)

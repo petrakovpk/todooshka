@@ -48,7 +48,7 @@ class ChangeGenderCell: UITableViewCell {
   // MARK: - Configure
   func configure(text: String, isSelected: Bool ) {
     textLabel?.text = text
-    let selectedImage = UIImage(named: "selectedRound")?.withTintColor(Palette.SingleColors.BlueRibbon!, renderingMode: .alwaysTemplate)
+    let selectedImage = UIImage(named: "selectedRound")?.withTintColor(Palette.SingleColors.BlueRibbon, renderingMode: .alwaysTemplate)
     isSelectedImageView.image = isSelected ? selectedImage : UIImage(named: "round")
   }
 }
