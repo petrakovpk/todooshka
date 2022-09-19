@@ -21,8 +21,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   // serrvices
   let actionService = ActionService()
-  let birdService = BirdService()
-  let birdTypeService = BirdTypeService()
   let gameCurrencyService = GameCurrencyService()
   let preferencesService = PreferencesService()
   let dataService = DataService()
@@ -31,8 +29,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   lazy var appServices = {
     return AppServices(
       actionService: actionService,
-      birdService: birdService,
-      birdTypeService: birdTypeService,
       dataService: dataService,
       gameCurrencyService: gameCurrencyService,
       preferencesService: preferencesService,      

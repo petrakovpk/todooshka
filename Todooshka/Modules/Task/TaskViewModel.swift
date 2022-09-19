@@ -156,7 +156,6 @@ class TaskViewModel: Stepper {
         task.compactMap{ $0.status }.distinctUntilChanged(),
         input.alertOkButtonClickTrigger.map{ TaskStatus.Completed }
       ).merge()
-      .debug()
     
     let closed = input.alertOkButtonClickTrigger
       .map{ Date() }
@@ -166,13 +165,12 @@ class TaskViewModel: Stepper {
       .combineLatest(text, description, kindOfTask, status, closed) { text, description, kindOfTask, status, closed in
         TaskAttr(closed: closed, description: description, kindOfTask: kindOfTask, status: status, text: text)
       }.distinctUntilChanged()
-      .debug()
     
     // description
     let setDescriptionPlaceholder = Driver
       .of(
         // Это как бы старт
-        task.compactMap{ $0.description }.asObservable().take(1).asDriver(onErrorJustReturn: ""),
+        task.map{ $0.description ?? "" }.asObservable().take(1).asDriver(onErrorJustReturn: ""),
         // Это когда перестаем редактировать
         input.descriptionTextViewDidEndEditing.withLatestFrom(description){ $1 }
       ).merge()

@@ -45,8 +45,7 @@ class ShopViewModel: Stepper {
       }
     
     // birds
-    let birds = services.birdService.birds
-      .asDriver()
+    let birds = services.dataService.birds
     
     // dataSource
     let dataSource = birds

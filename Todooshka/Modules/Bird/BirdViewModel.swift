@@ -96,7 +96,7 @@ class BirdViewModel: Stepper {
     let kindsOfTask = services.dataService.kindsOfTask.asDriver()
     
     // bird
-    let bird = services.birdService.birds
+    let bird = services.dataService.birds
       .map{
         $0.first {
           $0.UID == self.bird.UID
@@ -111,7 +111,7 @@ class BirdViewModel: Stepper {
         items: kindsOfTask.map { kindOfTask -> TypeSmallCollectionViewCellSectionModelItem in
           TypeSmallCollectionViewCellSectionModelItem(
             kindOfTask: kindOfTask,
-            isSelected: bird.isBought && bird.typesUID.contains(where: { $0 == kindOfTask.UID }),
+            isSelected: bird.isBought && bird.kindsOfTaskUID.contains(where: { $0 == kindOfTask.UID }),
             isEnabled: bird.isBought)
         }
       )]

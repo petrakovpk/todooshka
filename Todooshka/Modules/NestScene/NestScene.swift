@@ -111,7 +111,7 @@ class NestScene: SKScene {
   
   func hatch(index: Int, typeUID: String) {
     
-    guard let bird = birds.first(where: { $0.clade.index == index && $0.typesUID.contains{ $0 == typeUID }}) else { return }
+    guard let bird = birds.first(where: { $0.clade.index == index && $0.kindsOfTaskUID.contains{ $0 == typeUID }}) else { return }
     
     let node = SKBirdNode(clade: Clade(index: index), style: bird.style, scenePosition: position)
     

@@ -51,7 +51,7 @@ class NestSceneModel: Stepper {
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
     
-    let birds = services.birdService.birds.asDriver()
+    let birds = services.dataService.birds
     
     let dataSource = services.actionService.nestDataSource.asDriver()
     

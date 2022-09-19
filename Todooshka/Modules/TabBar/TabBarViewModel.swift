@@ -88,8 +88,10 @@ class TabBarViewModel: Stepper {
         self.services.actionService.nestDataSource.accept(dataSource)
       }
     
+    let birds = services.dataService.birds
+    
     let branchDataSource = Driver
-      .combineLatest(selectedDate, tasks) { selectedDate, tasks -> [Int: BirdActionType] in
+      .combineLatest(selectedDate, tasks, birds) { selectedDate, tasks, birds -> [Int: BirdActionType] in
         
         // dataSource
         var result: [Int: BirdActionType] = [:]
@@ -100,7 +102,7 @@ class TabBarViewModel: Stepper {
           .sorted{ $0.closed! < $1.closed! }
         
         for (birdN, task) in completedTasks.enumerated() where completedTasks.count >= 1 && birdN <= 7 {
-          let style = self.services.birdService.birds.value.first(where: { $0.typesUID.contains(task.kindOfTaskUID) })?.style ?? .Simple
+          let style = birds.first(where: { $0.kindsOfTaskUID.contains(task.kindOfTaskUID) })?.style ?? .Simple
           result[birdN + 1] = .Sitting(style: style, closed: task.closed!)
         }
         

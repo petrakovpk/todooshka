@@ -18,8 +18,14 @@ protocol HasDataService {
 class DataService {
 
   // MARK: - Properties
+  // core data
   let appDelegate = UIApplication.shared.delegate as! AppDelegate
+  
+  // rx
   let disposeBag = DisposeBag()
+  
+  // data
+  let birds: Driver<[Bird]>
   let firebaseTasks: Driver<[Task]>
   let firebaseKindsOfTask: Driver<[KindOfTask]>
   let kindsOfTask: Driver<[KindOfTask]>
@@ -35,6 +41,11 @@ class DataService {
     let context = self.appDelegate
       .persistentContainer
       .viewContext
+    
+    birds = context
+      .rx
+      .entities(Bird.self)
+      .asDriver(onErrorJustReturn: [])
 
     firebaseTasks = user
       .asObservable()
