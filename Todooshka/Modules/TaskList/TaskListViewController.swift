@@ -170,6 +170,7 @@ class TaskListViewController: TDViewController {
       outputs.hideCell.drive(hideCellBinder),
       outputs.navigateBack.drive(),
       outputs.openTask.drive(),
+      outputs.removeAllTasks.drive(),
       outputs.removeTask.drive(),
       outputs.setAlertText.drive(alertLabel.rx.text),
       outputs.setDataSource.drive(collectionView.rx.items(dataSource: dataSource)),

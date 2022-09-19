@@ -53,9 +53,9 @@ class TaskListFlow: Flow {
       return navigateToShowTaskType(kindOfTask: kindOfTask)
 
     case .CreateTaskIsRequired(let status, let date):
-      return navigateToTask(taskFlowAction: .create(status: status, closed: date))
+      return navigateToTask(taskUID: UUID().uuidString, status: status, closed: date)
     case .ShowTaskIsRequired(let task):
-      return navigateToTask(taskFlowAction: .show(task: task))
+      return navigateToTask(taskUID: task.UID)
       
     case .TaskTypesListIsRequired:
       return navigateToTaskTypesList()
@@ -123,14 +123,23 @@ class TaskListFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToTask(taskFlowAction: TaskFlowAction) -> FlowContributors {
+  private func navigateToTask(taskUID: String) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, taskFlowAction: taskFlowAction)
+    let viewModel = TaskViewModel(services: services, taskUID: taskUID )
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
+    
+    private func navigateToTask(taskUID: String, status: TaskStatus, closed: Date?) -> FlowContributors {
+      let viewController = TaskViewController()
+      let viewModel = TaskViewModel(services: services, taskUID: taskUID, status: status, closed: closed)
+      viewController.viewModel = viewModel
+      rootViewController.tabBarController?.tabBar.isHidden = true
+      rootViewController.pushViewController(viewController, animated: true)
+      return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+    }
   
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
     let viewController = TaskListViewController()

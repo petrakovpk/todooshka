@@ -11,21 +11,30 @@ import RxSwift
 
 extension SharedSequence where Element == Task {
   
-  func change(with status: TaskStatus) -> RxCocoa.SharedSequence<SharingStrategy, Task> {
+  func change(closed date: Date) -> RxCocoa.SharedSequence<SharingStrategy, Task> {
+    return self.map { task in
+      var task = task
+      task.closed = date
+      return task
+    }
+  }
+  
+  func change(created date: Date) -> RxCocoa.SharedSequence<SharingStrategy, Task> {
+    return self.map { task in
+      var task = task
+      task.created = date
+      return task
+    }
+  }
+  
+  func change(status: TaskStatus) -> RxCocoa.SharedSequence<SharingStrategy, Task> {
     return self.map { task in
       var task = task
       task.status = status
       return task
     }
   }
-    
-    func change(with closed: Date) -> RxCocoa.SharedSequence<SharingStrategy, Task> {
-      return self.map { task in
-        var task = task
-        task.closed = closed
-        return task
-      }
-  }
+  
 }
 
 

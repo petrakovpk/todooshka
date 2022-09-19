@@ -133,7 +133,6 @@ class MainTaskListViewController: UIViewController {
     super.viewWillAppear(animated)
     sceneModel.willShow.accept(())
     scene?.reloadData()
-    listViewModel.viewWillAppear()
     navigationController?.tabBarController?.tabBar.isHidden = false
   }
   

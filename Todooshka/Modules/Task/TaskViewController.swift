@@ -21,14 +21,14 @@ class TaskViewController: TDViewController {
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TypeLargeCollectionViewCellSectionModel>!
   
   // MARK: - Task UI Elements
-  private let nameLabel: UILabel = {
+  private let textLabel: UILabel = {
     let label = UILabel(text: "Задача")
     label.font = UIFont.systemFont(ofSize: 15.adjusted , weight: .medium)
     label.textAlignment = .left
     return label
   }()
   
-  private let typeLabel: UILabel = {
+  private let kindOfTaskLabel: UILabel = {
     let label = UILabel(text: "Тип")
     label.font = UIFont.systemFont(ofSize: 15.adjusted , weight: .medium)
     label.textAlignment = .left
@@ -48,7 +48,7 @@ class TaskViewController: TDViewController {
     return view
   }()
   
-  private let nameTextField: TDTaskTextField = {
+  private let textTextField: TDTaskTextField = {
     let field = TDTaskTextField(placeholder: "Введите название задачи")
     field.returnKeyType = .done
     return field
@@ -62,9 +62,10 @@ class TaskViewController: TDViewController {
     return textView
   }()
   
-  private let typesButton: UIButton = {
-    let button = UIButton(type: .custom)
+  private let kindsOfTaskButton: UIButton = {
+    let button = UIButton(type: .system)
     button.setImage(UIImage(named: "settings")?.template , for: .normal)
+    button.tintColor = Theme.App.Buttons.RoundButton.tint
     return button
   }()
   
@@ -88,7 +89,7 @@ class TaskViewController: TDViewController {
   }()
   
   private let alertButton: UIButton = {
-    let button = UIButton(type: .custom)
+    let button = UIButton(type: .system)
     button.cornerRadius = 48.superAdjusted / 2
     button.setTitle("Да, я молодец :)", for: .normal)
     button.setTitleColor(.white, for: .normal)
@@ -100,8 +101,8 @@ class TaskViewController: TDViewController {
     let animationView = AnimationView(name: "taskDone2")
     animationView.isHidden = true
     animationView.contentMode = .scaleAspectFill
-  //  animationView.loopMode = .repeat(3.0)
-  //  animationView.animationSpeed = 1.0
+    animationView.loopMode = .repeat(3.0)
+    animationView.animationSpeed = 1.0
     return animationView
   }()
   
@@ -114,11 +115,11 @@ class TaskViewController: TDViewController {
     bindViewModel()
   }
   
-  override func viewDidDisappear(_ animated: Bool) {
-    if isModal && viewModel.services.tabBarService.selectedItem.value == .Left {
-      //viewModel.services.actionService.runNestSceneActionsTrigger.accept(())
-    }
-  }
+//  override func viewDidDisappear(_ animated: Bool) {
+//    if isModal && viewModel.services.tabBarService.selectedItem.value == .Left {
+//      //viewModel.services.actionService.runNestSceneActionsTrigger.accept(())
+//    }
+//  }
   
   //MARK: - Configure UI
   private func configureUI() {
@@ -127,10 +128,10 @@ class TaskViewController: TDViewController {
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     
     // adding
-    view.addSubview(nameLabel)
-    view.addSubview(nameTextField)
-    view.addSubview(typeLabel)
-    view.addSubview(typesButton)
+    view.addSubview(textLabel)
+    view.addSubview(textTextField)
+    view.addSubview(kindOfTaskLabel)
+    view.addSubview(kindsOfTaskButton)
     view.addSubview(collectionView)
     view.addSubview(descriptionLabel)
     view.addSubview(descriptionTextView)
@@ -141,25 +142,25 @@ class TaskViewController: TDViewController {
     saveButton.isHidden = false
     
     // nameLabel
-    nameLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21.superAdjusted, leftConstant: 16, rightConstant: 16)
+    textLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21.superAdjusted, leftConstant: 16, rightConstant: 16)
     
     // nameTextField
-    nameTextField.anchor(top: nameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 5.superAdjusted, leftConstant: 16, rightConstant: 16, heightConstant: 40.superAdjusted)
+    textTextField.anchor(top: textLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 5.superAdjusted, leftConstant: 16, rightConstant: 16, heightConstant: 40.superAdjusted)
     
-    // typeLabel
-    typeLabel.anchor(top: nameTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16.superAdjusted, leftConstant: 16, rightConstant: 16)
+    // kindOfTaskLabel
+    kindOfTaskLabel.anchor(top: textTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16.superAdjusted, leftConstant: 16, rightConstant: 16)
     
     // configureTaskTypesButton
-    typesButton.imageView?.tintColor = Theme.App.Buttons.RoundButton.tint
-    typesButton.centerYAnchor.constraint(equalTo: typeLabel.centerYAnchor).isActive = true
-    typesButton.anchor(right: view.rightAnchor, rightConstant: 16)
+   
+    kindsOfTaskButton.centerYAnchor.constraint(equalTo: kindOfTaskLabel.centerYAnchor).isActive = true
+    kindsOfTaskButton.anchor(right: view.rightAnchor, rightConstant: 16)
     
     // collectionView
     collectionView.backgroundColor = UIColor.clear
     collectionView.clipsToBounds = false
     collectionView.isScrollEnabled = false
     collectionView.register(TypeLargeCollectionViewCell.self, forCellWithReuseIdentifier: TypeLargeCollectionViewCell.reuseID)
-    collectionView.anchor(top: typeLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20.superAdjusted, leftConstant: 16, heightConstant: 100.superAdjusted )
+    collectionView.anchor(top: kindOfTaskLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20.superAdjusted, leftConstant: 16, heightConstant: 100.superAdjusted )
     
     // descriptionLabel
     descriptionLabel.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20.superAdjusted, leftConstant: 16, rightConstant: 16)
@@ -172,6 +173,9 @@ class TaskViewController: TDViewController {
     
     // completeTaskButton
     completeButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor,  leftConstant: 16, bottomConstant: 16, rightConstant: 16, heightConstant: 48.superAdjusted)
+    
+    // hideKeyboardWhenTappedAround
+    hideKeyboardWhenTappedAround()
   }
   
   private func configureAlert() {
@@ -213,13 +217,11 @@ class TaskViewController: TDViewController {
   
   //MARK: - Bind
   func bindViewModel() {
-    
-    descriptionTextView.text = viewModel.task.description
-    
+
     let input = TaskViewModel.Input(
-      // nameTextField
-      text: nameTextField.rx.text.orEmpty.asDriver(),
-      textFieldEditingDidEndOnExit: nameTextField.rx.controlEvent([.editingDidEndOnExit]).asDriver(),
+      // textTextField
+      textTextFieldText: textTextField.rx.text.orEmpty.asDriver(),
+      textFieldEditingDidEndOnExit: textTextField.rx.controlEvent([.editingDidEndOnExit]).asDriver(),
       // descriptionTextField
       descriptionTextViewText: descriptionTextView.rx.text.orEmpty.asDriver(),
       descriptionTextViewDidBeginEditing: descriptionTextView.rx.didBeginEditing.asDriver(),
@@ -228,53 +230,44 @@ class TaskViewController: TDViewController {
       selection: collectionView.rx.itemSelected.asDriver(),
       // buttons
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      configureTaskTypesButtonClickTrigger: typesButton.rx.tap.asDriver(),
+      configureTaskTypesButtonClickTrigger: kindsOfTaskButton.rx.tap.asDriver(),
       saveTaskButtonClickTrigger: saveButton.rx.tap.asDriver(),
       completeButtonClickTrigger: completeButton.rx.tap.asDriver(),
       // Complete Task Alert
-      alertCompleteTaskOkButtonClickTrigger: alertButton.rx.tap.asDriver()
+      alertOkButtonClickTrigger: alertButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
     
     [
-      // textChanging
-      outputs.nameTextField.drive(nameTextField.rx.text),
-      // descriptionTextField
-      outputs.descriptionTextViewData.drive(descriptionTextViewDataBinder),
-      // typeChanging
-     // outputs.typeChanging.drive(),
-      // collectionView
+      outputs.clearDescriptionPlaceholder.drive(clearDescriptionPlaceholderBinder),
+      outputs.configureKindsOfTask.drive(),
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.selection.drive(),
-      // buttons
+      outputs.descriptionTextField.drive(descriptionTextView.rx.text),
       outputs.navigateBack.drive(),
-      outputs.configureTaskTypesButtonClick.drive(),
-      // alert
-      outputs.showAlert.drive(showAlertBinder),
-      outputs.hideAlert.drive(hideAlertBinder),
-      // save
-      outputs.saveTask.drive(),
-      // point
-      outputs.getPoint.drive(),
-      // isNew
-      outputs.taskIsNew.drive(taskIsNewBinder)
+      outputs.save.drive(),
+      outputs.setDescriptionPlaceholder.drive(setDescriptionPlaceholderBinder),
+      outputs.showAlertTrigger.drive(showAlertBinder),
+      outputs.hideAlertTrigger.drive(hideAlertBinder),
+      outputs.taskIsNewTrigger.drive(taskIsNewBinder),
+      outputs.textTextField.drive(textTextField.rx.text),
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
   }
   
-  //MARK: - Binders
-  var descriptionTextViewDataBinder: Binder<(text: String, isPlaceholder: Bool)> {
-    return Binder(self, binding: { (vc, descriptionTextViewData) in
-      let (text, isPlaceholder) = descriptionTextViewData
-      if isPlaceholder {
-        vc.descriptionTextView.textColor = Theme.App.placeholder
-        vc.descriptionTextView.text = "Напишите комментарий"
-      } else {
-        vc.descriptionTextView.textColor = Theme.App.text
-        vc.descriptionTextView.text = text
-      }
+  // MARK: - Binders
+  var clearDescriptionPlaceholderBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.descriptionTextView.textColor = Theme.App.text
+      vc.descriptionTextView.clear()
+    })
+  }
+  
+  var setDescriptionPlaceholderBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.descriptionTextView.textColor = Theme.App.placeholder
+      vc.descriptionTextView.text = "Напишите комментарий"
     })
   }
   
@@ -304,15 +297,13 @@ class TaskViewController: TDViewController {
     })
   }
   
-  var taskIsNewBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isNew) in
-      if isNew {
+  var taskIsNewBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
         vc.completeButton.isHidden = true
-        vc.nameTextField.becomeFirstResponder()
-      } else {
-        vc.completeButton.isHidden = false
-        vc.hideKeyboardWhenTappedAround()
-      }
+        vc.textTextField.becomeFirstResponder()
+//        vc.completeButton.isHidden = false
+//        vc.hideKeyboardWhenTappedAround()
+      
     })
   }
   
