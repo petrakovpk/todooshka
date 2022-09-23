@@ -93,7 +93,7 @@ class KindOfTaskViewModel: Stepper {
     
     // COLORS
     let dataSourceColors = Driver
-      .combineLatest(icons, selectedColor) { colors, color -> [KindOfTaskColorSectionModel] in
+      .combineLatest(colors, selectedColor) { colors, color -> [KindOfTaskColorSectionModel] in
         [
           KindOfTaskColorSectionModel(
             header: "",
