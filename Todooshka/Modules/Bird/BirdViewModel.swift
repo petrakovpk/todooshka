@@ -5,6 +5,7 @@
 //  Created by Петраков Павел Константинович on 02.02.2022.
 //
 
+import CoreData
 import RxFlow
 import RxSwift
 import RxCocoa
@@ -13,139 +14,149 @@ import UIKit
 class BirdViewModel: Stepper {
 
   // MARK: - Properties
+  // context
+  let appDelegate = UIApplication.shared.delegate as! AppDelegate
+  var managedContext: NSManagedObjectContext {
+    self.appDelegate.persistentContainer.viewContext
+  }
+  // rx
   let steps = PublishRelay<Step>()
   let services: AppServices
-  
-  var bird: Bird
+  // bird
+  let birdUID: String
   
   // MARK: - Transform
   struct Input {
-    
-    // buttons
+    let alertBuyButtonClick: Driver<Void>
+    let alertCancelButtonClick: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
     let buyButtonClickTrigger: Driver<Void>
-    let alertCancelButtonClick: Driver<Void>
-    let alertBuyButtonClick: Driver<Void>
-    
-    // collectionView
     let selection: Driver<IndexPath>
   }
   
   struct Output {
-    
-    // Properties
-    
-    // title
-    let title: Driver<String>
-    // image
-    let image: Driver<UIImage?>
-    // description
-    let description: Driver<String>
-    // collectionView
-    let dataSource: Driver<[TypeSmallCollectionViewCellSectionModel]>
-    // price
-    let price: Driver<String>
-    // buyButtonIsHidden
-    let buyButtonIsHidden: Driver<Bool>
-    // isBoughtLabel
-    let isBoughtLabel: Driver<Bool>
-    // buyAlertViewIsHidden
-    let buyAlertViewIsHidden: Driver<Bool>
-    // eggImageView
-    let eggImageView: Driver<UIImage?>
-    // birdImageView
+    let addKindOfTask: Driver<Void>
     let birdImageView: Driver<UIImage?>
-    // buyButtonIsEnabled
+    let buyAlertViewIsHidden: Driver<Bool>
     let buyButtonIsEnabled: Driver<Bool>
-    // labelText
+    let buyButtonIsHidden: Driver<Bool>
+    let buyLabelIsHidden: Driver<Bool>
+    let eggImageView: Driver<UIImage?>
+    let dataSource: Driver<[KindOfTaskForBirdSection]>
+    let description: Driver<String>
+    let kindOfTaskImageView: Driver<UIImage?>
     let labelText: Driver<String>
-    
-    // Actions
-    
-    // back
-    let back: Driver<Void>
-    // selection
-    let selection: Driver<KindOfTask>
-    // buy
-    let buy: Driver<Void>
-    
+    let navigateBack: Driver<Void>
+    let price: Driver<String>
+    //let selectedKindOfTask: Driver<KindOfTask>
+    let title: Driver<String>
   }
   
   //MARK: - Init
-  init(bird: Bird, services: AppServices) {
-    self.bird = bird
+  init(birdUID: String, services: AppServices) {
+    self.birdUID = birdUID
     self.services = services
   }
   
   // MARK: - Transform
   func transform(input: Input) -> Output {
     
-    // title
-    let title = Driver<String>.of(self.bird.name)
+    let bird = services.dataService
+      .birds
+      .compactMap{ $0.first(where: { $0.UID == self.birdUID }) }
     
-    // image
-    let image = Driver<UIImage?>.of(self.bird.getImageForState(state: .Normal))
-    
-    // description
-    let description = Driver<String>.of(self.bird.description)
-    
-    // price
-    let price = Driver<String>.of(self.bird.price.string)
-    
-    // types
     let kindsOfTask = services.dataService.kindsOfTask.asDriver()
     
-    // bird
-    let bird = services.dataService.birds
-      .map{
-        $0.first {
-          $0.UID == self.bird.UID
-        } ?? self.bird
-      }
-      .asDriver(onErrorJustReturn: self.bird)
-        
+    let kindOfTaskImageView = kindsOfTask
+      .withLatestFrom(bird) { kindsOfTask, bird -> KindOfTask? in
+        kindsOfTask.first(where: { $0.UID == bird.style.rawValue })
+      }.map{ $0?.icon.image }
+      .asDriver(onErrorJustReturn: nil)
+     
+
+    let buyButtonIsHidden = bird
+      .map{ $0.isBought }
+    
+    let buyLabelIsHidden = buyButtonIsHidden
+      .map{ !$0 }
+    
+    let description = bird
+      .map{ $0.description }
+    
+    let eggImageView = bird
+      .map{ $0.eggImage }
+    
+    let birdImageView = bird
+      .map{ $0.getImageForState(state: .Normal) }
+    
+    let price = bird
+      .map{ $0.price }
+      .map{ $0.string }
+    
+    let title = bird
+      .map{ $0.name }
+    
     // dataSource
-    let dataSource = Driver.combineLatest(bird, kindsOfTask) { bird, kindsOfTask -> [TypeSmallCollectionViewCellSectionModel] in
-      [TypeSmallCollectionViewCellSectionModel(
-        header: "",
-        items: kindsOfTask.map { kindOfTask -> TypeSmallCollectionViewCellSectionModelItem in
-          TypeSmallCollectionViewCellSectionModelItem(
-            kindOfTask: kindOfTask,
-            isSelected: bird.isBought && bird.kindsOfTaskUID.contains(where: { $0 == kindOfTask.UID }),
-            isEnabled: bird.isBought)
-        }
-      )]
-      }
+    let dataSource = Driver.combineLatest(bird, kindsOfTask) { bird, kindsOfTask -> [KindOfTaskForBirdSection] in
+      [
+        KindOfTaskForBirdSection(
+          header: "",
+          items: kindsOfTask
+            .filter { $0.UID == bird.style.rawValue }
+            .map {
+              KindOfTaskForBirdItem(
+                kindOfTask: $0,
+                isPlusButton: false,
+                isRemovable: $0.UID != bird.style.rawValue
+              )
+            }
+          + [KindOfTaskForBirdItem (kindOfTask: KindOfTask.Standart.Empty, isPlusButton: true, isRemovable: false)]
+        )
+      ]
+    }
       .asDriver(onErrorJustReturn: [])
 
-    // buyButtonIsHidden
-    let buyButtonIsHidden = bird.map{ $0.isBought }
+    // navigate back
+    let navigateBack = input.backButtonClickTrigger
+      .map { self.steps.accept(AppStep.NavigateBack) }
     
-    // eggImageView
-    let eggImageView = Driver<UIImage?>.of(self.bird.eggImage)
-    
-    // birdImageView
-    let birdImageView = Driver<UIImage?>.of(self.bird.getImageForState(state: .Normal))
-    
-    // isBoughtLabel
-    let isBoughtLabel = bird.map{ $0.isBought == false }
-    
-    // back
-    let back = input.backButtonClickTrigger
-      .do { _ in
-        self.steps.accept(AppStep.ShopIsCompleted)
-      }
-    
-    // selection
+    // selectedKindOfTask
     let selection = input.selection
-      .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTask in
-        return dataSource[indexPath.section].items[indexPath.item].kindOfTask }
-      .withLatestFrom(bird) { type, bird -> KindOfTask in
-        guard bird.isBought else { return type }
-//        self.services.birdService.linkBirdToTypeUID(bird: bird, type: type)
-        return type
+      .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTaskForBirdItem in
+        dataSource[indexPath.section].items[indexPath.item]
       }
     
+    let addKindOfTask = selection
+      .filter{ $0.isPlusButton }
+      .map{ _ in self.steps.accept(AppStep.KindOfTaskWithBird(birdUID: self.birdUID)) }
+
+//    let addKindOfTask = selectedKindOfTask
+//      .withLatestFrom(bird) { kindOfTask, bird -> Bird in
+//        var bird = bird
+//        bird.kindsOfTaskUID.appendIfNotContains(kindOfTask.UID)
+//        return bird
+//      }.filter{ $0.isBought }
+//      .asObservable()
+//      .flatMapLatest({ self.managedContext.rx.update($0) })
+      
+    
+//    let removeKindOfTask = selectedKindOfTask
+//      .withLatestFrom(bird) { kindOfTask, birds -> [Bird] in
+//        birds
+//      }.map { $0.filter { $0.UID != self.birdUID } }
+//    
+//    
+    
+    
+    
+    
+//    let
+//      .withLatestFrom(bird) { type, bird -> KindOfTask in
+//        guard bird.isBought else { return type }
+///       self.services.birdService.linkBirdToTypeUID(bird: bird, type: type)
+//        return type
+//      }
+//
     // buyAlertViewIsHidden
     let buyAlertViewIsHidden = Driver
       .of(
@@ -155,56 +166,43 @@ class BirdViewModel: Stepper {
       )
       .merge()
     
-    let gameCurrency = services.gameCurrencyService.gameCurrency
-      .map { $0.filter{ $0.currency == self.bird.currency } }
+    let feathers = services.dataService.feathers
       .asDriver(onErrorJustReturn: [])
     
-    let possibilities = bird.withLatestFrom(gameCurrency) { $1.count - $0.price }
+    let diamonds = services.dataService.diamonds
+      .asDriver(onErrorJustReturn: [])
+    
+    let possibilities = bird.withLatestFrom(feathers) { $1.count - $0.price }
     
     let buyButtonIsEnabled = possibilities.map{ $0 >= 0 ? true : false }
     
     let labelText = possibilities.map{ $0 >= 0 ? "Можете купить!" : "Не хватает \(abs($0)) перышек" }
     
-    let buy = input.alertBuyButtonClick.withLatestFrom(gameCurrency) { _, gameCurrency in
-      var bird  = self.bird
-      bird.isBought = true
-     // self.services.birdService.saveBirdToCoreData(bird: bird)
-      for gameCurrencyForRemoving in gameCurrency {
-        self.services.gameCurrencyService.removeGameCurrencyFromCoreData(gameCurrency: gameCurrencyForRemoving)
-      }
-    }
+//    let buy = input.alertBuyButtonClick.withLatestFrom(feathers) { _, gameCurrency in
+//      var bird  = self.bird
+//      bird.isBought = true
+//     // self.services.birdService.saveBirdToCoreData(bird: bird)
+//      for gameCurrencyForRemoving in gameCurrency {
+//       // self.services.gameCurrencyService.removeGameCurrencyFromCoreData(gameCurrency: gameCurrencyForRemoving)
+//      }
+//    }
     
     return Output(
-      // title
-      title: title,
-      // image
-      image: image,
-      // description
-      description: description,
-      // dataSource
-      dataSource: dataSource,
-      // price
-      price: price,
-      // buyButtonIsHidden
-      buyButtonIsHidden: buyButtonIsHidden,
-      // isBoughtLabel
-      isBoughtLabel: isBoughtLabel,
-      // buyAlertViewIsHidden
-      buyAlertViewIsHidden: buyAlertViewIsHidden,
-      // eggImageView
-      eggImageView: eggImageView,
-      //birdImageView
+      addKindOfTask: addKindOfTask,
       birdImageView: birdImageView,
-      // buyButtonIsEnabled
+      buyAlertViewIsHidden: buyAlertViewIsHidden,
       buyButtonIsEnabled: buyButtonIsEnabled,
-      // labelText
+      buyButtonIsHidden: buyButtonIsHidden,
+      buyLabelIsHidden: buyLabelIsHidden,
+      eggImageView: eggImageView,
+      dataSource: dataSource,
+      description: description,
+      kindOfTaskImageView: kindOfTaskImageView,
       labelText: labelText,
-      // back
-      back: back,
-      // selection
-      selection: selection,
-      // buy
-      buy: buy
+      navigateBack: navigateBack,
+      price: price,
+      //selectedKindOfTask: selectedKindOfTask,
+      title: title
     )
   }
 }

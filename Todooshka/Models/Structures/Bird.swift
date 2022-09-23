@@ -12,7 +12,7 @@ struct Bird: IdentifiableType, Equatable {
   
   // MARK: - IdentifiableType
   var identity: String {
-    return UID
+    UID
   }
   
   // MARK: - Properties
@@ -31,37 +31,6 @@ struct Bird: IdentifiableType, Equatable {
     UIImage(named: "яйцо_" + clade.rawValue + "_" + "без_трещин")
   }
   
-  // MARK: - Init
-//  init(UID: String, name: String, description: String, clade: Clade, style: Style, price: Int, currency: Currency, isBought: Bool, typesUID: [String]) {
-//    self.UID = UID
-//    self.currency = currency
-//    self.description = description
-//    self.isBought = isBought
-//    self.name = name
-//    self.price = price
-//    self.clade = clade
-//    self.style = style
-//    self.typesUID = typesUID
-//  }
-//
-//  init?(birdCoreData: BirdCoreData) {
-//    guard
-//      let currency = Currency(rawValue: birdCoreData.currency),
-//      let clade = Clade(rawValue: birdCoreData.clade),
-//      let style = Style(rawValue: birdCoreData.style)
-//    else { return nil }
-//
-//    self.currency = currency
-//    self.clade = clade
-//    self.style = style
-//    self.UID = birdCoreData.uid
-//    self.description = birdCoreData.desc
-//    self.isBought = birdCoreData.isBought
-//    self.name = birdCoreData.name
-//    self.price = Int(birdCoreData.price)
-//    self.typesUID = birdCoreData.typesUID
-//  }
-  
   // MARK: - Equatable
   static func == (lhs: Bird, rhs: Bird) -> Bool {
     return lhs.identity == rhs.identity && lhs.isBought == rhs.isBought
@@ -69,7 +38,7 @@ struct Bird: IdentifiableType, Equatable {
   
   // MARK: - image
   func getImageForState(state: BirdState) -> UIImage? {
-    return UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + state.rawValue)
+    return UIImage(named: clade.rawValue + "_" + style.imageName + "_" + state.rawValue)
   }
 }
 

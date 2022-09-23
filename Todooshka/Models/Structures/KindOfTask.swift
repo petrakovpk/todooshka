@@ -35,9 +35,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
   var text: String
 
   // MARK: - Identity
-  var identity: String {
-    return UID
-  }
+  var identity: String { UID }
   
   // MARK: - Init
   init(UID: String, icon: Icon, color: UIColor?, text: String, index: Int) {

@@ -10,37 +10,49 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-class BirdViewController: UIViewController {
-
-  // MARK: - Header UI Elemenets
-  private let headerView = UIView()
-  private let titleLabel = UILabel()
-  private let dividerView = UIView()
-  private let backButton = UIButton(type: .custom)
+class BirdViewController: TDViewController {
   
   // MARK: - Body UI Elemenets
-  private let imageView: UIImageView = {
+  private let birdImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.layer.cornerRadius = 15
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
   
+  private let changeButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.setTitle("Изменить", for: .normal)
+    button.setTitleColor(Theme.App.text, for: .normal)
+    button.cornerRadius = 5
+    button.backgroundColor = .systemGray.withAlphaComponent(0.3)
+    return button
+  }()
+  
+  private let kindOfTaskImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.layer.cornerRadius = 15
+    imageView.contentMode = .scaleAspectFit
+    imageView.image = KindOfTask.Standart.Business.icon.image.template
+    imageView.tintColor = Palette.SingleColors.SantasGray
+    return imageView
+  }()
+  
   private let typeLabel: UILabel = {
     let label = UILabel()
-    label.text = "Эта птица будет появляться при выполнении задач с типом:"
+    label.text = "Эта птица для типов ниже:"
     label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
     return label
   }()
   
   private var collectionView: UICollectionView!
-  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TypeSmallCollectionViewCellSectionModel>!
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskForBirdSection>!
   
   private let descriptionBackgroundView: UIView = {
     let view = UIView()
     view.layer.cornerRadius = 15
     view.layer.borderWidth = 1.0
-    view.layer.borderColor = Palette.SingleColors.BlueRibbon.cgColor
+    view.layer.borderColor = Theme.App.text?.cgColor
     return view
   }()
 
@@ -62,7 +74,7 @@ class BirdViewController: UIViewController {
   private let priceLabel: UILabel = {
     let label = UILabel()
     label.textAlignment = .center
-    label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+    label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
     label.textColor = UIColor(hexString: "ec55d4")
     return label
   }()
@@ -82,7 +94,7 @@ class BirdViewController: UIViewController {
     return button
   }()
   
-  private let isBoughtLabel: UILabel = {
+  private let buyLabel: UILabel = {
     let label = UILabel()
     label.text = "Птица открыта!"
     label.textAlignment = .center
@@ -99,71 +111,39 @@ class BirdViewController: UIViewController {
   
   // MARK: - Lifecycle
   override func viewDidLoad() {
-    configureHeader()
+    super.viewDidLoad()
     configureBody()
     configureDataSource()
     bindViewModel()
   }
   
   // MARK: - Configure
-  func configureHeader() {
-      
-    // adding
-    view.addSubview(headerView)
-    headerView.addSubview(titleLabel)
-    headerView.addSubview(backButton)
-    headerView.addSubview(dividerView)
-    headerView.addSubview(priceBackgroundView)
-    priceBackgroundView.addSubview(priceImageView)
-    priceBackgroundView.addSubview(priceLabel)
-    
-    // headerView
-    headerView.backgroundColor = UIColor(named: "navigationHeaderViewBackgroundColor")
-    headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: 96)
-    
-    // titleLabel
-    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-    titleLabel.text = "Добро пожаловать в магазин!"
-    titleLabel.anchorCenterXToSuperview()
-    titleLabel.anchor(bottom: headerView.bottomAnchor, bottomConstant: 20)
-    
-    // backButton
-    backButton.imageView?.tintColor = Theme.App.text
-    backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
-    backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
-    // dividerView
-    dividerView.backgroundColor = UIColor(named: "navigationDividerViewBackgroundColor")
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
-    
-    // priceBackgroundView
-    priceBackgroundView.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, rightConstant: 16, widthConstant: 40)
-    
-    // priceImagView
-    priceImageView.anchorCenterYToSuperview()
-    priceImageView.anchor(right: headerView.rightAnchor, rightConstant: 16, widthConstant: 15, heightConstant: 30)
-    
-    // priceLabel
-    priceLabel.anchorCenterYToSuperview()
-    priceLabel.anchor(right: priceImageView.leftAnchor, topConstant: 8, rightConstant: 8)
-  }
   
   func configureBody() {
+    
+    // settings
+    titleLabel.text = "Добро пожаловать в магазин!"
     
     // collectionView
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     
     // adding
     view.addSubviews([
-      imageView,
-      typeLabel,
+      alertBuyView,
+      birdImageView,
+      buyButton,
+      buyLabel,
+      changeButton,
       collectionView,
       descriptionBackgroundView,
-      buyButton,
-      isBoughtLabel,
-      alertBuyView
+      kindOfTaskImageView,
+      priceBackgroundView,
+      typeLabel
     ])
-
+    
+    priceBackgroundView.addSubview(priceImageView)
+    priceBackgroundView.addSubview(priceLabel)
+    
     // view
     view.backgroundColor = Theme.App.background
     
@@ -172,29 +152,45 @@ class BirdViewController: UIViewController {
     alertBuyView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
     
     // imageView
-    imageView.anchorCenterXToSuperview()
-    imageView.anchor(top: headerView.bottomAnchor, topConstant: 16, widthConstant: 200, heightConstant: 260)
+    birdImageView.anchorCenterXToSuperview()
+    birdImageView.anchor(top: headerView.bottomAnchor, topConstant: 16, widthConstant: 200, heightConstant: 260)
     
-    // chooseTypeLabel
-    typeLabel.anchor(top: imageView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 32, leftConstant: 16, rightConstant: 16)
+    // kindOfTaskImageView
+    kindOfTaskImageView.anchor(top: birdImageView.topAnchor, right: birdImageView.leftAnchor, topConstant: 8, rightConstant: 8, widthConstant: 40, heightConstant: 40)
+    
+    // priceBackgroundView
+    priceBackgroundView.anchor(top: birdImageView.topAnchor, left: birdImageView.rightAnchor, topConstant: 8, leftConstant: 8, widthConstant: 40, heightConstant: 40)
+    
+    // priceImagView
+    priceImageView.anchorCenterYToSuperview()
+    priceImageView.anchor(right: priceBackgroundView.rightAnchor, widthConstant: 20, heightConstant: 40)
+    
+    // priceLabel
+    priceLabel.anchorCenterYToSuperview()
+    priceLabel.anchor(right: priceImageView.leftAnchor, topConstant: 8, rightConstant: 8)
+
+    // typeLabel
+    typeLabel.anchor(top: birdImageView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 32, leftConstant: 16, rightConstant: 16, heightConstant: 30)
+    
+    // changeButton
+    changeButton.anchor(top: birdImageView.bottomAnchor, right: view.rightAnchor, topConstant: 32, rightConstant: 16, widthConstant: 100, heightConstant: 30)
     
     // collectionView
     collectionView.backgroundColor = UIColor.clear
     collectionView.clipsToBounds = false
-    collectionView.isScrollEnabled = false
-    collectionView.register(TypeSmallCollectionViewCell.self, forCellWithReuseIdentifier: TypeSmallCollectionViewCell.reuseID)
-    collectionView.anchor(top: typeLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16.superAdjusted, leftConstant: 16, heightConstant: 60.superAdjusted )
+    collectionView.register(KindOfTaskForBirdCell.self, forCellWithReuseIdentifier: KindOfTaskForBirdCell.reuseID)
+    collectionView.anchor(top: typeLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, heightConstant: 60)
     
     // buyButton
     buyButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 32, rightConstant: 16, heightConstant: 50)
     
     // isBoughtLabel
-    isBoughtLabel.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 32, rightConstant: 16, heightConstant: 50)
+    buyLabel.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 32, rightConstant: 16, heightConstant: 50)
     
     // descriptionBackgroundView
     descriptionBackgroundView.addSubview(descriptionTextView)
     descriptionBackgroundView.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, bottom: buyButton.topAnchor, right: view.rightAnchor, topConstant: 32, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
-    
+
     // descriptionTextView
     descriptionTextView.anchorCenterXToSuperview()
     descriptionTextView.anchorCenterYToSuperview()
@@ -224,48 +220,46 @@ class BirdViewController: UIViewController {
   func bindViewModel() {
     
     let input = BirdViewModel.Input(
-      // buttons
+      alertBuyButtonClick: alertBuyView.buyButton.rx.tap.asDriver(),
+      alertCancelButtonClick: alertBuyView.cancelButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       buyButtonClickTrigger: buyButton.rx.tap.asDriver(),
-      alertCancelButtonClick: alertBuyView.cancelButton.rx.tap.asDriver(),
-      alertBuyButtonClick: alertBuyView.buyButton.rx.tap.asDriver(),
-      // collectionView
       selection: collectionView.rx.itemSelected.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
     
     [
-      // title
-      outputs.title.drive(titleLabel.rx.text),
-      // image
-      outputs.image.drive(imageView.rx.image),
-      // description
-      outputs.description.drive(descriptionTextView.rx.text),
-      // collectionView
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      // price
-      outputs.price.drive(priceLabel.rx.text),
-      // buyButtonIsHidden
+      outputs.addKindOfTask.drive(),
+      outputs.birdImageView.drive(birdImageView.rx.image),
+      outputs.kindOfTaskImageView.drive(kindOfTaskImageView.rx.image),
+//      outputs.buyAlertViewIsHidden: buyAlertViewIsHidden,
+//      outputs.buyButtonIsEnabled: buyButtonIsEnabled,
       outputs.buyButtonIsHidden.drive(buyButton.rx.isHidden),
-      // isBoughtLabel
-      outputs.isBoughtLabel.drive(isBoughtLabel.rx.isHidden),
-      // buyAlertViewIsHidden
-      outputs.buyAlertViewIsHidden.drive(alertBuyView.rx.isHidden),
-      // eggImageView
-      outputs.eggImageView.drive(alertBuyView.eggImageView.rx.image),
-      // birdImageView
-      outputs.birdImageView.drive(alertBuyView.birdImageView.rx.image),
-      // buyButtonIsEnabled
-      outputs.buyButtonIsEnabled.drive(alertBuyView.buyButton.rx.isEnabled),
-      // labelText
-      outputs.labelText.drive(alertBuyView.label.rx.text),
-      // back
-      outputs.back.drive(),
-      // selection
-      outputs.selection.drive(),
-      // buy
-      outputs.buy.drive()
+//      outputs.eggImageView: eggImageView,
+      outputs.buyLabelIsHidden.drive(buyLabel.rx.isHidden),
+      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.description.drive(descriptionTextView.rx.text),
+//      outputs.labelText: labelText,
+      outputs.navigateBack.drive(),
+      outputs.price.drive(priceLabel.rx.text),
+//      outputs.selectedKindOfTask: selectedKindOfTask,
+//      outputs.title: title
+//      outputs.birdImageView.drive(alertBuyView.birdImageView.rx.image),
+//      outputs.buyButtonIsHidden.drive(buyButton.rx.isHidden),
+//     // outputs.buy.drive(),
+//      outputs.buyAlertViewIsHidden.drive(alertBuyView.rx.isHidden),
+//      outputs.buyButtonIsEnabled.drive(alertBuyView.buyButton.rx.isEnabled),
+//      outputs.eggImageView.drive(alertBuyView.eggImageView.rx.image),
+//    //
+//      outputs.description.drive(descriptionTextView.rx.text),
+//      outputs.isBoughtLabel.drive(isBoughtLabel.rx.isHidden),
+//   //   outputs.image.drive(imageView.rx.image),
+//      outputs.labelText.drive(alertBuyView.label.rx.text),
+//      outputs.navigateBack.drive(),
+//      outputs.price.drive(priceLabel.rx.text),
+//      outputs.selection.drive(),
+      outputs.title.drive(titleLabel.rx.text),
     ]
       .forEach({$0.disposed(by: disposeBag)})
   }
@@ -273,10 +267,10 @@ class BirdViewController: UIViewController {
   // MARK: - Configure DataSource
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TypeSmallCollectionViewCellSectionModel>(
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskForBirdSection>(
       configureCell: {(_, collectionView, indexPath, item) in
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TypeSmallCollectionViewCell.reuseID, for: indexPath) as! TypeSmallCollectionViewCell
-        cell.configure(with: item.kindOfTask, isSelected: item.isSelected, isEnabled: item.isEnabled)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskForBirdCell.reuseID, for: indexPath) as! KindOfTaskForBirdCell
+        item.isPlusButton ? cell.configureAsPlusButton() : cell.configure(with: item)
         return cell
       })
   }

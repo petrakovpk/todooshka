@@ -94,11 +94,7 @@ class TaskCell: SwipeCollectionViewCell {
     super.prepareForReuse()
     disposeBag = DisposeBag()
   }
-  
-  override func layoutSubviews() {
-    super.layoutSubviews()
-  }
-  
+
   // MARK: - Draw
   override func draw(_ rect: CGRect) {
     configureUI()
@@ -207,8 +203,6 @@ class TaskCell: SwipeCollectionViewCell {
   //MARK: - Configure UI
   func configureUI() {
     
-    
-
     // contentView
     contentView.addSubview(repeatButton)
     contentView.addSubview(taskTextLabel)
@@ -253,15 +247,12 @@ class TaskCell: SwipeCollectionViewCell {
     // descriptionTextLabel
     descriptionTextLabel.removeAllConstraints()
     
-    if descriptionTextLabel.text == nil {
-      // taskTextLabel
+    if let description = descriptionTextLabel.text, description != "" {
+      taskTextLabel.anchor(top: contentView.topAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 12, leftConstant: 8, rightConstant: 8)
+      descriptionTextLabel.anchor(top: taskTextLabel.bottomAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 3, leftConstant: 8, rightConstant: 8)
+    } else {
       taskTextLabel.anchorCenterYToSuperview()
       taskTextLabel.anchor(left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, leftConstant: 8, rightConstant: 8)
-    } else {
-      // taskTextLabel
-      taskTextLabel.anchor(top: contentView.topAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 12, leftConstant: 8, rightConstant: 8)
-      // descriptionTextLabel
-      descriptionTextLabel.anchor(top: taskTextLabel.bottomAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 3, leftConstant: 8, rightConstant: 8)
     }
   }
   
@@ -332,82 +323,4 @@ class TaskCell: SwipeCollectionViewCell {
     
     oldLineGradientLayer = lineGradientLayer
   }
-  
-  //MARK: - Bind
-  func bindViewModel(){
-    //
-    //    let input = TaskCellModel.Input(
-    //      repeatButtonClickTrigger: repeatButton.rx.tap.asDriver()
-    //    )
-    //
-    //    let outputs = viewModel.transform(input: input)
-    //
-    //    [
-    //      // text
-    //      outputs.text.drive(taskTextLabel.rx.text),
-    //
-    //      // description
-    //      outputs.description.drive(descriptionTextLabel.rx.text),
-    //
-    //      // type
-    //      outputs.type.drive(typeBinder),
-    //
-    //      // time Left
-    //      outputs.timeLeftText.drive(taskTimeLeftLabel.rx.text),
-    //      outputs.timeLeftPercent.drive(timeLeftPercentBinder),
-    //
-    //      // repeat button
-    //      outputs.repeatButtonClick.drive(),
-    //
-    //      // actions
-    //      outputs.isHidden.drive(isHiddenBinder),
-    //
-    //      // dataSource
-    //      outputs.reloadDataSource.drive(),
-    //
-    //      // mode
-    //      outputs.mode.drive(modeBinder)
-    //    ]
-    //      .forEach({ $0.disposed(by: disposeBag) })
-    
-  }
-  
-  // MARK: - Binders
-  //  var typeBinder: Binder<TaskType> {
-  //    return Binder(self, binding: { (cell, type) in
-  //      cell.taskTypeImageView.image = type.icon.image
-  //      cell.taskTypeImageView.tintColor = type.color.uiColor
-  //    })
-  //  }
-  //
-  //  var isHiddenBinder: Binder<Bool> {
-  //    return Binder(self, binding: { (cell, isHide) in
-  //      if isHide == false  { return }
-  //      cell.hideSwipe(animated: true)
-  //    })
-  //  }
-  //
-  //  var timeLeftPercentBinder: Binder<Double> {
-  //    return Binder(self, binding: { (cell, percent) in
-  //      let widthConstant = percent * (cell.contentView.frame.width.double - 22)
-  //      cell.configurelineLayout(widthConstant: widthConstant)
-  //    })
-  //  }
-  //
-  //  var modeBinder: Binder<TaskCellMode> {
-  //    return Binder(self, binding: { (cell, mode) in
-  //      switch mode {
-  //      case .WithTimer:
-  //        cell.taskTimeLeftView.isHidden = false
-  //        cell.repeatButton.isHidden = true
-  //      case .WithRepeatButton:
-  //        cell.taskTimeLeftView.isHidden = true
-  //        cell.repeatButton.isHidden = false
-  //      case .WithFeather:
-  //        cell.taskTimeLeftView.isHidden = true
-  //        cell.repeatButton.isHidden = true
-  //      }
-  //    })
-  //  }
-  
 }

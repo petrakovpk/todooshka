@@ -30,7 +30,7 @@ class KindOfTaskListDeletedViewModel: Stepper {
   }
   
   struct Output {
-    let dataSource: Driver<[KindOfTaskListSectionModel]>
+    let dataSource: Driver<[KindOfTaskListSection]>
     let hideAlert: Driver<Void>
     let navigateBack: Driver<Void>
     let removeAllKindsOfTask: Driver<Result<Void,Error>>
@@ -50,7 +50,7 @@ class KindOfTaskListDeletedViewModel: Stepper {
       .map{ $0.filter{ $0.status == .deleted } }
     
     let dataSource = kindsOfTask
-      .map {[ KindOfTaskListSectionModel(header: "", items: $0) ]}
+      .map {[ KindOfTaskListSection(header: "", items: $0) ]}
     
     let hideAlert = Driver
       .of(input.alertCancelButtonClickTrigger, input.alertDeleteButtonClickTrigger)

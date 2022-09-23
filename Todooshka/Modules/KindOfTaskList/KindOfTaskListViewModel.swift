@@ -29,7 +29,7 @@ class KindOfTaskListViewModel: Stepper {
   
   struct Output {
     let addTask: Driver<Void>
-    let dataSource: Driver<[KindOfTaskListSectionModel]>
+    let dataSource: Driver<[KindOfTaskListSection]>
     let hideAlert: Driver<Void>
     let moving: Driver<Result<Void,Error>>
     let navigateBack: Driver<Void>
@@ -54,7 +54,7 @@ class KindOfTaskListViewModel: Stepper {
 
     // dataSource
     let dataSource = kindsOfTask
-      .map({[ KindOfTaskListSectionModel(header: "", items: $0) ]})
+      .map({[ KindOfTaskListSection(header: "", items: $0) ]})
       .asDriver()
     
     let openKindOfTask = input.selection

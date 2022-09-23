@@ -32,7 +32,6 @@ class ShopCollectionViewCell: UICollectionViewCell {
     
     // contentView
     contentView.cornerRadius = 11
-    contentView.backgroundColor = .systemGray.withAlphaComponent(0.3)
     
     // adding
     contentView.addSubview(nameLabel)
@@ -50,5 +49,6 @@ class ShopCollectionViewCell: UICollectionViewCell {
   func configure(bird: Bird) {
     nameLabel.text = bird.style.rawValue
     imageView.image = bird.getImageForState(state: .Normal)
+    contentView.backgroundColor = bird.isBought ? .clear : .systemGray.withAlphaComponent(0.3)
   }
 }

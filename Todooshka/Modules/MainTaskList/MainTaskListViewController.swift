@@ -301,9 +301,7 @@ class MainTaskListViewController: UIViewController {
     let outputs = listViewModel.transform(input: input)
     
     [
-      outputs.changeToCompleted.drive(),
-      outputs.changeToIdea.drive(),
-      outputs.changeToInProgress.drive(),
+      outputs.change.drive(changeBinder),
       outputs.hideAlert.drive(hideAlertBinder),
       outputs.hideCell.drive(hideCellBinder),
       outputs.openTask.drive(),
@@ -317,7 +315,12 @@ class MainTaskListViewController: UIViewController {
       .forEach({ $0.disposed(by: disposeBag) })
   }
   
-  //MARK: - Binders
+  // MARK: - Binders
+  var changeBinder: Binder<Result<Void, Error>> {
+    return Binder(self, binding: { (vc, _) in
+      vc.collectionView.reloadData()
+    })
+  }
   var hideAlertBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.alertView.isHidden = true

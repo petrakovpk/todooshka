@@ -46,7 +46,7 @@ class DiamondViewModel: Stepper {
     
     // backButtonClickHandler
     let backButtonClickHandler = input.backButtonClickTrigger
-      .do { _ in self.steps.accept(AppStep.DiamondIsCompleted) }
+      .map { self.steps.accept(AppStep.NavigateBack) }
     
     // offerSelected
     let smallOfferSelected = input.smallOfferBackgroundClickTrigger.map{ DiamondPackageType.Small }.asDriver()

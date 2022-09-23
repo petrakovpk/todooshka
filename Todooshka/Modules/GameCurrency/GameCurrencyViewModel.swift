@@ -37,7 +37,7 @@ class ScoreViewModel: Stepper {
   func transform(input: Input) -> Output {
     
     let backButtonClickHandler = input.backButtonClickHandler
-      .map { self.steps.accept(AppStep.ShowPointsIsCompleted) }
+      .map { self.steps.accept(AppStep.NavigateBack) }
     
     let buyButtonClickHandler = input.buyButtonClickTrigger
     

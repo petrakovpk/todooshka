@@ -70,7 +70,7 @@ class FeatherViewModel: Stepper {
     
     // backButtonClickHandler
     let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.FeatherIsCompleted) }
+      .map { self.steps.accept(AppStep.NavigateBack) }
     
     return Output(
       dataSource: dataSource,

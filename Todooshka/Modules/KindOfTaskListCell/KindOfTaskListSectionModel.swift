@@ -1,5 +1,5 @@
 //
-//  KindOfTaskListSectionModel.swift
+//  KindOfTaskListSection.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 04.08.2021.
@@ -7,7 +7,7 @@
 
 import RxDataSources
 
-struct KindOfTaskListSectionModel: AnimatableSectionModelType {
+struct KindOfTaskListSection: AnimatableSectionModelType {
     
     var identity: String {
       return header
@@ -21,7 +21,7 @@ struct KindOfTaskListSectionModel: AnimatableSectionModelType {
         self.items = items
     }
     
-    init(original: KindOfTaskListSectionModel, items: [KindOfTask]) {
+    init(original: KindOfTaskListSection, items: [KindOfTask]) {
         self = original
         self.items = items
     }

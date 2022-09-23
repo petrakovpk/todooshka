@@ -18,7 +18,7 @@ class KindOfTaskListViewController: TDViewController {
   let disposeBag = DisposeBag()
   
   var collectionView: UICollectionView!
-  var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSectionModel>!
+  var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>!
   var viewModel: KindOfTaskListViewModel!
   
   let itemMoved = BehaviorRelay<ItemMovedEvent?>(value: nil)
@@ -201,7 +201,7 @@ class KindOfTaskListViewController: TDViewController {
   func configureDataSource() {
     
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSectionModel>(
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(
       configureCell: {(_, collectionView, indexPath, kindOfTask) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskListCell.reuseID, for: indexPath) as! KindOfTaskListCell
         cell.delegate = self

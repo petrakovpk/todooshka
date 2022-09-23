@@ -37,7 +37,7 @@ class AlertFlow: Flow {
     case .RemoveTaskIsRequired:
       return .none
     
-    case .RemoveTaskIsCompleted:
+    case .Dismiss:
       return dismiss()
     
     default:

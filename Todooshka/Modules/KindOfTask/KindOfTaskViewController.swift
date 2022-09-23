@@ -192,8 +192,8 @@ class KindOfTaskViewController: TDViewController {
       output.dataSourceIcon.drive(collectionViewIcon.rx.items(dataSource: dataSourceIcon)),
       output.text.drive(textField.rx.text),
       output.save.drive(),
-      output.selectedIcon.drive(taskTypeImageView.rx.image),
-      output.selectedColor.drive(taskTypeImageView.rx.tintColor),
+      output.selectIcon.drive(taskTypeImageView.rx.image),
+      output.selectColor.drive(taskTypeImageView.rx.tintColor),
       output.textLen.drive(textLenLabel.rx.text),
     ]
       .forEach({$0.disposed(by: disposeBag)})

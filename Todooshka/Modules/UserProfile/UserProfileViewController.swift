@@ -11,7 +11,7 @@ import RxFlow
 import RxSwift
 import UIKit
 
-class UserProfileViewController: UIViewController {
+class UserProfileViewController: TDViewController {
   
   // MARK: - Properties
   let disposeBag = DisposeBag()
@@ -20,10 +20,6 @@ class UserProfileViewController: UIViewController {
   var viewModel: UserProfileViewModel!
   
   // MARK: - UI Elements
-  private let backButton = UIButton(type: .custom)
-  private let headerView = UIView()
-  private let titleLabel = UILabel()
-  
   private let logOutButton: UIButton = {
     let button = UIButton(type: .system)
     button.setTitle("Выйти из аккаунта", for: .normal)
@@ -55,30 +51,16 @@ class UserProfileViewController: UIViewController {
     tableView.backgroundColor = Theme.App.background
     
     // adding
-    view.addSubview(headerView)
     view.addSubview(tableView)
     view.addSubview(logOutButton)
-    headerView.addSubview(titleLabel)
-    headerView.addSubview(backButton)
+
     
     // view
     view.backgroundColor = Theme.App.background
-    
-    // headerView
-    headerView.backgroundColor = UIColor(named: "navigationHeaderViewBackgroundColor")
-    headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
-    
+
     // titleLabel
-    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     titleLabel.text = "Настройки и конфеденциальность"
-    titleLabel.anchorCenterXToSuperview()
-    titleLabel.anchor(bottom: headerView.bottomAnchor, bottomConstant: 20)
-    
-    // backButton
-    backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
-    backButton.imageView?.tintColor = Theme.App.text
-    backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
+
     // logOutButton
     logOutButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 16, rightConstant: 16, heightConstant: 50)
     
@@ -100,9 +82,9 @@ class UserProfileViewController: UIViewController {
     [
       output.dataSource.drive(tableView.rx.items(dataSource: dataSource)),
       output.itemSelected.drive(),
+      output.logOut.drive(),
       output.navigateBack.drive(),
       output.title.drive(titleLabel.rx.text),
-      output.logOut.drive(),
     ]
       .forEach{ $0.disposed(by: disposeBag) }
   }

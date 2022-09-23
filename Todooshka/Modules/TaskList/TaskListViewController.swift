@@ -163,9 +163,7 @@ class TaskListViewController: TDViewController {
     
     [
       outputs.addTask.drive(),
-      outputs.changeToCompleted.drive(),
-      outputs.changeToIdea.drive(),
-      outputs.changeToInProgress.drive(),
+      outputs.change.drive(changeBinder),
       outputs.hideAlert.drive(hideAlertBinder),
       outputs.hideCell.drive(hideCellBinder),
       outputs.navigateBack.drive(),
@@ -184,6 +182,12 @@ class TaskListViewController: TDViewController {
   }
   
   // MARK: - Binders
+  var changeBinder: Binder<Result<Void, Error>> {
+    return Binder(self, binding: { (vc, _) in
+      vc.collectionView.reloadData()
+    })
+  }
+  
   var hideAlertBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.alertView.isHidden = true
@@ -236,7 +240,12 @@ class TaskListViewController: TDViewController {
       cell.configure(with: item.task)
       cell.configure(with: item.kindOfTask)
       cell.delegate = self
-      cell.repeatButton.rx.tap.map{ _ -> IndexPath in indexPath }.asDriver(onErrorJustReturn: nil).drive(self.repeatButtonBinder).disposed(by: cell.disposeBag)
+      cell.disposeBag = DisposeBag()
+      cell.repeatButton.rx.tap
+        .map{ _ -> IndexPath in indexPath }
+        .asDriver(onErrorJustReturn: nil)
+        .drive(self.repeatButtonBinder)
+        .disposed(by: cell.disposeBag)
       return cell
     }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
       let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView

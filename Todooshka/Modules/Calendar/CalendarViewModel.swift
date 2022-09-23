@@ -152,18 +152,12 @@ class CalendarViewModel: Stepper {
       }
    
     // score
-    let featherScoreLabel = services.gameCurrencyService.gameCurrency
-      .map { $0.filter {
-        $0.currency == .Feather }
-      .count
-        .string }
+    let featherScoreLabel = services.dataService.feathers
+      .map{ $0.count.string }
       .asDriver(onErrorJustReturn: "")
     
-    let diamondScoreLabel = services.gameCurrencyService.gameCurrency
-      .map { $0.filter {
-        $0.currency == .Diamond }
-      .count
-        .string }
+    let diamondScoreLabel = services.dataService.diamonds
+      .map{ $0.count.string }
       .asDriver(onErrorJustReturn: "")
     
     // buttons

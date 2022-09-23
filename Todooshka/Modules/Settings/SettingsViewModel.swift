@@ -6,7 +6,7 @@
 //
 
 import CoreData
-import FirebaseAuth
+import Firebase
 import RxFlow
 import RxSwift
 import RxCocoa
@@ -19,6 +19,19 @@ class SettingsViewModel: Stepper {
   
   private let dataSource = BehaviorRelay<[SettingsCellSectionModel]>(value: [])
   private let showAlert = BehaviorRelay<Bool>(value: false)
+  
+  // auth
+  let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .logInIsRequired)
+ // let userProfileIsRequired = SettingsItem(imageName: "user-square", text: "Герой без имени" , type: .userProfileIsRequiared)
+  //data
+  let syncDataIsRequired = SettingsItem(imageName: "box-tick", text: "Синхронизировать данные", type: .syncDataIsRequired)
+  // deleted
+  let deletedTaskTypeListIsRequired = SettingsItem(imageName: "trash", text: "Типы", type: .deletedTaskTypeListIsRequired)
+  let deletedTaskListIsRequired = SettingsItem(imageName: "trash", text: "Задачи", type: .deletedTaskListIsRequired)
+  // security
+  let removeAccount = SettingsItem(imageName: "remove", text: "Удалить аккаунт", type: .removeAccountIsRequired)
+  // help
+  let askSupport = SettingsItem(imageName: "message-notif", text: "Обратиться в поддержку", type: .askSupport)
   
   struct Input {
     let backButtonClickTrigger: Driver<Void>
@@ -38,43 +51,61 @@ class SettingsViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    let currentUser = Auth.auth().rx.stateDidChange.asDriver(onErrorJustReturn: nil)
+    let currentUser = Auth.auth().rx
+      .stateDidChange
+      .asDriver(onErrorJustReturn: nil)
     
-    // auth
-    let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .logInIsRequired)
-    let userProfileIsRequired = SettingsItem(imageName: "user-square", text: Auth.auth().currentUser?.displayName ?? "Герой без имени" , type: .userProfileIsRequiared)
-    //data
-    let syncDataIsRequired = SettingsItem(imageName: "box-tick", text: "Синхронизировать данные", type: .syncDataIsRequired)
-  //  let loadDataIsRequired = SettingsItem(imageName: "box-tick", text: "Загрузить данные", type: .loadDataIsRequired)
-    // deleted
-    let deletedTaskTypeListIsRequired = SettingsItem(imageName: "trash", text: "Типы", type: .deletedTaskTypeListIsRequired)
-    let deletedTaskListIsRequired = SettingsItem(imageName: "trash", text: "Задачи", type: .deletedTaskListIsRequired)
-    // security
-    let removeAccount = SettingsItem(imageName: "remove", text: "Удалить аккаунт", type: .removeAccountIsRequired)
-    // help
-    let askSupport = SettingsItem(imageName: "message-notif", text: "Обратиться в поддержку", type: .askSupport)
+    let userName = currentUser
+      .compactMap{ $0 }
+      .asObservable()
+      .flatMapLatest({ DB_USERS_REF.child($0.uid).child("PERSONAL").rx.observeEvent(.value) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .compactMap { result -> DataSnapshot? in
+        guard case .success(let dataSnapshot) = result else { return nil }
+        return dataSnapshot
+      }
+      .map { snapshot -> NSDictionary? in
+        snapshot.value as? NSDictionary
+      }
+      .map { dict -> String? in
+        dict?.value(forKey: "name") as? String
+      }.withLatestFrom(currentUser) { name, currentUser -> String in
+        name ?? (currentUser?.displayName ?? "Главный герой")
+      }
     
-    // dataSource
-    let dataSource = currentUser
-      .map {[
-        SettingsCellSectionModel(
-          header: "Аккаунт",
-          items: [$0 == nil ? logInIsRequired : userProfileIsRequired]),
-        SettingsCellSectionModel(
-          header: "Облако",
-          items: [syncDataIsRequired]),
-        SettingsCellSectionModel(
-          header: "Удаленные данные",
-          items: [deletedTaskTypeListIsRequired, deletedTaskListIsRequired]),
-        SettingsCellSectionModel(
-          header: "Поддержка",
-          items: [askSupport]),
-        SettingsCellSectionModel(
-          header: "Безопасность",
-          items: [removeAccount])
-      ]}
+    
+    let userProfileIsRequired = userName
+      .map {
+        SettingsItem(
+          imageName: "user-square",
+          text: $0,
+          type: .userProfileIsRequiared
+        )
+      }
 
+    // dataSource
+    let dataSource = Driver
+      .combineLatest(currentUser, userProfileIsRequired) { currentUser, userProfileIsRequired in
+        [
+          SettingsCellSectionModel(
+            header: "Аккаунт",
+            items: [currentUser == nil ? self.logInIsRequired : userProfileIsRequired]),
+          SettingsCellSectionModel(
+            header: "Облако",
+            items: [self.syncDataIsRequired]),
+          SettingsCellSectionModel(
+            header: "Удаленные данные",
+            items: [self.deletedTaskTypeListIsRequired, self.deletedTaskListIsRequired]),
+          SettingsCellSectionModel(
+            header: "Поддержка",
+            items: [self.askSupport]),
+          SettingsCellSectionModel(
+            header: "Безопасность",
+            items: [self.removeAccount])
+        ]
+      }
     
+
     let itemSelected = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource in
         let item = dataSource[indexPath.section].items[indexPath.item]

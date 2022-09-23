@@ -152,7 +152,7 @@ class TaskListFlow: Flow {
   
   private func navigateToCreateTaskType() -> FlowContributors {
     let viewController = KindOfTaskViewController()
-    let viewModel = KindOfTaskViewModel(services: services, action: .create)
+    let viewModel = KindOfTaskViewModel(services: services, kindOfTaskUID: UUID().uuidString )
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
@@ -161,7 +161,7 @@ class TaskListFlow: Flow {
   
   private func navigateToShowTaskType(kindOfTask: KindOfTask) -> FlowContributors {
     let viewController = KindOfTaskViewController()
-    let viewModel = KindOfTaskViewModel(services: services, action: .show(kindOfTask: kindOfTask))
+    let viewModel = KindOfTaskViewModel(services: services, kindOfTaskUID: kindOfTask.UID )
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)

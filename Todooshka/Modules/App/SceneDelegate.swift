@@ -21,7 +21,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   // serrvices
   let actionService = ActionService()
-  let gameCurrencyService = GameCurrencyService()
   let preferencesService = PreferencesService()
   let dataService = DataService()
   let tabBarService = TabBarService()
@@ -30,7 +29,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     return AppServices(
       actionService: actionService,
       dataService: dataService,
-      gameCurrencyService: gameCurrencyService,
       preferencesService: preferencesService,      
       tabBarService: tabBarService
     )

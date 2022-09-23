@@ -50,9 +50,7 @@ class TaskListViewModel: Stepper {
   
   struct Output {
     let addTask: Driver<Void>
-    let changeToCompleted: Driver<Result<Void,Error>>
-    let changeToIdea: Driver<Result<Void,Error>>
-    let changeToInProgress: Driver<Result<Void,Error>>
+    let change: Driver<Result<Void,Error>>
     let hideAlert: Driver<Void>
     let hideCell: Driver<IndexPath>
     let navigateBack: Driver<Void>
@@ -115,6 +113,7 @@ class TaskListViewModel: Stepper {
     let changeStatus = changeStatusTrigger
       .asDriver()
       .compactMap{ $0 }
+      .debug()
 
     let changeToIdea = changeStatus
       .filter{ $0.status == .Idea }
@@ -145,6 +144,10 @@ class TaskListViewModel: Stepper {
       }.asObservable()
       .flatMapLatest({ self.managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+    
+    let change = Driver
+      .of(changeToIdea, changeToInProgress, changeToCompleted)
+      .merge()
     
     let changeToRemove = changeStatus
       .filter{ $0.status == .Deleted }
@@ -238,9 +241,7 @@ class TaskListViewModel: Stepper {
 
     return Output(
       addTask: addTask,
-      changeToCompleted: changeToCompleted,
-      changeToIdea: changeToIdea,
-      changeToInProgress: changeToInProgress,
+      change: change,
       hideAlert: hideAlert,
       hideCell: hideCell,
       navigateBack: navigateBack,

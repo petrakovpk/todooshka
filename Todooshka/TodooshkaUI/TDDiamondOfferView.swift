@@ -94,7 +94,7 @@ class TDDiamondPackageOfferView: UIView {
       diamondImageView.anchorCenterXToSuperview()
       diamondImageView.anchor(widthConstant: viewWidth / 5)
     case .Large:
-      offerNameLabel.text = "Luxury"
+      offerNameLabel.text = "Самый выгодный"
       offerScoreLabel.text = "25 шт."
       priceLabel.text = "249 руб."
       diamondImageView.anchorCenterYToSuperview()

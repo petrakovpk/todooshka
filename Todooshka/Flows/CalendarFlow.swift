@@ -39,6 +39,20 @@ class CalendarFlow: Flow {
     case .CalendarIsRequired:
       return navigateToCalendar()
       
+      // Changing
+    case .ChangingNameIsRequired:
+      return navigateToChangingName()
+    case .ChangingGenderIsRequired:
+      return navigateToChangingGender()
+    case .ChangingBirthdayIsRequired:
+      return navigateToChangingBirthday()
+    case .ChangingEmailIsRequired:
+      return navigateToChangingEmail()
+    case .ChangingPhoneIsRequired:
+      return navigateToChangingPhone()
+    case .ChangingPasswordIsRequired:
+      return navigateToChangingPassword()
+      
       // Task
     case .CreateTaskIsRequired(let status, let date):
       return navigateToTask(taskUID: UUID().uuidString, status: status, closed: date)
@@ -58,74 +72,52 @@ class CalendarFlow: Flow {
       // Deleted Task Type List
     case .DeletedTaskTypeListIsRequired:
       return navigateToDeletedTaskTypeList()
-    case .DeletedTaskTypeListIsCompleted:
-      return navigateBack()
       
-      // Task Type List
-    case .TaskTypesListIsRequired:
-      return navigateToTaskTypesList()
-    case .TaskTypesListIsCompleted:
-      return navigateBack()
+      // Diamond
+    case .DiamondIsRequired:
+      return navigateToDiamond()
       
+      // Feather
+    case .FeatherIsRequired:
+      return navigateToFeather()
+      
+    case .KindOfTaskWithBird(let birdUID):
+      return navigateToKindOfTaskForBird(birdUID: birdUID)
+      
+      // Logout
+    case .LogoutIsRequired:
+      return endUserProfileFlow()
+      
+      // Navigate Back
+    case .NavigateBack:
+      return navigateBack()
+
       // User Settings
     case .SettingsIsRequired:
       return navigateToSettings()
-    case .SettingsIsCompleted:
-      return navigateBack()
+      
+      // Bird
+    case .ShowBirdIsRequired(let bird):
+      return navigateToBird(bird: bird)
+     
       
       // Shop
     case .ShopIsRequired:
       return navigateToShop()
     case .ShopIsCompleted:
-      return navigateBack()
-      
-      // Bird
-    case .ShowBirdIsRequired(let bird):
-      return navigateToBird(bird: bird)
-    case .ShowBirdIsCompleted:
-      return navigateBack()
-      
-      // Feather
-    case .FeatherIsRequired:
-      return navigateToFeather()
-    case .FeatherIsCompleted:
-      return navigateBack()
-      
-      // Diamond
-    case .DiamondIsRequired:
-      return navigateToDiamond()
-    case .DiamondIsCompleted:
-      return navigateBack()
-      
-      // Logout
-    case .LogoutIsRequired:
-      return endUserProfileFLow()
-      
-    case .UserProfileIsRequired:
-      return navigateToUserProfile()
-      
-      // Navigate Back
-    case .NavigateBack:
-      return navigateBack()
+      return navigateBackFromShop()
       
       // SyncIsRequired
     case .SyncDataIsRequired:
       return navigateToSyncData()
       
-      // Changing
-    case .ChangingNameIsRequired:
-      return navigateToChangingName()
-    case .ChangingGenderIsRequired:
-      return navigateToChangingGender()
-    case .ChangingBirthdayIsRequired:
-      return navigateToChangingBirthday()
-    case .ChangingEmailIsRequired:
-      return navigateToChangingEmail()
-    case .ChangingPhoneIsRequired:
-      return navigateToChangingPhone()
-    case .ChangingPasswordIsRequired:
-      return navigateToChangingPassword()
+      // Task Type List
+    case .TaskTypesListIsRequired:
+      return navigateToTaskTypesList()
       
+    case .UserProfileIsRequired:
+      return navigateToUserProfile()
+ 
     default:
       return .none
     }
@@ -175,6 +167,14 @@ class CalendarFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
+  private func navigateToKindOfTaskForBird(birdUID: String) -> FlowContributors {
+    let viewController = KindOfTaskForBirdViewController()
+    let viewModel = KindOfTaskForBirdViewModel(services: services, birdUID: birdUID)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
   private func navigateToTaskTypesList() -> FlowContributors {
     let viewController = KindOfTaskListViewController()
     let viewModel = KindOfTaskListViewModel(services: services)
@@ -204,13 +204,14 @@ class CalendarFlow: Flow {
     let viewController = ShopViewController()
     let viewModel = ShopViewModel(services: services)
     viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
   private func navigateToBird(bird: Bird) -> FlowContributors {
     let viewController = BirdViewController()
-    let viewModel = BirdViewModel(bird: bird, services: services)
+    let viewModel = BirdViewModel(birdUID: bird.UID , services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
@@ -256,12 +257,19 @@ class CalendarFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
+  
+  private func navigateBackFromShop() -> FlowContributors {
+    rootViewController.tabBarController?.tabBar.isHidden = false
+    rootViewController.popViewController(animated: true)
+    return .none
+  }
+  
   private func navigateBack() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .none
   }
   
-  func endUserProfileFLow() -> FlowContributors {
+  func endUserProfileFlow() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .end(forwardToParentFlowWithStep: AppStep.LogoutIsRequired)
   }

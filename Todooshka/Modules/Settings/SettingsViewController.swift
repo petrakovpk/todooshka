@@ -11,7 +11,7 @@ import RxFlow
 import RxSwift
 import UIKit
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: TDViewController {
   
   //MARK: - Properties
   let disposeBag = DisposeBag()
@@ -21,8 +21,6 @@ class SettingsViewController: UIViewController {
   var dataSource: RxTableViewSectionedReloadDataSource<SettingsCellSectionModel>!
   
   //MARK: - UI Elements
-  private let backButton = UIButton(type: .custom)
-  
   private let alertBackgroundView: UIView = {
     let view = UIView()
     view.backgroundColor = .black.withAlphaComponent(0.5)
@@ -47,9 +45,6 @@ class SettingsViewController: UIViewController {
     return button
   }()
   
-  private let headerView = UIView()
-  private let titleLabel = UILabel()
-  private let dividerView = UIView()
   private let alertWindowView = UIView()
   private let alertLabel = UILabel(text: "Выйти из системы?")
   
@@ -69,11 +64,7 @@ class SettingsViewController: UIViewController {
     tableView = UITableView(frame: .zero, style: .grouped)
     
     // adding
-    view.addSubview(headerView)
     view.addSubview(tableView)
-    headerView.addSubview(titleLabel)
-    headerView.addSubview(backButton)
-    headerView.addSubview(dividerView)
     
     // view
     view.backgroundColor = Theme.App.background
@@ -92,10 +83,6 @@ class SettingsViewController: UIViewController {
     backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
     backButton.imageView?.tintColor = Theme.App.text
     backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
-    // dividerView
-    dividerView.backgroundColor = UIColor(named: "navigationDividerViewBackgroundColor")
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
     
     // tableView
     tableView.backgroundColor = .clear

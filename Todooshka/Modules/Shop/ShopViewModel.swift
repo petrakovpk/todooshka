@@ -16,18 +16,14 @@ class ShopViewModel: Stepper {
   let services: AppServices
   
   struct Input {
-    // buttons
     let backButtonClickTrigger: Driver<Void>
-    // collection view
     let selection: Driver<IndexPath>
   }
   
   struct Output {
-    // buttons
-    let backButtonClickHandler: Driver<Void>
-    // collectionView
-    let itemSelected: Driver<Void>
     let dataSource: Driver<[ShopSectionModel]>
+    let navigateBack: Driver<Void>
+    let show: Driver<Void>
   }
   
   // MARK: - Init
@@ -39,10 +35,8 @@ class ShopViewModel: Stepper {
   func transform(input: Input) -> Output {
     
     // buttons
-    let backButtonClickHandler = input.backButtonClickTrigger
-      .do { _ in
-        self.steps.accept(AppStep.ShopIsCompleted)
-      }
+    let navigateBack = input.backButtonClickTrigger
+      .map { self.steps.accept(AppStep.ShopIsCompleted) }
     
     // birds
     let birds = services.dataService.birds
@@ -50,33 +44,30 @@ class ShopViewModel: Stepper {
     // dataSource
     let dataSource = birds
       .map { birds -> [ShopSectionModel] in
-        var result: [ShopSectionModel] = []
-        let birdsGroupingByClade = Dictionary(grouping: birds, by: { $0.clade })
+        Dictionary(grouping: birds, by: { $0.clade })
           .sorted(by: { $0.key.index < $1.key.index })
-        
-        for birds in birdsGroupingByClade {
-          let header = birds.key.rawValue
-          let birds = birds.value.sorted(by: { $0.currency.index < $1.currency.index && $0.price < $1.price })
-          result.append(ShopSectionModel(header: header, items: birds))
-        }
-        
-        return result
+          .map { dict in
+            ShopSectionModel(
+              header: dict.key.rawValue,
+              items: dict.value.sorted(by: {
+                $0.currency.index <= $1.currency.index
+                && $0.price <= $1.price
+                && $0.style.index <= $1.style.index
+              })
+            )
+          }
       }.asDriver(onErrorJustReturn: [])
     
     // item selected
-    let itemSelected = input.selection
+    let show = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource in
-        return dataSource[indexPath.section].items[indexPath.item]
-      }.map { bird in
-        self.steps.accept(AppStep.ShowBirdIsRequired(bird: bird))
-      }
+        dataSource[indexPath.section].items[indexPath.item]
+      }.map { self.steps.accept(AppStep.ShowBirdIsRequired(bird: $0)) }
     
     return Output(
-      // buttons
-      backButtonClickHandler: backButtonClickHandler,
-      // dataSource
-      itemSelected: itemSelected,
-      dataSource: dataSource
+      dataSource: dataSource,
+      navigateBack: navigateBack,
+      show: show
     )
   }
   
