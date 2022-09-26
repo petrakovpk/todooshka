@@ -97,7 +97,7 @@ class TaskViewModel: Stepper {
           UID: self.taskUID,
           text: "",
           description: "",
-          kindOfTaskUID: KindOfTask.Standart.Empty.UID,
+          kindOfTaskUID: KindOfTask.Standart.Simple.UID,
           status: self.status,
           created: Date(),
           closed: self.closed)
@@ -131,7 +131,7 @@ class TaskViewModel: Stepper {
     // task attr
     let savedKindfOfTask = task
       .withLatestFrom(kindsOfTask){ task, kindsOfTask -> KindOfTask in
-        kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Empty
+        kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
       }
     
     let selectedKindfOfTask = input.selection

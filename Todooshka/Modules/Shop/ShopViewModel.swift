@@ -21,7 +21,7 @@ class ShopViewModel: Stepper {
   }
   
   struct Output {
-    let dataSource: Driver<[ShopSectionModel]>
+    let dataSource: Driver<[ShopSection]>
     let navigateBack: Driver<Void>
     let show: Driver<Void>
   }
@@ -43,12 +43,12 @@ class ShopViewModel: Stepper {
     
     // dataSource
     let dataSource = birds
-      .map { birds -> [ShopSectionModel] in
+      .map { birds -> [ShopSection] in
         Dictionary(grouping: birds, by: { $0.clade })
-          .sorted(by: { $0.key.index < $1.key.index })
+          .sorted(by: { $0.key.level < $1.key.level })
           .map { dict in
-            ShopSectionModel(
-              header: dict.key.rawValue,
+            ShopSection(
+              header: dict.key.text,
               items: dict.value.sorted(by: {
                 $0.currency.index <= $1.currency.index
                 && $0.price <= $1.price

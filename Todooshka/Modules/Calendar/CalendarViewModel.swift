@@ -81,7 +81,7 @@ class CalendarViewModel: Stepper {
   func transform(input: Input) -> Output {
     
     // caledar
-    let selectedDate = services.preferencesService.selectedDate.asDriver()
+    let selectedDate = services.dataService.selectedDate.asDriver()
     let selectedMonthComponents = selectedMonthComponents.asDriver()
     
     // completed tasks
@@ -145,10 +145,9 @@ class CalendarViewModel: Stepper {
           self.steps.accept(AppStep.CompletedTaskListIsRequired(date: calendarDay.date))
           return
         } else {
-          self.services.preferencesService.selectedDate.accept(calendarDay.date)
+          self.services.dataService.selectedDate.accept(calendarDay.date)
           self.services.actionService.runBranchSceneActionsTrigger.accept(())
         }
-        
       }
    
     // score

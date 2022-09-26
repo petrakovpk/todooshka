@@ -51,7 +51,7 @@ class FeatherViewModel: Stepper {
         tasks.map { task in
           TaskListSectionItem(
             task: task,
-            kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Empty
+            kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
           )
         }
       }

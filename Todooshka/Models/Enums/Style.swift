@@ -5,9 +5,11 @@
 //  Created by Петраков Павел Константинович on 11.04.2022.
 //
 
+import UIKit
+
 enum Style: String {
   
-  case Simple = "Empty"
+  case Simple = "Simple"
   case Business = "Business"
   case Student = "Student"
   case Cook = "Cook"
@@ -38,6 +40,18 @@ enum Style: String {
     case .Fashion: return "модный"
     case .Sport: return "спортивный"
     case .Kid: return "ребенок"
+    }
+  }
+  
+  var image: UIImage? {
+    switch self {
+    case .Simple: return Icon.Unlimited.image
+    case .Student: return Icon.Teacher.image
+    case .Business: return Icon.Briefcase.image
+    case .Cook: return Icon.Profile2user.image
+    case .Fashion: return Icon.Shop.image
+    case .Sport: return Icon.Dumbbell.image
+    case .Kid: return Icon.EmojiHappy.image
     }
   }
 }

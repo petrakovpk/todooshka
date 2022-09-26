@@ -101,7 +101,7 @@ class BirdViewController: TDViewController {
     return label
   }()
   
-  private let alertBuyView = AlertBuyView()
+  private let alertViewBackground = AlertBuyView()
   
   // MARK: - MVVM
   public var viewModel: BirdViewModel!
@@ -129,7 +129,7 @@ class BirdViewController: TDViewController {
     
     // adding
     view.addSubviews([
-      alertBuyView,
+      // 1st
       birdImageView,
       buyButton,
       buyLabel,
@@ -138,7 +138,9 @@ class BirdViewController: TDViewController {
       descriptionBackgroundView,
       kindOfTaskImageView,
       priceBackgroundView,
-      typeLabel
+      typeLabel,
+      // 2nd
+      alertViewBackground,
     ])
     
     priceBackgroundView.addSubview(priceImageView)
@@ -148,8 +150,8 @@ class BirdViewController: TDViewController {
     view.backgroundColor = Theme.App.background
     
     // buyAlertView
-    alertBuyView.isHidden = true
-    alertBuyView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    alertViewBackground.isHidden = true
+    alertViewBackground.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
     
     // imageView
     birdImageView.anchorCenterXToSuperview()
@@ -173,7 +175,7 @@ class BirdViewController: TDViewController {
     typeLabel.anchor(top: birdImageView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 32, leftConstant: 16, rightConstant: 16, heightConstant: 30)
     
     // changeButton
-    changeButton.anchor(top: birdImageView.bottomAnchor, right: view.rightAnchor, topConstant: 32, rightConstant: 16, widthConstant: 100, heightConstant: 30)
+    //changeButton.anchor(top: birdImageView.bottomAnchor, right: view.rightAnchor, topConstant: 32, rightConstant: 16, widthConstant: 100, heightConstant: 30)
     
     // collectionView
     collectionView.backgroundColor = UIColor.clear
@@ -220,8 +222,8 @@ class BirdViewController: TDViewController {
   func bindViewModel() {
     
     let input = BirdViewModel.Input(
-      alertBuyButtonClick: alertBuyView.buyButton.rx.tap.asDriver(),
-      alertCancelButtonClick: alertBuyView.cancelButton.rx.tap.asDriver(),
+      alertBuyButtonClick: alertViewBackground.buyButton.rx.tap.asDriver(),
+      alertCancelButtonClick: alertViewBackground.cancelButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       buyButtonClickTrigger: buyButton.rx.tap.asDriver(),
       selection: collectionView.rx.itemSelected.asDriver()
@@ -230,39 +232,38 @@ class BirdViewController: TDViewController {
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.addKindOfTask.drive(),
+      outputs.alertBuyButtonIsEnabled.drive(alertViewBackground.buyButton.rx.isEnabled),
+      outputs.alertLabelText.drive(alertViewBackground.label.rx.text),
+      outputs.alertViewHide.drive(alertViewHideBinder),
+      outputs.alertViewShow.drive(alertViewShowBinder),
       outputs.birdImageView.drive(birdImageView.rx.image),
-      outputs.kindOfTaskImageView.drive(kindOfTaskImageView.rx.image),
-//      outputs.buyAlertViewIsHidden: buyAlertViewIsHidden,
-//      outputs.buyButtonIsEnabled: buyButtonIsEnabled,
+      outputs.birdImageView.drive(alertViewBackground.birdImageView.rx.image),
       outputs.buyButtonIsHidden.drive(buyButton.rx.isHidden),
-//      outputs.eggImageView: eggImageView,
       outputs.buyLabelIsHidden.drive(buyLabel.rx.isHidden),
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.description.drive(descriptionTextView.rx.text),
-//      outputs.labelText: labelText,
+      outputs.eggImageView.drive(alertViewBackground.eggImageView.rx.image),
+      outputs.kindOfTaskImageView.drive(kindOfTaskImageView.rx.image),
       outputs.navigateBack.drive(),
+      outputs.plusButtonClickTrigger.drive(),
       outputs.price.drive(priceLabel.rx.text),
-//      outputs.selectedKindOfTask: selectedKindOfTask,
-//      outputs.title: title
-//      outputs.birdImageView.drive(alertBuyView.birdImageView.rx.image),
-//      outputs.buyButtonIsHidden.drive(buyButton.rx.isHidden),
-//     // outputs.buy.drive(),
-//      outputs.buyAlertViewIsHidden.drive(alertBuyView.rx.isHidden),
-//      outputs.buyButtonIsEnabled.drive(alertBuyView.buyButton.rx.isEnabled),
-//      outputs.eggImageView.drive(alertBuyView.eggImageView.rx.image),
-//    //
-//      outputs.description.drive(descriptionTextView.rx.text),
-//      outputs.isBoughtLabel.drive(isBoughtLabel.rx.isHidden),
-//   //   outputs.image.drive(imageView.rx.image),
-//      outputs.labelText.drive(alertBuyView.label.rx.text),
-//      outputs.navigateBack.drive(),
-//      outputs.price.drive(priceLabel.rx.text),
-//      outputs.selection.drive(),
       outputs.title.drive(titleLabel.rx.text),
     ]
       .forEach({$0.disposed(by: disposeBag)})
   }
+  
+  var alertViewHideBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertViewBackground.isHidden = true
+    })
+  }
+  
+  var alertViewShowBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertViewBackground.isHidden = false
+    })
+  }
+  
     
   // MARK: - Configure DataSource
   func configureDataSource() {
@@ -270,7 +271,12 @@ class BirdViewController: TDViewController {
     dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskForBirdSection>(
       configureCell: {(_, collectionView, indexPath, item) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskForBirdCell.reuseID, for: indexPath) as! KindOfTaskForBirdCell
-        item.isPlusButton ? cell.configureAsPlusButton() : cell.configure(with: item)
+        switch item.kindOfTaskType {
+        case .isPlusButton:
+          cell.configureAsPlusButton()
+        case .kindOfTask(let kindOfTask, let isEnabled):
+          cell.configure(with: kindOfTask, isEnabled: isEnabled)
+        }
         return cell
       })
   }

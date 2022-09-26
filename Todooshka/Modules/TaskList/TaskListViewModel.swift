@@ -105,7 +105,7 @@ class TaskListViewModel: Stepper {
         tasks.map { task in
           TaskListSectionItem(
             task: task,
-            kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Empty
+            kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
           )
         }
       }.map {[ TaskListSectionModel(header: "", mode: self.mode == .Main ? TaskCellMode.WithTimer : TaskCellMode.WithRepeatButton , items: $0) ]}

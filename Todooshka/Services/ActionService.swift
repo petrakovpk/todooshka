@@ -21,8 +21,8 @@ protocol HasActionService {
 class ActionService {
   
   // MARK: - Properties
-  var nestDataSource = BehaviorRelay<[Int: EggActionType]>(value: [:])
-  var branchDataSource = BehaviorRelay<[Int: BirdActionType]>(value: [:])
+//  var nestDataSource = BehaviorRelay<[EggActionType]>(value: [])
+  //  var branchDataSource = BehaviorRelay<[Int: BirdActionType]>(value: [:])
  // var runNestSceneActionsTrigger = BehaviorRelay<Void>(value: ())
   var runBranchSceneActionsTrigger = BehaviorRelay<Void>(value: ())
   var forceNestSceneTrigger = BehaviorRelay<Void?>(value: nil)

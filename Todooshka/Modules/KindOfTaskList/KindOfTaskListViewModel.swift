@@ -54,8 +54,12 @@ class KindOfTaskListViewModel: Stepper {
 
     // dataSource
     let dataSource = kindsOfTask
-      .map({[ KindOfTaskListSection(header: "", items: $0) ]})
-      .asDriver()
+      .map{[
+        KindOfTaskListSection(
+          header: "",
+          items: $0
+        )
+      ]}.asDriver()
     
     let openKindOfTask = input.selection
       .withLatestFrom(dataSource){ $1[$0.section].items[$0.item] }

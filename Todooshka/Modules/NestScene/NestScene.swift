@@ -10,13 +10,9 @@ import SpriteKit
 
 class NestScene: SKScene {
   
-  // MARK: - Public
-
-  
   // MARK: - Private
-  private var actions: [Int: EggActionType] = [1: .Init, 2: .Init, 3: .Init, 4: .Init, 5: .Init, 6: .Init, 7: .Init]
-  private var birds: [Bird] = []
-  private var SKEggNodes: [Int: SKEggNode] = [:]
+  private var actions: [EggActionType] = [.Init, .Init, .Init, .Init, .Init, .Init, .Init]
+  private var SKEggNodes: [SKEggNode] = []
   
   // MARK: - UI Nodes
   private let background: SKSpriteNode = {
@@ -43,16 +39,16 @@ class NestScene: SKScene {
       
       // nodes
       SKEggNodes = [
-        1: SKEggNode(index: 1, parentPosition: position),
-        2: SKEggNode(index: 2, parentPosition: position),
-        3: SKEggNode(index: 3, parentPosition: position),
-        4: SKEggNode(index: 4, parentPosition: position),
-        5: SKEggNode(index: 5, parentPosition: position),
-        6: SKEggNode(index: 6, parentPosition: position),
-        7: SKEggNode(index: 7, parentPosition: position)
+        SKEggNode(level: 1, parentPosition: position),
+        SKEggNode(level: 2, parentPosition: position),
+        SKEggNode(level: 3, parentPosition: position),
+        SKEggNode(level: 4, parentPosition: position),
+        SKEggNode(level: 5, parentPosition: position),
+        SKEggNode(level: 6, parentPosition: position),
+        SKEggNode(level: 7, parentPosition: position)
       ]
       
-      for node in SKEggNodes.values {
+      for node in SKEggNodes {
         addChild(node)
         node.position = node.nestPosition
       }
@@ -66,37 +62,34 @@ class NestScene: SKScene {
     background.run(action)
   }
   
-  func setup(with actions: [Int: EggActionType]) {
+  func setup(with actions: [EggActionType]) {
     self.actions = actions
-  }
-  
-  func setup(with birds: [Bird]) {
-    self.birds = birds
   }
   
   // MARK: - DataSource
   func reloadData() {
-    for (index, node) in SKEggNodes {
-      guard let action = actions[index] else { continue }
+    for (index, node) in SKEggNodes.enumerated() {
+      
+      guard let action = actions[safe: index] else { continue }
       
       switch (node.action, action) {
       case (.Init, .NoCracks):
         node.show(state: .NoCracks, withAnimation: false , completion: nil)
 
-      case (.Init, .Crack(let typeUID)):
-        node.show(state: .Crack(typeUID: typeUID), withAnimation: false, completion: nil)
+      case (.Init, .Crack(let style)):
+        node.show(state: .Crack(style: style), withAnimation: false, completion: nil)
 
       case (.Hide, .NoCracks):
         node.show(state: .NoCracks, withAnimation: true , completion: nil)
 
-      case (.Hide, .Crack(let typeUID)):
-        node.show(state: .Crack(typeUID: typeUID), withAnimation: true, completion: nil)
+      case (.Hide, .Crack(let style)):
+        node.show(state: .Crack(style: style), withAnimation: true, completion: nil)
 
       case (.Crack(_), .NoCracks):
         node.repair()
 
-      case (.NoCracks, .Crack(let typeUID)):
-        node.crack(completion: { self.hatch(index: index, typeUID: typeUID) })
+      case (.NoCracks, .Crack(let style)):
+        node.crack(completion: { self.hatch(level: node.level, style: style) })
 
       case (_, .Hide):
         node.hide()
@@ -109,12 +102,10 @@ class NestScene: SKScene {
     }
   }
   
-  func hatch(index: Int, typeUID: String) {
+  func hatch(level: Int, style: Style) {
     
-    guard let bird = birds.first(where: { $0.clade.index == index && $0.kindsOfTaskUID.contains{ $0 == typeUID }}) else { return }
-    
-    let node = SKBirdNode(clade: Clade(index: index), style: bird.style, scenePosition: position)
-    
+    let node = SKBirdNode(clade: Clade(level: level), style: style, scenePosition: position)
+
     // adding
     addChild(node)
 
@@ -128,7 +119,7 @@ class NestScene: SKScene {
   // Убираем птиц и крекаем яйца
   func forceUpdate() {
     
-    for node in SKEggNodes.values where node.isCracking == true {
+    for node in SKEggNodes where node.isCracking == true {
       node.removeAllActions()
       node.forceCrack()
       node.isCracking = false 

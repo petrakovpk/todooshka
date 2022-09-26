@@ -41,8 +41,8 @@ class KindOfTaskViewModel: Stepper {
   }
   
   struct Output {
-    let dataSourceColor: Driver<[KindOfTaskColorSectionModel]>
-    let dataSourceIcon: Driver<[KindOfTaskIconSectionModel]>
+    let dataSourceColor: Driver<[KindOfTaskColorSection]>
+    let dataSourceIcon: Driver<[KindOfTaskIconSection]>
     let navigateBack: Driver<Void>
     let save: Driver<Result<Void, Error>>
     let selectColor:  Driver<UIColor>
@@ -69,6 +69,9 @@ class KindOfTaskViewModel: Stepper {
     let kindOfTask = services.dataService.kindsOfTask
       .compactMap{ $0.first(where: { $0.UID == self.kindOfTaskUID } ) }
     
+    let isStyleLocked = kindOfTask
+      .map{ $0.isStyleLocked }
+    
     let kindOfTaskText = kindOfTask
       .map{ $0.text }
     
@@ -80,7 +83,7 @@ class KindOfTaskViewModel: Stepper {
     
     let kindOfTaskIndex = kindOfTask
       .map{ $0.index }
-      .startWith(0)
+      .startWith(-1)
     
     let text = Driver
       .of(
@@ -93,9 +96,9 @@ class KindOfTaskViewModel: Stepper {
     
     // COLORS
     let dataSourceColors = Driver
-      .combineLatest(colors, selectedColor) { colors, color -> [KindOfTaskColorSectionModel] in
+      .combineLatest(colors, selectedColor) { colors, color -> [KindOfTaskColorSection] in
         [
-          KindOfTaskColorSectionModel(
+          KindOfTaskColorSection(
             header: "",
             items: colors.map{ KindOfTaskColorItem(color: $0, isSelected: $0.hexString == color?.hexString) }
           )
@@ -107,14 +110,15 @@ class KindOfTaskViewModel: Stepper {
       input.selectionColor.withLatestFrom(dataSourceColors) { indexPath, dataSource -> UIColor in
         dataSource[indexPath.section].items[indexPath.item].color
       }
-    ).merge()
+    )
+      .merge()
       .do { self.selectedColor.accept($0) }
     
     // ICONS
     let dataSourceIcons = Driver
-      .combineLatest(icons, selectedIcon) { icons, icon -> [KindOfTaskIconSectionModel] in
+      .combineLatest(icons, selectedIcon) { icons, icon -> [KindOfTaskIconSection] in
         [
-          KindOfTaskIconSectionModel(
+          KindOfTaskIconSection(
             header: "",
             items: icons.map{ KindOfTaskIconItem(icon: $0, isSelected: $0.rawValue == icon?.rawValue) }
           )
@@ -126,17 +130,19 @@ class KindOfTaskViewModel: Stepper {
       input.selectionIcon.withLatestFrom(dataSourceIcons) { indexPath, dataSource -> Icon in
         dataSource[indexPath.section].items[indexPath.item].icon
       }
-    ).merge()
+    )
+      .merge()
       .do{ self.selectedIcon.accept($0) }
     
     let selectImage = selectIcon
       .map{ $0.image }
     
     let kindOfTaskAttr = Driver
-      .combineLatest(selectedColor.compactMap{ $0 }, selectedIcon.compactMap{ $0 } , text, kindOfTaskIndex) { color, icon, text, index -> KindOfTask in
+      .combineLatest(selectedColor.compactMap{ $0 }, selectedIcon.compactMap{ $0 }, text, kindOfTaskIndex, isStyleLocked) { color, icon, text, index, isStyleLocked -> KindOfTask in
         KindOfTask(
           UID: self.kindOfTaskUID,
           icon: icon,
+          isStyleLocked: isStyleLocked,
           color: color,
           text: text,
           index: index

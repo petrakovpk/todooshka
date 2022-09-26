@@ -50,7 +50,12 @@ class KindOfTaskListDeletedViewModel: Stepper {
       .map{ $0.filter{ $0.status == .deleted } }
     
     let dataSource = kindsOfTask
-      .map {[ KindOfTaskListSection(header: "", items: $0) ]}
+      .map {[
+        KindOfTaskListSection(
+          header: "",
+          items: $0
+        )
+      ]}
     
     let hideAlert = Driver
       .of(input.alertCancelButtonClickTrigger, input.alertDeleteButtonClickTrigger)

@@ -304,7 +304,7 @@ class CalendarViewController: UIViewController {
     })
   }
   
-  var sceneDataSourceBinder: Binder<[Int: BirdActionType]> {
+  var sceneDataSourceBinder: Binder<[BirdActionType]> {
     return Binder(self, binding: { (vc, actions) in
       if let scene = vc.scene {
         scene.setup(with: actions)

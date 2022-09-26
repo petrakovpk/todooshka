@@ -16,7 +16,7 @@ protocol HasPreferencesService {
 class PreferencesService {
   
   let formatter = DateFormatter()
-  let selectedDate = BehaviorRelay<Date>(value: Date())
+//  let selectedDate = BehaviorRelay<Date>(value: Date())
   let scrollToCurrentMonthTrigger = BehaviorRelay<(trigger: Bool, withAnimation: Bool)>(value: (false, false))
   
   init() {

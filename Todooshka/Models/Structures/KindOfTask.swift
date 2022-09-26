@@ -14,45 +14,59 @@ struct KindOfTask: IdentifiableType, Equatable  {
 
   // MARK: - Staic
   struct Standart {
-    static let Empty = KindOfTask(UID: "Empty", icon: .Unlimited, color: Palette.SingleColors.Corduroy , text: "Без типа", index: 0)
-    static let Student = KindOfTask(UID: "Student", icon: .Teacher, color: Palette.SingleColors.PurpleHeart, text: "Учеба", index: 1)
-    static let Business = KindOfTask(UID: "Business", icon: .Briefcase, color: Palette.SingleColors.PurpleHeart, text: "Работа", index: 2)
-    static let Cook = KindOfTask(UID: "Cook", icon: .Profile2user, color: Palette.SingleColors.Jaffa, text: "Готовка", index: 3)
-    static let Home = KindOfTask(UID: "Home", icon: .House, color: Palette.SingleColors.Cerise, text: "Домашние дела", index: 4)
-    static let Kid = KindOfTask(UID: "Kid", icon: .EmojiHappy, color: Palette.SingleColors.Amethyst, text: "Детишки", index: 5)
-    static let Love = KindOfTask(UID: "Love", icon: .Lovely, color: Palette.SingleColors.Amethyst, text: "Вторая половинка", index: 6)
-    static let Pet = KindOfTask(UID: "Pet", icon: .Pet, color: Palette.SingleColors.BrinkPink, text: "Домашнее животное", index: 7)
-    static let Sport = KindOfTask(UID: "Sport", icon: .Dumbbell, color: Palette.SingleColors.BlushPink, text: "Спорт", index: 8)
-    static let Fashion = KindOfTask(UID: "Fashion", icon: .Shop, color: Palette.SingleColors.BlushPink, text: "Быть модным", index: 9)
+    static let Simple = KindOfTask(UID: "Simple", icon: .Unlimited, isStyleLocked: true, color: Palette.SingleColors.Corduroy , text: "Без типа", index: 0, style: .Simple)
+    static let Student = KindOfTask(UID: "Student", icon: .Teacher, isStyleLocked: true, color: Palette.SingleColors.PurpleHeart, text: "Учеба", index: 1, style: .Student)
+    static let Business = KindOfTask(UID: "Business", icon: .Briefcase, isStyleLocked: true, color: Palette.SingleColors.PurpleHeart, text: "Работа", index: 2, style: .Business)
+    static let Cook = KindOfTask(UID: "Cook", icon: .Profile2user, isStyleLocked: true, color: Palette.SingleColors.Jaffa, text: "Готовка", index: 3, style: .Cook)
+    static let Home = KindOfTask(UID: "Home", icon: .House, isStyleLocked: false, color: Palette.SingleColors.Cerise, text: "Домашние дела", index: 4, style: .Simple)
+    static let Kid = KindOfTask(UID: "Kid", icon: .EmojiHappy, isStyleLocked: true, color: Palette.SingleColors.Amethyst, text: "Детишки", index: 5, style: .Kid)
+    static let Love = KindOfTask(UID: "Love", icon: .Lovely, isStyleLocked: false, color: Palette.SingleColors.Amethyst, text: "Вторая половинка", index: 6, style: .Simple)
+    static let Pet = KindOfTask(UID: "Pet", icon: .Pet, isStyleLocked: false, color: Palette.SingleColors.BrinkPink, text: "Домашнее животное", index: 7, style: .Simple)
+    static let Sport = KindOfTask(UID: "Sport", icon: .Dumbbell, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Спорт", index: 8, style: .Sport)
+    static let Fashion = KindOfTask(UID: "Fashion", icon: .Shop, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Быть модным", index: 9, style: .Fashion)
   }
+  
+  // MARK: - Identity
+  var identity: String { UID }
   
   // MARK: - Properties
   var UID: String
   var color: UIColor
   var icon: Icon
   var index: Int
+  var isStyleLocked: Bool = false
   var status: KindOfTaskStatus = .active
+  var style: Style = .Simple
   var text: String
 
-  // MARK: - Identity
-  var identity: String { UID }
-  
   // MARK: - Init
-  init(UID: String, icon: Icon, color: UIColor?, text: String, index: Int) {
+  init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int) {
     self.UID = UID
     self.color = color ?? UIColor.systemGray
     self.icon = icon
     self.index = index
+    self.isStyleLocked = isStyleLocked
     self.text = text
+  }
+  
+  init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int, style: Style) {
+    self.UID = UID
+    self.color = color ?? UIColor.systemGray
+    self.icon = icon
+    self.index = index
+    self.isStyleLocked = isStyleLocked
+    self.text = text
+    self.style = style
   }
   
   // MARK: - Equatable
   static func == (lhs: KindOfTask, rhs: KindOfTask) -> Bool {
-    lhs.UID == rhs.UID &&
-    lhs.icon == rhs.icon &&
-    lhs.color == rhs.color &&
-    lhs.text == rhs.text &&
-    lhs.index == rhs.index
+    lhs.UID == rhs.UID
+    && lhs.icon == rhs.icon
+    && lhs.color == rhs.color
+    && lhs.text == rhs.text
+    && lhs.index == rhs.index
+    && lhs.style == rhs.style
   }
 }
 
@@ -110,6 +124,7 @@ extension KindOfTask: Persistable {
   init(entity: T) {
     UID = entity.value(forKey: "uid") as! String
     index = entity.value(forKey: "index") as! Int
+    isStyleLocked = entity.value(forKey: "isStyleLocked") as! Bool
     text = entity.value(forKey: "text") as! String
     
     // color
@@ -132,6 +147,13 @@ extension KindOfTask: Persistable {
     } else {
       self.status = .active
     }
+    
+    // style
+    if let styleRawValue = entity.value(forKey: "styleRawValue") as? String, let style = Style(rawValue: styleRawValue) {
+      self.style = style
+    } else {
+      self.style = .Simple
+    }
   }
   
   func update(_ entity: T) {
@@ -139,7 +161,9 @@ extension KindOfTask: Persistable {
     entity.setValue(color.hexString, forKey: "colorHexString")
     entity.setValue(icon.rawValue, forKey: "iconRawValue")
     entity.setValue(index, forKey: "index")
+    entity.setValue(isStyleLocked, forKey: "isStyleLocked")
     entity.setValue(status.rawValue, forKey: "statusRawValue")
+    entity.setValue(style.rawValue, forKey: "styleRawValue")
     entity.setValue(text, forKey: "text")
     
     do {

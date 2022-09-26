@@ -174,7 +174,7 @@ class KindOfTaskListDeletedViewController: TDViewController {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(configureCell: { (_, collectionView, indexPath, kindOfTask) in
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskListCell.reuseID, for: indexPath) as! KindOfTaskListCell
-      cell.configure(with: kindOfTask)
+      cell.configure(with: kindOfTask, mode: .WithRepeatButton)
       cell.repeatButton.rx.tap.map{ _ -> IndexPath in indexPath }.asDriver(onErrorJustReturn: nil).drive(self.repeatButtonBinder).disposed(by: cell.disposeBag)
       return cell
     })

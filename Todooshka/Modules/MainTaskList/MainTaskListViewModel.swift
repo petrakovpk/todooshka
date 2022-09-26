@@ -41,15 +41,11 @@ class MainTaskListViewModel: Stepper {
     
     // idea
     let ideaButtonClick = input.ideaButtonClickTrigger
-      .do { _ in
-        self.steps.accept(AppStep.IdeaTaskListIsRequired)
-      }
+      .map { self.steps.accept(AppStep.IdeaTaskListIsRequired) }
     
     // overdued
     let overduedButtonClick = input.overduedButtonClickTrigger
-      .do { _ in
-        self.steps.accept(AppStep.OverduedTaskListIsRequired)
-      }
+      .map { self.steps.accept(AppStep.OverduedTaskListIsRequired) }
     
     return Output(
       // idea

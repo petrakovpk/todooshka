@@ -27,7 +27,7 @@ class BranchSceneModel: Stepper {
     // birds
     let birds: Driver<[Bird]>
     // dataSource
-    let dataSource: Driver<[Int: BirdActionType]>
+    let dataSource: Driver<[BirdActionType]>
     // force
     let forceNestUpdate: Driver<Void>
     let forceBranchUpdate: Driver<Void>
@@ -44,9 +44,7 @@ class BranchSceneModel: Stepper {
     let forceNestUpdate = willShow
       .compactMap{ $0 }
       .asDriver(onErrorJustReturn: ())
-      .do { _ in
-        self.services.actionService.forceNestSceneTrigger.accept(())
-      }
+      .map { self.services.actionService.forceNestSceneTrigger.accept(()) }
     
     let forceBranchUpdate = services.actionService.forceBranchSceneTrigger
       .compactMap{ $0 }
@@ -64,7 +62,7 @@ class BranchSceneModel: Stepper {
 
     let birds = services.dataService.birds
     
-    let dataSource = services.actionService.branchDataSource.asDriver()
+    let dataSource = services.dataService.branchDataSource
 
     return Output(
       background: background,

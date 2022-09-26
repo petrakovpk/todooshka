@@ -68,22 +68,10 @@ class SettingsViewController: TDViewController {
     
     // view
     view.backgroundColor = Theme.App.background
-    
-    // headerView
-    headerView.backgroundColor = UIColor(named: "navigationHeaderViewBackgroundColor")
-    headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: isModal ? 55 : 96)
-    
+
     // titleLabel
-    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     titleLabel.text = "Настройки и конфеденциальность"
-    titleLabel.anchorCenterXToSuperview()
-    titleLabel.anchor(bottom: headerView.bottomAnchor, bottomConstant: 20)
-    
-    // backButton
-    backButton.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
-    backButton.imageView?.tintColor = Theme.App.text
-    backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
+
     // tableView
     tableView.backgroundColor = .clear
     tableView.register(SettingsCell.self, forCellReuseIdentifier: SettingsCell.reuseID)

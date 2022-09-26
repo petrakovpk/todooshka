@@ -5,7 +5,6 @@
         <attribute name="currencyRawValue" attributeType="String"/>
         <attribute name="desc" attributeType="String"/>
         <attribute name="isBought" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="kindsOfTaskUID" optional="YES" attributeType="Transformable"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="price" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="styleRawValue" optional="YES" attributeType="String"/>
@@ -22,10 +21,13 @@
         <attribute name="uid" attributeType="String"/>
     </entity>
     <entity name="KindOfTask" representedClassName="" elementID="CoreDataTaskType" syncable="YES">
+        <attribute name="associatedStyleRawValue" optional="YES" attributeType="String"/>
         <attribute name="colorHexString" attributeType="String" versionHashModifier="CoreDataTaskType"/>
         <attribute name="iconRawValue" attributeType="String"/>
         <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" elementID="orderNumber"/>
+        <attribute name="isStyleLocked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="statusRawValue" attributeType="String"/>
+        <attribute name="styleRawValue" optional="YES" attributeType="String"/>
         <attribute name="text" attributeType="String"/>
         <attribute name="uid" attributeType="String"/>
     </entity>
@@ -42,10 +44,10 @@
         <attribute name="userUID" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Bird" positionX="45" positionY="-36" width="128" height="164"/>
+        <element name="Bird" positionX="45" positionY="-36" width="128" height="149"/>
         <element name="Diamond" positionX="27" positionY="-18" width="128" height="59"/>
         <element name="Feather" positionX="-136.0000610351562" positionY="-99.328857421875" width="128" height="89"/>
-        <element name="KindOfTask" positionX="189.2603149414062" positionY="-106.2628479003906" width="128" height="119"/>
+        <element name="KindOfTask" positionX="189.2603149414062" positionY="-106.2628479003906" width="128" height="164"/>
         <element name="Task" positionX="36" positionY="-135" width="128" height="179"/>
     </elements>
 </model>

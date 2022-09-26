@@ -353,7 +353,7 @@ class MainTaskListViewController: UIViewController {
     })
   }
 
-  var sceneDataSourceBinder: Binder<[Int: EggActionType]> {
+  var sceneDataSourceBinder: Binder<[EggActionType]> {
     return Binder(self, binding: { (vc, actions) in
       if let scene = vc.scene {
         scene.setup(with: actions)
@@ -383,7 +383,7 @@ class MainTaskListViewController: UIViewController {
   var birdsBinder: Binder<[Bird]> {
     return Binder(self, binding: { (vc, birds) in
       if let scene = vc.scene {
-        scene.setup(with: birds)
+//        scene.setup(with: birds)
       }
     })
   }

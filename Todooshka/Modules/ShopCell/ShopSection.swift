@@ -1,5 +1,5 @@
 //
-//  ShopSectionModel.swift
+//  ShopSection.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 02.02.2022.
@@ -7,7 +7,7 @@
 
 import RxDataSources
 
-struct ShopSectionModel: AnimatableSectionModelType {
+struct ShopSection: AnimatableSectionModelType {
 
   // MARK: - Properties
   var header: String
@@ -24,7 +24,7 @@ struct ShopSectionModel: AnimatableSectionModelType {
       self.items = items
   }
   
-  init(original: ShopSectionModel, items: [Bird]) {
+  init(original: ShopSection, items: [Bird]) {
       self = original
       self.items = items
   }

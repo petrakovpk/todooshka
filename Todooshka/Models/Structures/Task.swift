@@ -28,7 +28,7 @@ struct Task: IdentifiableType, Equatable {
   var closed: Date?
   
   // link properties
-  var kindOfTaskUID: String = KindOfTask.Standart.Empty.UID
+  var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID
   
   //MARK: - Calculated Properties
   var identity: String { return self.UID }

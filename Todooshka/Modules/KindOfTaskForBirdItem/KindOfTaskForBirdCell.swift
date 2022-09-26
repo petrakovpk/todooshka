@@ -26,13 +26,6 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     return imageView
   }()
   
-  private let removeImageView: UIImageView = {
-    let imageView = UIImageView()
-    imageView.image = UIImage(named: "remove")?.template
-    imageView.tintColor = Palette.SingleColors.Cerise
-    return imageView
-  }()
-  
   private let textView: UITextView = {
     let textView = UITextView()
     textView.textAlignment = .center
@@ -90,33 +83,30 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     shapeLayer.fillColor = nil
   }
   
-  func configure(with item: KindOfTaskForBirdItem) {
+  func configure(with kindOfTask: KindOfTask, isEnabled: Bool) {
     // removeFromSuperview
     imageView.removeFromSuperview()
     textView.removeFromSuperview()
-    removeImageView.removeFromSuperview()
     
     // adding
     contentView.addSubview(imageView)
     contentView.addSubview(textView)
-    contentView.addSubview(removeImageView)
+    
+    // contentView
+    contentView.borderWidth = 0.0
     
     // shapeLayer
-    shapeLayer.fillColor = Theme.Bird.TypeSmallCollectionViewCell.unselectedBackground?.cgColor
+    shapeLayer.fillColor = isEnabled ? Theme.Bird.TypeSmallCollectionViewCell.unselectedBackground?.cgColor : UIColor.systemGray.withAlphaComponent(0.3).cgColor
     
     // imageView
     imageView.anchorCenterXToSuperview()
     imageView.anchor(top: contentView.topAnchor, topConstant: 12, widthConstant: 25, heightConstant: 25)
-    imageView.image = item.kindOfTask.icon.image
-    imageView.tintColor = item.kindOfTask.color
-    
-    // removeImageView
-    removeImageView.isHidden = !item.isRemovable
-    removeImageView.anchor(top: contentView.topAnchor, right: contentView.rightAnchor, topConstant: -8.5, rightConstant: -8.5, widthConstant: 24, heightConstant: 24)
-    
+    imageView.image = kindOfTask.icon.image
+    imageView.tintColor = kindOfTask.color
+
     // textView
     textView.anchor(top: imageView.bottomAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
-    textView.text = item.kindOfTask.text
+    textView.text = kindOfTask.text
     textView.textColor = Theme.App.text
     
   }

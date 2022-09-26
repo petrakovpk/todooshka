@@ -28,7 +28,7 @@ class NestSceneModel: Stepper {
     // birds
     let birds: Driver<[Bird]>
     // dataSource
-    let dataSource: Driver<[Int: EggActionType]>
+    let dataSource: Driver<[EggActionType]>
     // force
     let forceNestUpdate: Driver<Void>
     let forceBranchUpdate: Driver<Void>
@@ -53,7 +53,7 @@ class NestSceneModel: Stepper {
     
     let birds = services.dataService.birds
     
-    let dataSource = services.actionService.nestDataSource.asDriver()
+    let dataSource = services.dataService.nestDataSource
     
     let forceNestUpdate = services.actionService.forceNestSceneTrigger
       .compactMap{ $0 }

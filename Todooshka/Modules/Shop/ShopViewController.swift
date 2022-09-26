@@ -20,7 +20,7 @@ class ShopViewController: TDViewController {
   
   // MARK: - RX Elements
   private let disposeBag = DisposeBag()
-  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<ShopSectionModel>!
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<ShopSection>!
   
   // MARK: - Lifecycle
   override func viewDidLoad() {
@@ -60,7 +60,7 @@ class ShopViewController: TDViewController {
   }
   
   func configureDataSource() {
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<ShopSectionModel>(configureCell: { _, collectionView, indexPath, item in
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<ShopSection>(configureCell: { _, collectionView, indexPath, item in
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShopCollectionViewCell.reuseID, for: indexPath) as! ShopCollectionViewCell
       cell.configure(bird: item)
       return cell

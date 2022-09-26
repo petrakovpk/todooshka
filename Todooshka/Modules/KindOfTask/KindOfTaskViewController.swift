@@ -17,8 +17,8 @@ class KindOfTaskViewController: TDViewController {
   var viewModel: KindOfTaskViewModel!
   let disposeBag = DisposeBag()
   
-  private var dataSourceColor: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskColorSectionModel>!
-  private var dataSourceIcon: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskIconSectionModel>!
+  private var dataSourceColor: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskColorSection>!
+  private var dataSourceIcon: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskIconSection>!
   
   //MARK: - UI Elements
   private let taskTypeImageContainerView: UIView = {
@@ -156,7 +156,7 @@ class KindOfTaskViewController: TDViewController {
   //MARK: - Color CollectionView
   func configureDataSource() {
     collectionViewColor.dataSource = nil
-    dataSourceColor = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskColorSectionModel>(
+    dataSourceColor = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskColorSection>(
       configureCell: {(_, collectionView, indexPath, item) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskColorCell.reuseID, for: indexPath) as! KindOfTaskColorCell
         cell.configure(with: item)
@@ -164,7 +164,7 @@ class KindOfTaskViewController: TDViewController {
       })
     
     collectionViewIcon.dataSource = nil
-    dataSourceIcon = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskIconSectionModel>(
+    dataSourceIcon = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskIconSection>(
       configureCell: {(_, collectionView, indexPath, item) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskIconCell.reuseID, for: indexPath) as! KindOfTaskIconCell
         cell.configure(with: item)

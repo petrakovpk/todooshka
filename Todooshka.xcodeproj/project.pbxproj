@@ -12,7 +12,7 @@
 		6006F82B27AA6C0200E5AE9E /* ShopCellHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F82A27AA6C0200E5AE9E /* ShopCellHeader.swift */; };
 		6006F82D27AA6E7100E5AE9E /* Bird.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F82C27AA6E7100E5AE9E /* Bird.swift */; };
 		6006F82F27AA701F00E5AE9E /* Clade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F82E27AA701F00E5AE9E /* Clade.swift */; };
-		6006F83327AA74CE00E5AE9E /* ShopSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F83227AA74CE00E5AE9E /* ShopSectionModel.swift */; };
+		6006F83327AA74CE00E5AE9E /* ShopSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F83227AA74CE00E5AE9E /* ShopSection.swift */; };
 		6006F83627AA8EDF00E5AE9E /* BirdViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F83527AA8EDF00E5AE9E /* BirdViewController.swift */; };
 		6006F83827AA8EEA00E5AE9E /* BirdViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F83727AA8EEA00E5AE9E /* BirdViewModel.swift */; };
 		600718FA27BE9121006F2FEF /* GameCurrencyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600718F927BE9121006F2FEF /* GameCurrencyViewController.swift */; };
@@ -36,7 +36,6 @@
 		602EA058274E93E600525D6C /* NestScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 602EA057274E93E500525D6C /* NestScene.sks */; };
 		602EA05A274E944A00525D6C /* NestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602EA059274E944A00525D6C /* NestScene.swift */; };
 		603C5CF626F21A060056729B /* KindOfTaskColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603C5CF526F21A060056729B /* KindOfTaskColorCell.swift */; };
-		603C5CF826F21A1A0056729B /* TaskTypeColorCollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603C5CF726F21A1A0056729B /* TaskTypeColorCollectionViewCellModel.swift */; };
 		604257672677AAA0005A518C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604257662677AAA0005A518C /* SettingsViewController.swift */; };
 		604257692677AAAD005A518C /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604257682677AAAD005A518C /* SettingsViewModel.swift */; };
 		6042576B2677AB0D005A518C /* SettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6042576A2677AB0D005A518C /* SettingsCell.swift */; };
@@ -55,7 +54,7 @@
 		6053F86628213BED0047C204 /* KindOfTaskListDeletedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F86428213BED0047C204 /* KindOfTaskListDeletedViewController.swift */; };
 		6053F86A2822B1F30047C204 /* KindOfTaskForBirdItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F8692822B1F30047C204 /* KindOfTaskForBirdItem.swift */; };
 		6053F86D2822DAE90047C204 /* BirdState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F86C2822DAE90047C204 /* BirdState.swift */; };
-		60559CA626E76F5300CCBD5F /* KindOfTaskColorSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60559CA526E76F5300CCBD5F /* KindOfTaskColorSectionModel.swift */; };
+		60559CA626E76F5300CCBD5F /* KindOfTaskColorSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60559CA526E76F5300CCBD5F /* KindOfTaskColorSection.swift */; };
 		6055D193267104E800316BB4 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6055D192267104E800316BB4 /* UIViewController.swift */; };
 		6055D199267200B700316BB4 /* UserDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6055D198267200B700316BB4 /* UserDay.swift */; };
 		6055D19B2672021200316BB4 /* CalendarSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6055D19A2672021200316BB4 /* CalendarSectionModel.swift */; };
@@ -65,9 +64,8 @@
 		605823A826C2F18F00F79155 /* TaskReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605823A726C2F18F00F79155 /* TaskReusableView.swift */; };
 		6067D99F26B1EF3A00F0FB72 /* TabBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6067D99E26B1EF3A00F0FB72 /* TabBarViewModel.swift */; };
 		6067D9A126B1EF7700F0FB72 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6067D9A026B1EF7700F0FB72 /* TabBar.swift */; };
-		6069AE3E26E7AE830098B25E /* KindOfTaskIconSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069AE3D26E7AE830098B25E /* KindOfTaskIconSectionModel.swift */; };
+		6069AE3E26E7AE830098B25E /* KindOfTaskIconSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069AE3D26E7AE830098B25E /* KindOfTaskIconSection.swift */; };
 		6069AE4126E7E5890098B25E /* KindOfTaskIconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069AE4026E7E5890098B25E /* KindOfTaskIconCell.swift */; };
-		6069AE4326E7E59B0098B25E /* TaskTypeIconCollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069AE4226E7E59B0098B25E /* TaskTypeIconCollectionViewCellModel.swift */; };
 		606B03AD26C4619200F332C5 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606B03AC26C4619200F332C5 /* Date.swift */; };
 		606FB75127F728A400782E17 /* TaskListCellMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FB75027F728A400782E17 /* TaskListCellMode.swift */; };
 		6075496227EDC5B400B96D20 /* CrackType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6075496127EDC5B400B96D20 /* CrackType.swift */; };
@@ -111,9 +109,8 @@
 		60BB15FE27AB189700DB081B /* CalendarDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BB15FD27AB189700DB081B /* CalendarDay.swift */; };
 		60BCBA7F275D26E0007EF465 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60BCBA7E275D26E0007EF465 /* Assets.xcassets */; };
 		60C00DA026B2F6E600AAD0E1 /* TaskListFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C00D9F26B2F6E600AAD0E1 /* TaskListFlow.swift */; };
-		60C0BC9126BAD93C000A4A79 /* TypeLargeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C0BC9026BAD93C000A4A79 /* TypeLargeCollectionViewCell.swift */; };
 		60C1522926BC3A9E00F10284 /* KindOfTaskListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1522826BC3A9D00F10284 /* KindOfTaskListCell.swift */; };
-		60C1AC552817D52100C63404 /* KindOfTaskListSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1AC542817D52100C63404 /* KindOfTaskListSectionModel.swift */; };
+		60C1AC552817D52100C63404 /* KindOfTaskListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1AC542817D52100C63404 /* KindOfTaskListSection.swift */; };
 		60D5662426CC1AB600D865DD /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662326CC1AB600D865DD /* OnboardingViewController.swift */; };
 		60D5662626CC201400D865DD /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662526CC201400D865DD /* OnboardingViewModel.swift */; };
 		60D5662826CC202B00D865DD /* OnboardingSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662726CC202B00D865DD /* OnboardingSectionModel.swift */; };
@@ -124,8 +121,6 @@
 		60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */; };
 		60E816B528116C20003F28DC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E816B428116C20003F28DC /* Theme.swift */; };
 		60E970362823F13700577484 /* BirdActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E970352823F13700577484 /* BirdActionType.swift */; };
-		60E9704328258EC200577484 /* TypeLargeCollectionViewCellSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E9704228258EC200577484 /* TypeLargeCollectionViewCellSectionModel.swift */; };
-		60E9704528258ED300577484 /* TypeLargeCollectionViewCellSectionModelItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E9704428258ED300577484 /* TypeLargeCollectionViewCellSectionModelItem.swift */; };
 		60E970472827025B00577484 /* SceneActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E970462827025B00577484 /* SceneActionType.swift */; };
 		60E9704928284B5F00577484 /* ActionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E9704828284B5F00577484 /* ActionService.swift */; };
 		60EB113F2656A32500992BF8 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB113E2656A32400992BF8 /* Task.swift */; };
@@ -218,8 +213,15 @@
 		9D42C05F28CF5427008F624F /* SetEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05E28CF5427008F624F /* SetEmailViewController.swift */; };
 		9D42C06128D04E45008F624F /* AuthTextFieldType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C06028D04E45008F624F /* AuthTextFieldType.swift */; };
 		9D44C0BC28DA271B0022148C /* RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0BB28DA271B0022148C /* RangeReplaceableCollection.swift */; };
-		9D44C0BF28DC66830022148C /* KindOfTaskForBirdViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0BE28DC66830022148C /* KindOfTaskForBirdViewController.swift */; };
-		9D44C0C128DC668E0022148C /* KindOfTaskForBirdTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C028DC668E0022148C /* KindOfTaskForBirdTaskViewModel.swift */; };
+		9D44C0BF28DC66830022148C /* KindOfTaskListForBirdViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0BE28DC66830022148C /* KindOfTaskListForBirdViewController.swift */; };
+		9D44C0C128DC668E0022148C /* KindOfTaskListForBirdViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C028DC668E0022148C /* KindOfTaskListForBirdViewModel.swift */; };
+		9D44C0C328E06A300022148C /* KindOfTaskListCellMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C228E06A300022148C /* KindOfTaskListCellMode.swift */; };
+		9D44C0C528E06F010022148C /* KindOfTaskListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C428E06F010022148C /* KindOfTaskListItem.swift */; };
+		9D44C0C728E06F4A0022148C /* KindOfTaskIconItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C628E06F4A0022148C /* KindOfTaskIconItem.swift */; };
+		9D44C0CA28E06F770022148C /* KindOfTaskColorItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C928E06F770022148C /* KindOfTaskColorItem.swift */; };
+		9D44C0D128E0708E0022148C /* TypeLargeCollectionViewCellSectionModelItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0CE28E0708E0022148C /* TypeLargeCollectionViewCellSectionModelItem.swift */; };
+		9D44C0D228E0708E0022148C /* TypeLargeCollectionViewCellSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0CF28E0708E0022148C /* TypeLargeCollectionViewCellSectionModel.swift */; };
+		9D44C0D328E0708E0022148C /* TypeLargeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0D028E0708E0022148C /* TypeLargeCollectionViewCell.swift */; };
 		9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */; };
 		9D6B6B12284FEC46000ABAE7 /* BranchSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */; };
 		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
@@ -252,7 +254,7 @@
 		6006F82A27AA6C0200E5AE9E /* ShopCellHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopCellHeader.swift; sourceTree = "<group>"; };
 		6006F82C27AA6E7100E5AE9E /* Bird.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bird.swift; sourceTree = "<group>"; };
 		6006F82E27AA701F00E5AE9E /* Clade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clade.swift; sourceTree = "<group>"; };
-		6006F83227AA74CE00E5AE9E /* ShopSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopSectionModel.swift; sourceTree = "<group>"; };
+		6006F83227AA74CE00E5AE9E /* ShopSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopSection.swift; sourceTree = "<group>"; };
 		6006F83527AA8EDF00E5AE9E /* BirdViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdViewController.swift; sourceTree = "<group>"; };
 		6006F83727AA8EEA00E5AE9E /* BirdViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdViewModel.swift; sourceTree = "<group>"; };
 		600718F927BE9121006F2FEF /* GameCurrencyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCurrencyViewController.swift; sourceTree = "<group>"; };
@@ -276,7 +278,6 @@
 		602EA057274E93E500525D6C /* NestScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = NestScene.sks; sourceTree = "<group>"; };
 		602EA059274E944A00525D6C /* NestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestScene.swift; sourceTree = "<group>"; };
 		603C5CF526F21A060056729B /* KindOfTaskColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskColorCell.swift; sourceTree = "<group>"; };
-		603C5CF726F21A1A0056729B /* TaskTypeColorCollectionViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeColorCollectionViewCellModel.swift; sourceTree = "<group>"; };
 		604257662677AAA0005A518C /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		604257682677AAAD005A518C /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		6042576A2677AB0D005A518C /* SettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCell.swift; sourceTree = "<group>"; };
@@ -295,7 +296,7 @@
 		6053F86428213BED0047C204 /* KindOfTaskListDeletedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskListDeletedViewController.swift; sourceTree = "<group>"; };
 		6053F8692822B1F30047C204 /* KindOfTaskForBirdItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskForBirdItem.swift; sourceTree = "<group>"; };
 		6053F86C2822DAE90047C204 /* BirdState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdState.swift; sourceTree = "<group>"; };
-		60559CA526E76F5300CCBD5F /* KindOfTaskColorSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskColorSectionModel.swift; sourceTree = "<group>"; };
+		60559CA526E76F5300CCBD5F /* KindOfTaskColorSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskColorSection.swift; sourceTree = "<group>"; };
 		6055D192267104E800316BB4 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		6055D198267200B700316BB4 /* UserDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDay.swift; sourceTree = "<group>"; };
 		6055D19A2672021200316BB4 /* CalendarSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSectionModel.swift; sourceTree = "<group>"; };
@@ -305,9 +306,8 @@
 		605823A726C2F18F00F79155 /* TaskReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskReusableView.swift; sourceTree = "<group>"; };
 		6067D99E26B1EF3A00F0FB72 /* TabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewModel.swift; sourceTree = "<group>"; };
 		6067D9A026B1EF7700F0FB72 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
-		6069AE3D26E7AE830098B25E /* KindOfTaskIconSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskIconSectionModel.swift; sourceTree = "<group>"; };
+		6069AE3D26E7AE830098B25E /* KindOfTaskIconSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskIconSection.swift; sourceTree = "<group>"; };
 		6069AE4026E7E5890098B25E /* KindOfTaskIconCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskIconCell.swift; sourceTree = "<group>"; };
-		6069AE4226E7E59B0098B25E /* TaskTypeIconCollectionViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeIconCollectionViewCellModel.swift; sourceTree = "<group>"; };
 		606B03AC26C4619200F332C5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		606FB75027F728A400782E17 /* TaskListCellMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListCellMode.swift; sourceTree = "<group>"; };
 		6075496127EDC5B400B96D20 /* CrackType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrackType.swift; sourceTree = "<group>"; };
@@ -353,9 +353,8 @@
 		60BB15FD27AB189700DB081B /* CalendarDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDay.swift; sourceTree = "<group>"; };
 		60BCBA7E275D26E0007EF465 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		60C00D9F26B2F6E600AAD0E1 /* TaskListFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListFlow.swift; sourceTree = "<group>"; };
-		60C0BC9026BAD93C000A4A79 /* TypeLargeCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeLargeCollectionViewCell.swift; sourceTree = "<group>"; };
 		60C1522826BC3A9D00F10284 /* KindOfTaskListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListCell.swift; sourceTree = "<group>"; };
-		60C1AC542817D52100C63404 /* KindOfTaskListSectionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskListSectionModel.swift; sourceTree = "<group>"; };
+		60C1AC542817D52100C63404 /* KindOfTaskListSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskListSection.swift; sourceTree = "<group>"; };
 		60D5662326CC1AB600D865DD /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		60D5662526CC201400D865DD /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		60D5662726CC202B00D865DD /* OnboardingSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSectionModel.swift; sourceTree = "<group>"; };
@@ -366,8 +365,6 @@
 		60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDTopRoundButton.swift; sourceTree = "<group>"; };
 		60E816B428116C20003F28DC /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		60E970352823F13700577484 /* BirdActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdActionType.swift; sourceTree = "<group>"; };
-		60E9704228258EC200577484 /* TypeLargeCollectionViewCellSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeLargeCollectionViewCellSectionModel.swift; sourceTree = "<group>"; };
-		60E9704428258ED300577484 /* TypeLargeCollectionViewCellSectionModelItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeLargeCollectionViewCellSectionModelItem.swift; sourceTree = "<group>"; };
 		60E970462827025B00577484 /* SceneActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneActionType.swift; sourceTree = "<group>"; };
 		60E9704828284B5F00577484 /* ActionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionService.swift; sourceTree = "<group>"; };
 		60EB113C2656850C00992BF8 /* Todooshka.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Todooshka.entitlements; sourceTree = "<group>"; };
@@ -440,8 +437,15 @@
 		9D42C05E28CF5427008F624F /* SetEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetEmailViewController.swift; sourceTree = "<group>"; };
 		9D42C06028D04E45008F624F /* AuthTextFieldType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTextFieldType.swift; sourceTree = "<group>"; };
 		9D44C0BB28DA271B0022148C /* RangeReplaceableCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeReplaceableCollection.swift; sourceTree = "<group>"; };
-		9D44C0BE28DC66830022148C /* KindOfTaskForBirdViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskForBirdViewController.swift; sourceTree = "<group>"; };
-		9D44C0C028DC668E0022148C /* KindOfTaskForBirdTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskForBirdTaskViewModel.swift; sourceTree = "<group>"; };
+		9D44C0BE28DC66830022148C /* KindOfTaskListForBirdViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListForBirdViewController.swift; sourceTree = "<group>"; };
+		9D44C0C028DC668E0022148C /* KindOfTaskListForBirdViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListForBirdViewModel.swift; sourceTree = "<group>"; };
+		9D44C0C228E06A300022148C /* KindOfTaskListCellMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListCellMode.swift; sourceTree = "<group>"; };
+		9D44C0C428E06F010022148C /* KindOfTaskListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListItem.swift; sourceTree = "<group>"; };
+		9D44C0C628E06F4A0022148C /* KindOfTaskIconItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskIconItem.swift; sourceTree = "<group>"; };
+		9D44C0C928E06F770022148C /* KindOfTaskColorItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskColorItem.swift; sourceTree = "<group>"; };
+		9D44C0CE28E0708E0022148C /* TypeLargeCollectionViewCellSectionModelItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeLargeCollectionViewCellSectionModelItem.swift; sourceTree = "<group>"; };
+		9D44C0CF28E0708E0022148C /* TypeLargeCollectionViewCellSectionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeLargeCollectionViewCellSectionModel.swift; sourceTree = "<group>"; };
+		9D44C0D028E0708E0022148C /* TypeLargeCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeLargeCollectionViewCell.swift; sourceTree = "<group>"; };
 		9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSceneModel.swift; sourceTree = "<group>"; };
 		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
@@ -515,7 +519,7 @@
 			children = (
 				6006F82827AA6BF100E5AE9E /* ShopCell.swift */,
 				6006F82A27AA6C0200E5AE9E /* ShopCellHeader.swift */,
-				6006F83227AA74CE00E5AE9E /* ShopSectionModel.swift */,
+				6006F83227AA74CE00E5AE9E /* ShopSection.swift */,
 			);
 			path = ShopCell;
 			sourceTree = "<group>";
@@ -608,20 +612,14 @@
 			path = BranchScene;
 			sourceTree = "<group>";
 		};
-		603C5CF226F219C40056729B /* TypeColorCell */ = {
-			isa = PBXGroup;
-			children = (
-				603C5CF726F21A1A0056729B /* TaskTypeColorCollectionViewCellModel.swift */,
-			);
-			path = TypeColorCell;
-			sourceTree = "<group>";
-		};
 		603EC53926E8905A00B39FB7 /* KindOfTaskListCell */ = {
 			isa = PBXGroup;
 			children = (
 				60C1522826BC3A9D00F10284 /* KindOfTaskListCell.swift */,
+				9D44C0C228E06A300022148C /* KindOfTaskListCellMode.swift */,
+				9D44C0C428E06F010022148C /* KindOfTaskListItem.swift */,
 				60A2F49326EE4E5B00C328C1 /* KindOfTaskListReusableCell.swift */,
-				60C1AC542817D52100C63404 /* KindOfTaskListSectionModel.swift */,
+				60C1AC542817D52100C63404 /* KindOfTaskListSection.swift */,
 			);
 			path = KindOfTaskListCell;
 			sourceTree = "<group>";
@@ -713,14 +711,6 @@
 				6067D99E26B1EF3A00F0FB72 /* TabBarViewModel.swift */,
 			);
 			path = TabBar;
-			sourceTree = "<group>";
-		};
-		6069AE3F26E7E5580098B25E /* TypeIconCell */ = {
-			isa = PBXGroup;
-			children = (
-				6069AE4226E7E59B0098B25E /* TaskTypeIconCollectionViewCellModel.swift */,
-			);
-			path = TypeIconCell;
 			sourceTree = "<group>";
 		};
 		607BCB5E26E62E2F000A8248 /* KindOfTask */ = {
@@ -839,13 +829,14 @@
 				9DE960822861068100E5981A /* Feather */,
 				600718F827BE8E2A006F2FEF /* GameCurrency */,
 				607BCB5E26E62E2F000A8248 /* KindOfTask */,
-				9DC65D4F28D6EDF900221ED2 /* KindOfTaskCell */,
-				9D44C0BD28DC663C0022148C /* KindOfTaskForBird */,
+				9DC65D4F28D6EDF900221ED2 /* KindOfTaskColorCell */,
 				6053F86B2822BA290047C204 /* KindOfTaskForBirdItem */,
+				9D44C0D428E070C40022148C /* KindOfTaskIconCell */,
 				6008CFB22684C4B2006DBF1F /* KindOfTaskList */,
 				603EC53926E8905A00B39FB7 /* KindOfTaskListCell */,
 				6053F86228213BD00047C204 /* KindOfTaskListDeleted */,
-				60E9704128258E9200577484 /* LargeTypeCell */,
+				9D44C0BD28DC663C0022148C /* KindOfTaskListForBird */,
+				9D44C0CD28E0708E0022148C /* LargeTypeCell */,
 				9D42BF7128C76A5A008F624F /* Login */,
 				60AE9DC42652FC5300E51531 /* MainTaskList */,
 				60E970372823F28100577484 /* NestScene */,
@@ -864,8 +855,6 @@
 				60855BD8265905F700079D75 /* Task */,
 				605823A926C2F33800F79155 /* TaskCell */,
 				602591C82679CF0800E2BBF8 /* TaskList */,
-				603C5CF226F219C40056729B /* TypeColorCell */,
-				6069AE3F26E7E5580098B25E /* TypeIconCell */,
 				60AE9DC52652FC5E00E51531 /* UserProfile */,
 				9D42C02E28CF0E70008F624F /* UserProfileCell */,
 			);
@@ -992,16 +981,6 @@
 				6045FEB8284D4B56002C9C24 /* NestSceneModel.swift */,
 			);
 			path = NestScene;
-			sourceTree = "<group>";
-		};
-		60E9704128258E9200577484 /* LargeTypeCell */ = {
-			isa = PBXGroup;
-			children = (
-				60C0BC9026BAD93C000A4A79 /* TypeLargeCollectionViewCell.swift */,
-				60E9704228258EC200577484 /* TypeLargeCollectionViewCellSectionModel.swift */,
-				60E9704428258ED300577484 /* TypeLargeCollectionViewCellSectionModelItem.swift */,
-			);
-			path = LargeTypeCell;
 			sourceTree = "<group>";
 		};
 		60EB113D2656A30000992BF8 /* Models */ = {
@@ -1171,13 +1150,33 @@
 			path = ChangeGenderItem;
 			sourceTree = "<group>";
 		};
-		9D44C0BD28DC663C0022148C /* KindOfTaskForBird */ = {
+		9D44C0BD28DC663C0022148C /* KindOfTaskListForBird */ = {
 			isa = PBXGroup;
 			children = (
-				9D44C0BE28DC66830022148C /* KindOfTaskForBirdViewController.swift */,
-				9D44C0C028DC668E0022148C /* KindOfTaskForBirdTaskViewModel.swift */,
+				9D44C0BE28DC66830022148C /* KindOfTaskListForBirdViewController.swift */,
+				9D44C0C028DC668E0022148C /* KindOfTaskListForBirdViewModel.swift */,
 			);
-			path = KindOfTaskForBird;
+			path = KindOfTaskListForBird;
+			sourceTree = "<group>";
+		};
+		9D44C0CD28E0708E0022148C /* LargeTypeCell */ = {
+			isa = PBXGroup;
+			children = (
+				9D44C0CE28E0708E0022148C /* TypeLargeCollectionViewCellSectionModelItem.swift */,
+				9D44C0CF28E0708E0022148C /* TypeLargeCollectionViewCellSectionModel.swift */,
+				9D44C0D028E0708E0022148C /* TypeLargeCollectionViewCell.swift */,
+			);
+			path = LargeTypeCell;
+			sourceTree = "<group>";
+		};
+		9D44C0D428E070C40022148C /* KindOfTaskIconCell */ = {
+			isa = PBXGroup;
+			children = (
+				6069AE4026E7E5890098B25E /* KindOfTaskIconCell.swift */,
+				9D44C0C628E06F4A0022148C /* KindOfTaskIconItem.swift */,
+				6069AE3D26E7AE830098B25E /* KindOfTaskIconSection.swift */,
+			);
+			path = KindOfTaskIconCell;
 			sourceTree = "<group>";
 		};
 		9D6B6B0E284FEA0F000ABAE7 /* Typealias */ = {
@@ -1197,15 +1196,14 @@
 			path = SyncData;
 			sourceTree = "<group>";
 		};
-		9DC65D4F28D6EDF900221ED2 /* KindOfTaskCell */ = {
+		9DC65D4F28D6EDF900221ED2 /* KindOfTaskColorCell */ = {
 			isa = PBXGroup;
 			children = (
 				603C5CF526F21A060056729B /* KindOfTaskColorCell.swift */,
-				60559CA526E76F5300CCBD5F /* KindOfTaskColorSectionModel.swift */,
-				6069AE4026E7E5890098B25E /* KindOfTaskIconCell.swift */,
-				6069AE3D26E7AE830098B25E /* KindOfTaskIconSectionModel.swift */,
+				9D44C0C928E06F770022148C /* KindOfTaskColorItem.swift */,
+				60559CA526E76F5300CCBD5F /* KindOfTaskColorSection.swift */,
 			);
-			path = KindOfTaskCell;
+			path = KindOfTaskColorCell;
 			sourceTree = "<group>";
 		};
 		9DE960822861068100E5981A /* Feather */ = {
@@ -1398,11 +1396,13 @@
 				9D42C06128D04E45008F624F /* AuthTextFieldType.swift in Sources */,
 				9DC65D4628D3517E00221ED2 /* Persistable.swift in Sources */,
 				60227A0827AD299200DA7572 /* DataService.swift in Sources */,
+				9D44C0D228E0708E0022148C /* TypeLargeCollectionViewCellSectionModel.swift in Sources */,
 				60FA513F26D806BA007B3B36 /* ConfirmRemoveTaskViewController.swift in Sources */,
 				60FFF65727A9A5D800290331 /* ShopViewController.swift in Sources */,
 				605823A826C2F18F00F79155 /* TaskReusableView.swift in Sources */,
 				60A2F49926EE55BF00C328C1 /* AlertFlow.swift in Sources */,
 				9D42C01F28CB426A008F624F /* UserProfileViewController.swift in Sources */,
+				9D44C0D128E0708E0022148C /* TypeLargeCollectionViewCellSectionModelItem.swift in Sources */,
 				9DC65D4228D3512900221ED2 /* FetchedResultsControllerSectionObserver.swift in Sources */,
 				6006F83827AA8EEA00E5AE9E /* BirdViewModel.swift in Sources */,
 				60FA514126D806CC007B3B36 /* ConfirmRemoveTaskViewModel.swift in Sources */,
@@ -1412,13 +1412,11 @@
 				9D42C01B28CA37BC008F624F /* FIRUser+Rx.swift in Sources */,
 				60BABA40269B48FF00D5E40B /* Cell.swift in Sources */,
 				9D42C04728CF29C8008F624F /* ChangeBirthdayViewController.swift in Sources */,
-				60E9704328258EC200577484 /* TypeLargeCollectionViewCellSectionModel.swift in Sources */,
 				6067D9A126B1EF7700F0FB72 /* TabBar.swift in Sources */,
 				60B82FEF2655031100BF5F94 /* TaskStepper.swift in Sources */,
-				6069AE3E26E7AE830098B25E /* KindOfTaskIconSectionModel.swift in Sources */,
+				6069AE3E26E7AE830098B25E /* KindOfTaskIconSection.swift in Sources */,
 				60AE9DDE2652FF4200E51531 /* CalendarFlow.swift in Sources */,
 				6022899E267B6F2C00E9429A /* CalendarCell.swift in Sources */,
-				603C5CF826F21A1A0056729B /* TaskTypeColorCollectionViewCellModel.swift in Sources */,
 				60C00DA026B2F6E600AAD0E1 /* TaskListFlow.swift in Sources */,
 				6008CFB62684C8AF006DBF1F /* KindOfTaskListViewModel.swift in Sources */,
 				60D5662626CC201400D865DD /* OnboardingViewModel.swift in Sources */,
@@ -1442,6 +1440,7 @@
 				9D42C02128CB4272008F624F /* UserProfileViewModel.swift in Sources */,
 				9D42BF6928C76A38008F624F /* AuthSectionModel.swift in Sources */,
 				60E970472827025B00577484 /* SceneActionType.swift in Sources */,
+				9D44C0D328E0708E0022148C /* TypeLargeCollectionViewCell.swift in Sources */,
 				602EA053274E67F000525D6C /* TDTaskTextField.swift in Sources */,
 				60AE9DB22652F5C300E51531 /* AppStep.swift in Sources */,
 				606FB75127F728A400782E17 /* TaskListCellMode.swift in Sources */,
@@ -1467,13 +1466,14 @@
 				6055D1A026723C6700316BB4 /* CalendarReusableView.swift in Sources */,
 				600718FA27BE9121006F2FEF /* GameCurrencyViewController.swift in Sources */,
 				603C5CF626F21A060056729B /* KindOfTaskColorCell.swift in Sources */,
+				9D44C0C528E06F010022148C /* KindOfTaskListItem.swift in Sources */,
 				6006F82B27AA6C0200E5AE9E /* ShopCellHeader.swift in Sources */,
 				9DC65D3E28D320CA00221ED2 /* SyncDataViewModel.swift in Sources */,
 				606B03AD26C4619200F332C5 /* Date.swift in Sources */,
 				9D42C05328CF3514008F624F /* ChangeGenderCell.swift in Sources */,
 				9DE96089286106B600E5981A /* DiamondViewController.swift in Sources */,
 				602D1B3E26C1BBE600DAA711 /* TDTaskCommentTextView.swift in Sources */,
-				60C1AC552817D52100C63404 /* KindOfTaskListSectionModel.swift in Sources */,
+				60C1AC552817D52100C63404 /* KindOfTaskListSection.swift in Sources */,
 				9D42BF5528C23CA0008F624F /* TaskListSectionItem.swift in Sources */,
 				60F0719926DA70970048AB71 /* UITextFields.swift in Sources */,
 				604257712677EC24005A518C /* UIAlertController.swift in Sources */,
@@ -1486,6 +1486,7 @@
 				9D42C05028CF33A0008F624F /* ChangeGenderItem.swift in Sources */,
 				60F0719526DA70740048AB71 /* UIViewControllers.swift in Sources */,
 				60AE9DB02652F5B600E51531 /* AppFlow.swift in Sources */,
+				9D44C0C328E06A300022148C /* KindOfTaskListCellMode.swift in Sources */,
 				9D42C05F28CF5427008F624F /* SetEmailViewController.swift in Sources */,
 				604257672677AAA0005A518C /* SettingsViewController.swift in Sources */,
 				9D42C04E28CF3338008F624F /* ChangeGenderSectionModel.swift in Sources */,
@@ -1516,19 +1517,19 @@
 				6053F86628213BED0047C204 /* KindOfTaskListDeletedViewController.swift in Sources */,
 				9DE9608B286106BF00E5981A /* DiamondViewModel.swift in Sources */,
 				9D42BF4C289AABEF008F624F /* SKBirdNode.swift in Sources */,
+				9D44C0C728E06F4A0022148C /* KindOfTaskIconItem.swift in Sources */,
 				60AE9DBF2652F9CF00E51531 /* AppStepper.swift in Sources */,
 				60B82FED2654FCE100BF5F94 /* TaskFlow.swift in Sources */,
-				6006F83327AA74CE00E5AE9E /* ShopSectionModel.swift in Sources */,
+				6006F83327AA74CE00E5AE9E /* ShopSection.swift in Sources */,
 				600DA58F27FEFC16004A4634 /* TaskFlowAction.swift in Sources */,
 				60EB113F2656A32500992BF8 /* Task.swift in Sources */,
 				600718FC27BE912E006F2FEF /* GameCurrencyViewModel.swift in Sources */,
 				9D42BF5128C08D06008F624F /* Settings.swift in Sources */,
 				6053F858282014060047C204 /* ErrorType.swift in Sources */,
 				6049C4EE27EC7960005A7150 /* EggType.swift in Sources */,
-				60C0BC9126BAD93C000A4A79 /* TypeLargeCollectionViewCell.swift in Sources */,
 				6096ABA82683E9E100285AA7 /* UITextView.swift in Sources */,
 				604257692677AAAD005A518C /* SettingsViewModel.swift in Sources */,
-				9D44C0BF28DC66830022148C /* KindOfTaskForBirdViewController.swift in Sources */,
+				9D44C0BF28DC66830022148C /* KindOfTaskListForBirdViewController.swift in Sources */,
 				6042576F2677BE1C005A518C /* SettingsSectionModel.swift in Sources */,
 				9D42C03F28CF246E008F624F /* ChangeNameViewModel.swift in Sources */,
 				60DF0E5327FC37F500249AEA /* MainTaskListViewModel.swift in Sources */,
@@ -1536,12 +1537,13 @@
 				9D42C03428CF0EA5008F624F /* UserProfileCellType.swift in Sources */,
 				6055D19B2672021200316BB4 /* CalendarSectionModel.swift in Sources */,
 				9DC65D5128D883F400221ED2 /* Diamond.swift in Sources */,
-				60559CA626E76F5300CCBD5F /* KindOfTaskColorSectionModel.swift in Sources */,
+				60559CA626E76F5300CCBD5F /* KindOfTaskColorSection.swift in Sources */,
 				9D42BF6828C76A38008F624F /* AuthViewController.swift in Sources */,
 				604D1F7D27ADB80500E05D09 /* KindOfTaskStatus.swift in Sources */,
 				600DA58D27FED7BB004A4634 /* TypeColor.swift in Sources */,
 				9D42BFB728C9F955008F624F /* FIRAuth+Rx.swift in Sources */,
 				6055D1A2267245D100316BB4 /* TaskListSectionModel.swift in Sources */,
+				9D44C0CA28E06F770022148C /* KindOfTaskColorItem.swift in Sources */,
 				608FD86B2688827200819D68 /* KindOfTask.swift in Sources */,
 				6053F86A2822B1F30047C204 /* KindOfTaskForBirdItem.swift in Sources */,
 				60D5662426CC1AB600D865DD /* OnboardingViewController.swift in Sources */,
@@ -1554,7 +1556,7 @@
 				9D42BF6228C75F0C008F624F /* AuthFlow.swift in Sources */,
 				60D5662826CC202B00D865DD /* OnboardingSectionModel.swift in Sources */,
 				6055D19D26720B9E00316BB4 /* DatabaseReference.swift in Sources */,
-				9D44C0C128DC668E0022148C /* KindOfTaskForBirdTaskViewModel.swift in Sources */,
+				9D44C0C128DC668E0022148C /* KindOfTaskListForBirdViewModel.swift in Sources */,
 				6053F86D2822DAE90047C204 /* BirdState.swift in Sources */,
 				602EA05A274E944A00525D6C /* NestScene.swift in Sources */,
 				60AE65D727F5BFB100CFE7BB /* Result.swift in Sources */,
@@ -1563,7 +1565,6 @@
 				9D42BF49289A82DB008F624F /* SKEggNode.swift in Sources */,
 				9D42C05B28CF4FD9008F624F /* ChangePasswordViewController.swift in Sources */,
 				9DC65D4B28D3AF8100221ED2 /* Task+Rx.swift in Sources */,
-				60E9704528258ED300577484 /* TypeLargeCollectionViewCellSectionModelItem.swift in Sources */,
 				60ED956E27B520C1005ACC33 /* TaskStatus.swift in Sources */,
 				9D42BF4F28BF8466008F624F /* TabBarService.swift in Sources */,
 				9D42C01D28CA3A9B008F624F /* FIRPhoneAuthProvider+Rx.swift in Sources */,
@@ -1575,7 +1576,6 @@
 				9D42C01928CA14AA008F624F /* FIRDatabaseReference+Rx.swift in Sources */,
 				6006F83627AA8EDF00E5AE9E /* BirdViewController.swift in Sources */,
 				60E44687272742D300C514FC /* Device.swift in Sources */,
-				6069AE4326E7E59B0098B25E /* TaskTypeIconCollectionViewCellModel.swift in Sources */,
 				6045FEBB284D4B64002C9C24 /* KindOfTaskIForBirdSection.swift in Sources */,
 				9D42C03628CF0FA8008F624F /* UserProfileItem.swift in Sources */,
 				60E9704928284B5F00577484 /* ActionService.swift in Sources */,

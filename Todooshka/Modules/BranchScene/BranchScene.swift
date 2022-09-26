@@ -13,8 +13,8 @@ class BranchScene: SKScene {
   // MARK: - Public
   
   // MARK: - Private
-  private var actions: [Int: BirdActionType] = [1: .Init, 2: .Init, 3: .Init, 4: .Init, 5: .Init, 6: .Init, 7: .Init]
-  private var SKBirdNodes: [Int: SKBirdNode] = [:]
+  private var actions: [BirdActionType] = [.Init, .Init, .Init, .Init, .Init, .Init, .Init]
+  private var SKBirdNodes: [SKBirdNode] = []
   
   // MARK: - UI Nodes
   private let background: SKSpriteNode = {
@@ -41,16 +41,16 @@ class BranchScene: SKScene {
       
       // birds
       SKBirdNodes = [
-        1: SKBirdNode(clade: Clade(index: 1), style: .Simple, scenePosition: position),
-        2: SKBirdNode(clade: Clade(index: 2), style: .Simple, scenePosition: position),
-        3: SKBirdNode(clade: Clade(index: 3), style: .Simple, scenePosition: position),
-        4: SKBirdNode(clade: Clade(index: 4), style: .Simple, scenePosition: position),
-        5: SKBirdNode(clade: Clade(index: 5), style: .Simple, scenePosition: position),
-        6: SKBirdNode(clade: Clade(index: 6), style: .Simple, scenePosition: position),
-        7: SKBirdNode(clade: Clade(index: 7), style: .Simple, scenePosition: position)
+        SKBirdNode(clade: Clade(level: 1), style: .Simple, scenePosition: position),
+        SKBirdNode(clade: Clade(level: 2), style: .Simple, scenePosition: position),
+        SKBirdNode(clade: Clade(level: 3), style: .Simple, scenePosition: position),
+        SKBirdNode(clade: Clade(level: 4), style: .Simple, scenePosition: position),
+        SKBirdNode(clade: Clade(level: 5), style: .Simple, scenePosition: position),
+        SKBirdNode(clade: Clade(level: 6), style: .Simple, scenePosition: position),
+        SKBirdNode(clade: Clade(level: 7), style: .Simple, scenePosition: position)
       ]
       
-      for node in SKBirdNodes.values {
+      for node in SKBirdNodes {
         addChild(node)
         node.position = node.branchPosition
       }
@@ -64,21 +64,18 @@ class BranchScene: SKScene {
     background.run(action)
   }
   
-  func setup(with actions: [Int: BirdActionType]) {
+  func setup(with actions: [BirdActionType]) {
     self.actions = actions
-  }
-  
-  func setup(with birds: [Bird]) {
-  //  self.birds = birds
   }
   
   // MARK: - DataSource
     func reloadData() {
       
-      let hiddenBirds = SKBirdNodes.filter{ $0.value.action == .Hide }
+      let hiddenBirds = SKBirdNodes.filter{ $0.action == .Hide }
       
-      for (index, node) in SKBirdNodes {
-        guard let action = actions[index] else { return }
+      for (index, node) in SKBirdNodes.enumerated() {
+        
+        guard let action = actions[safe: index + 1] else { return }
         
         switch (node.action, action) {
         case (.Init, .Sitting(let newStyle, _)):
@@ -107,7 +104,7 @@ class BranchScene: SKScene {
       let location = touch.location(in: self)
       let touchedNode = self.nodes(at: location)
       for node in touchedNode {
-        for bird in SKBirdNodes.values {
+        for bird in SKBirdNodes {
           if node == bird {
             if bird.wingsIsUp {
               bird.wingsIsUp = false

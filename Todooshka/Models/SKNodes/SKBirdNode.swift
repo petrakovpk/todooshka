@@ -16,14 +16,14 @@ class SKBirdNode: SKSpriteNode {
   
   var branchPosition: CGPoint {
     CGPoint(
-      x: (Settings.Bird.deltaFromBranch[clade.index]?.x ?? 0) + position.x,
-      y: (Settings.Bird.deltaFromBranch[clade.index]?.y ?? 0) + position.y)
+      x: (Settings.Bird.deltaFromBranch[clade.level]?.x ?? 0) + position.x,
+      y: (Settings.Bird.deltaFromBranch[clade.level]?.y ?? 0) + position.y)
   }
   
    var nestPosition: CGPoint {
     CGPoint(
-      x: (Settings.Bird.deltaFromNest[clade.index]?.x ?? 0) + position.x,
-      y: (Settings.Bird.deltaFromNest[clade.index]?.y ?? 0) + position.y)
+      x: (Settings.Bird.deltaFromNest[clade.level]?.x ?? 0) + position.x,
+      y: (Settings.Bird.deltaFromNest[clade.level]?.y ?? 0) + position.y)
   }
 
   var wingsIsUp: Bool = false
@@ -63,11 +63,11 @@ class SKBirdNode: SKSpriteNode {
   }
   
   // Image
-  private var frontImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.Normal.rawValue) ?? UIImage() }
-  private var rightLegForwardImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.RightLegForward.rawValue) ?? UIImage() }
-  private var leftLegForwardImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.LeftLegForward.rawValue) ?? UIImage() }
-  private var closedEyesImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.ClosedEyes.rawValue) ?? UIImage() }
-  private var raisedWingsImage: UIImage { UIImage(named: clade.rawValue + "_" + style.rawValue + "_" + BirdState.RaisedWings.rawValue) ?? UIImage() }
+  private var frontImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.Normal.rawValue) ?? UIImage() }
+  private var rightLegForwardImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.RightLegForward.rawValue) ?? UIImage() }
+  private var leftLegForwardImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.LeftLegForward.rawValue) ?? UIImage() }
+  private var closedEyesImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.ClosedEyes.rawValue) ?? UIImage() }
+  private var raisedWingsImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.RaisedWings.rawValue) ?? UIImage() }
   
   // Texture
   private var frontTexture: SKTexture { SKTexture(image: frontImage) }
@@ -87,7 +87,7 @@ class SKBirdNode: SKSpriteNode {
     name = "Bird"
     xScale = Theme.Scene.Egg.scale
     yScale = Theme.Scene.Egg.scale
-    zPosition = CGFloat(clade.index + 1)
+    zPosition = CGFloat(clade.level + 1)
   }
   
   required init?(coder aDecoder: NSCoder) {

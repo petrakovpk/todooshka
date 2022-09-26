@@ -168,8 +168,8 @@ class CalendarFlow: Flow {
   }
   
   private func navigateToKindOfTaskForBird(birdUID: String) -> FlowContributors {
-    let viewController = KindOfTaskForBirdViewController()
-    let viewModel = KindOfTaskForBirdViewModel(services: services, birdUID: birdUID)
+    let viewController = KindOfTaskListForBirdViewController()
+    let viewModel = KindOfTaskListForBirdViewModel(services: services, birdUID: birdUID)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

@@ -23,8 +23,8 @@ enum Clade: String {
   // Дракон
   case Dragon = "дракон"
   
-  // eggN
-  var index: Int {
+  // level
+  var level: Int {
     switch self {
     case .Chiken: return 1
     case .Penguin: return 2
@@ -36,9 +36,22 @@ enum Clade: String {
     }
   }
   
+  // text
+  var text: String {
+    switch self {
+    case .Chiken: return "1-я задача, Курица"
+    case .Penguin: return "2-я задача, Пингвин"
+    case .Ostrich: return "3-я задача, Страус"
+    case .Parrot: return "4-я задача, Попугай"
+    case .Eagle: return "5-я задача, Орел"
+    case .Owl: return "6-я задача, Сова"
+    case .Dragon: return "7-я задача, Дракон"
+    }
+  }
+  
   // init
-  init(index: Int) {
-    switch index {
+  init(level: Int) {
+    switch level {
     case 1: self = .Chiken
     case 2: self = .Penguin
     case 3: self = .Ostrich
@@ -49,19 +62,6 @@ enum Clade: String {
     default: self = .Chiken
     }
   }
-  
-  // init
-//  init(birdN: Int) {
-//    switch birdN {
-//    case 1: self = .Chiken
-//    case 2: self = .Penguin
-//    case 3: self = .Ostrich
-//    case 4: self = .Parrot
-//    case 5: self = .Eagle
-//    case 6: self = .Owl
-//    case 7: self = .Dragon
-//    default: self = .Chiken
-//    }
-//  }
+
   
 }

@@ -7,18 +7,27 @@
 
 import RxDataSources
 
+enum KindOfTaskForBirdItemType: Equatable {
+  case kindOfTask(kindOfTask: KindOfTask, isEnabled: Bool)
+  case isPlusButton
+}
+
 struct KindOfTaskForBirdItem: IdentifiableType, Equatable {
   
-  let kindOfTask: KindOfTask
-  let isPlusButton: Bool
-  let isRemovable: Bool
+  let kindOfTaskType: KindOfTaskForBirdItemType
   
   //MARK: - Identity
-  var identity: String { kindOfTask.UID }
+  var identity: String {
+    switch kindOfTaskType {
+    case .isPlusButton:
+      return "plus"
+    case .kindOfTask(let kindOfTask, let isEnabled):
+      return kindOfTask.UID + isEnabled.string
+    }
+  }
   
   // MARK: - Equatable
   static func == (lhs: KindOfTaskForBirdItem, rhs: KindOfTaskForBirdItem) -> Bool {
-    lhs.kindOfTask.UID == rhs.kindOfTask.UID
-    && lhs.isRemovable == rhs.isRemovable
+    lhs.identity == rhs.identity
   }
 }

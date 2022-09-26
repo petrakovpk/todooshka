@@ -199,13 +199,12 @@ class KindOfTaskListViewController: TDViewController {
   
   //MARK: - Color CollectionView
   func configureDataSource() {
-    
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(
       configureCell: {(_, collectionView, indexPath, kindOfTask) in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskListCell.reuseID, for: indexPath) as! KindOfTaskListCell
         cell.delegate = self
-        cell.configure(with: kindOfTask)
+        cell.configure(with: kindOfTask, mode: .Empty)
         return cell
       }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
         let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: KindOfTaskListReusableCell.reuseID, for: indexPath) as! KindOfTaskListReusableCell
@@ -213,8 +212,6 @@ class KindOfTaskListViewController: TDViewController {
         return section
       })
   }
-  
-  
 }
 
 

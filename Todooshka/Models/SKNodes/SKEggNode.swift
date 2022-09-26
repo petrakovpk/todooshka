@@ -14,8 +14,8 @@ class SKEggNode: SKSpriteNode {
   var isCracking: Bool = false
   var nestPosition: CGPoint {
     CGPoint(
-      x: (Settings.Egg.deltaFromNest[index]?.x ?? 0) + parentPosition.x,
-      y: (Settings.Egg.deltaFromNest[index]?.y ?? 0) + parentPosition.y
+      x: (Settings.Egg.deltaFromNest[level]?.x ?? 0) + parentPosition.x,
+      y: (Settings.Egg.deltaFromNest[level]?.y ?? 0) + parentPosition.y
     )
   }
   
@@ -30,13 +30,13 @@ class SKEggNode: SKSpriteNode {
   private let wait = SKAction.wait(forDuration: 0.5)
   
   // Other
-  private let index: Int
+  let level: Int
   private let parentPosition: CGPoint
   
   // Image
-  private var noCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(index: index).rawValue + "_" + CrackType.NoCrack.stringForImage) ?? UIImage() }
-  private var oneCrackImage: UIImage { UIImage(named: "яйцо_" + Clade.init(index: index).rawValue + "_" + CrackType.OneCrack.stringForImage) ?? UIImage() }
-  private var threeCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(index: index).rawValue + "_" + CrackType.ThreeCracks.stringForImage) ?? UIImage() }
+  private var noCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.NoCrack.stringForImage) ?? UIImage() }
+  private var oneCrackImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.OneCrack.stringForImage) ?? UIImage() }
+  private var threeCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.ThreeCracks.stringForImage) ?? UIImage() }
   
   // Texture
   private var noCracksTexture: SKTexture { SKTexture(image: noCracksImage) }
@@ -44,9 +44,9 @@ class SKEggNode: SKSpriteNode {
   private var threeCracksTexture: SKTexture { SKTexture(image: threeCracksImage) }
   
   // MARK: - Init
-  init(index: Int, parentPosition: CGPoint) {
+  init(level: Int, parentPosition: CGPoint) {
     // Super init
-    self.index = index
+    self.level = level
     self.parentPosition = parentPosition
     super.init(texture: nil, color: .clear, size: .zero)
     
@@ -54,7 +54,7 @@ class SKEggNode: SKSpriteNode {
     name = "Egg"
     size = noCracksTexture.size()
     texture = noCracksTexture
-    zPosition = CGFloat(index + 1)
+    zPosition = CGFloat(level + 1)
     xScale = Theme.Scene.Egg.scale
     yScale = Theme.Scene.Egg.scale
     alpha = 0.0
