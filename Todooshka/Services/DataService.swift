@@ -222,9 +222,7 @@ class DataService {
     // MARK: - Branch DataSource
     let selectedDate = selectedDate
       .asDriver()
-    
-   // selectedDate.drive().disposed(by: disposeBag)
-    
+
     let completedTasksForSelectedDate = Driver
       .combineLatest(tasks, selectedDate) { tasks, selectedDate -> [Task] in
         tasks

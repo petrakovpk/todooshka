@@ -70,7 +70,7 @@ class BranchScene: SKScene {
   
   // MARK: - DataSource
     func reloadData() {
-      
+
       let hiddenBirds = SKBirdNodes.filter{ $0.action == .Hide }
       
       for (index, node) in SKBirdNodes.enumerated() {
@@ -82,7 +82,7 @@ class BranchScene: SKScene {
           node.changeStyle(style: newStyle, withDelay: false)
         
         case (.Hide, .Sitting(let newStyle, _)):
-          node.changeStyle(style: newStyle, withDelay: hiddenBirds.count != 7 )
+          node.changeStyle(style: newStyle, withDelay: hiddenBirds.count != 6 )
         
         case (.Sitting(let oldStyle, let oldClosed), .Sitting(let newStyle, let newClosed)):
           if Calendar.current.isDate(oldClosed, inSameDayAs: newClosed) == false || oldStyle != newStyle {
