@@ -60,7 +60,7 @@ class TaskCell: SwipeCollectionViewCell {
     let label = UILabel()
     label.textAlignment = .left
     label.font = UIFont.systemFont(ofSize: 10, weight: .regular)
-    label.textColor = Theme.TaskList.Cell.descriptionText
+    label.textColor = Theme.Cells.TaskList.Description
     return label
   }()
   
@@ -68,7 +68,7 @@ class TaskCell: SwipeCollectionViewCell {
     let view = UIView()
     view.cornerRadius = 15
     view.layer.masksToBounds = false
-    view.backgroundColor = Theme.TaskList.Cell.timeLeftViewBackground
+    view.backgroundColor = Theme.Cells.TaskList.TimeLeftViewBackground
     return view
   }()
   

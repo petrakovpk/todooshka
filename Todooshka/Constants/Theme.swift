@@ -70,32 +70,13 @@ struct Theme {
   
   struct Cells {
     struct KindOfTask {
-      static let SelectedBackground =  Palette.SingleColors.BlueRibbon
+      static let Border = Palette.DualColors.Periwinkle_200_202_255_PortGore_24_27_60
+      static let SelectedBackground = Palette.SingleColors.BlueRibbon
       static let UnselectedBackground = Palette.DualColors.TitanWhite_244_245_255_Ebony_10_11_31
     }
-  }
-  
-  struct TaskList {
-    struct Cell {
-      static let descriptionText = Palette.DualColors.BlackPearl_a60_White_a60
-      static let timeLeftViewBackground = Palette.DualColors.BlueBayoux_Haiti_10_13_36
-    }
-  }
-  
-  // Task
-//  struct Task {
-//    struct TypeLargeCollectionViewCell {
-//      static let selectedText = UIColor.white
-//      static let selectedTint = UIColor.white
-//      static let selectedBackground = Palette.SingleColors.BlueRibbon
-//      static let unselectedBackground = Palette.DualColors.White_BlackPearl
-//    }
-//  }
-  
-  struct TaskType {
-    struct Cell {
-      static let background = Palette.DualColors.TitanWhite_244_245_255_Haiti_16_18_54
-      static let border = Palette.DualColors.Periwinkle_PortGore
+    struct TaskList {
+      static let Description = Palette.DualColors.BlackPearl_a60_White_a60
+      static let TimeLeftViewBackground = Palette.DualColors.BlueBayoux_Haiti_10_13_36
     }
   }
   

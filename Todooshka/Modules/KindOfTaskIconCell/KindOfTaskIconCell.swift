@@ -49,31 +49,11 @@ class KindOfTaskIconCell: UICollectionViewCell {
       imageView.image = item.icon.image
     }
     
-    shapeLayer.fillColor =   item.isSelected ? Palette.SingleColors.BlueRibbon.cgColor : Theme.TaskType.Cell.background?.cgColor
-    shapeLayer.strokeColor = item.isSelected ? nil : Theme.TaskType.Cell.border?.cgColor
+    shapeLayer.fillColor =   item.isSelected ? Theme.Cells.KindOfTask.SelectedBackground.cgColor : Theme.Cells.KindOfTask.UnselectedBackground?.cgColor
+    shapeLayer.strokeColor = item.isSelected ? nil : Theme.Cells.KindOfTask.Border?.cgColor
     shapeLayer.shadowColor = item.isSelected ? Palette.SingleColors.BlueRibbon.cgColor : UIColor.clear.cgColor
     imageView.tintColor =    item.isSelected ? UIColor.white : Theme.App.text
     
   }
-  
-  // MARK: - Bind to ViewModel
-//  func bindViewModel() {
-//    let outputs = viewModel.transform()
-//
-//    [
-//      outputs.isSelected.drive(isSelectedBinder),
-//      outputs.image.drive(imageView.rx.image)
-//    ]
-//      .forEach({$0.disposed(by: disposeBag)})
-//  }
-//
-//  var isSelectedBinder: Binder<Bool> {
-//    return Binder(self, binding: { (cell, isSelected) in
-//      cell.shapeLayer.fillColor =   isSelected ? Palette.SingleColors.BlueRibbon.cgColor : Theme.TaskType.Cell.background?.cgColor
-//      cell.shapeLayer.strokeColor = isSelected ? nil : Theme.TaskType.Cell.border?.cgColor
-//      cell.shapeLayer.shadowColor = isSelected ? Palette.SingleColors.BlueRibbon.cgColor : UIColor.clear.cgColor
-//      cell.imageView.tintColor =    isSelected ? UIColor.white : Theme.App.text
-//    })
-//  }
 }
 

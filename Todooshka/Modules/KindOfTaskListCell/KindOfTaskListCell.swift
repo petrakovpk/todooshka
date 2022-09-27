@@ -82,8 +82,8 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
     // contentView
     contentView.cornerRadius = height / 2
     contentView.layer.borderWidth = 1
-    contentView.layer.borderColor = Theme.TaskType.Cell.border?.cgColor
-    contentView.backgroundColor = Theme.TaskType.Cell.background
+    contentView.layer.borderColor = Theme.Cells.KindOfTask.Border?.cgColor
+    contentView.backgroundColor = Theme.Cells.KindOfTask.UnselectedBackground
     contentView.layer.masksToBounds = false
     
     // leftImageView

@@ -79,6 +79,8 @@ class KindOfTaskCell: UICollectionViewCell {
     imageView.tintColor = isSelected ? .white : kindOfTask.color
     
     // shapeLayer
+    shapeLayer.borderWidth = isSelected ? 0 : 1
+    shapeLayer.borderColor = Theme.Cells.KindOfTask.Border?.cgColor
     shapeLayer.shadowOpacity = isSelected ? 1 : 0
     shapeLayer.shadowRadius = isSelected ? 7 : 0
     shapeLayer.shadowPath = isSelected ? shapeLayer.path : nil

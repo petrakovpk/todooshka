@@ -25,8 +25,8 @@ class KindOfTaskViewController: TDViewController {
     let view = UIView()
     view.cornerRadius = 16
     view.layer.borderWidth = 1
-    view.layer.borderColor = Theme.TaskType.Cell.border?.cgColor
-    view.backgroundColor = Theme.TaskType.Cell.background
+    view.layer.borderColor = Theme.Cells.KindOfTask.Border?.cgColor
+    view.backgroundColor = Theme.Cells.KindOfTask.UnselectedBackground
     return view
   }()
   
