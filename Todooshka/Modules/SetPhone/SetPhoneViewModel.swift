@@ -5,7 +5,7 @@
 //  Created by Pavel Petakov on 12.09.2022.
 //
 
-import Firebase
+import FirebaseAuth
 import RxFlow
 import RxSwift
 import RxCocoa
@@ -15,12 +15,10 @@ enum PhoneSetMode {
   case NotSet
 }
 
-
 class SetPhoneViewModel: Stepper {
   
   let services: AppServices
   let steps = PublishRelay<Step>()
- // var mode: SetPhoneViewModelMode = .Phone
   let reload = BehaviorRelay<Void>(value: ())
   
   struct Input {

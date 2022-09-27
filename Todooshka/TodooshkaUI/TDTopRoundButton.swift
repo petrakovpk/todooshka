@@ -31,11 +31,11 @@ class TDRoundButton: UIButton {
       addSubview(blurEffectView)
       blurEffectView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor)
     } else {
-      backgroundColor = Theme.App.Buttons.RoundButton.background
+      backgroundColor = Theme.Buttons.RoundButton.background
     }
     
     // imageView
-    imageView.tintColor = Theme.App.Buttons.RoundButton.tint
+    imageView.tintColor = Theme.Buttons.RoundButton.tint
     imageView.anchorCenterXToSuperview()
     imageView.anchorCenterYToSuperview()
   }

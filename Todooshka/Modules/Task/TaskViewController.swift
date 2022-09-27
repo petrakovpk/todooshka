@@ -65,7 +65,7 @@ class TaskViewController: TDViewController {
   private let kindsOfTaskButton: UIButton = {
     let button = UIButton(type: .system)
     button.setImage(UIImage(named: "settings")?.template , for: .normal)
-    button.tintColor = Theme.App.Buttons.RoundButton.tint
+    button.tintColor = Theme.Buttons.RoundButton.tint
     return button
   }()
   

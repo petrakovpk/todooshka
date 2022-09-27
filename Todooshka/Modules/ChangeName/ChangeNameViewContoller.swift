@@ -23,16 +23,14 @@ class ChangeNameViewContoller: TDViewController {
     let textField = UITextField()
     let spacer = UIView()
     textField.borderWidth = 1.0
-    textField.borderColor = Palette.DualColors.HawkesBlue_Haiti_7_9_30
-    textField.backgroundColor = Palette.DualColors.TitanWhite_224_226_255_
+    textField.borderColor = Theme.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
     textField.cornerRadius = 13
     textField.leftView = spacer
     textField.leftViewMode = .always
     textField.placeholder = "Введите имя"
     textField.returnKeyType = .done
-    // spacer
     spacer.anchor(widthConstant: 16, heightConstant: 54)
-    
     return textField
   }()
   

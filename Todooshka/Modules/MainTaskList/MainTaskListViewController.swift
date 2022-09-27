@@ -100,21 +100,21 @@ class MainTaskListViewController: UIViewController {
   
   private let overduedTasksButton: UIButton = {
     let button = UIButton(type: .custom)
+    button.backgroundColor = Theme.Buttons.OverduedOrIdea.Background
+    button.cornerRadius = 15
     button.setTitle("Просрочка", for: .normal)
     button.setTitleColor(Theme.App.text, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-    button.cornerRadius = 15
-    button.backgroundColor = Theme.MainTaskList.buttonBackground
     return button
   }()
   
   private let ideaTasksButton: UIButton = {
     let button = UIButton(type: .custom)
+    button.backgroundColor = Theme.Buttons.OverduedOrIdea.Background
+    button.cornerRadius = 15
     button.setTitle("Ящик идей", for: .normal)
     button.setTitleColor(Theme.App.text, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-    button.cornerRadius = 15
-    button.backgroundColor = Theme.MainTaskList.buttonBackground
     return button
   }()
   

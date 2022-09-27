@@ -153,7 +153,7 @@ class LoginViewController: UIViewController {
     headerView.addSubview(backButton)
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Theme.Auth.Background
     
     // headerView
     headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: 96)
@@ -260,7 +260,7 @@ class LoginViewController: UIViewController {
   
   var setNextButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
-      vc.nextButton.backgroundColor = isEnabled ? Palette.SingleColors.BlueRibbon : Palette.DualColors.Mischka_205_205_223_
+      vc.nextButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
       vc.nextButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
       vc.nextButton.isEnabled = isEnabled
     })
@@ -289,10 +289,10 @@ class LoginViewController: UIViewController {
     return Binder(self, binding: { (vc, loginViewControllerStyle) in
       switch loginViewControllerStyle {
       case .Email:
-        vc.leftDividerView.backgroundColor = Palette.SingleColors.BlueRibbon
-        vc.rightDividerView.backgroundColor = Palette.DualColors.Mischka_205_205_223_
-        vc.emailButton.setTitleColor(Theme.App.text, for: .normal)
-        vc.phoneButton.setTitleColor(Palette.DualColors.Mischka_205_205_223_, for: .normal)
+        vc.leftDividerView.backgroundColor = Theme.Divider.selected
+        vc.rightDividerView.backgroundColor = Theme.Divider.unselected
+        vc.emailButton.setTitleColor(Theme.Divider.selectedText , for: .normal)
+        vc.phoneButton.setTitleColor(Theme.Divider.unselectedText, for: .normal)
         vc.emailTextField.isHidden = false
         vc.phoneTextField.isHidden = true
         vc.passwordTextField.isHidden = true
@@ -302,10 +302,10 @@ class LoginViewController: UIViewController {
         vc.sendOTPCodeButton.isHidden = true
         vc.emailTextField.becomeFirstResponder()
       case .Password:
-        vc.leftDividerView.backgroundColor = Palette.SingleColors.BlueRibbon
-        vc.rightDividerView.backgroundColor = Palette.DualColors.Mischka_205_205_223_
-        vc.emailButton.setTitleColor(Theme.App.text, for: .normal)
-        vc.phoneButton.setTitleColor(Palette.DualColors.Mischka_205_205_223_, for: .normal)
+        vc.leftDividerView.backgroundColor = Theme.Divider.selected
+        vc.rightDividerView.backgroundColor = Theme.Divider.unselected
+        vc.emailButton.setTitleColor(Theme.Divider.selectedText, for: .normal)
+        vc.phoneButton.setTitleColor(Theme.Divider.unselectedText, for: .normal)
         vc.emailTextField.isHidden = true
         vc.phoneTextField.isHidden = true
         vc.passwordTextField.isHidden = false
@@ -318,10 +318,10 @@ class LoginViewController: UIViewController {
         vc.passwordTextField.becomeFirstResponder()
         vc.resetPasswordButton.setTitle("Забыли пароль?\nОтправить письмо для восстановления пароля", for: .normal)
       case .RepeatPassword:
-        vc.leftDividerView.backgroundColor = Palette.SingleColors.BlueRibbon
-        vc.rightDividerView.backgroundColor = Palette.DualColors.Mischka_205_205_223_
-        vc.emailButton.setTitleColor(Theme.App.text, for: .normal)
-        vc.phoneButton.setTitleColor(Palette.DualColors.Mischka_205_205_223_, for: .normal)
+        vc.leftDividerView.backgroundColor = Theme.Divider.selected
+        vc.rightDividerView.backgroundColor = Theme.Divider.unselected
+        vc.emailButton.setTitleColor(Theme.Divider.selectedText, for: .normal)
+        vc.phoneButton.setTitleColor(Theme.Divider.unselectedText, for: .normal)
         vc.emailTextField.isHidden = true
         vc.phoneTextField.isHidden = true
         vc.passwordTextField.isHidden = false
@@ -333,10 +333,10 @@ class LoginViewController: UIViewController {
         vc.repeatPasswordTextField.clear()
         vc.passwordTextField.becomeFirstResponder()
       case .Phone:
-        vc.leftDividerView.backgroundColor = Palette.DualColors.Mischka_205_205_223_
-        vc.rightDividerView.backgroundColor = Palette.SingleColors.BlueRibbon
-        vc.emailButton.setTitleColor(Palette.DualColors.Mischka_205_205_223_, for: .normal)
-        vc.phoneButton.setTitleColor(Theme.App.text, for: .normal)
+        vc.leftDividerView.backgroundColor = Theme.Divider.unselected
+        vc.rightDividerView.backgroundColor = Theme.Divider.selected
+        vc.emailButton.setTitleColor(Theme.Divider.unselectedText, for: .normal)
+        vc.phoneButton.setTitleColor(Theme.Divider.selectedText, for: .normal)
         vc.emailTextField.isHidden = true
         vc.phoneTextField.isHidden = false
         vc.passwordTextField.isHidden = true
@@ -346,10 +346,10 @@ class LoginViewController: UIViewController {
         vc.sendOTPCodeButton.isHidden = true
         vc.phoneTextField.becomeFirstResponder()
       case .OTPCode:
-        vc.leftDividerView.backgroundColor = Palette.DualColors.Mischka_205_205_223_
-        vc.rightDividerView.backgroundColor = Palette.SingleColors.BlueRibbon
-        vc.emailButton.setTitleColor(Palette.DualColors.Mischka_205_205_223_, for: .normal)
-        vc.phoneButton.setTitleColor(Theme.App.text, for: .normal)
+        vc.leftDividerView.backgroundColor = Theme.Divider.unselected
+        vc.rightDividerView.backgroundColor = Theme.Divider.selected
+        vc.emailButton.setTitleColor(Theme.Divider.unselectedText, for: .normal)
+        vc.phoneButton.setTitleColor(Theme.Divider.selectedText, for: .normal)
         vc.emailTextField.isHidden = true
         vc.phoneTextField.isHidden = true
         vc.passwordTextField.isHidden = true

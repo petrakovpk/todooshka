@@ -89,16 +89,6 @@ class AuthViewController: UIViewController {
     return button
   }()
   
-//  private let loginButton: UIButton = {
-//    let button = UIButton(type: .custom)
-//    button.backgroundColor = .white
-//    button.setTitleColor(UIColor(red: 0.039, green: 0.047, blue: 0.137, alpha: 1), for: .normal)
-//    button.cornerRadius = 25
-//    let attrString = NSAttributedString(string: "Войти в аккаунт через почту / телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
-//    button.setAttributedTitle(attrString, for: .normal)
-//    return button
-//  }()
-  
   private let privacyButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setTitleColor(UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1), for: .normal)
@@ -124,11 +114,9 @@ class AuthViewController: UIViewController {
     view.addSubview(appleButton)
     view.addSubview(googleButton)
     view.addSubview(skipButton)
-    // view.addSubview(loginButton)
-    // view.addSubview(privacyButton)
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Theme.Auth.Background
     
     // headerLabel
     headerLabel.anchor(top: view.topAnchor, topConstant: 84)
@@ -154,13 +142,7 @@ class AuthViewController: UIViewController {
     // skipButton
     skipButton.anchor(top: googleButton.bottomAnchor, topConstant: 25)
     skipButton.anchorCenterXToSuperview()
-    
-    // loginButton
-   // loginButton.anchor(top: skipButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 60, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-    
-    // privacyButton
-  //  privacyButton.anchor(bottom: view.safeAreaLayoutGuide.bottomAnchor, bottomConstant: 20)
-  //  privacyButton.anchorCenterXToSuperview()
+
   }
   
   //MARK: - Bind

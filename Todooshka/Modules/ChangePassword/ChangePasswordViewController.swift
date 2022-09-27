@@ -28,8 +28,21 @@ class ChangePasswordViewController: TDViewController {
     return textView
   }()
   
-  private let newPasswordTextField = TDAuthTextField(type: .Password)
-  private let repeatNewPasswordTextField = TDAuthTextField(type: .RepeatPassword)
+  private let newPasswordTextField: TDAuthTextField = {
+    let textField = TDAuthTextField(type: .Password)
+    textField.borderColor = Theme.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
+    textField.imageView.tintColor = Theme.TextFields.SettingsTextField.Tint
+    return textField
+  }()
+  
+  private let repeatNewPasswordTextField: TDAuthTextField = {
+    let textField = TDAuthTextField(type: .RepeatPassword)
+    textField.borderColor = Theme.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
+    textField.imageView.tintColor = Theme.TextFields.SettingsTextField.Tint
+    return textField
+  }()
   
   private let setPasswordButton: UIButton = {
     let button = UIButton(type: .system)
@@ -114,7 +127,7 @@ class ChangePasswordViewController: TDViewController {
   
   var setPasswordButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
-      vc.setPasswordButton.backgroundColor = isEnabled ? Palette.SingleColors.BlueRibbon : Palette.DualColors.Mischka_205_205_223_
+      vc.setPasswordButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
       vc.setPasswordButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
       vc.setPasswordButton.isEnabled = isEnabled
     })

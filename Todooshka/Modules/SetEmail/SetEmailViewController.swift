@@ -48,8 +48,21 @@ class SetEmailViewController: TDViewController {
     return button
   }()
   
-  private let currentEmailTextField = TDAuthTextField(type: .Email)
-  private let newEmailTextField = TDAuthTextField(type: .Email)
+  private let currentEmailTextField: TDAuthTextField = {
+    let textField = TDAuthTextField(type: .Email)
+    textField.borderColor = Theme.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
+    textField.imageView.tintColor = Theme.TextFields.SettingsTextField.Tint
+    return textField
+  }()
+  
+  private let newEmailTextField: TDAuthTextField = {
+    let textField = TDAuthTextField(type: .Email)
+    textField.borderColor = Theme.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
+    textField.imageView.tintColor = Theme.TextFields.SettingsTextField.Tint
+    return textField
+  }()
   
   private let errorTextView: UITextView = {
     let textView = UITextView()
@@ -142,7 +155,7 @@ class SetEmailViewController: TDViewController {
   
   var sendVerificationEmailButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
-      vc.sendVerificationEmailButton.backgroundColor = isEnabled ? Palette.SingleColors.BlueRibbon : Palette.DualColors.Mischka_205_205_223_
+      vc.sendVerificationEmailButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
       vc.sendVerificationEmailButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
       vc.sendVerificationEmailButton.isEnabled = isEnabled
     })
@@ -150,7 +163,7 @@ class SetEmailViewController: TDViewController {
   
   var setNewEmailButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
-      vc.setNewEmailButton.backgroundColor = isEnabled ? Palette.SingleColors.BlueRibbon : Palette.DualColors.Mischka_205_205_223_
+      vc.setNewEmailButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
       vc.setNewEmailButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
       vc.setNewEmailButton.isEnabled = isEnabled
     })
