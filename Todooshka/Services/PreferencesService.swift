@@ -16,15 +16,16 @@ protocol HasPreferencesService {
 class PreferencesService {
   
   let formatter = DateFormatter()
-//  let selectedDate = BehaviorRelay<Date>(value: Date())
   let scrollToCurrentMonthTrigger = BehaviorRelay<(trigger: Bool, withAnimation: Bool)>(value: (false, false))
+  
+  var isOnboardingCompleted: Bool {
+    UserDefaults.standard.bool(forKey: "isOnboardingCompleted")
+  }
+  
   
   init() {
     formatter.timeZone = TimeZone.current
   }
   
-  func isOnboardingCompleted() -> Bool {
-    return UserDefaults.standard.bool(forKey: "isOnboardingCompleted")
-  }
   
 }

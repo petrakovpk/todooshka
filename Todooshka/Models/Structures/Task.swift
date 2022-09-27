@@ -30,7 +30,7 @@ struct Task: IdentifiableType, Equatable {
   
   // kindOfTaskUID
   var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID
-  var userUID: String?
+  var userUID: String? = Auth.auth().currentUser?.uid
   
   // MARK: - Calculated Propertie
   var is24hoursPassed: Bool {
@@ -86,6 +86,7 @@ struct Task: IdentifiableType, Equatable {
     && lhs.closed == rhs.closed
     && lhs.planned == rhs.planned
     && lhs.index == rhs.index
+    && lhs.userUID == rhs.userUID
   }
   
 }

@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import Firebase
 import RxFlow
 import RxSwift
 import RxCocoa
@@ -55,11 +56,12 @@ class TaskListViewModel: Stepper {
     let hideCell: Driver<IndexPath>
     let navigateBack: Driver<Void>
     let openTask: Driver<Void>
-    let removeAllTasks: Driver<Result<Void, Error>>
+    let removeAll: Driver<Result<Void, Error>>
+  //  let removeAllTasksFromFirebase: Driver<Result<DatabaseReference, Error>>
     let removeTask: Driver<Result<Void, Error>>
     let reloadData: Driver<[IndexPath]>
     let setAlertText: Driver<String>
-    let setDataSource: Driver<[TaskListSectionModel]>
+    let setDataSource: Driver<[TaskListSection]>
     let title: Driver<String>
     let showAlert: Driver<Void>
     let showAddTaskButton: Driver<Void>
@@ -108,7 +110,13 @@ class TaskListViewModel: Stepper {
             kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
           )
         }
-      }.map {[ TaskListSectionModel(header: "", mode: self.mode == .Main ? TaskCellMode.WithTimer : TaskCellMode.WithRepeatButton , items: $0) ]}
+      }.map {[
+        TaskListSection(
+          header: "",
+          mode: self.mode == .Main ? TaskCellMode.WithTimer : TaskCellMode.WithRepeatButton ,
+          items: $0
+        )
+      ]}
     
     let changeStatus = changeStatusTrigger
       .asDriver()
@@ -197,16 +205,35 @@ class TaskListViewModel: Stepper {
       .flatMapLatest({ self.managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
-    let removeAllTasks = input.alertDeleteButtonClick
+    let removeAll = input.alertDeleteButtonClick
       .withLatestFrom(removeMode) { $1 }
       .compactMap { removeMode -> [Task]? in
         guard case .All(let tasks) = removeMode else { return nil }
         return tasks
-      }.asObservable()
+      }.asDriver(onErrorJustReturn: [])
+      
+    let removeAllFromCoreData = removeAll
+      .asObservable()
       .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ self.managedContext.rx.delete($0) })
+      .map { task -> Task in
+        var task = task
+        task.status = .Archive
+        return task
+      }
+      .flatMapLatest({ self.managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+
+//    let removeAllTasksFromFirebase = Driver
+//      .combineLatest(removeAll, services.dataService.user) { removeAllTasks, user -> [Task] in
+//        user == nil ? [] : removeAllTasks
+//      }
+//      .asObservable()
+//      .flatMapLatest({ Observable.from($0) })
+//      .filter{ $0.userUID != nil }
+//      .flatMapLatest({
+//        DB_USERS_REF.child($0.userUID ?? "Error").child("TASKS").child($0.UID).rx.removeValue()
+//      }).asDriver(onErrorJustReturn: .failure(ErrorType.DriverError) )
+
     let addTask = input.addTaskButtonClickTrigger
       .map { _ in self.steps.accept(AppStep.CreateTaskIsRequired(status: .Idea, createdDate: Date())) }
     
@@ -245,7 +272,8 @@ class TaskListViewModel: Stepper {
       hideCell: hideCell,
       navigateBack: navigateBack,
       openTask: openTask,
-      removeAllTasks: removeAllTasks,
+      removeAll: removeAllFromCoreData,
+//      removeAllTasksFromFirebase: removeAllTasksFromFirebase,
       removeTask: removeTask,
       reloadData: reloadData,
       setAlertText: alertText,

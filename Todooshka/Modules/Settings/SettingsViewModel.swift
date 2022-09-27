@@ -51,8 +51,7 @@ class SettingsViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    let currentUser = Auth.auth().rx
-      .stateDidChange
+    let currentUser = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
     
     let userName = currentUser
@@ -75,6 +74,7 @@ class SettingsViewModel: Stepper {
     
     
     let userProfileIsRequired = userName
+      .startWith("")
       .map {
         SettingsItem(
           imageName: "user-square",

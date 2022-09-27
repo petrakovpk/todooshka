@@ -17,7 +17,7 @@ class TaskListViewController: TDViewController {
   let disposeBag = DisposeBag()
   
   var collectionView: UICollectionView!
-  var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>!
+  var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
   var viewModel: TaskListViewModel!
   
   // alert
@@ -168,7 +168,8 @@ class TaskListViewController: TDViewController {
       outputs.hideCell.drive(hideCellBinder),
       outputs.navigateBack.drive(),
       outputs.openTask.drive(),
-      outputs.removeAllTasks.drive(),
+      outputs.removeAll.drive(),
+    //  outputs.removeAllTasksFromFirebase.drive(),
       outputs.removeTask.drive(),
       outputs.setAlertText.drive(alertLabel.rx.text),
       outputs.setDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
@@ -234,7 +235,7 @@ class TaskListViewController: TDViewController {
   
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { dataSource, collectionView, indexPath, item in
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(configureCell: { dataSource, collectionView, indexPath, item in
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
       cell.configure(with: dataSource[indexPath.section].mode)
       cell.configure(with: item.task)

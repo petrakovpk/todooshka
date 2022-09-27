@@ -37,17 +37,26 @@ class DataService {
   let nestDataSource: Driver<[EggActionType]>
   let selectedDate = BehaviorRelay<Date>(value: Date())
   let tasks: Driver<[Task]>
+  let user: Driver<User?>
+  let compactUser: Driver<User>
   
   // MARK: - Init
   init() {
     
     let context = appDelegate.persistentContainer.viewContext
     
-    let listener = Auth.auth().rx.stateDidChange
+    let allTasks = context
+      .rx
+      .entities(Task.self)
+      .map({ $0.sorted{ $0.created < $1.created } })
+      .asDriver(onErrorJustReturn: [])
+
+    user = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
     
-    let user = listener.compactMap{ $0 }
-
+    compactUser = user
+      .compactMap{ $0 }
+    
     // MARK: - Const
     colors = Driver<[UIColor]>.of([
       Palette.SingleColors.Amethyst,
@@ -107,23 +116,12 @@ class DataService {
       .rx
       .entities(KindOfTask.self)
       .map({ $0.sorted{ $0.index < $1.index } })
-      .withLatestFrom(listener) { kindsOfTask, user -> [KindOfTask] in
-        kindsOfTask.filter { $0.userUID == user?.uid }
-      }
       .asDriver(onErrorJustReturn: [])
     
-    tasks = context
-      .rx
-      .entities(Task.self)
-      .map({ $0.sorted{ $0.created < $1.created } })
-      .withLatestFrom(listener) { tasks, user -> [Task] in
-        tasks.filter { $0.userUID == user?.uid }
-      }
-      .asDriver(onErrorJustReturn: [])
-    
-    // drive
-    tasks.drive().disposed(by: disposeBag)
-    
+    tasks = Driver.combineLatest(user, allTasks) { user, tasks -> [Task] in
+      tasks.filter{ $0.userUID == user?.uid }
+    }.debug()
+
     // add feather
     tasks
       .map { tasks -> [Task] in // получаем все закрытые на сегодня таски
@@ -375,10 +373,11 @@ class DataService {
     
     // MARK: - Firebase
     // присваиваем
-    let tasksWithoutUser = tasks
-      .map{ $0.filter{ $0.userUID == nil } }
-    
+    let tasksWithoutUser = allTasks
+      .map { $0.filter { $0.userUID == nil } }
+
     user
+      .compactMap{ $0 }
       .withLatestFrom(tasksWithoutUser) { user, tasks -> [Task] in
         tasks.map { task -> Task in
           var task = task
@@ -394,6 +393,7 @@ class DataService {
     
     // скачиваем
     firebaseTasks = user
+      .compactMap{ $0 }
       .asObservable()
       .flatMapLatest({ user -> Observable<DataSnapshot> in
         DB_USERS_REF.child(user.uid).child("TASKS").rx.observeEvent(.value)
@@ -402,13 +402,14 @@ class DataService {
       .asDriver(onErrorJustReturn: [])
     
     firebaseKindsOfTask = user
+      .compactMap{ $0 }
       .asObservable()
       .flatMapLatest({ user -> Observable<DataSnapshot>  in
         DB_USERS_REF.child(user.uid).child("KINDSOFTASK").rx.observeEvent(.value)
       }).compactMap{ $0.children.allObjects as? [DataSnapshot] }
       .map({ $0.compactMap { KindOfTask(snapshot: $0) } })
       .asDriver(onErrorJustReturn: [])
-    
+
     firebaseTasks.drive().disposed(by: disposeBag)
     firebaseKindsOfTask.drive().disposed(by: disposeBag)
     
@@ -418,23 +419,25 @@ class DataService {
         tasks.filter { task in firebaseTasks.contains{ $0 == task } == false }
       }
       .flatMapLatest({  Observable.from($0) })
-      .withLatestFrom(user) { task, user in
+      .withLatestFrom(compactUser) { task, user in
         DB_USERS_REF.child(user.uid).child("TASKS").child(task.UID).updateChildValues(task.data)
       }
+      .debug()
       .asDriver(onErrorJustReturn: ())
       .drive()
       .disposed(by: disposeBag)
-    
+
     Observable
       .combineLatest(kindsOfTask.asObservable(), firebaseKindsOfTask.asObservable()) { kindsOfTask, firebaseKindsOfTask -> [KindOfTask] in
         kindsOfTask.filter { kindsOfTask in firebaseKindsOfTask.contains{ $0 == kindsOfTask } == false }
       }
       .flatMapLatest({  Observable.from($0) })
-      .withLatestFrom(user) { kindOfTask, user in
+      .withLatestFrom(compactUser) { kindOfTask, user in
         DB_USERS_REF.child(user.uid).child("KINDSOFTASK").child(kindOfTask.UID).updateChildValues(kindOfTask.data)
       }
       .asDriver(onErrorJustReturn: ())
       .drive()
       .disposed(by: disposeBag)
+
   }
 }

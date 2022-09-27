@@ -1,5 +1,5 @@
 //
-//  TaskListSectionModel.swift
+//  TaskListSection.swift
 //  Todooshka
 //
 //  Created by Петраков Павел Константинович on 10.06.2021.
@@ -7,7 +7,7 @@
 
 import RxDataSources
 
-struct TaskListSectionModel: AnimatableSectionModelType {
+struct TaskListSection: AnimatableSectionModelType {
   
   var identity: String { header }
   
@@ -21,7 +21,7 @@ struct TaskListSectionModel: AnimatableSectionModelType {
     self.items = items
   }
   
-  init(original: TaskListSectionModel, items: [TaskListSectionItem]) {
+  init(original: TaskListSection, items: [TaskListSectionItem]) {
     self = original
     self.items = items
   }

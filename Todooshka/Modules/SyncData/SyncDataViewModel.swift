@@ -36,40 +36,23 @@ class SyncDataViewModel: Stepper {
   
   func transform(input: Input) -> Output {
 
-    let user = Driver<User?>
-      .of(Auth.auth().currentUser)
-      .compactMap{ $0 }
-    
     let deviceCount = services.dataService
       .tasks
+      .map{ $0.filter{ $0.status != .Archive } }
       .map{ $0.count }
     
     let deviceCountLabel = deviceCount.map{ $0.string }
     
-    let dataSnapshot = user
-      .asObservable()
-      .flatMapLatest { user  -> Observable<Result<DataSnapshot,Error>> in
-        DB_USERS_REF.child(user.uid).child("TASKS").rx.observeEvent(.value)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      .compactMap { result -> DataSnapshot? in
-        guard case .success(let snapshot) = result else { return nil }
-        return snapshot
-      }
+    let firebaseTasks = services.dataService.firebaseTasks
+      .map{ $0.filter{ $0.status != .Archive } }
     
-    let dict = dataSnapshot
-      .compactMap { snapshot -> NSDictionary? in
-        snapshot.value as? NSDictionary ?? nil
-      }
-    
-    let firebaseCount = dict
+    let firebaseCount = firebaseTasks
       .map{ $0.count }
     
     let firebaseCountLabel = firebaseCount
       .map{ $0.string }
     
     let syncButtonIsEnabled = Driver.combineLatest(deviceCount, firebaseCount) { $0 != $1 }
-    
-    let firebaseTasks = services.dataService.firebaseTasks
     
     let sync = Driver
       .combineLatest(input.syncButtonClickTrigger, firebaseTasks ) { $1 }

@@ -53,7 +53,7 @@ class FeatherViewController: TDViewController {
   }()
   
   private var collectionView: UICollectionView!
-  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>!
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
 
   //MARK: - Lifecycle
   override func viewDidLoad() {
@@ -143,7 +143,7 @@ class FeatherViewController: TDViewController {
   // MARK: - Configure DataSource
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { dataSource, collectionView, indexPath, item in
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(configureCell: { dataSource, collectionView, indexPath, item in
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
       cell.configure(with: dataSource[indexPath.section].mode)
       cell.configure(with: item.task)

@@ -67,6 +67,7 @@ class OnboardingViewModel: Stepper {
     let completeOnboarding = input.skipButtonClickTrigger
       .withLatestFrom(input.willDisplayCell) { $1 }
       .filter { $0.at.section == 2 }
+      .map { _ in UserDefaults.standard.setValue(true, forKey: "isOnboardingCompleted") }
       .map { _ in self.steps.accept(AppStep.OnboardingIsCompleted) }
      
     let backgroundImage = input.willDisplayCell

@@ -21,7 +21,7 @@ class FeatherViewModel: Stepper {
   }
   
   struct Output {
-    let dataSource: Driver<[TaskListSectionModel]>
+    let dataSource: Driver<[TaskListSection]>
     let navigateBack: Driver<Void>
   }
   
@@ -64,7 +64,7 @@ class FeatherViewModel: Stepper {
           .init(grouping: $0, by: { $0.task.closed?.startOfDay ?? Date().startOfDay })
           .sorted(by: { $0.key > $1.key })
           .map { key, value in
-            TaskListSectionModel(header: key.string(withFormat: "dd MMM yyyy") , mode: .WithFeather, items: value)
+            TaskListSection(header: key.string(withFormat: "dd MMM yyyy") , mode: .WithFeather, items: value)
           }
       }
     

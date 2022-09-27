@@ -26,7 +26,7 @@ class MainTaskListViewController: UIViewController {
   
   // MARK: - UI Elements
   private var collectionView: UICollectionView!
-  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>!
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
   
   private let taskCountLabel: UILabel = {
     let label = UILabel()
@@ -216,7 +216,7 @@ class MainTaskListViewController: UIViewController {
   //MARK: - Configure Data Source
   private func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(
       configureCell: { dataSource, collectionView, indexPath, item in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
         cell.configure(with: dataSource[indexPath.section].mode)
@@ -388,7 +388,7 @@ class MainTaskListViewController: UIViewController {
     })
   }
   
-  var dataSourceBinder: Binder<[TaskListSectionModel]> {
+  var dataSourceBinder: Binder<[TaskListSection]> {
     return Binder(self, binding: { (vc, dataSource) in
       if dataSource.count == 0 {
         vc.animationView.play(toProgress: 1.0)
