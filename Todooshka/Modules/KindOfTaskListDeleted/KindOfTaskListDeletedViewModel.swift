@@ -69,7 +69,6 @@ class KindOfTaskListDeletedViewModel: Stepper {
         kindOfTask.status = .active
         return kindOfTask
       }
-      .debug()
       .flatMapLatest(({ self.managedContext.rx.update($0) }))
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     

@@ -190,7 +190,7 @@ class LoginViewModel: Stepper {
       .flatMapLatest { attr -> Observable<[String]> in
         print("1234", attr)
         return Auth.auth().rx.fetchProviders(forEmail: attr.email)
-      }.debug()
+      }
       .asDriver(onErrorJustReturn: [])
       .map { providers -> LoginViewControllerStyle  in
         providers.isEmpty ? .RepeatPassword : .Password
@@ -270,7 +270,6 @@ class LoginViewModel: Stepper {
       }
     
     let setSendOTPCodeButtonClickSuccess = sendOTPCodeWithButton
-      .debug()
       .compactMap { result -> String? in
         switch result {
         case .success(_): return "CМС с КОДОМ отправлено! Отправить повторно."

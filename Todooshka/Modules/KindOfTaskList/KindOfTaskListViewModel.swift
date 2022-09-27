@@ -72,7 +72,7 @@ class KindOfTaskListViewModel: Stepper {
         let element = kindsOfTask.remove(at: itemMovedEvent.sourceIndex.row)
         kindsOfTask.insert(element, at: itemMovedEvent.destinationIndex.row)
         return kindsOfTask
-      }.debug()
+      }
       .distinctUntilChanged()
       .map { kindsOfTask -> [KindOfTask] in
         var kindsOfTask = kindsOfTask

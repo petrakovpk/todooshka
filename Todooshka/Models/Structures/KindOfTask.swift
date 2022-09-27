@@ -38,6 +38,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
   var status: KindOfTaskStatus = .active
   var style: Style = .Simple
   var text: String
+  var userUID: String?
 
   // MARK: - Init
   init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int) {
@@ -106,6 +107,7 @@ extension KindOfTask {
     self.index = index
     self.status = status
     self.text = text
+    self.userUID = Auth.auth().currentUser?.uid
   }
 }
 
@@ -113,19 +115,16 @@ extension KindOfTask {
 extension KindOfTask: Persistable {
   typealias T = NSManagedObject
   
-  static var entityName: String {
-    return "KindOfTask"
-  }
+  static var entityName: String { "KindOfTask" }
   
-  static var primaryAttributeName: String {
-    return "uid"
-  }
+  static var primaryAttributeName: String { "uid" }
   
   init(entity: T) {
     UID = entity.value(forKey: "uid") as! String
     index = entity.value(forKey: "index") as! Int
     isStyleLocked = entity.value(forKey: "isStyleLocked") as! Bool
     text = entity.value(forKey: "text") as! String
+    userUID = entity.value(forKey: "userUID") as? String
     
     // color
     if let colorHexString = entity.value(forKey: "colorHexString") as? String, let color = UIColor(hexString: colorHexString) {
@@ -165,6 +164,7 @@ extension KindOfTask: Persistable {
     entity.setValue(status.rawValue, forKey: "statusRawValue")
     entity.setValue(style.rawValue, forKey: "styleRawValue")
     entity.setValue(text, forKey: "text")
+    entity.setValue(userUID, forKey: "userUID")
     
     do {
       try entity.managedObjectContext?.save()

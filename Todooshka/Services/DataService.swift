@@ -42,6 +42,11 @@ class DataService {
   init() {
     
     let context = appDelegate.persistentContainer.viewContext
+    
+    let listener = Auth.auth().rx.stateDidChange
+      .asDriver(onErrorJustReturn: nil)
+    
+    let user = listener.compactMap{ $0 }
 
     // MARK: - Const
     colors = Driver<[UIColor]>.of([
@@ -97,18 +102,23 @@ class DataService {
       .rx
       .entities(Feather.self)
       .asDriver(onErrorJustReturn: [])
-      .debug()
 
     kindsOfTask = context
       .rx
       .entities(KindOfTask.self)
       .map({ $0.sorted{ $0.index < $1.index } })
+      .withLatestFrom(listener) { kindsOfTask, user -> [KindOfTask] in
+        kindsOfTask.filter { $0.userUID == user?.uid }
+      }
       .asDriver(onErrorJustReturn: [])
     
     tasks = context
       .rx
       .entities(Task.self)
       .map({ $0.sorted{ $0.created < $1.created } })
+      .withLatestFrom(listener) { tasks, user -> [Task] in
+        tasks.filter { $0.userUID == user?.uid }
+      }
       .asDriver(onErrorJustReturn: [])
     
     // drive
@@ -122,7 +132,6 @@ class DataService {
           .filter{ Calendar.current.isDate(Date(), inSameDayAs: $0.closed ?? Date()) }
       }
       .filter{ $0.count <= 7 } // за день не более 7
-      .debug()
       .withLatestFrom(feathers) { (tasks, feathers) -> [Task] in // получаем те, для кого не сделали перышки
         tasks
           .filter{ task -> Bool in
@@ -152,7 +161,7 @@ class DataService {
           .filter{ feather -> Bool in
             tasks.filter{ $0.status == .Completed}.map{ $0.UID }.contains(feather.taskUID) == false
           }
-      }.debug()
+      }
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .flatMapLatest({ context.rx.delete($0) })
@@ -265,7 +274,6 @@ class DataService {
       }.map { $0.prefix(7) }
       .map{ Array($0) }
       .distinctUntilChanged()
-      .debug()
     
     // MARK: - Initial loading
     kindsOfTask
@@ -366,10 +374,25 @@ class DataService {
       .disposed(by: disposeBag)
     
     // MARK: - Firebase
-    let user = Auth.auth().rx.stateDidChange
-      .asDriver(onErrorJustReturn: nil)
-      .compactMap{ $0 }
+    // присваиваем
+    let tasksWithoutUser = tasks
+      .map{ $0.filter{ $0.userUID == nil } }
     
+    user
+      .withLatestFrom(tasksWithoutUser) { user, tasks -> [Task] in
+        tasks.map { task -> Task in
+          var task = task
+          task.userUID = user.uid
+          return task
+        }
+      }.asObservable()
+      .flatMapLatest({ Observable.from($0) })
+      .flatMapLatest({ context.rx.update($0) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .drive()
+      .disposed(by: disposeBag)
+    
+    // скачиваем
     firebaseTasks = user
       .asObservable()
       .flatMapLatest({ user -> Observable<DataSnapshot> in
@@ -386,13 +409,13 @@ class DataService {
       .map({ $0.compactMap { KindOfTask(snapshot: $0) } })
       .asDriver(onErrorJustReturn: [])
     
-    
     firebaseTasks.drive().disposed(by: disposeBag)
     firebaseKindsOfTask.drive().disposed(by: disposeBag)
     
+    // загружаем
     Observable
-      .combineLatest(tasks.asObservable(), firebaseTasks.asObservable()) { phoneTasks, firebaseTasks -> [Task] in
-        phoneTasks.filter { phoneTask in firebaseTasks.contains{ $0 == phoneTask } == false }
+      .combineLatest(tasks.asObservable(), firebaseTasks.asObservable()) { tasks, firebaseTasks -> [Task] in
+        tasks.filter { task in firebaseTasks.contains{ $0 == task } == false }
       }
       .flatMapLatest({  Observable.from($0) })
       .withLatestFrom(user) { task, user in
@@ -403,8 +426,8 @@ class DataService {
       .disposed(by: disposeBag)
     
     Observable
-      .combineLatest(kindsOfTask.asObservable(), firebaseKindsOfTask.asObservable()) { phoneKindsOfTask, firebaseKindsOfTask -> [KindOfTask] in
-        phoneKindsOfTask.filter { phoneKindOfTask in firebaseKindsOfTask.contains{ $0 == phoneKindOfTask } == false }
+      .combineLatest(kindsOfTask.asObservable(), firebaseKindsOfTask.asObservable()) { kindsOfTask, firebaseKindsOfTask -> [KindOfTask] in
+        kindsOfTask.filter { kindsOfTask in firebaseKindsOfTask.contains{ $0 == kindsOfTask } == false }
       }
       .flatMapLatest({  Observable.from($0) })
       .withLatestFrom(user) { kindOfTask, user in

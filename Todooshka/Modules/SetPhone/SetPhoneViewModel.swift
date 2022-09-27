@@ -65,7 +65,6 @@ class SetPhoneViewModel: Stepper {
     
     let phoneNumber = Driver
       .combineLatest(reload, user) { $1.phoneNumber ?? "" }
-      .debug()
 
     // CORRECT
     let correctPhoneNumber = Driver
@@ -137,7 +136,6 @@ class SetPhoneViewModel: Stepper {
       .flatMapLatest { phoneNumber -> Observable<Result<String,Error>> in
         PhoneAuthProvider.provider().rx.verifyPhoneNumber(phoneNumber)
       }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      .debug()
     
     let verificationID = sendOTPCode
       .compactMap { result -> String? in
@@ -153,12 +151,11 @@ class SetPhoneViewModel: Stepper {
         
     let signUpWithPhoneAttr = Driver
       .combineLatest(verificationID, correctOTPCode) { SignUpWithPhoneAttr(verificationID: $0, verificationCode: $1) }
-      .debug()
     
     let credential = input.checkOTPCodeButtonClickTrigger
       .withLatestFrom(signUpWithPhoneAttr) {
         PhoneAuthProvider.provider().credential(withVerificationID: $1.verificationID , verificationCode: $1.verificationCode)
-      }.debug()
+      }
     
     let link = credential
       .withLatestFrom(user) { ($0, $1) }

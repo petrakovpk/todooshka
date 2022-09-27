@@ -67,7 +67,6 @@ class SetEmailViewModel: Stepper {
     
     let isEmailVerified = user
       .map{ $0.isEmailVerified }
-      .debug()
     
     let emailLabelText = isEmailVerified
       .map{ $0 ? "Ваш основной email (подтвержден)" : "Ваш основной email (не подтвержден)" }
@@ -94,11 +93,10 @@ class SetEmailViewModel: Stepper {
       .withLatestFrom(isCurrentEmailValid) { $1 }
       .filter{ $0 }
       .withLatestFrom(input.currentEmailTextFieldText) { $1 }
-      .debug()
       .withLatestFrom(user){ ($0, $1) }.asObservable()
       .flatMapLatest { (email, user) -> Observable<Result<Void,Error>>  in
         user.rx.sendEmailVerification()
-      }.debug()
+      }
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
     let sendEmailVerificationError = sendEmailVerification
@@ -126,7 +124,7 @@ class SetEmailViewModel: Stepper {
       .asObservable()
       .flatMapLatest{ (user, email) -> Observable<Result<Void, Error>>  in
         user.rx.updateEmail(to: email)
-      }.debug().asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
     let setNewEmailTryError = setNewEmailTry
       .compactMap { result -> Error? in
@@ -146,7 +144,6 @@ class SetEmailViewModel: Stepper {
     let setError = Driver
       .of(sendEmailVerificationError, setNewEmailTryError)
       .merge()
-      .debug()
       .map{ $0.localizedDescription }
     
     let clearEror = Driver

@@ -113,7 +113,6 @@ class TaskListViewModel: Stepper {
     let changeStatus = changeStatusTrigger
       .asDriver()
       .compactMap{ $0 }
-      .debug()
 
     let changeToIdea = changeStatus
       .filter{ $0.status == .Idea }

@@ -15,6 +15,7 @@ struct Task: IdentifiableType, Equatable {
   static let emptyTask: Task = Task(UID: "Empty", text: "", description: "", status: .InProgress, created: Date())
   
   // MARK: - Properites
+  var identity: String { UID }
   var UID: String
   
   var text: String
@@ -27,29 +28,28 @@ struct Task: IdentifiableType, Equatable {
   var planned: Date?
   var closed: Date?
   
-  // link properties
+  // kindOfTaskUID
   var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID
+  var userUID: String?
   
-  //MARK: - Calculated Properties
-  var identity: String { return self.UID }
-  
+  // MARK: - Calculated Propertie
   var is24hoursPassed: Bool {
-    return created.timeIntervalSince1970 <= Date().timeIntervalSince1970 - 24 * 60 * 60
+    created.timeIntervalSince1970 <= Date().timeIntervalSince1970 - 24 * 60 * 60
   }
   
   var secondsLeft: Double {
-    return max(24 * 60 * 60 + created.timeIntervalSince1970 - Date().timeIntervalSince1970, 0)
+    max(24 * 60 * 60 + created.timeIntervalSince1970 - Date().timeIntervalSince1970, 0)
   }
   
+  let formatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "HH'h' mm'm' ss's'"
+    formatter.timeZone = TimeZone(secondsFromGMT: 0)
+    return formatter
+  }()
+  
   var timeLeftText: String {
-    let formatter: DateFormatter = {
-      let formatter = DateFormatter()
-      formatter.dateFormat = "HH'h' mm'm' ss's'"
-      formatter.timeZone = TimeZone(secondsFromGMT: 0)
-      return formatter
-    }()
-    
-    return formatter.string(from: Date(timeIntervalSince1970: secondsLeft))
+    formatter.string(from: Date(timeIntervalSince1970: secondsLeft))
   }
   
   var timeLeftPercent: Double {
@@ -88,10 +88,6 @@ struct Task: IdentifiableType, Equatable {
     && lhs.index == rhs.index
   }
   
-  // MARK: - Helpers
- // func type(withTypeService service: HasTypesService) -> KindOfTask? {
-    //service.typesService.types.value.first(where: { $0.UID == self.typeUID })
-//  }
 }
 
 // MARK: - Firebase
@@ -131,6 +127,7 @@ extension Task {
     self.kindOfTaskUID = kindOfTaskUID
     self.created = Date(timeIntervalSince1970: created)
     self.index = index
+    self.userUID = Auth.auth().currentUser?.uid
     
     if let closed = dict.value(forKey: "closed") as? TimeInterval {
       self.closed = Date(timeIntervalSince1970: closed)
@@ -146,36 +143,34 @@ extension Task {
 extension Task: Persistable {
   typealias T = NSManagedObject
   
-  static var entityName: String {
-    return "Task"
-  }
+  static var entityName: String { "Task" }
   
-  static var primaryAttributeName: String {
-    return "uid"
-  }
+  static var primaryAttributeName: String { "uid" }
   
   init(entity: T) {
     UID = entity.value(forKey: "uid") as! String
-    text = entity.value(forKey: "text") as! String
-    description = entity.value(forKey: "desc") as? String
-    status = TaskStatus(rawValue: entity.value(forKey: "status") as! String) ?? TaskStatus.InProgress
-    kindOfTaskUID = entity.value(forKey: "kindOfTaskUID") as! String
-    created = entity.value(forKey: "created") as! Date
     closed = entity.value(forKey: "closed") as? Date
-    planned = entity.value(forKey: "planned") as? Date
+    created = entity.value(forKey: "created") as! Date
+    description = entity.value(forKey: "desc") as? String
     index = entity.value(forKey: "index") as! Int
+    kindOfTaskUID = entity.value(forKey: "kindOfTaskUID") as! String
+    planned = entity.value(forKey: "planned") as? Date
+    status = TaskStatus(rawValue: entity.value(forKey: "status") as! String) ?? TaskStatus.InProgress
+    text = entity.value(forKey: "text") as! String
+    userUID = entity.value(forKey: "userUID") as? String
   }
   
   func update(_ entity: T) {
     entity.setValue(UID, forKey: "uid")
-    entity.setValue(text, forKey: "text")
-    entity.setValue(description, forKey: "desc")
-    entity.setValue(status.rawValue, forKey: "status")
-    entity.setValue(kindOfTaskUID, forKey: "kindOfTaskUID")
-    entity.setValue(created, forKey: "created")
     entity.setValue(closed, forKey: "closed")
-    entity.setValue(planned, forKey: "planned")
+    entity.setValue(created, forKey: "created")
+    entity.setValue(description, forKey: "desc")
     entity.setValue(index, forKey: "index")
+    entity.setValue(kindOfTaskUID, forKey: "kindOfTaskUID")
+    entity.setValue(planned, forKey: "planned")
+    entity.setValue(status.rawValue, forKey: "status")
+    entity.setValue(text, forKey: "text")
+    entity.setValue(userUID, forKey: "userUID")
     
     do {
       try entity.managedObjectContext?.save()

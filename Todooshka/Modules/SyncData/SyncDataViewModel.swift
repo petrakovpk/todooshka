@@ -78,7 +78,6 @@ class SyncDataViewModel: Stepper {
       .flatMapLatest({ task -> Observable<Result<Void, Error>> in
         self.appDelegate.persistentContainer.viewContext.rx.update(task)
       })
-      .debug()
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
   
     let navigateBack = input.backButtonClickTrigger

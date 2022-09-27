@@ -159,7 +159,6 @@ final class OnboardingViewController: UIViewController {
         cell.viewModel = cellViewModel
         return cell
       })
-    
   }
   
   //MARK: - Bind To
