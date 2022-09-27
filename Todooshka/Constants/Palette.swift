@@ -71,7 +71,8 @@ struct Palette {
     static let TitanWhite_228_229_254_Haiti_7_9_30 = UIColor(named: "TitanWhite_228_229_254_Haiti_7_9_30")
     static let TitanWhite_235_236_255_BlackPerl_3_4_16 = UIColor(named: "TitanWhite_235_236_255_BlackPerl_3_4_16")
     static let TitanWhite_235_236_255_Haiti_10_12_35 = UIColor(named: "TitanWhite_235_236_255_Haiti_10_12_35")
-    static let TitanWhite_244_245_255_Haiti_16_18_54 = UIColor(named: "itanWhite(244_245_255)_Haiti(16_18_54)")
+    static let TitanWhite_244_245_255_Ebony_10_11_31 = UIColor(named: "TitanWhite_244_245_255_Ebony_10_11_31")
+    static let TitanWhite_244_245_255_Haiti_16_18_54 = UIColor(named: "TitanWhite(244_245_255)_Haiti(16_18_54)")
     
     static let Wistful_169_171_217_EastBay_81_85_132 = UIColor(named: "Wistful_169_171_217_EastBay_81_85_132")
     

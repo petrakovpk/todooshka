@@ -46,7 +46,7 @@ struct Theme {
   }
   
   struct Onboarding {
-    static let dotBackground = Palette.DualColors.PeriwinkleGray_Fiord
+    static let dot = Palette.DualColors.PeriwinkleGray_Fiord
     static let text = Palette.SingleColors.SantasGray
   }
   
@@ -68,7 +68,13 @@ struct Theme {
     static let Unselected = Palette.DualColors.BlackPearl_a50_White_a30
   }
   
-  // TaskList
+  struct Cells {
+    struct KindOfTask {
+      static let SelectedBackground =  Palette.SingleColors.BlueRibbon
+      static let UnselectedBackground = Palette.DualColors.TitanWhite_244_245_255_Ebony_10_11_31
+    }
+  }
+  
   struct TaskList {
     struct Cell {
       static let descriptionText = Palette.DualColors.BlackPearl_a60_White_a60
@@ -77,14 +83,14 @@ struct Theme {
   }
   
   // Task
-  struct Task {
-    struct TypeLargeCollectionViewCell {
-      static let selectedText = UIColor.white
-      static let selectedTint = UIColor.white
-      static let selectedBackground = Palette.SingleColors.BlueRibbon
-      static let unselectedBackground = Palette.DualColors.White_BlackPearl
-    }
-  }
+//  struct Task {
+//    struct TypeLargeCollectionViewCell {
+//      static let selectedText = UIColor.white
+//      static let selectedTint = UIColor.white
+//      static let selectedBackground = Palette.SingleColors.BlueRibbon
+//      static let unselectedBackground = Palette.DualColors.White_BlackPearl
+//    }
+//  }
   
   struct TaskType {
     struct Cell {

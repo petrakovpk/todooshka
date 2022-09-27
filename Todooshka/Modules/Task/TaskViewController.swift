@@ -18,7 +18,7 @@ class TaskViewController: TDViewController {
   var viewModel: TaskViewModel!
   
   private let disposeBag = DisposeBag()
-  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TypeLargeCollectionViewCellSectionModel>!
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskSection>!
   
   // MARK: - Task UI Elements
   private let textLabel: UILabel = {
@@ -159,7 +159,7 @@ class TaskViewController: TDViewController {
     collectionView.backgroundColor = UIColor.clear
     collectionView.clipsToBounds = false
     collectionView.isScrollEnabled = false
-    collectionView.register(TypeLargeCollectionViewCell.self, forCellWithReuseIdentifier: TypeLargeCollectionViewCell.reuseID)
+    collectionView.register(KindOfTaskCell.self, forCellWithReuseIdentifier: KindOfTaskCell.reuseID)
     collectionView.anchor(top: kindOfTaskLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20.superAdjusted, leftConstant: 16, heightConstant: 100.superAdjusted )
     
     // descriptionLabel
@@ -309,9 +309,9 @@ class TaskViewController: TDViewController {
   
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TypeLargeCollectionViewCellSectionModel>(
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskSection>(
       configureCell: {(_, collectionView, indexPath, item) in
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TypeLargeCollectionViewCell.reuseID, for: indexPath) as! TypeLargeCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskCell.reuseID, for: indexPath) as! KindOfTaskCell
         cell.configure(kindOfTask: item.kindOfTask, isSelected: item.isSelected)
         return cell
       })

@@ -110,7 +110,7 @@ final class OnboardingViewController: UIViewController {
     
     // centralDot
     centralDot.cornerRadius = 3
-    centralDot.backgroundColor = Theme.Onboarding.dotBackground
+    centralDot.backgroundColor = Theme.Onboarding.dot
     centralDot.anchorCenterXToSuperview()
     centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: 6, heightConstant: 6)
     
@@ -122,7 +122,7 @@ final class OnboardingViewController: UIViewController {
     
     // rightDot
     rightDot.cornerRadius = 3
-    rightDot.backgroundColor = Theme.Onboarding.dotBackground
+    rightDot.backgroundColor = Theme.Onboarding.dot
     rightDot.removeAllConstraints()
     rightDot.anchor(top: centralDot.topAnchor, left: centralDot.rightAnchor, leftConstant: 10.0, widthConstant: 6, heightConstant: 6)
     
@@ -134,17 +134,17 @@ final class OnboardingViewController: UIViewController {
     centralDot.removeAllConstraints()
     centralDot.anchorCenterXToSuperview()
     centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: CGFloat(6 + 19 * centralDotPercent / 100).adjusted, heightConstant: 6)
-    centralDotPercent == 0 ? (centralDot.backgroundColor = Theme.Onboarding.dotBackground) : (centralDot.backgroundColor = Palette.SingleColors.BlueRibbon)
+    centralDotPercent == 0 ? (centralDot.backgroundColor = Theme.Onboarding.dot) : (centralDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // leftDot
     leftDot.removeAllConstraints()
     leftDot.anchor(top: centralDot.topAnchor, right: centralDot.leftAnchor, rightConstant: 10.0, widthConstant: CGFloat(6 + 19 * leftDotPercent / 100).adjusted, heightConstant: 6)
-    leftDotPercent == 0 ? (leftDot.backgroundColor = Theme.Onboarding.dotBackground) : (leftDot.backgroundColor = Palette.SingleColors.BlueRibbon)
+    leftDotPercent == 0 ? (leftDot.backgroundColor = Theme.Onboarding.dot) : (leftDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // rightDot
     rightDot.removeAllConstraints()
     rightDot.anchor(top: centralDot.topAnchor, left: centralDot.rightAnchor, leftConstant: 10.0, widthConstant: CGFloat(6 + 19 * rightDotPercent / 100).adjusted, heightConstant: 6)
-    rightDotPercent == 0 ? (rightDot.backgroundColor = Theme.Onboarding.dotBackground) : (rightDot.backgroundColor = Palette.SingleColors.BlueRibbon)
+    rightDotPercent == 0 ? (rightDot.backgroundColor = Theme.Onboarding.dot) : (rightDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     self.view.layoutIfNeeded()
   }

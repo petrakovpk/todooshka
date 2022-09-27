@@ -61,7 +61,7 @@ class TaskViewModel: Stepper {
   struct Output {
     let clearDescriptionPlaceholder: Driver<Void>
     let configureKindsOfTask: Driver<Void>
-    let dataSource: Driver<[TypeLargeCollectionViewCellSectionModel]>
+    let dataSource: Driver<[KindOfTaskSection]>
     let descriptionTextField: Driver<String>
     let hideAlertTrigger: Driver<Void>
     let navigateBack: Driver<Void>
@@ -115,11 +115,11 @@ class TaskViewModel: Stepper {
     
     // dataSource
     let dataSource = Driver
-      .combineLatest(task, kindsOfTask) { task, kindsOfTask -> [TypeLargeCollectionViewCellSectionModel] in
-        [TypeLargeCollectionViewCellSectionModel(
+      .combineLatest(task, kindsOfTask) { task, kindsOfTask -> [KindOfTaskSection] in
+        [KindOfTaskSection(
           header: "",
           items: kindsOfTask.map {
-            TypeLargeCollectionViewCellSectionModelItem(
+            KindOfTaskItem(
               kindOfTask: $0,
               isSelected: $0.UID == task.kindOfTaskUID
             )
