@@ -75,14 +75,14 @@ class BranchScene: SKScene {
       
       for (index, node) in SKBirdNodes.enumerated() {
         
-        guard let action = actions[safe: index + 1] else { return }
+        guard let action = actions[safe: index] else { return }
         
         switch (node.action, action) {
         case (.Init, .Sitting(let newStyle, _)):
           node.changeStyle(style: newStyle, withDelay: false)
         
         case (.Hide, .Sitting(let newStyle, _)):
-          node.changeStyle(style: newStyle, withDelay: hiddenBirds.count != 6 )
+          node.changeStyle(style: newStyle, withDelay: hiddenBirds.count != 7 )
         
         case (.Sitting(let oldStyle, let oldClosed), .Sitting(let newStyle, let newClosed)):
           if Calendar.current.isDate(oldClosed, inSameDayAs: newClosed) == false || oldStyle != newStyle {

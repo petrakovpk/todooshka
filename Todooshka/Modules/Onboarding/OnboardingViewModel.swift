@@ -18,16 +18,18 @@ class OnboardingViewModel: Stepper {
   let services: AppServices
   
   struct Input {
+    let didScroll: Driver<Void>
     let skipButtonClickTrigger: Driver<Void>
-    let cellScrolled: Driver<Int>
+    let willDisplayCell: Driver<Reactive<UICollectionView>.DisplayCollectionViewCellEvent>
   }
   
   struct Output {
+    let backgroundImage: Driver<UIImage>
+    let completeOnboarding: Driver<Void>
     let dataSource: Driver<[OnboardingSectionModel]>
-    let skipButtonClick: Driver<Int?>
+    let reloadPoints: Driver<Void>
+    let scrollToSection: Driver<Int>
     let skipButtonTitle: Driver<String>
-    let cellScrolled: Driver<Int>
-    let backgroundImage: Driver<UIImage?>
   }
   
   //MARK: - Init
@@ -47,41 +49,38 @@ class OnboardingViewModel: Stepper {
       OnboardingSectionModel(items: [onboardingSectionItem3])
     ])
     
-    let skipButtonClick = input.skipButtonClickTrigger
-      .withLatestFrom(input.cellScrolled) { _, cellIndex -> Int? in
-        if cellIndex == 0 { return 1 }
-        if cellIndex == 1 { return 2 }
-        if cellIndex == 2 {
-          UserDefaults.standard.setValue(true, forKey: "isOnboardingCompleted")
-          self.steps.accept(AppStep.OnboardingIsCompleted)
-        }
-        return nil
-      }
+    let reloadPoints = input.didScroll
     
-    let skipButtonTitle = input.cellScrolled
-      .map { cellIndex -> String in
-        if cellIndex == 0 { return "Далее"}
-        if cellIndex == 1 { return "Далее"}
-        if cellIndex == 2 { return "НАЧНЕМ!"}
-        return ""
-      }
+    let skipButtonTitle = input.willDisplayCell
+      .map { event -> String in
+        event.at.section == 2 ? "Начнем!" : "Далее"
+      }.startWith("Далее")
       .distinctUntilChanged()
     
-    let cellScrolled = input.cellScrolled
+    let scrollToSection = input.skipButtonClickTrigger
+      .withLatestFrom(input.willDisplayCell) { $1 }
+      .filter { $0.at.section <= 1 }
+      .map { event -> Int in
+        event.at.section + 1
+      }.asDriver()
     
-    let backgroundImage = input.cellScrolled
-      .map { cellIndex -> UIImage? in
-        let imageName  = "Onboarding" + String(cellIndex + 1) + "Background"
-        guard let image = UIImage(named: imageName) else { return nil }
-        return image
+    let completeOnboarding = input.skipButtonClickTrigger
+      .withLatestFrom(input.willDisplayCell) { $1 }
+      .filter { $0.at.section == 2 }
+      .map { _ in self.steps.accept(AppStep.OnboardingIsCompleted) }
+     
+    let backgroundImage = input.willDisplayCell
+      .compactMap { event -> UIImage? in
+        UIImage(named: "Onboarding" + String(event.at.section + 1) + "Background")
       }
     
     return Output(
+      backgroundImage: backgroundImage,
+      completeOnboarding: completeOnboarding,
       dataSource: dataSource,
-      skipButtonClick: skipButtonClick,
-      skipButtonTitle: skipButtonTitle,
-      cellScrolled: cellScrolled,
-      backgroundImage: backgroundImage
+      reloadPoints: reloadPoints,
+      scrollToSection: scrollToSection,
+      skipButtonTitle: skipButtonTitle
     )
   }
 }

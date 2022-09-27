@@ -134,12 +134,12 @@ final class OnboardingViewController: UIViewController {
     centralDot.removeAllConstraints()
     centralDot.anchorCenterXToSuperview()
     centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: CGFloat(6 + 19 * centralDotPercent / 100).adjusted, heightConstant: 6)
-    centralDotPercent == 0 ? (leftDot.backgroundColor = Theme.Onboarding.dotBackground) : (centralDot.backgroundColor = Palette.SingleColors.BlueRibbon)
+    centralDotPercent == 0 ? (centralDot.backgroundColor = Theme.Onboarding.dotBackground) : (centralDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // leftDot
     leftDot.removeAllConstraints()
     leftDot.anchor(top: centralDot.topAnchor, right: centralDot.leftAnchor, rightConstant: 10.0, widthConstant: CGFloat(6 + 19 * leftDotPercent / 100).adjusted, heightConstant: 6)
-    leftDotPercent == 0 ? (centralDot.backgroundColor = Theme.Onboarding.dotBackground) : (leftDot.backgroundColor = Palette.SingleColors.BlueRibbon)
+    leftDotPercent == 0 ? (leftDot.backgroundColor = Theme.Onboarding.dotBackground) : (leftDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // rightDot
     rightDot.removeAllConstraints()
@@ -164,51 +164,65 @@ final class OnboardingViewController: UIViewController {
   
   //MARK: - Bind To
   func bindViewModel() {
+
+    let input = OnboardingViewModel.Input (
+      didScroll: collectionView.rx.didScroll.asDriver(),
+      skipButtonClickTrigger: skipButton.rx.tap.asDriver(),
+      willDisplayCell: collectionView.rx.willDisplayCell.asDriver()
+    )
     
-    let cellScrolled = collectionView.rx.didScroll.map { _ -> Int in
+    let output = viewModel.transform(input: input)
+    
+    [
+      output.backgroundImage.drive(backgroundImageBinder),
+      output.completeOnboarding.drive(),
+      output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      output.reloadPoints.drive(reloadPointsBinder),
+      output.scrollToSection.drive(scrollToSectionBinder),
+      output.skipButtonTitle.drive(skipButtonTitleBinder),
+    ]
+      .forEach({ $0.disposed(by: disposeBag) })
+
+  }
+  
+  var backgroundImageBinder: Binder<UIImage?> {
+    return Binder(self, binding: { (vc, image) in
+      UIView.transition(
+        with:  vc.backgroundImageView,
+        duration: 0.4,
+        options: .transitionCrossDissolve,
+        animations: {
+          self.backgroundImageView.image = image
+        }, completion: nil)
+    })
+  }
+  
+  var reloadPointsBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, section) in
       var leftDotPercent = 0
       var centralDotPercent = 0
       var rightDotPercent = 0
-      
-      let cells = self.collectionView.visibleCells
-      for cell in cells {
+      for cell in vc.collectionView.visibleCells {
         let f = cell.frame
-        guard let w = self.view.window else { return 0 }
+        guard let w = self.view.window else { return }
         let rect = w.convert(f, from: cell.superview!)
         let inter = rect.intersection(w.bounds)
         let ratio = (inter.width * inter.height) / (f.width * f.height)
         if let indexPath = self.collectionView.indexPath(for: cell) {
-          if indexPath.section == 0 { leftDotPercent = Int(ratio * 100) }
-          if indexPath.section == 1 { centralDotPercent = Int(ratio * 100) }
-          if indexPath.section == 2 { rightDotPercent = Int(ratio * 100) }
+          switch indexPath.section {
+          case 0: leftDotPercent = Int(ratio * 100)
+          case 1: centralDotPercent = Int(ratio * 100)
+          case 2: rightDotPercent = Int(ratio * 100)
+          default: return
+          }
         }
       }
-      
       self.setDotWidth(leftDotPercent: leftDotPercent, centralDotPercent: centralDotPercent, rightDotPercent: rightDotPercent)
-      
-      let array = [leftDotPercent, centralDotPercent, rightDotPercent]
-      return array.firstIndex(of: array.max() ?? 0) ?? 0
-    }
-      .distinctUntilChanged()
-      .asDriver(onErrorJustReturn: 0)
-      .startWith(0)
-    
-    let input = OnboardingViewModel.Input (
-      skipButtonClickTrigger: skipButton.rx.tap.asDriver(),
-      cellScrolled: cellScrolled
-    )
-    
-    let output = viewModel.transform(input: input)
-    output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
-    output.skipButtonClick.drive(skipButtonClickBinder).disposed(by: disposeBag)
-    output.skipButtonTitle.drive(skipButtonTitleBinder).disposed(by: disposeBag)
-    output.cellScrolled.drive().disposed(by: disposeBag)
-    output.backgroundImage.drive(backgroundImageViewBinder).disposed(by: disposeBag)
+    })
   }
   
-  var skipButtonClickBinder: Binder<Int?> {
+  var scrollToSectionBinder: Binder<Int> {
     return Binder(self, binding: { (vc, section) in
-      guard let section = section else { return }
       vc.collectionView.isPagingEnabled = false
       vc.collectionView.scrollToItem(at: IndexPath(item: 0, section: section), at: .right, animated: true)
       vc.collectionView.isPagingEnabled = true
@@ -225,16 +239,7 @@ final class OnboardingViewController: UIViewController {
     })
   }
   
-  var backgroundImageViewBinder: Binder<UIImage?> {
-    return Binder(self, binding: { (vc, image) in
-      UIView.transition(with:  vc.backgroundImageView,
-                        duration: 0.4,
-                        options: .transitionCrossDissolve,
-                        animations: {
-        self.backgroundImageView.image = image
-      }, completion: nil)
-    })
-  }
+
 }
 
 
