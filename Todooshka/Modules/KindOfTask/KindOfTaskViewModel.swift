@@ -71,6 +71,7 @@ class KindOfTaskViewModel: Stepper {
     
     let isStyleLocked = kindOfTask
       .map{ $0.isStyleLocked }
+      .startWith(false)
     
     let kindOfTaskText = kindOfTask
       .map{ $0.text }

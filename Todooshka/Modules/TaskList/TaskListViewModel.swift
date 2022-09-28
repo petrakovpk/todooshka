@@ -210,9 +210,7 @@ class TaskListViewModel: Stepper {
       .compactMap { removeMode -> [Task]? in
         guard case .All(let tasks) = removeMode else { return nil }
         return tasks
-      }.asDriver(onErrorJustReturn: [])
-      
-    let removeAllFromCoreData = removeAll
+      }
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .map { task -> Task in
@@ -222,17 +220,19 @@ class TaskListViewModel: Stepper {
       }
       .flatMapLatest({ self.managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-
-//    let removeAllTasksFromFirebase = Driver
-//      .combineLatest(removeAll, services.dataService.user) { removeAllTasks, user -> [Task] in
-//        user == nil ? [] : removeAllTasks
-//      }
+      //.asDriver(onErrorJustReturn: [])
+      
+//    let removeAllFromCoreData = removeAll
 //      .asObservable()
 //      .flatMapLatest({ Observable.from($0) })
-//      .filter{ $0.userUID != nil }
-//      .flatMapLatest({
-//        DB_USERS_REF.child($0.userUID ?? "Error").child("TASKS").child($0.UID).rx.removeValue()
-//      }).asDriver(onErrorJustReturn: .failure(ErrorType.DriverError) )
+//      .map { task -> Task in
+//        var task = task
+//        task.status = .Archive
+//        return task
+//      }
+//      .flatMapLatest({ self.managedContext.rx.update($0) })
+//      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+
 
     let addTask = input.addTaskButtonClickTrigger
       .map { _ in self.steps.accept(AppStep.CreateTaskIsRequired(status: .Idea, createdDate: Date())) }
@@ -272,7 +272,7 @@ class TaskListViewModel: Stepper {
       hideCell: hideCell,
       navigateBack: navigateBack,
       openTask: openTask,
-      removeAll: removeAllFromCoreData,
+      removeAll: removeAll,
 //      removeAllTasksFromFirebase: removeAllTasksFromFirebase,
       removeTask: removeTask,
       reloadData: reloadData,

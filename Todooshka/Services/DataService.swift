@@ -35,6 +35,7 @@ class DataService {
   let firebaseKindsOfTask: Driver<[KindOfTask]>
   let kindsOfTask: Driver<[KindOfTask]>
   let nestDataSource: Driver<[EggActionType]>
+  let reloadNestScene = BehaviorRelay<Void>(value: ())
   let selectedDate = BehaviorRelay<Date>(value: Date())
   let tasks: Driver<[Task]>
   let user: Driver<User?>
@@ -49,6 +50,12 @@ class DataService {
       .rx
       .entities(Task.self)
       .map({ $0.sorted{ $0.created < $1.created } })
+      .asDriver(onErrorJustReturn: [])
+    
+    let allKindsOfTask = context
+      .rx
+      .entities(KindOfTask.self)
+      .map({ $0.sorted{ $0.index < $1.index } })
       .asDriver(onErrorJustReturn: [])
 
     user = Auth.auth().rx.stateDidChange
@@ -112,15 +119,17 @@ class DataService {
       .entities(Feather.self)
       .asDriver(onErrorJustReturn: [])
 
-    kindsOfTask = context
-      .rx
-      .entities(KindOfTask.self)
-      .map({ $0.sorted{ $0.index < $1.index } })
-      .asDriver(onErrorJustReturn: [])
+    kindsOfTask = Driver.combineLatest(user, allKindsOfTask) { user, kindsOfTask -> [KindOfTask] in
+      kindsOfTask.filter{ $0.userUID == user?.uid }
+    }
     
     tasks = Driver.combineLatest(user, allTasks) { user, tasks -> [Task] in
       tasks.filter{ $0.userUID == user?.uid }
-    }.debug()
+    }
+    
+    birds.drive().disposed(by: disposeBag)
+    kindsOfTask.drive().disposed(by: disposeBag)
+    tasks.drive().disposed(by: disposeBag)
 
     // add feather
     tasks
@@ -166,8 +175,28 @@ class DataService {
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
-   
     
+    // close bird
+    let openBirds = birds
+      .map{ $0.filter{ $0.isBought } }
+    
+    Driver
+      .combineLatest(feathers, openBirds) { feathers, birds -> Bird? in
+        if birds.map({ $0.price }).sum() > feathers.count {
+          return birds.max(by: { $0.price < $1.price })
+        } else { return nil  }
+      }
+      .compactMap{ $0 }
+      .map { bird -> Bird in
+        var bird = bird
+        bird.isBought = false
+        return bird
+      }.asObservable()
+      .flatMapLatest({ context.rx.update($0) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .drive()
+      .disposed(by: disposeBag)
+   
     // MARK: - Nest DataSource
     let completedTasks = tasks
       .map { tasks -> [Task] in
@@ -175,9 +204,9 @@ class DataService {
           .filter { $0.status == .Completed }
           .filter { Calendar.current.isDate($0.closed ?? Date(), inSameDayAs: Date()) }
           .sorted { $0.closed! < $1.closed! }
-      }
+      }.debug()
     
-    let isProgressTasks = tasks
+    let inProgressTasks = tasks
       .map { tasks -> [Task] in
         tasks
           .filter { $0.status == .InProgress }
@@ -188,26 +217,30 @@ class DataService {
     let crackActions = completedTasks
       .map { $0.prefix(7) } // берем первые 7 выполненных задач
       .map { Array($0) }
+      .debug()
       .withLatestFrom(kindsOfTask) { tasks, kindsOfTask -> [Style] in // получаем для них стили
         tasks.compactMap { task -> Style? in
           kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID })?.style
         }
-      }.withLatestFrom(birds) { style, birds -> [Bird] in // получаем птиц
+      }.debug()
+      .withLatestFrom(birds) { style, birds -> [Bird] in // получаем птиц
         style.enumerated().compactMap { index, style -> Bird? in
           birds.first(where: { $0.style == style && $0.clade == Clade(level: index + 1) })
         }
-      }.map { birds -> [Style] in // если куплена, то оставляем, иначе симл
+      }.debug()
+      .map { birds -> [Style] in // если куплена, то оставляем, иначе симл
         birds.map{ bird -> Style in
           bird.isBought ? bird.style : .Simple }
-      }
+      }.debug()
       .map { styles -> [EggActionType] in // получаем действия
         styles.map{ .Crack(style: $0) }
-      }
+      }.debug().startWith([])
     
-    let noCrackActions = isProgressTasks
+    let noCrackActions = inProgressTasks
       .map { $0.prefix(7) } // берем первые 7 выполненных задач
       .map { Array($0) }
       .map { $0.map { _ in EggActionType.NoCracks } }
+      .startWith([])
     
     let hideEggsActions = Driver<[EggActionType]>.of([
       .Hide,
@@ -218,12 +251,13 @@ class DataService {
       .Hide,
       .Hide
     ])
-    
+
     nestDataSource = Driver
       .combineLatest(crackActions, noCrackActions, hideEggsActions) { crackActions, noCrackActions, hideEggsActions -> [EggActionType] in
         crackActions + noCrackActions + hideEggsActions
       }.map { $0.prefix(7) }
       .map{ Array($0) }
+      .debug()
       .distinctUntilChanged()
     
     // MARK: - Branch DataSource
@@ -375,14 +409,30 @@ class DataService {
     // присваиваем
     let tasksWithoutUser = allTasks
       .map { $0.filter { $0.userUID == nil } }
+    
+    let kindsOfTaskWithoutUser = allKindsOfTask
+      .map { $0.filter { $0.userUID == nil } }
 
-    user
-      .compactMap{ $0 }
+    compactUser
       .withLatestFrom(tasksWithoutUser) { user, tasks -> [Task] in
         tasks.map { task -> Task in
           var task = task
           task.userUID = user.uid
           return task
+        }
+      }.asObservable()
+      .flatMapLatest({ Observable.from($0) })
+      .flatMapLatest({ context.rx.update($0) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .drive()
+      .disposed(by: disposeBag)
+    
+    compactUser
+      .withLatestFrom(kindsOfTaskWithoutUser) { user, kindsOfTask -> [KindOfTask] in
+        kindsOfTask.map { kindOfTask -> KindOfTask in
+          var kindOfTask = kindOfTask
+          kindOfTask.userUID = user.uid
+          return kindOfTask
         }
       }.asObservable()
       .flatMapLatest({ Observable.from($0) })
@@ -422,7 +472,6 @@ class DataService {
       .withLatestFrom(compactUser) { task, user in
         DB_USERS_REF.child(user.uid).child("TASKS").child(task.UID).updateChildValues(task.data)
       }
-      .debug()
       .asDriver(onErrorJustReturn: ())
       .drive()
       .disposed(by: disposeBag)

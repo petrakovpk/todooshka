@@ -93,7 +93,7 @@ class BirdViewModel: Stepper {
       .map{ $0.string }
     
     let title = bird
-      .map{ $0.name }
+      .map{ $0.style.text }
     
     let kindOfTaskMain = kindsOfTask.withLatestFrom(bird) { kindsOfTask, bird -> [KindOfTask] in
       kindsOfTask.filter{ $0.style.rawValue == bird.style.rawValue }

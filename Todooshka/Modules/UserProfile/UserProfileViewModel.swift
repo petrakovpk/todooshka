@@ -15,7 +15,6 @@ class UserProfileViewModel: Stepper {
   let reloadData = BehaviorRelay<Void>(value: ())
   let services: AppServices
   let steps = PublishRelay<Step>()
-  
 
   struct Input {
     let backButtonClickTrigger: Driver<Void>
@@ -24,7 +23,7 @@ class UserProfileViewModel: Stepper {
   }
   
   struct Output {
-    let dataSource: Driver<[UserProfileSectionModel]>
+    let dataSource: Driver<[UserProfileSection]>
     let itemSelected: Driver<Void>
     let logOut: Driver<Void>
     let navigateBack: Driver<Void>
@@ -61,7 +60,7 @@ class UserProfileViewModel: Stepper {
     let birthday = dict
       .compactMap { $0["birthday"] as? Double }
       .map { Date(timeIntervalSince1970: $0) }
-      .map { $0.string(withFormat: "dd MMMM yyyy") }
+      .map { self.services.preferencesService.formatter.string(from: $0) }
       .startWith("")
     
     let gender = dict
@@ -86,19 +85,19 @@ class UserProfileViewModel: Stepper {
       }
     
     let dataSource = userProfileData
-      .map { data -> [UserProfileSectionModel] in
+      .map { data -> [UserProfileSection] in
         [
-          UserProfileSectionModel(header: "Личная информация", items: [
+          UserProfileSection(header: "Личная информация", items: [
             UserProfileItem(type: .Name, leftText: "Имя", rightText: data.name),
             UserProfileItem(type: .Gender, leftText: "Пол", rightText: data.gender.rawValue ),
             UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: data.birthday )]),
           
-          UserProfileSectionModel(header: "Вход в приложение", items: [
+          UserProfileSection(header: "Вход в приложение", items: [
             UserProfileItem(type: .Phone, leftText: "Телефон", rightText: data.phone),
             UserProfileItem(type: .Email, leftText: "Email", rightText: data.email),
             UserProfileItem(type: .Password, leftText: "Пароль", rightText: "Cменить пароль")]),
           
-          UserProfileSectionModel(header: "История покупок", items: [])
+          UserProfileSection(header: "История покупок", items: [])
         ]
       }.asDriver(onErrorJustReturn: [])
 

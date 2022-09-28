@@ -14,7 +14,7 @@ enum CalendarSectionType {
 struct CalendarSectionModel: AnimatableSectionModelType {
   
   var identity: String {
-    return year.string + month.string
+    year.string + month.string
   }
   
   var type: CalendarSectionType
@@ -22,9 +22,9 @@ struct CalendarSectionModel: AnimatableSectionModelType {
   var month: Int
   var items: [CalendarDay]
   
-  var monthName: String {
-    DateFormatter().standaloneMonthSymbols[self.month - 1]
-  }
+//  var monthName: String {
+//    DateFormatter().standaloneMonthSymbols[self.month - 1]
+//  }
   
   init(type: CalendarSectionType, year: Int, month: Int, items: [CalendarDay]) {
     self.type = type

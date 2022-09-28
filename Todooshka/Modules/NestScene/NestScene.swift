@@ -68,42 +68,58 @@ class NestScene: SKScene {
   
   // MARK: - DataSource
   func reloadData() {
+    
     for (index, node) in SKEggNodes.enumerated() {
       
-      guard let action = actions[safe: index] else { continue }
+      guard let action = actions[safe: index],
+            action != node.action else { continue }
+      
+      print("1234", index, node.action, action)
       
       switch (node.action, action) {
       case (.Init, .NoCracks):
         node.show(state: .NoCracks, withAnimation: false , completion: nil)
+        node.action = action
+        continue
 
       case (.Init, .Crack(let style)):
         node.show(state: .Crack(style: style), withAnimation: false, completion: nil)
+        node.action = action
+        continue
 
       case (.Hide, .NoCracks):
         node.show(state: .NoCracks, withAnimation: true , completion: nil)
+        node.action = action
+        continue
 
       case (.Hide, .Crack(let style)):
         node.show(state: .Crack(style: style), withAnimation: true, completion: nil)
+        node.action = action
+        continue
 
       case (.Crack(_), .NoCracks):
         node.repair()
+        node.action = action
+        continue
 
       case (.NoCracks, .Crack(let style)):
         node.crack(completion: { self.hatch(level: node.level, style: style) })
+        node.action = action
+        continue
 
       case (_, .Hide):
         node.hide()
+        node.action = action
+        continue
 
       default:
         continue
       }
-      
-      node.action = action
     }
   }
   
   func hatch(level: Int, style: Style) {
-    
+
     let node = SKBirdNode(clade: Clade(level: level), style: style, scenePosition: position)
 
     // adding
@@ -112,23 +128,9 @@ class NestScene: SKScene {
     // node
     node.position = node.nestPosition
     node.runFromNest() {
-      node.removeFromParent()
+     node.removeFromParent()
     }
   }
   
-  // Убираем птиц и крекаем яйца
-  func forceUpdate() {
-    
-    for node in SKEggNodes where node.isCracking == true {
-      node.removeAllActions()
-      node.forceCrack()
-      node.isCracking = false 
-    }
-    
-    for node in children where node.name == "Bird" {
-      node.removeFromParent()
-    }
 
-  }
-  
 }

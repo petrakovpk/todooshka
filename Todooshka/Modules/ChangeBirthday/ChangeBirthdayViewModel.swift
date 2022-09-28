@@ -14,7 +14,7 @@ class ChangeBirthdayViewModel: Stepper {
   
   let services: AppServices
   let steps = PublishRelay<Step>()
-
+  
   struct Input {
     let backButtonClickTrigger: Driver<Void>
     let datePicker: Driver<Date>
@@ -61,7 +61,7 @@ class ChangeBirthdayViewModel: Stepper {
       .asDriver()
     
     let dateText = birthday
-      .map { $0.string(withFormat: "dd MMMM yyyy")}
+      .map{ self.services.preferencesService.formatter.string(from: $0) }
     
     let datePickerValue = birthday
     

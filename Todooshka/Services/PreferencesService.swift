@@ -15,7 +15,13 @@ protocol HasPreferencesService {
 
 class PreferencesService {
   
-  let formatter = DateFormatter()
+  let formatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ru_RU")
+    formatter.dateFormat = "dd MMMM yyyy"
+    return formatter
+  }()
+  
   let scrollToCurrentMonthTrigger = BehaviorRelay<(trigger: Bool, withAnimation: Bool)>(value: (false, false))
   
   var isOnboardingCompleted: Bool {

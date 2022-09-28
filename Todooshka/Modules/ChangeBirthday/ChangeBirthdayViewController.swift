@@ -22,7 +22,6 @@ class ChangeBirthdayViewController: TDViewController {
   private let label: UILabel = {
     let label = UILabel()
     label.textAlignment = .center
-    label.text = "21 ноября 1991"
     label.font = UIFont.systemFont(ofSize: 22, weight: .medium)
     return label
   }()

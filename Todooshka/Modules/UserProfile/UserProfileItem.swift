@@ -9,12 +9,12 @@ import RxDataSources
 
 struct UserProfileItem: IdentifiableType, Equatable  {
   
-  var identity: String { return UUID().uuidString }
+  var identity: String { type.rawValue }
   var type: UserProfileCellType
   var leftText: String
   var rightText: String
   
   static func == (lhs: UserProfileItem, rhs: UserProfileItem) -> Bool {
-    return lhs.leftText == rhs.rightText
+    lhs.leftText == rhs.rightText
   }
 }

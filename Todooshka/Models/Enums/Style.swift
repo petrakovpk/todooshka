@@ -54,4 +54,16 @@ enum Style: String {
     case .Kid: return Icon.EmojiHappy.image
     }
   }
+  
+  var text: String {
+    switch self {
+    case .Simple: return "Обычный"
+    case .Student: return "Студент"
+    case .Business: return "Деловой"
+    case .Cook: return "Повар"
+    case .Fashion: return "Модный"
+    case .Sport: return "Спортивный"
+    case .Kid: return "Ребенок"
+    }
+  }
 }

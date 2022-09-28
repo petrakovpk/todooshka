@@ -22,7 +22,6 @@ class SettingsViewModel: Stepper {
   
   // auth
   let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .logInIsRequired)
- // let userProfileIsRequired = SettingsItem(imageName: "user-square", text: "Герой без имени" , type: .userProfileIsRequiared)
   //data
   let syncDataIsRequired = SettingsItem(imageName: "box-tick", text: "Синхронизировать данные", type: .syncDataIsRequired)
   // deleted

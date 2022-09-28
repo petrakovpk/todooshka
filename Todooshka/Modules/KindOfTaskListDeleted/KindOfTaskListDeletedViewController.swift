@@ -150,7 +150,7 @@ class KindOfTaskListDeletedViewController: TDViewController {
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.hideAlert.drive(hideAlertBinder),
       outputs.navigateBack.drive(),
-      outputs.removeAllKindsOfTask.drive(),
+      outputs.removeAll.drive(),
       outputs.repeatKindOfTask.drive(),
       outputs.showAlert.drive(showAlertBinder),
     ]

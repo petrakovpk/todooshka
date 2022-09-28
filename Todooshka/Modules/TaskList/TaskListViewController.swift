@@ -169,7 +169,6 @@ class TaskListViewController: TDViewController {
       outputs.navigateBack.drive(),
       outputs.openTask.drive(),
       outputs.removeAll.drive(),
-    //  outputs.removeAllTasksFromFirebase.drive(),
       outputs.removeTask.drive(),
       outputs.setAlertText.drive(alertLabel.rx.text),
       outputs.setDataSource.drive(collectionView.rx.items(dataSource: dataSource)),

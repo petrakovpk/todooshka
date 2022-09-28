@@ -22,11 +22,13 @@ class SKEggNode: SKSpriteNode {
   // MARK: - Private
   // Actions
   private let fadeInWithoutDuration = SKAction.fadeIn(withDuration: 0.0)
+  private let fadeTo07WithoutDuration = SKAction.fadeAlpha(to: 0.7, duration: 0.0)
   private let fadeInWithDuration = SKAction.fadeIn(withDuration: 1.0)
+  private let fadeTo07WithDuration = SKAction.fadeAlpha(to: 0.7, duration: 1.0)
   private let fadeOutAction = SKAction.fadeOut(withDuration: 1.0)
   private var setNoCracksTexture: SKAction { SKAction.setTexture(noCracksTexture, resize: false) }
   private var setOneCrackTexture: SKAction { SKAction.setTexture(oneCrackTexture, resize: false) }
-  private var setThreeCracksTexture: SKAction { SKAction.setTexture(threeCracksTexture, resize: true) }
+  private var setThreeCracksTexture: SKAction { SKAction.setTexture(threeCracksTexture, resize: false) }
   private let wait = SKAction.wait(forDuration: 0.5)
   
   // Other
@@ -54,10 +56,20 @@ class SKEggNode: SKSpriteNode {
     name = "Egg"
     size = noCracksTexture.size()
     texture = noCracksTexture
-    zPosition = CGFloat(level + 1)
     xScale = Theme.Scene.Egg.scale
     yScale = Theme.Scene.Egg.scale
     alpha = 0.0
+    
+    switch level {
+    case 1: zPosition = 3
+    case 2: zPosition = 4
+    case 3: zPosition = 5
+    case 4: zPosition = 6
+    case 5: zPosition = 7
+    case 6: zPosition = 6
+    case 7: zPosition = 5
+    default: return
+    }
   }
   
   required init?(coder aDecoder: NSCoder) {
@@ -66,13 +78,20 @@ class SKEggNode: SKSpriteNode {
   
   // MARK: - Actions
   func show(state: EggActionType, withAnimation: Bool, completion: (() -> Void)?) {
+
     switch (state, withAnimation) {
     case (.NoCracks, true):
       run(SKAction.sequence([setNoCracksTexture, fadeInWithDuration]))
+      return
     case (.NoCracks, false):
       run(SKAction.sequence([setNoCracksTexture, fadeInWithoutDuration]))
-    case (.Crack(_), _):
-      run(setThreeCracksTexture) { self.alpha = 0.7 }
+      return
+    case (.Crack(_), true):
+      run(SKAction.sequence([setThreeCracksTexture, fadeTo07WithDuration]))
+      return
+    case (.Crack(_), false):
+      run(SKAction.sequence([setThreeCracksTexture, fadeTo07WithoutDuration]))
+      return
     default:
       return
     }

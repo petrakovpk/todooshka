@@ -47,7 +47,7 @@ class ShopCollectionViewCell: UICollectionViewCell {
   
   // MARK: - Configure UI
   func configure(bird: Bird) {
-    nameLabel.text = bird.style.rawValue
+    nameLabel.text = bird.style.text
     imageView.image = bird.getImageForState(state: .Normal)
     contentView.backgroundColor = bird.isBought ? .clear : .systemGray.withAlphaComponent(0.3)
   }

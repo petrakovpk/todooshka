@@ -17,6 +17,7 @@ class TaskCell: SwipeCollectionViewCell {
   static let reuseID: String = "TaskCell"
   
   var disposeBag = DisposeBag()
+  var drawCompleted: Bool = false
 
   // MARK: - Public
   // UI
@@ -98,6 +99,7 @@ class TaskCell: SwipeCollectionViewCell {
   // MARK: - Draw
   override func draw(_ rect: CGRect) {
     configureUI()
+    drawCompleted = true
   }
   
   func drawLightMode() {
@@ -240,20 +242,15 @@ class TaskCell: SwipeCollectionViewCell {
     // repeatButton
     repeatButton.anchorCenterYToSuperview()
     repeatButton.anchor(right: contentView.rightAnchor, rightConstant: 8, widthConstant: 110, heightConstant: 30)
-    
-    // taskTextLabel
-    taskTextLabel.removeAllConstraints()
-    
-    // descriptionTextLabel
-    descriptionTextLabel.removeAllConstraints()
-    
-    if let description = descriptionTextLabel.text, description != "" {
-      taskTextLabel.anchor(top: contentView.topAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 12, leftConstant: 8, rightConstant: 8)
-      descriptionTextLabel.anchor(top: taskTextLabel.bottomAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 3, leftConstant: 8, rightConstant: 8)
-    } else {
+
+    if descriptionTextLabel.text == "" {
       taskTextLabel.anchorCenterYToSuperview()
       taskTextLabel.anchor(left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, leftConstant: 8, rightConstant: 8)
+    } else {
+      taskTextLabel.anchor(top: contentView.topAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 12, leftConstant: 8, rightConstant: 8)
+      descriptionTextLabel.anchor(top: taskTextLabel.bottomAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 3, leftConstant: 8, rightConstant: 8)
     }
+    
   }
   
   func configure(with mode: TaskCellMode) {
@@ -271,10 +268,24 @@ class TaskCell: SwipeCollectionViewCell {
   }
   
   func configure(with task: Task) {
-    taskTextLabel.text = task.text
     descriptionTextLabel.text = task.description
+    taskTextLabel.text = task.text
     taskTimeLeftLabel.text = task.timeLeftText
+    
     configureLineLayout(with: task.timeLeftPercent)
+    
+    if drawCompleted {
+      taskTextLabel.removeAllConstraints()
+      descriptionTextLabel.removeAllConstraints()
+      
+      if descriptionTextLabel.text == "" {
+        taskTextLabel.anchorCenterYToSuperview()
+        taskTextLabel.anchor(left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, leftConstant: 8, rightConstant: 8)
+      } else {
+        taskTextLabel.anchor(top: contentView.topAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 12, leftConstant: 8, rightConstant: 8)
+        descriptionTextLabel.anchor(top: taskTextLabel.bottomAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 3, leftConstant: 8, rightConstant: 8)
+      }
+    }
   }
   
   func configure(with kindOfTask: KindOfTask) {

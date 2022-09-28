@@ -33,6 +33,11 @@ struct Theme {
     }
   }
   
+  struct Calendar {
+    static let Background = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
+    static let Divider = Palette.DualColors.MoonRaker_PortGore
+  }
+  
   struct Divider {
     static let selected = Palette.SingleColors.BlueRibbon
     static let unselected = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
@@ -46,8 +51,8 @@ struct Theme {
   }
   
   struct Onboarding {
-    static let dot = Palette.DualColors.PeriwinkleGray_Fiord
-    static let text = Palette.SingleColors.SantasGray
+    static let Dot = Palette.DualColors.PeriwinkleGray_Fiord
+    static let Text = Palette.SingleColors.SantasGray
   }
   
   struct TextFields {
@@ -69,6 +74,10 @@ struct Theme {
   }
   
   struct Cells {
+    struct Calendar {
+      static let Border = Palette.SingleColors.BlueRibbon
+      static let Selected = Palette.SingleColors.BlueRibbon
+    }
     struct KindOfTask {
       static let Border = Palette.DualColors.Periwinkle_200_202_255_PortGore_24_27_60
       static let SelectedBackground = Palette.SingleColors.BlueRibbon
@@ -80,29 +89,8 @@ struct Theme {
     }
   }
   
-  struct UserProfile {
-    struct Calendar {
-      static let background = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
-      static let divider = Palette.DualColors.MoonRaker_PortGore
-      
-      struct Cell {
-        static let border = Palette.SingleColors.BlueRibbon
-        static let selectedBackground = Palette.SingleColors.BlueRibbon
-      }
-    }
-  }
-  
   struct GameCurrency {
     static let textViewBackground = Palette.DualColors.TitanWhite_228_229_254_Haiti_17_20_52
-  }
-  
-  struct Bird {
-    struct TypeSmallCollectionViewCell {
-      static let selectedText = UIColor.black
-      static let selectedTint = UIColor.black
-      static let selectedBackground = Palette.SingleColors.Shamrock
-      static let unselectedBackground = Palette.DualColors.White_BlackPearl
-    }
   }
   
   // Diamond

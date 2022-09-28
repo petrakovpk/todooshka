@@ -33,7 +33,7 @@ class KindOfTaskListDeletedViewModel: Stepper {
     let dataSource: Driver<[KindOfTaskListSection]>
     let hideAlert: Driver<Void>
     let navigateBack: Driver<Void>
-    let removeAllKindsOfTask: Driver<Result<Void,Error>>
+    let removeAll: Driver<Result<Void,Error>>
     let repeatKindOfTask: Driver<Result<Void,Error>>
     let showAlert: Driver<Void>
   }
@@ -47,7 +47,7 @@ class KindOfTaskListDeletedViewModel: Stepper {
     
     let kindsOfTask = services.dataService
       .kindsOfTask
-      .map{ $0.filter{ $0.status == .deleted } }
+      .map{ $0.filter{ $0.status == .Deleted } }
     
     let dataSource = kindsOfTask
       .map {[
@@ -66,7 +66,7 @@ class KindOfTaskListDeletedViewModel: Stepper {
       .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
       .map { kindOfTask -> KindOfTask in
         var kindOfTask = kindOfTask
-        kindOfTask.status = .active
+        kindOfTask.status = .Active
         return kindOfTask
       }
       .flatMapLatest(({ self.managedContext.rx.update($0) }))
@@ -77,18 +77,23 @@ class KindOfTaskListDeletedViewModel: Stepper {
     let navigateBack = input.backButtonClickTrigger
       .map{ self.steps.accept(AppStep.NavigateBack) }
     
-    let removeAllKindsOfTask = input.alertDeleteButtonClickTrigger
+    let removeAll = input.alertDeleteButtonClickTrigger
       .withLatestFrom(kindsOfTask) { $1 }
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ self.appDelegate.persistentContainer.viewContext.rx.delete($0) })
+      .map { kindOfTask -> KindOfTask in
+        var kindOfTask = kindOfTask
+        kindOfTask.status = .Archive
+        return kindOfTask
+      }
+      .flatMapLatest({ self.appDelegate.persistentContainer.viewContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
     return Output(
       dataSource: dataSource,
       hideAlert: hideAlert,
       navigateBack: navigateBack,
-      removeAllKindsOfTask: removeAllKindsOfTask,
+      removeAll: removeAll,
       repeatKindOfTask: repeatKindOfTask,
       showAlert: showAlert
     )

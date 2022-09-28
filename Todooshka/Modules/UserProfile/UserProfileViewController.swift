@@ -15,7 +15,7 @@ class UserProfileViewController: TDViewController {
   
   // MARK: - Properties
   let disposeBag = DisposeBag()
-  var dataSource: RxTableViewSectionedReloadDataSource<UserProfileSectionModel>!
+  var dataSource: RxTableViewSectionedReloadDataSource<UserProfileSection>!
   var tableView: UITableView!
   var viewModel: UserProfileViewModel!
   
@@ -91,7 +91,7 @@ class UserProfileViewController: TDViewController {
   
   func configureDataSource() {
     tableView.dataSource = nil
-    dataSource = RxTableViewSectionedReloadDataSource<UserProfileSectionModel> (configureCell: { _, tableView, indexPath, item in
+    dataSource = RxTableViewSectionedReloadDataSource<UserProfileSection> (configureCell: { _, tableView, indexPath, item in
       let cell = tableView.dequeueReusableCell(withIdentifier: UserProfileCell.reuseID, for: indexPath) as! UserProfileCell
       cell.configure(leftText: item.leftText, rightText: item.rightText)
       return cell

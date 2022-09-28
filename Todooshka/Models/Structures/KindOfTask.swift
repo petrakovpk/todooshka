@@ -35,10 +35,10 @@ struct KindOfTask: IdentifiableType, Equatable  {
   var icon: Icon
   var index: Int
   var isStyleLocked: Bool = false
-  var status: KindOfTaskStatus = .active
+  var status: KindOfTaskStatus = .Active
   var style: Style = .Simple
   var text: String
-  var userUID: String?
+  var userUID: String? = Auth.auth().currentUser?.uid
 
   // MARK: - Init
   init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int) {
@@ -68,6 +68,8 @@ struct KindOfTask: IdentifiableType, Equatable  {
     && lhs.text == rhs.text
     && lhs.index == rhs.index
     && lhs.style == rhs.style
+    && lhs.status == rhs.status
+    && lhs.userUID == rhs.userUID
   }
 }
 
@@ -144,7 +146,7 @@ extension KindOfTask: Persistable {
     if let statusRawValue = entity.value(forKey: "statusRawValue") as? String, let status = KindOfTaskStatus(rawValue: statusRawValue) {
       self.status = status
     } else {
-      self.status = .active
+      self.status = .Active
     }
     
     // style

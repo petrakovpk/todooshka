@@ -111,7 +111,7 @@ class TaskViewModel: Stepper {
     // kindsOfTask
     let kindsOfTask = services.dataService
       .kindsOfTask
-      .map { $0.filter { $0.status == .active }}
+      .map { $0.filter { $0.status == .Active }}
     
     // dataSource
     let dataSource = Driver

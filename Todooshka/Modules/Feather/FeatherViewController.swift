@@ -41,7 +41,7 @@ class FeatherViewController: TDViewController {
     textView.layer.cornerRadius = 15
     textView.backgroundColor = .clear
     textView.textAlignment = .center
-    textView.text = "Это перышко. Его можно получить выполняя ежедневные задания, которые ты сам себе ставишь. За день можно получить не более 7 перышек. Перышки можно потратить их на покупку обычных птиц."
+    textView.text = "Это перышко. Его можно получить, выполняя ежедневные задания, которые ты сам себе ставишь. За день можно получить не более 7 перышек. Перышки можно потратить на покупку обычных птиц."
     return textView
   }()
   

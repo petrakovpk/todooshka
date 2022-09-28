@@ -98,6 +98,13 @@ class CalendarViewController: UIViewController {
   
   fileprivate var needsDelayedScrolling: ScrollToIndexPath = .Initial
   
+  private let formatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ru_RU")
+    formatter.dateFormat = "MMMM"
+    return formatter
+  }()
+  
   //MARK: - Lifecycle
   override func viewDidLoad() {
     configureScene()
@@ -228,7 +235,7 @@ class CalendarViewController: UIViewController {
     diamondLabel.anchor(top: diamondBackroundView.topAnchor, left: diamondBackroundView.leftAnchor, bottom: diamondBackroundView.bottomAnchor, right: diamondsImageView.leftAnchor, topConstant: 4, leftConstant: 8, bottomConstant: 4, rightConstant: 8)
     
     // calendarBackgroundView
-    calendarBackgroundView.backgroundColor = Theme.UserProfile.Calendar.background
+    calendarBackgroundView.backgroundColor = Theme.Calendar.Background
     calendarBackgroundView.cornerRadius = 11
     calendarBackgroundView.anchor(top: shopButton.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 30.superAdjusted, leftConstant: 16, bottomConstant: 32.superAdjusted, rightConstant: 16)
     
@@ -236,7 +243,7 @@ class CalendarViewController: UIViewController {
     calendarHeaderView.anchor(top: calendarBackgroundView.topAnchor, left: calendarBackgroundView.leftAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted, heightConstant: 30)
     
     //calendarDividerView
-    calendarDividerView.backgroundColor = Theme.UserProfile.Calendar.divider
+    calendarDividerView.backgroundColor = Theme.Calendar.Divider
     calendarDividerView.anchor(top: calendarHeaderView.bottomAnchor, left: calendarBackgroundView.leftAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted, heightConstant: 1)
     
     // calendarView
@@ -284,13 +291,8 @@ class CalendarViewController: UIViewController {
     let outputs = sceneModel.transform(input: input)
     
     [
-      // scene
       outputs.background.drive(sceneBackgroundBinder),
-      // actions
-      outputs.dataSource.drive(sceneDataSourceBinder),
-      // force
-      outputs.forceNestUpdate.drive(),
-      outputs.forceBranchUpdate.drive(forceBranchUpdateBinder)
+      outputs.dataSource.drive(sceneDataSourceBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
@@ -311,14 +313,6 @@ class CalendarViewController: UIViewController {
         if vc.isVisible {
           scene.reloadData()
         }
-      }
-    })
-  }
-  
-  var forceBranchUpdateBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
-      if let scene = vc.scene {
-       // scene.forceUpdate()
       }
     })
   }
@@ -399,16 +393,6 @@ class CalendarViewController: UIViewController {
       }
     })
   }
-  
-
-  var runBinder: Binder<[BranchSceneAction]> {
-    return Binder(self, binding: { (vc, actions) in
-      if let scene = vc.scene {
- //         scene.run(actions: actions)
-//        vc.branchSceneModel.services.actionService.removeBranchSceneActions(branchSceneActions: actions)
-      }
-    })
-  }
 }
 
 
@@ -440,7 +424,7 @@ extension CalendarViewController: UICollectionViewDataSource {
     let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CalendarReusableView.reuseID, for: indexPath) as! CalendarReusableView
     header.label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
     header.label.textAlignment = .left
-    header.label.text = dataSource[indexPath.section].monthName
+    header.label.text = formatter.standaloneMonthSymbols[dataSource[indexPath.section].month - 1]
     header.label.text?.firstCharacterUppercased()
     return header
   }

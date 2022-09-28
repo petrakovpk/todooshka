@@ -93,10 +93,11 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     contentView.addSubview(textView)
     
     // contentView
-    contentView.borderWidth = 0.0
+    contentView.borderWidth = 1.0
+    contentView.borderColor = Theme.Cells.KindOfTask.Border
     
     // shapeLayer
-    shapeLayer.fillColor = isEnabled ? Theme.Bird.TypeSmallCollectionViewCell.unselectedBackground?.cgColor : UIColor.systemGray.withAlphaComponent(0.3).cgColor
+    shapeLayer.fillColor = isEnabled ? Theme.Cells.KindOfTask.UnselectedBackground?.cgColor : UIColor.systemGray.withAlphaComponent(0.3).cgColor
     
     // imageView
     imageView.anchorCenterXToSuperview()

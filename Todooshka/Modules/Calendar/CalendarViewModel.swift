@@ -87,9 +87,8 @@ class CalendarViewModel: Stepper {
     // completed tasks
     let completedTasks = services.dataService
       .tasks
-      .map { $0.filter {
-        $0.status == .Completed && $0.closed != nil
-      }}
+      .map { $0.filter { $0.status == .Completed }}
+      .map { $0.filter { $0.closed != nil }}
       .asDriver(onErrorJustReturn: [])
     
     // dataSource
@@ -161,21 +160,20 @@ class CalendarViewModel: Stepper {
     
     // buttons
     let featherBackgroundViewClickHandler = input.featherBackgroundViewClickTrigger
-      .do { _ in self.steps.accept(AppStep.FeatherIsRequired) }
+      .map { self.steps.accept(AppStep.FeatherIsRequired) }
     
     let diamondBackgroundViewClickHandler = input.diamondBackgroundViewClickTrigger
-      .do { _ in self.steps.accept(AppStep.DiamondIsRequired) }
+      .map { self.steps.accept(AppStep.DiamondIsRequired) }
     
     let settingsButtonClicked = input.settingsButtonClickTrigger
-      .do { _ in self.steps.accept(AppStep.SettingsIsRequired) }
+      .map { self.steps.accept(AppStep.SettingsIsRequired) }
     
     let shopButtonClicked = input.shopButtonClickTrigger
-      .do { _ in self.steps.accept(AppStep.ShopIsRequired) }
+      .map { self.steps.accept(AppStep.ShopIsRequired) }
     
     let willDisplayCell = input.willDisplayCell
-      .map { event -> Int in
-        event.at.section
-      }.distinctUntilChanged()
+      .map { $0.at.section }
+      .distinctUntilChanged()
       .withLatestFrom(dataSource) { section, dataSource -> Void in
         if section == dataSource.count - 1 {
           self.appendFutureData()

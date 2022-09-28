@@ -72,7 +72,7 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
     
     // descriptionTextView
     descriptionTextView.backgroundColor = .clear
-    descriptionTextView.textColor = Theme.Onboarding.text
+    descriptionTextView.textColor = Theme.Onboarding.Text
     descriptionTextView.anchorCenterXToSuperview()
     descriptionTextView.anchor(left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor, leftConstant: 32, bottomConstant: 100.adjusted, rightConstant: 32, heightConstant: 90.adjusted)
    

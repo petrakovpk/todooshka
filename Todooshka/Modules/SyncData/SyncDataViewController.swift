@@ -19,7 +19,7 @@ class SyncDataViewController: TDViewController {
   private let disposeBag = DisposeBag()
   
   // MARK: - UI Elemenets
-  private let deviceLabel: UILabel = {
+  private let taskDeviceLabel: UILabel = {
     let label = UILabel()
     label.text = "Задач на устройстве"
     label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
@@ -27,7 +27,7 @@ class SyncDataViewController: TDViewController {
     return label
   }()
   
-  private let deviceCountLabel: UILabel = {
+  private let taskDeviceCountLabel: UILabel = {
     let label = UILabel()
     label.text = ""
     label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
@@ -35,7 +35,7 @@ class SyncDataViewController: TDViewController {
     return label
   }()
   
-  private let firebaseLabel: UILabel = {
+  private let taskFirebaseLabel: UILabel = {
     let label = UILabel()
     label.text = "Задач в облаке"
     label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
@@ -43,7 +43,7 @@ class SyncDataViewController: TDViewController {
     return label
   }()
   
-  private let firebaseCountLabel: UILabel = {
+  private let taskFirebaseCountLabel: UILabel = {
     let label = UILabel()
     label.text = ""
     label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
@@ -51,10 +51,49 @@ class SyncDataViewController: TDViewController {
     return label
   }()
   
-  private let syncButton: UIButton = {
+  private let taskSyncButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 13
-    button.setTitle("Загрузить данные из облака", for: .normal)
+    button.setTitle("Загрузить задачи из облака", for: .normal)
+    return button
+  }()
+  
+  private let kindsOfTaskDeviceLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Задач на устройстве"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    label.textAlignment = .center
+    return label
+  }()
+  
+  private let kindsOfTaskDeviceCountLabel: UILabel = {
+    let label = UILabel()
+    label.text = ""
+    label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+    label.textAlignment = .center
+    return label
+  }()
+  
+  private let kindsOfTaskFirebaseLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Задач в облаке"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    label.textAlignment = .center
+    return label
+  }()
+  
+  private let kindsOfTaskFirebaseCountLabel: UILabel = {
+    let label = UILabel()
+    label.text = ""
+    label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+    label.textAlignment = .center
+    return label
+  }()
+  
+  private let kindsOfTaskSyncButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 13
+    button.setTitle("Загрузить типа задач из облака", for: .normal)
     return button
   }()
   
@@ -69,11 +108,17 @@ class SyncDataViewController: TDViewController {
   func configureUI() {
 
     // Init
-    let stackView1 = UIStackView(arrangedSubviews: [deviceLabel, firebaseLabel], axis: .horizontal)
+    let stackView1 = UIStackView(arrangedSubviews: [taskDeviceLabel, taskFirebaseLabel], axis: .horizontal)
     stackView1.distribution = .fillEqually
     
-    let stackView2 = UIStackView(arrangedSubviews: [deviceCountLabel, firebaseCountLabel], axis: .horizontal)
+    let stackView2 = UIStackView(arrangedSubviews: [taskDeviceCountLabel, taskFirebaseCountLabel], axis: .horizontal)
     stackView2.distribution = .fillEqually
+  
+    let stackView3 = UIStackView(arrangedSubviews: [kindsOfTaskDeviceLabel, kindsOfTaskFirebaseLabel], axis: .horizontal)
+    stackView3.distribution = .fillEqually
+    
+    let stackView4 = UIStackView(arrangedSubviews: [kindsOfTaskDeviceCountLabel, kindsOfTaskFirebaseCountLabel], axis: .horizontal)
+    stackView4.distribution = .fillEqually
     
     //  header
     titleLabel.text = "Синхронизируем данные"
@@ -82,7 +127,10 @@ class SyncDataViewController: TDViewController {
     view.addSubviews([
       stackView1,
       stackView2,
-      syncButton
+      taskSyncButton,
+      stackView3,
+      stackView4,
+      kindsOfTaskSyncButton
     ])
     
     // stackView1
@@ -92,7 +140,16 @@ class SyncDataViewController: TDViewController {
     stackView2.anchor(top: stackView1.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 30)
     
     // syncButton
-    syncButton.anchor(top: stackView2.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    taskSyncButton.anchor(top: stackView2.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    
+    // stackView1
+    stackView3.anchor(top: taskSyncButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 30)
+
+    // stackView2
+    stackView4.anchor(top: stackView3.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 30)
+    
+    // syncButton
+    kindsOfTaskSyncButton.anchor(top: stackView4.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
 
   }
   
@@ -102,26 +159,40 @@ class SyncDataViewController: TDViewController {
     
     let input = SyncDataViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      syncButtonClickTrigger: syncButton.rx.tap.asDriver()
+      kindsOfTaskSyncButtonClickTrigger: kindsOfTaskSyncButton.rx.tap.asDriver(),
+      taskSyncButtonClickTrigger: taskSyncButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.deviceCountLabel.drive(deviceCountLabel.rx.text),
-      outputs.firebaseCountLabel.drive(firebaseCountLabel.rx.text),
+      outputs.kindsOfTaskDeviceCountLabel.drive(kindsOfTaskDeviceCountLabel.rx.text),
+      outputs.kindsOfTaskFirebaseCountLabel.drive(kindsOfTaskFirebaseCountLabel.rx.text),
+      outputs.kindsOfTaskSync.drive(),
+      outputs.kindsOfTaskSyncButtonIsEnabled.drive(kindsOfTaskSyncButtonIsEnabledBinder),
       outputs.navigateBack.drive(),
-      outputs.sync.drive(),
-      outputs.syncButtonIsEnabled.drive(syncButtonIsEnabledBinder)
+      outputs.taskDeviceCountLabel.drive(taskDeviceCountLabel.rx.text),
+      outputs.taskFirebaseCountLabel.drive(taskFirebaseCountLabel.rx.text),
+      outputs.taskSync.drive(),
+      outputs.taskSyncButtonIsEnabled.drive(taskSyncButtonIsEnabledBinder)
+
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
   
-  var syncButtonIsEnabledBinder: Binder<Bool> {
+  var kindsOfTaskSyncButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
-      vc.syncButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
-      vc.syncButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
-      vc.syncButton.isEnabled = isEnabled
+      vc.kindsOfTaskSyncButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
+      vc.kindsOfTaskSyncButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.kindsOfTaskSyncButton.isEnabled = isEnabled
+    })
+  }
+  
+  var taskSyncButtonIsEnabledBinder: Binder<Bool> {
+    return Binder(self, binding: { (vc, isEnabled) in
+      vc.taskSyncButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
+      vc.taskSyncButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.taskSyncButton.isEnabled = isEnabled
     })
   }
 }

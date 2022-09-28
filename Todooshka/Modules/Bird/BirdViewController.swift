@@ -121,9 +121,6 @@ class BirdViewController: TDViewController {
   
   func configureBody() {
     
-    // settings
-    titleLabel.text = "Добро пожаловать в магазин!"
-    
     // collectionView
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     

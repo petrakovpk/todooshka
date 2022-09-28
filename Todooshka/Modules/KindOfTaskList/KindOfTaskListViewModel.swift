@@ -50,7 +50,7 @@ class KindOfTaskListViewModel: Stepper {
     
     let kindsOfTask = services.dataService
       .kindsOfTask
-      .map({ $0.filter{ $0.status == .active } })
+      .map({ $0.filter{ $0.status == .Active } })
 
     // dataSource
     let dataSource = kindsOfTask
@@ -102,7 +102,7 @@ class KindOfTaskListViewModel: Stepper {
       .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
       .map{ kindOfTask -> KindOfTask in
         var kindOfTask = kindOfTask
-        kindOfTask.status = .deleted
+        kindOfTask.status = .Deleted
         return kindOfTask
       }
       .asObservable()

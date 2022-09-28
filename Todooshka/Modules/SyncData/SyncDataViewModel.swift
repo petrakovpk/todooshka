@@ -18,15 +18,20 @@ class SyncDataViewModel: Stepper {
 
   struct Input {
     let backButtonClickTrigger: Driver<Void>
-    let syncButtonClickTrigger: Driver<Void>
+    let kindsOfTaskSyncButtonClickTrigger: Driver<Void>
+    let taskSyncButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
-    let deviceCountLabel: Driver<String>
-    let firebaseCountLabel: Driver<String>
+    let kindsOfTaskDeviceCountLabel: Driver<String>
+    let kindsOfTaskFirebaseCountLabel: Driver<String>
+    let kindsOfTaskSync: Driver<Result<Void,Error>>
+    let kindsOfTaskSyncButtonIsEnabled: Driver<Bool>
     let navigateBack: Driver<Void>
-    let sync: Driver<Result<Void,Error>>
-    let syncButtonIsEnabled: Driver<Bool>
+    let taskDeviceCountLabel: Driver<String>
+    let taskFirebaseCountLabel: Driver<String>
+    let taskSync: Driver<Result<Void,Error>>
+    let taskSyncButtonIsEnabled: Driver<Bool>
   }
   
   //MARK: - Init
@@ -36,42 +41,80 @@ class SyncDataViewModel: Stepper {
   
   func transform(input: Input) -> Output {
 
-    let deviceCount = services.dataService
+    let taskDeviceCount = services.dataService
       .tasks
       .map{ $0.filter{ $0.status != .Archive } }
       .map{ $0.count }
+      .startWith(0)
     
-    let deviceCountLabel = deviceCount.map{ $0.string }
+    let taskDeviceCountLabel = taskDeviceCount.map{ $0.string }
     
     let firebaseTasks = services.dataService.firebaseTasks
       .map{ $0.filter{ $0.status != .Archive } }
     
-    let firebaseCount = firebaseTasks
+    let taskFirebaseCount = firebaseTasks
       .map{ $0.count }
+      .startWith(0)
     
-    let firebaseCountLabel = firebaseCount
+    let taskFirebaseCountLabel = taskFirebaseCount
       .map{ $0.string }
     
-    let syncButtonIsEnabled = Driver.combineLatest(deviceCount, firebaseCount) { $0 != $1 }
+    let taskSyncButtonIsEnabled = Driver.combineLatest(taskDeviceCount, taskFirebaseCount) { $0 != $1 }
     
-    let sync = Driver
-      .combineLatest(input.syncButtonClickTrigger, firebaseTasks ) { $1 }
+    let taskSync = Driver
+      .combineLatest(input.taskSyncButtonClickTrigger, firebaseTasks ) { $1 }
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
+      .filter{ $0.status != .Archive }
       .flatMapLatest({ task -> Observable<Result<Void, Error>> in
         self.appDelegate.persistentContainer.viewContext.rx.update(task)
       })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+    
+    let kindsOfTaskDeviceCount = services.dataService
+      .kindsOfTask
+      .map{ $0.filter{ $0.status != .Archive } }
+      .map{ $0.count }
+      .startWith(0)
+    
+    let firebaseKindsOfTask = services.dataService.firebaseKindsOfTask
+      .map{ $0.filter{ $0.status != .Archive } }
+    
+    let kindsOfTaskDeviceCountLabel = kindsOfTaskDeviceCount
+      .map{ $0.string }
+
+    let kindsOfTaskFirebaseCount = firebaseKindsOfTask
+      .map{ $0.count }
+      .startWith(0)
+    
+    let kindsOfTaskFirebaseCountLabel = kindsOfTaskFirebaseCount
+      .map{ $0.string }
+    
+    let kindsOfTaskSyncButtonIsEnabled = Driver.combineLatest(kindsOfTaskDeviceCount, kindsOfTaskFirebaseCount) { $0 != $1 }
+    
+    let kindsOfTaskSync = Driver
+      .combineLatest(input.kindsOfTaskSyncButtonClickTrigger, firebaseKindsOfTask ) { $1 }
+      .asObservable()
+      .flatMapLatest({ Observable.from($0) })
+      .filter{ $0.status != .Archive }
+      .flatMapLatest({ kindofTask -> Observable<Result<Void, Error>> in
+        self.appDelegate.persistentContainer.viewContext.rx.update(kindofTask)
+      })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
   
     let navigateBack = input.backButtonClickTrigger
-      .map { _ in self.steps.accept(AppStep.NavigateBack) }
+      .map { self.steps.accept(AppStep.NavigateBack) }
     
     return Output(
-      deviceCountLabel: deviceCountLabel,
-      firebaseCountLabel: firebaseCountLabel,
+      kindsOfTaskDeviceCountLabel: kindsOfTaskDeviceCountLabel,
+      kindsOfTaskFirebaseCountLabel: kindsOfTaskFirebaseCountLabel,
+      kindsOfTaskSync: kindsOfTaskSync,
+      kindsOfTaskSyncButtonIsEnabled: kindsOfTaskSyncButtonIsEnabled,
       navigateBack: navigateBack,
-      sync: sync,
-      syncButtonIsEnabled: syncButtonIsEnabled
+      taskDeviceCountLabel: taskDeviceCountLabel,
+      taskFirebaseCountLabel: taskFirebaseCountLabel,
+      taskSync: taskSync,
+      taskSyncButtonIsEnabled: taskSyncButtonIsEnabled
     )
   }
   

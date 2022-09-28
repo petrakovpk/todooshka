@@ -188,8 +188,7 @@ class LoginViewModel: Stepper {
       .withLatestFrom(signUpWithEmailAttr)
       .asObservable()
       .flatMapLatest { attr -> Observable<[String]> in
-        print("1234", attr)
-        return Auth.auth().rx.fetchProviders(forEmail: attr.email)
+        Auth.auth().rx.fetchProviders(forEmail: attr.email)
       }
       .asDriver(onErrorJustReturn: [])
       .map { providers -> LoginViewControllerStyle  in

@@ -5,7 +5,7 @@
 //  Created by Pavel Petakov on 12.09.2022.
 //
 
-enum UserProfileCellType {
+enum UserProfileCellType: String {
   case Birthday
   case Email
   case Gender
