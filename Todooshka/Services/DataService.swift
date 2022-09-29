@@ -66,7 +66,6 @@ class DataService {
     
     compactUser = user
       .compactMap{ $0 }
-      .debug()
     
     // MARK: - Const
     colors = Driver<[UIColor]>.of([
@@ -151,22 +150,18 @@ class DataService {
     // MARK: - Clear
     allTasks
       .map { $0.filter { $0.status == .Archive } }
-      .debug()
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .flatMapLatest({ context.rx.delete($0) })
-      .debug()
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
     
     allKindsOfTask
       .map { $0.filter { $0.status == .Archive } }
-      .debug()
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .flatMapLatest({ context.rx.delete($0) })
-      .debug()
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
@@ -258,7 +253,6 @@ class DataService {
         crackActions + noCrackActions + hideEggsActions
       }.map { $0.prefix(7) }
       .map{ Array($0) }
-      .debug()
       .distinctUntilChanged()
     
     // MARK: - Branch DataSource
@@ -277,20 +271,19 @@ class DataService {
     let sittingAction = completedTasksForSelectedDate
       .map { $0.prefix(7) } // берем первые 7 выполненных задач
       .map { Array($0) }
-      .debug()
       .withLatestFrom(kindsOfTask) { tasks, kindsOfTask -> [Style] in // получаем для них стили
         tasks.compactMap { task -> Style? in
           kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID })?.style
         }
-      }.debug().withLatestFrom(birds) { style, birds -> [Bird] in // получаем птиц
+      }.withLatestFrom(birds) { style, birds -> [Bird] in // получаем птиц
         style.enumerated().compactMap { index, style -> Bird? in
           birds.first(where: { $0.style == style && $0.clade == Clade(level: index + 1) })
         }
-      }.debug().map { birds -> [Style] in // если куплена, то оставляем, иначе симл
+      }.map { birds -> [Style] in // если куплена, то оставляем, иначе симл
         birds.map { bird -> Style in
           bird.isBought ? bird.style : .Simple
         }
-      }.debug().withLatestFrom(selectedDate) { styles, closed -> [BirdActionType] in
+      }.withLatestFrom(selectedDate) { styles, closed -> [BirdActionType] in
         styles.map{ .Sitting(style: $0, closed: closed)
         }
       }
@@ -310,7 +303,6 @@ class DataService {
         sittingAction + hiddenBirdsActions
       }.map { $0.prefix(7) }
       .map{ Array($0) }
-      .debug()
       .distinctUntilChanged()
     
     // MARK: - Initial loading
@@ -509,7 +501,6 @@ class DataService {
           }
       }
       .asObservable()
-      .debug()
       .flatMapLatest({ Observable.from($0) })
       .flatMapLatest({ task -> Observable<Result<Void, Error>> in
         context.rx.update(task)
@@ -548,7 +539,6 @@ class DataService {
           }
       }
       .asObservable()
-      .debug()
       .flatMapLatest({ Observable.from($0) })
       .flatMapLatest({ kindOfTask -> Observable<Result<Void, Error>> in
         context.rx.update(kindOfTask)
@@ -566,7 +556,6 @@ class DataService {
           }
       }
       .asObservable()
-      .debug()
       .flatMapLatest({ Observable.from($0) })
       .flatMapLatest({ kindOfTask -> Observable<Result<Void, Error>> in
         context.rx.delete(kindOfTask)
@@ -648,7 +637,6 @@ class DataService {
           || firebaseBirds.contains{ $0.UID == bird.UID && $0.lastModified < bird.lastModified }
         }
       }
-      .debug()
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .withLatestFrom(compactUser) { bird, user in
