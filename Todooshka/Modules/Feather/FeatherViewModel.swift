@@ -34,15 +34,7 @@ class FeatherViewModel: Stepper {
   func transform(input: Input) -> Output {
     
     // tasks
-    let tasks = services.dataService
-      .tasks
-      .map {
-        $0.filter {
-          $0.status == .Completed ? true : false
-        }
-        .sorted(by: { $0.closed! > $1.closed! })
-      }
-      .asDriver(onErrorJustReturn: [])
+    let tasks = services.dataService.goldTasks
     
     let kindsOfTask = services.dataService.kindsOfTask.asDriver()
     
@@ -61,10 +53,10 @@ class FeatherViewModel: Stepper {
     let dataSource = taskListSectionItems
       .map {
         Dictionary
-          .init(grouping: $0, by: { $0.task.closed?.startOfDay ?? Date().startOfDay })
+          .init(grouping: $0, by: { $0.task.closed!.startOfDay })
           .sorted(by: { $0.key > $1.key })
           .map { key, value in
-            TaskListSection(header: key.string(withFormat: "dd MMM yyyy") , mode: .WithFeather, items: value)
+            TaskListSection(header: self.services.preferencesService.formatter.string(from: key), mode: .WithFeather, items: value)
           }
       }
     

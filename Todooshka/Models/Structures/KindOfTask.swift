@@ -30,15 +30,17 @@ struct KindOfTask: IdentifiableType, Equatable  {
   var identity: String { UID }
   
   // MARK: - Properties
-  var UID: String
-  var color: UIColor
-  var icon: Icon
-  var index: Int
-  var isStyleLocked: Bool = false
-  var status: KindOfTaskStatus = .Active
-  var style: Style = .Simple
-  var text: String
-  var userUID: String? = Auth.auth().currentUser?.uid
+  var UID: String { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var color: UIColor { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var icon: Icon { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var index: Int { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var isStyleLocked: Bool = false { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var status: KindOfTaskStatus = .Active { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var style: Style = .Simple { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var text: String { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date().timeIntervalSince1970 }}
+  
+  var lastModified: Double = Date().timeIntervalSince1970
 
   // MARK: - Init
   init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int) {
@@ -70,6 +72,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
     && lhs.style == rhs.style
     && lhs.status == rhs.status
     && lhs.userUID == rhs.userUID
+    && lhs.lastModified == rhs.lastModified
   }
 }
 
@@ -84,7 +87,8 @@ extension KindOfTask {
       "iconRawValue": icon.rawValue,
       "index": index,
       "statusRawValue": status.rawValue,
-      "text": text
+      "text": text,
+      "lastModified": lastModified
     ]
   }
   
@@ -99,7 +103,8 @@ extension KindOfTask {
           let index = dict.value(forKey: "index") as? Int,
           let statusRawValue = dict.value(forKey: "statusRawValue") as? String,
           let status = KindOfTaskStatus(rawValue: statusRawValue),
-          let text = dict.value(forKey: "text") as? String
+          let text = dict.value(forKey: "text") as? String,
+          let lastModified = dict.value(forKey: "lastModified") as? Double
     else { return nil }
     
     // init
@@ -109,6 +114,7 @@ extension KindOfTask {
     self.index = index
     self.status = status
     self.text = text
+    self.lastModified = lastModified
     self.userUID = Auth.auth().currentUser?.uid
   }
 }
@@ -127,6 +133,7 @@ extension KindOfTask: Persistable {
     isStyleLocked = entity.value(forKey: "isStyleLocked") as! Bool
     text = entity.value(forKey: "text") as! String
     userUID = entity.value(forKey: "userUID") as? String
+    lastModified = entity.value(forKey: "lastModified") as! Double
     
     // color
     if let colorHexString = entity.value(forKey: "colorHexString") as? String, let color = UIColor(hexString: colorHexString) {
@@ -167,6 +174,7 @@ extension KindOfTask: Persistable {
     entity.setValue(style.rawValue, forKey: "styleRawValue")
     entity.setValue(text, forKey: "text")
     entity.setValue(userUID, forKey: "userUID")
+    entity.setValue(lastModified, forKey: "lastModified")
     
     do {
       try entity.managedObjectContext?.save()

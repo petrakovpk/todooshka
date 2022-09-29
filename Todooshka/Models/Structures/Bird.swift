@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import Firebase
 import Differentiator
 
 struct Bird: IdentifiableType, Equatable {
@@ -14,7 +15,7 @@ struct Bird: IdentifiableType, Equatable {
   var identity: String { UID }
   
   // MARK: - Properties
-  let clade: Clade
+  let clade: Clade 
   let currency: Currency
   let description: String
   let name: String
@@ -22,7 +23,9 @@ struct Bird: IdentifiableType, Equatable {
   let style: Style
   let UID: String
   
-  var isBought: Bool
+  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date().timeIntervalSince1970} }
+  var isBought: Bool = false { didSet { lastModified = Date().timeIntervalSince1970} }
+  var lastModified: Double = Date().timeIntervalSince1970
   
   var eggImage: UIImage? {
     UIImage(named: "яйцо_" + clade.rawValue + "_" + "без_трещин")
@@ -31,6 +34,8 @@ struct Bird: IdentifiableType, Equatable {
   // MARK: - Equatable
   static func == (lhs: Bird, rhs: Bird) -> Bool {
     lhs.identity == rhs.identity
+    && lhs.isBought == rhs.isBought
+    && lhs.userUID == rhs.userUID
   }
   
   // MARK: - image
@@ -120,16 +125,29 @@ extension Bird {
   }
 }
 
+
+// MARK: - Firebase
+extension Bird {
+  typealias D = DataSnapshot
+  
+  var data: [AnyHashable: Any] {
+    [
+      "isBought": isBought,
+      "lastModified": lastModified
+    ]
+  }
+}
+
 // MARK: - Persistable
 extension Bird: Persistable {
   typealias T = NSManagedObject
   
   static var entityName: String {
-    return "Bird"
+    "Bird"
   }
   
   static var primaryAttributeName: String {
-    return "uid"
+    "uid"
   }
   
   init(entity: T) {
@@ -141,6 +159,8 @@ extension Bird: Persistable {
     price = entity.value(forKey: "price") as! Int
     style = Style(rawValue: entity.value(forKey: "styleRawValue") as! String) ?? Style.Simple
     isBought = entity.value(forKey: "isBought") as! Bool
+    userUID = entity.value(forKey: "userUID") as? String
+    lastModified = entity.value(forKey: "lastModified") as! Double
   }
   
   func update(_ entity: T) {
@@ -152,7 +172,9 @@ extension Bird: Persistable {
     entity.setValue(price, forKey: "price")
     entity.setValue(style.rawValue, forKey: "styleRawValue")
     entity.setValue(isBought, forKey: "isBought")
-    
+    entity.setValue(userUID, forKey: "userUID")
+    entity.setValue(lastModified, forKey: "lastModified")
+
     do {
       try entity.managedObjectContext?.save()
     } catch let error {

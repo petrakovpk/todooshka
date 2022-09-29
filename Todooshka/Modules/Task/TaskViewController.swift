@@ -175,7 +175,7 @@ class TaskViewController: TDViewController {
     completeButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor,  leftConstant: 16, bottomConstant: 16, rightConstant: 16, heightConstant: 48.superAdjusted)
     
     // hideKeyboardWhenTappedAround
-    hideKeyboardWhenTappedAround()
+   // hideKeyboardWhenTappedAround()
   }
   
   private func configureAlert() {
@@ -250,6 +250,7 @@ class TaskViewController: TDViewController {
       outputs.showAlertTrigger.drive(showAlertBinder),
       outputs.hideAlertTrigger.drive(hideAlertBinder),
       outputs.taskIsNewTrigger.drive(taskIsNewBinder),
+      outputs.taskIsNotNewTrigger.drive(taskIsNotNewBinder),
       outputs.textTextField.drive(textTextField.rx.text),
     ]
       .forEach({ $0.disposed(by: disposeBag) })
@@ -301,9 +302,13 @@ class TaskViewController: TDViewController {
     return Binder(self, binding: { (vc, _) in
         vc.completeButton.isHidden = true
         vc.textTextField.becomeFirstResponder()
-//        vc.completeButton.isHidden = false
-//        vc.hideKeyboardWhenTappedAround()
-      
+    })
+  }
+  
+  var taskIsNotNewBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+        vc.completeButton.isHidden = false
+        vc.hideKeyboardWhenTappedAround()
     })
   }
   

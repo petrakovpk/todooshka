@@ -73,9 +73,7 @@ class NestScene: SKScene {
       
       guard let action = actions[safe: index],
             action != node.action else { continue }
-      
-      print("1234", index, node.action, action)
-      
+            
       switch (node.action, action) {
       case (.Init, .NoCracks):
         node.show(state: .NoCracks, withAnimation: false , completion: nil)

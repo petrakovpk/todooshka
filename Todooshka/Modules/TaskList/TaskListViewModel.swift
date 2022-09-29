@@ -57,7 +57,6 @@ class TaskListViewModel: Stepper {
     let navigateBack: Driver<Void>
     let openTask: Driver<Void>
     let removeAll: Driver<Result<Void, Error>>
-  //  let removeAllTasksFromFirebase: Driver<Result<DatabaseReference, Error>>
     let removeTask: Driver<Result<Void, Error>>
     let reloadData: Driver<[IndexPath]>
     let setAlertText: Driver<String>
@@ -220,19 +219,6 @@ class TaskListViewModel: Stepper {
       }
       .flatMapLatest({ self.managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      //.asDriver(onErrorJustReturn: [])
-      
-//    let removeAllFromCoreData = removeAll
-//      .asObservable()
-//      .flatMapLatest({ Observable.from($0) })
-//      .map { task -> Task in
-//        var task = task
-//        task.status = .Archive
-//        return task
-//      }
-//      .flatMapLatest({ self.managedContext.rx.update($0) })
-//      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-
 
     let addTask = input.addTaskButtonClickTrigger
       .map { _ in self.steps.accept(AppStep.CreateTaskIsRequired(status: .Idea, createdDate: Date())) }

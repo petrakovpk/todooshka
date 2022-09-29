@@ -150,8 +150,8 @@ class CalendarViewModel: Stepper {
       }
    
     // score
-    let featherScoreLabel = services.dataService.feathers
-      .map{ $0.count.string }
+    let featherScoreLabel = services.dataService.feathersCount
+      .map{ $0.string }
       .asDriver(onErrorJustReturn: "")
     
     let diamondScoreLabel = services.dataService.diamonds

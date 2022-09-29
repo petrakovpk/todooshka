@@ -69,6 +69,7 @@ class TaskViewModel: Stepper {
     let setDescriptionPlaceholder: Driver<Void>
     let showAlertTrigger: Driver<Void>
     let taskIsNewTrigger: Driver<Void>
+    let taskIsNotNewTrigger: Driver<Void>
     let textTextField: Driver<String>
   }
   
@@ -106,6 +107,14 @@ class TaskViewModel: Stepper {
     let taskIsNewTrigger = tasks
       .map{ $0.first(where: { $0.UID == self.taskUID }) }
       .filter{ $0 == nil }
+      .map{ _ in () }
+    
+    let taskIsNotNewTrigger = tasks
+      .asObservable()
+      .take(1)
+      .asDriver(onErrorJustReturn: [])
+      .map{ $0.first(where: { $0.UID == self.taskUID }) }
+      .filter{ $0 != nil }
       .map{ _ in () }
     
     // kindsOfTask
@@ -237,6 +246,7 @@ class TaskViewModel: Stepper {
       setDescriptionPlaceholder: setDescriptionPlaceholder,
       showAlertTrigger: showAlertTrigger,
       taskIsNewTrigger: taskIsNewTrigger,
+      taskIsNotNewTrigger: taskIsNotNewTrigger,
       textTextField: text
     )
   }

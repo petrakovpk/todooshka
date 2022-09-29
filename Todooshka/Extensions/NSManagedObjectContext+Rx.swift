@@ -110,6 +110,7 @@ public extension Reactive where Base: NSManagedObjectContext {
       do {
         if let entity = try get(persistable) {
           self.base.delete(entity)
+          try self.base.save()
           observer.onNext(.success(()))
           observer.onCompleted()
         }

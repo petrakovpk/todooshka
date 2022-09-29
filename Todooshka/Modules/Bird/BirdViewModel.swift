@@ -150,17 +150,16 @@ class BirdViewModel: Stepper {
       .filter { $0.isBought }
       .map{ _ in self.steps.accept(AppStep.KindOfTaskWithBird(birdUID: self.birdUID)) }
     
-    let feathers = services.dataService.feathers
-      .asDriver(onErrorJustReturn: [])
+    let feathersCount = services.dataService.feathersCount
     
     let diamonds = services.dataService.diamonds
       .asDriver(onErrorJustReturn: [])
+
+   let alertBuyButtonIsEnabled = bird
+      .withLatestFrom(feathersCount) { $1 >= $0.price ? true : false }
     
-    let possibilities = bird.withLatestFrom(feathers) { $1.count - $0.price }
-    
-    let alertBuyButtonIsEnabled = possibilities.map{ $0 >= 0 ? true : false }
-    
-    let alertLabelText = possibilities.map{ $0 >= 0 ? "Можете купить!" : "Не хватает \(abs($0)) перышек" }
+    let alertLabelText = bird
+      .withLatestFrom(feathersCount) { $1 >= $0.price ? "Можете купить!" : "Не хватает \( $1 - $0.price ) перышек" }
     
     let buy = input.alertBuyButtonClick
       .withLatestFrom(bird){ _, bird -> Bird in

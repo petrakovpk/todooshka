@@ -29,8 +29,11 @@ class DataService {
   let branchDataSource: Driver<[BirdActionType]>
   let colors: Driver<[UIColor]>
   let diamonds: Driver<[Diamond]>
+  let goldTasks: Driver<[Task]>
   let icons: Driver<[Icon]>
-  let feathers: Driver<[Feather]>
+ // let feathers: Driver<[Feather]>
+  let firebaseBirds: Driver<[BirdFirebase]>
+  let feathersCount: Driver<Int>
   let firebaseTasks: Driver<[Task]>
   let firebaseKindsOfTask: Driver<[KindOfTask]>
   let kindsOfTask: Driver<[KindOfTask]>
@@ -63,6 +66,7 @@ class DataService {
     
     compactUser = user
       .compactMap{ $0 }
+      .debug()
     
     // MARK: - Const
     colors = Driver<[UIColor]>.of([
@@ -113,11 +117,6 @@ class DataService {
       .rx
       .entities(Diamond.self)
       .asDriver(onErrorJustReturn: [])
-    
-    feathers = context
-      .rx
-      .entities(Feather.self)
-      .asDriver(onErrorJustReturn: [])
 
     kindsOfTask = Driver.combineLatest(user, allKindsOfTask) { user, kindsOfTask -> [KindOfTask] in
       kindsOfTask.filter{ $0.userUID == user?.uid }
@@ -127,65 +126,67 @@ class DataService {
       tasks.filter{ $0.userUID == user?.uid }
     }
     
+    // получаем количество закрытых задач (максимум 7 в день) и вычитаем общую стоимость купленных птиц
+    goldTasks = tasks
+      .map { $0.filter{ $0.status == .Completed } }     // отбираем только звкрытые задачи
+      .map { $0.filter{ $0.closed != nil } }
+      .map { $0.sorted{ $0.closed! < $1.closed! } }     // сортируем их по дате закрытия
+      .map { Dictionary(grouping: $0 , by: { $0.closed!.startOfDay } ) } // превращаем в дикт по дате
+      .map { $0.values.flatMap{ $0.prefix(7) } } // берем первые 7 задач
+      .asDriver()
+    
+    feathersCount = Driver
+      .combineLatest(birds, goldTasks) { birds, goldTasks -> Int in
+        goldTasks.count - birds.filter{ $0.isBought }.map{ $0.price }.sum()
+      }
+    
+    //feathers.drive().disposed(by: disposeBag)
+    diamonds.drive().disposed(by: disposeBag)
     birds.drive().disposed(by: disposeBag)
     kindsOfTask.drive().disposed(by: disposeBag)
     tasks.drive().disposed(by: disposeBag)
+    goldTasks.drive().disposed(by: disposeBag)
+    feathersCount.drive().disposed(by: disposeBag)
 
-    // add feather
-    tasks
-      .map { tasks -> [Task] in // получаем все закрытые на сегодня таски
-        tasks
-          .filter{ $0.status == .Completed }
-          .filter{ Calendar.current.isDate(Date(), inSameDayAs: $0.closed ?? Date()) }
-      }
-      .filter{ $0.count <= 7 } // за день не более 7
-      .withLatestFrom(feathers) { (tasks, feathers) -> [Task] in // получаем те, для кого не сделали перышки
-        tasks
-          .filter{ task -> Bool in
-            feathers.map{ $0.taskUID }.contains(task.UID) == false
-          }
-      }
-      .map { tasks -> [Feather] in // делаем перышки
-        tasks.map {
-          Feather(
-            UID: UUID().uuidString,
-            created: Date(),
-            taskUID: $0.UID,
-            isSpent: false)
-        }
-      }
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ context.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      .drive()
-      .disposed(by: disposeBag)
-    
-    // remove feather
-    Driver
-      .combineLatest(tasks, feathers) { (tasks, feathers) -> [Feather] in
-        feathers
-          .filter{ feather -> Bool in
-            tasks.filter{ $0.status == .Completed}.map{ $0.UID }.contains(feather.taskUID) == false
-          }
-      }
+    // MARK: - Clear
+    allTasks
+      .map { $0.filter { $0.status == .Archive } }
+      .debug()
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .flatMapLatest({ context.rx.delete($0) })
+      .debug()
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
     
-    // close bird
-    let openBirds = birds
+    allKindsOfTask
+      .map { $0.filter { $0.status == .Archive } }
+      .debug()
+      .asObservable()
+      .flatMapLatest({ Observable.from($0) })
+      .flatMapLatest({ context.rx.delete($0) })
+      .debug()
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .drive()
+      .disposed(by: disposeBag)
+    
+    // MARK: - Bird
+    let openedBirds = birds
       .map{ $0.filter{ $0.isBought } }
     
+    // закрываем самую дорогую птицу если не хватает перышек (такое бывает при удалении выполненных задач)
+    let openedBirdSum = birds
+      .map{ $0.filter{ $0.isBought } }
+      .map{ $0.map{ $0.price }.sum() }
+
     Driver
-      .combineLatest(feathers, openBirds) { feathers, birds -> Bird? in
-        if birds.map({ $0.price }).sum() > feathers.count {
-          return birds.max(by: { $0.price < $1.price })
-        } else { return nil  }
+      .combineLatest(goldTasks, openedBirdSum) { goldTasks, openedBirdSum -> Bool in
+        openedBirdSum > goldTasks.count
       }
+      .filter{ $0 }
+      .withLatestFrom(openedBirds) { $1 }
+      .compactMap{ $0.max(by: { $0.price < $1.price }) }
       .compactMap{ $0 }
       .map { bird -> Bird in
         var bird = bird
@@ -204,7 +205,7 @@ class DataService {
           .filter { $0.status == .Completed }
           .filter { Calendar.current.isDate($0.closed ?? Date(), inSameDayAs: Date()) }
           .sorted { $0.closed! < $1.closed! }
-      }.debug()
+      }
     
     let inProgressTasks = tasks
       .map { tasks -> [Task] in
@@ -217,24 +218,23 @@ class DataService {
     let crackActions = completedTasks
       .map { $0.prefix(7) } // берем первые 7 выполненных задач
       .map { Array($0) }
-      .debug()
       .withLatestFrom(kindsOfTask) { tasks, kindsOfTask -> [Style] in // получаем для них стили
         tasks.compactMap { task -> Style? in
           kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID })?.style
         }
-      }.debug()
+      }
       .withLatestFrom(birds) { style, birds -> [Bird] in // получаем птиц
         style.enumerated().compactMap { index, style -> Bird? in
           birds.first(where: { $0.style == style && $0.clade == Clade(level: index + 1) })
         }
-      }.debug()
+      }
       .map { birds -> [Style] in // если куплена, то оставляем, иначе симл
         birds.map{ bird -> Style in
           bird.isBought ? bird.style : .Simple }
-      }.debug()
+      }
       .map { styles -> [EggActionType] in // получаем действия
         styles.map{ .Crack(style: $0) }
-      }.debug().startWith([])
+      }.startWith([])
     
     let noCrackActions = inProgressTasks
       .map { $0.prefix(7) } // берем первые 7 выполненных задач
@@ -284,10 +284,12 @@ class DataService {
           birds.first(where: { $0.style == style && $0.clade == Clade(level: index + 1) })
         }
       }.map { birds -> [Style] in // если куплена, то оставляем, иначе симл
-        birds.map{ bird -> Style in
-          bird.isBought ? bird.style : .Simple }
+        birds.map { bird -> Style in
+          bird.isBought ? bird.style : .Simple
+        }
       }.withLatestFrom(selectedDate) { styles, closed -> [BirdActionType] in
-        styles.map{ .Sitting(style: $0, closed: closed) }
+        styles.map{ .Sitting(style: $0, closed: closed)
+        }
       }
 
     let hiddenBirdsActions = Driver<[BirdActionType]>.of([
@@ -406,7 +408,7 @@ class DataService {
       .disposed(by: disposeBag)
     
     // MARK: - Firebase
-    // присваиваем
+    // присваиваем userUID при первом входе в аккаунт всем пустым задачам
     let tasksWithoutUser = allTasks
       .map { $0.filter { $0.userUID == nil } }
     
@@ -419,14 +421,15 @@ class DataService {
           var task = task
           task.userUID = user.uid
           return task
-        }
-      }.asObservable()
+        }.filter{ $0.status != .Archive }
+      }.debug()
+      .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .flatMapLatest({ context.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
-    
+
     compactUser
       .withLatestFrom(kindsOfTaskWithoutUser) { user, kindsOfTask -> [KindOfTask] in
         kindsOfTask.map { kindOfTask -> KindOfTask in
@@ -441,33 +444,72 @@ class DataService {
       .drive()
       .disposed(by: disposeBag)
     
-    // скачиваем
-    firebaseTasks = user
-      .compactMap{ $0 }
+    
+    // скачиваем из облака когда пользователь заходит в аккаунт
+    firebaseTasks = compactUser
       .asObservable()
       .flatMapLatest({ user -> Observable<DataSnapshot> in
         DB_USERS_REF.child(user.uid).child("TASKS").rx.observeEvent(.value)
-      }).compactMap{ $0.children.allObjects as? [DataSnapshot] }
+      })
+      .compactMap{ $0.children.allObjects as? [DataSnapshot] }
       .map({ $0.compactMap { Task(snapshot: $0) } })
       .asDriver(onErrorJustReturn: [])
     
-    firebaseKindsOfTask = user
-      .compactMap{ $0 }
+    firebaseKindsOfTask = compactUser
       .asObservable()
       .flatMapLatest({ user -> Observable<DataSnapshot>  in
         DB_USERS_REF.child(user.uid).child("KINDSOFTASK").rx.observeEvent(.value)
-      }).compactMap{ $0.children.allObjects as? [DataSnapshot] }
+      })
+      .compactMap{ $0.children.allObjects as? [DataSnapshot] }
       .map({ $0.compactMap { KindOfTask(snapshot: $0) } })
       .asDriver(onErrorJustReturn: [])
+    
+    firebaseBirds = compactUser
+      .asObservable()
+      .flatMapLatest({ user -> Observable<DataSnapshot>  in
+        DB_USERS_REF.child(user.uid).child("BIRDS").rx.observeEvent(.value)
+      })
+      .compactMap{ $0.children.allObjects as? [DataSnapshot] }
+      .map({ $0.compactMap { BirdFirebase(snapshot: $0) } })
+      .asDriver(onErrorJustReturn: [])
 
+    firebaseBirds.drive().disposed(by: disposeBag)
     firebaseTasks.drive().disposed(by: disposeBag)
     firebaseKindsOfTask.drive().disposed(by: disposeBag)
     
-    // загружаем
-    Observable
-      .combineLatest(tasks.asObservable(), firebaseTasks.asObservable()) { tasks, firebaseTasks -> [Task] in
-        tasks.filter { task in firebaseTasks.contains{ $0 == task } == false }
+    // Скачиваем из облака
+    firebaseTasks
+      .withLatestFrom(tasks) { firebaseTasks, tasks -> [Task] in
+        firebaseTasks
+          .filter{ $0.status != .Archive }
+          .filter{ firebaseTask in
+            // или нет воообще на устройстве такого таска
+            tasks.contains{ $0.UID == firebaseTask.UID } == false
+            // или таск на устройстве более старый
+            || tasks.contains{ $0.UID == firebaseTask.UID && $0.lastModified < firebaseTask.lastModified }
+          }
       }
+      .asObservable()
+      .debug()
+      .flatMapLatest({ Observable.from($0) })
+      .flatMapLatest({ task -> Observable<Result<Void, Error>> in
+        context.rx.update(task)
+      })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .drive()
+      .disposed(by: disposeBag)
+    
+    // загружаем в облако
+    Driver
+      .combineLatest(tasks, firebaseTasks) { tasks, firebaseTasks -> [Task] in
+        tasks.filter { task in
+          // или нет воообще в файрбейзе нет такого таска
+          firebaseTasks.contains{ $0.UID == task.UID } == false
+          // или таск на файрьейзе более старый
+          || firebaseTasks.contains{ $0.UID == task.UID && $0.lastModified < task.lastModified }
+        }
+      }
+      .asObservable()
       .flatMapLatest({  Observable.from($0) })
       .withLatestFrom(compactUser) { task, user in
         DB_USERS_REF.child(user.uid).child("TASKS").child(task.UID).updateChildValues(task.data)
@@ -475,18 +517,41 @@ class DataService {
       .asDriver(onErrorJustReturn: ())
       .drive()
       .disposed(by: disposeBag)
-
-    Observable
-      .combineLatest(kindsOfTask.asObservable(), firebaseKindsOfTask.asObservable()) { kindsOfTask, firebaseKindsOfTask -> [KindOfTask] in
-        kindsOfTask.filter { kindsOfTask in firebaseKindsOfTask.contains{ $0 == kindsOfTask } == false }
+    
+    Driver
+      .combineLatest(kindsOfTask, firebaseKindsOfTask) { kindsOfTask, firebaseKindsOfTask -> [KindOfTask] in
+        kindsOfTask.filter { kindOfTask in
+          // или нет воообще в файрбейзе нет такого таска
+          firebaseKindsOfTask.contains{ $0.UID == kindOfTask.UID } == false
+          // или таск на файрьейзе более старый
+          || firebaseKindsOfTask.contains{ $0.UID == kindOfTask.UID && $0.lastModified < kindOfTask.lastModified }
+        }
       }
-      .flatMapLatest({  Observable.from($0) })
-      .withLatestFrom(compactUser) { kindOfTask, user in
-        DB_USERS_REF.child(user.uid).child("KINDSOFTASK").child(kindOfTask.UID).updateChildValues(kindOfTask.data)
+      .asObservable()
+      .flatMapLatest({ Observable.from($0) })
+      .withLatestFrom(compactUser) { task, user in
+        DB_USERS_REF.child(user.uid).child("KINDSOFTASK").child(task.UID).updateChildValues(task.data)
       }
       .asDriver(onErrorJustReturn: ())
       .drive()
       .disposed(by: disposeBag)
-
+    
+    Driver
+      .combineLatest(birds, firebaseBirds) { birds, firebaseBirds -> [Bird] in
+        birds.filter { bird in
+          // или нет воообще в файрбейзе нет такого таска
+          firebaseBirds.contains{ $0.UID == bird.UID } == false
+          // или таск на файрьейзе более старый
+          || firebaseBirds.contains{ $0.UID == bird.UID && $0.lastModified < bird.lastModified }
+        }
+      }
+      .asObservable()
+      .flatMapLatest({ Observable.from($0) })
+      .withLatestFrom(compactUser) { bird, user in
+        DB_USERS_REF.child(user.uid).child("BIRDS").child(bird.UID).updateChildValues(bird.data)
+      }
+      .asDriver(onErrorJustReturn: ())
+      .drive()
+      .disposed(by: disposeBag)
   }
 }
