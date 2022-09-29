@@ -95,9 +95,11 @@ class BirdViewModel: Stepper {
     let title = bird
       .map{ $0.style.text }
     
-    let kindOfTaskMain = kindsOfTask.withLatestFrom(bird) { kindsOfTask, bird -> [KindOfTask] in
-      kindsOfTask.filter{ $0.style.rawValue == bird.style.rawValue }
-    }
+    let kindOfTaskMain = Driver
+      .combineLatest(kindsOfTask, bird) { kindsOfTask, bird -> [KindOfTask] in
+        print("1234", kindsOfTask.map{ $0.style.rawValue }, bird.style.rawValue )
+        return kindsOfTask.filter{ $0.style.rawValue == bird.style.rawValue }
+      }
     
     let kindsOfTaskNotOpenedBird = birds
     // получаем неоткрытые стили на текущем уровне
