@@ -11,13 +11,6 @@ class SKEggNode: SKSpriteNode {
   
   // MARK: - Public
   var action: EggActionType = .Init
-  var isCracking: Bool = false
-  var nestPosition: CGPoint {
-    CGPoint(
-      x: (Settings.Egg.deltaFromNest[level]?.x ?? 0) + parentPosition.x,
-      y: (Settings.Egg.deltaFromNest[level]?.y ?? 0) + parentPosition.y
-    )
-  }
   
   // MARK: - Private
   // Actions
@@ -33,7 +26,6 @@ class SKEggNode: SKSpriteNode {
   
   // Other
   let level: Int
-  private let parentPosition: CGPoint
   
   // Image
   private var noCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.NoCrack.stringForImage) ?? UIImage() }
@@ -46,13 +38,10 @@ class SKEggNode: SKSpriteNode {
   private var threeCracksTexture: SKTexture { SKTexture(image: threeCracksImage) }
   
   // MARK: - Init
-  init(level: Int, parentPosition: CGPoint) {
-    // Super init
+  init(level: Int) {
     self.level = level
-    self.parentPosition = parentPosition
     super.init(texture: nil, color: .clear, size: .zero)
     
-    // Other
     name = "Egg"
     size = noCracksTexture.size()
     texture = noCracksTexture
@@ -98,22 +87,16 @@ class SKEggNode: SKSpriteNode {
   }
   
   func crack(completion: (() -> Void)?) {
-    isCracking = true
     run(SKAction.sequence([setOneCrackTexture, wait, setThreeCracksTexture, wait])) {
       self.alpha = 0.7
-      self.isCracking = false
       completion?()
     }
   }
-  
-  func forceCrack() {
-    run(setThreeCracksTexture) { self.alpha = 0.7 }
-  }
-  
+
   func repair() {
     run(setNoCracksTexture) { self.alpha = 1.0 }
   }
-  
+
   func hide() {
     run(fadeOutAction)
   }

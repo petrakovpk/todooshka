@@ -39,18 +39,18 @@ class NestScene: SKScene {
       
       // nodes
       SKEggNodes = [
-        SKEggNode(level: 1, parentPosition: position),
-        SKEggNode(level: 2, parentPosition: position),
-        SKEggNode(level: 3, parentPosition: position),
-        SKEggNode(level: 4, parentPosition: position),
-        SKEggNode(level: 5, parentPosition: position),
-        SKEggNode(level: 6, parentPosition: position),
-        SKEggNode(level: 7, parentPosition: position)
+        SKEggNode(level: 1),
+        SKEggNode(level: 2),
+        SKEggNode(level: 3),
+        SKEggNode(level: 4),
+        SKEggNode(level: 5),
+        SKEggNode(level: 6),
+        SKEggNode(level: 7)
       ]
       
       for node in SKEggNodes {
         addChild(node)
-        node.position = node.nestPosition
+        node.position = Settings.Eggs.NestPosition[node.level] ?? .zero
       }
     }
   }
@@ -118,13 +118,14 @@ class NestScene: SKScene {
   
   func hatch(level: Int, style: Style) {
 
-    let node = SKBirdNode(clade: Clade(level: level), style: style, scenePosition: position)
+    let node = SKBirdNode(level: level, style: style)
 
     // adding
     addChild(node)
+    node.position = Settings.Birds.NestPosition[node.level] ?? .zero
 
     // node
-    node.position = node.nestPosition
+   // node.position = node.nestPosition
     node.runFromNest() {
      node.removeFromParent()
     }

@@ -13,20 +13,10 @@ class SKBirdNode: SKSpriteNode {
  
   // MARK: - Public
   var action: BirdActionType = .Init
-  
-  var branchPosition: CGPoint {
-    CGPoint(
-      x: (Settings.Bird.deltaFromBranch[clade.level]?.x ?? 0) + position.x,
-      y: (Settings.Bird.deltaFromBranch[clade.level]?.y ?? 0) + position.y)
-  }
-  
-   var nestPosition: CGPoint {
-    CGPoint(
-      x: (Settings.Bird.deltaFromNest[clade.level]?.x ?? 0) + position.x,
-      y: (Settings.Bird.deltaFromNest[clade.level]?.y ?? 0) + position.y)
-  }
+  let level: Int
 
   var wingsIsUp: Bool = false
+  var randomStaffIsDoing: Bool = false
   
   // MARK: - Private
   // Actions
@@ -54,7 +44,6 @@ class SKBirdNode: SKSpriteNode {
   
   // Other
   private let clade: Clade
-  private let scenePosition: CGPoint
   
   private var style: Style {
     didSet {
@@ -77,11 +66,12 @@ class SKBirdNode: SKSpriteNode {
   private var raisedWingsTexture: SKTexture {  SKTexture(image: raisedWingsImage) }
 
   // MARK: - Init
-  init(clade: Clade, style: Style, scenePosition: CGPoint) {
+  init(level: Int, style: Style) {
     // Super Init
-    self.clade = clade
+    self.level = level
+    self.clade = Clade(level: level)
     self.style = style
-    self.scenePosition = scenePosition
+   // self.scenePosition = scenePosition
     super.init(texture: nil, color: .clear, size: .zero)
     // Setup
     name = "Bird"
@@ -116,6 +106,11 @@ class SKBirdNode: SKSpriteNode {
         self.run(self.fadeInWithAnimationAction)
       }
     }
+    
+    if randomStaffIsDoing == false {
+      self.randomStaffIsDoing = true
+      self.doRandomStaff()
+    }
   }
     
   func runFromNest(completion: @escaping (() -> Void)) {
@@ -137,37 +132,26 @@ class SKBirdNode: SKSpriteNode {
   func dowsWings() {
     run(setFrontTextureAction)
   }
-  
-//  func runOnBranch(toPosition position: CGPoint, completion: @escaping (() -> Void) ) {
-//
-//    // isRunning
-//    isRunning = true
-//
-//    // duration
-//    let velocity = 91.0
-//    let space = UIScreen.main.bounds.width / 2 + position.x
-//    let duration = space / velocity
-//
-//    alpha = 1.0
-//
-//    run(legsRunningAction)
-//    run(SKAction.move(to: position, duration: duration)) {
-//      self.isRunning = false
-//      self.run(self.setFrontTextureAction)
-//      self.removeAllActions()
-//      completion()
-//    }
-//  }
-  
-  func hide() {
-    run(fadeOutAction)
-  }
-  
-  func forceUpdate() {
-   // run(setFrontTextureAction)
-   // isRunning = false
-  }
-  
 
+  func hide() {
+    run(fadeOutAction) {
+      self.removeAllActions()
+      self.randomStaffIsDoing = false
+    }
+  }
+  
+  func doRandomStaff() {
+    let waitBefore = SKAction.wait(forDuration: 10, withRange: 10)
+    
+    let clapWithEyes = SKAction.sequence([setClosedEyesTextureAction, waitAction, setFrontTextureAction])
+    let flapWithWings = SKAction.sequence([raiseWingsTextureAction, waitAction, setFrontTextureAction])
+    
+    let randomAction = SKAction.run({
+      self.run(Int.random(in: 0...1) == 0 ? clapWithEyes : flapWithWings)
+    })
+
+    let sequence = SKAction.sequence([waitBefore, randomAction])
+    self.run(SKAction.repeatForever(sequence))
+  }
 }
 

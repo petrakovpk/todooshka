@@ -8,8 +8,8 @@
 import CoreGraphics
 
 struct Settings {
-  struct Bird {
-    static let deltaFromNest: [Int: CGPoint] = [
+  struct Birds {
+    static let NestPosition: [Int: CGPoint] = [
       1: CGPoint(x: -30, y: 20),
       2: CGPoint(x: 20, y: 20),
       3: CGPoint(x: 70, y: -5),
@@ -19,7 +19,7 @@ struct Settings {
       7: CGPoint(x: -80, y: -5)
     ]
     
-    static let deltaFromBranch: [Int: CGPoint] = [
+    static let BranchPosition: [Int: CGPoint] = [
       1: CGPoint(x: 150, y: 0),
       2: CGPoint(x: -150, y: 0),
       3: CGPoint(x: 100, y: 0),
@@ -30,8 +30,8 @@ struct Settings {
     ]
   }
   
-  struct Egg {
-    static let deltaFromNest: [Int: CGPoint] = [
+  struct Eggs {
+    static let NestPosition: [Int: CGPoint] = [
       1: CGPoint(x: -30, y: 20),
       2: CGPoint(x: 20, y: 20),
       3: CGPoint(x: 70, y: -5),

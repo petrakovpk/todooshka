@@ -10,8 +10,6 @@ import SpriteKit
 
 class BranchScene: SKScene {
   
-  // MARK: - Public
-  
   // MARK: - Private
   private var actions: [BirdActionType] = [.Init, .Init, .Init, .Init, .Init, .Init, .Init]
   private var SKBirdNodes: [SKBirdNode] = []
@@ -41,18 +39,18 @@ class BranchScene: SKScene {
       
       // birds
       SKBirdNodes = [
-        SKBirdNode(clade: Clade(level: 1), style: .Simple, scenePosition: position),
-        SKBirdNode(clade: Clade(level: 2), style: .Simple, scenePosition: position),
-        SKBirdNode(clade: Clade(level: 3), style: .Simple, scenePosition: position),
-        SKBirdNode(clade: Clade(level: 4), style: .Simple, scenePosition: position),
-        SKBirdNode(clade: Clade(level: 5), style: .Simple, scenePosition: position),
-        SKBirdNode(clade: Clade(level: 6), style: .Simple, scenePosition: position),
-        SKBirdNode(clade: Clade(level: 7), style: .Simple, scenePosition: position)
+        SKBirdNode(level: 1, style: .Simple),
+        SKBirdNode(level: 2, style: .Simple),
+        SKBirdNode(level: 3, style: .Simple),
+        SKBirdNode(level: 4, style: .Simple),
+        SKBirdNode(level: 5, style: .Simple),
+        SKBirdNode(level: 6, style: .Simple),
+        SKBirdNode(level: 7, style: .Simple)
       ]
       
       for node in SKBirdNodes {
         addChild(node)
-        node.position = node.branchPosition
+        node.position = Settings.Birds.BranchPosition[node.level] ?? .zero
       }
     }
   }

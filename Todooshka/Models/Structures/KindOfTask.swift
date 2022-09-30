@@ -87,6 +87,7 @@ extension KindOfTask {
       "iconRawValue": icon.rawValue,
       "index": index,
       "statusRawValue": status.rawValue,
+      "styleRawValue": style.rawValue,
       "text": text,
       "lastModified": lastModified
     ]
@@ -103,6 +104,8 @@ extension KindOfTask {
           let index = dict.value(forKey: "index") as? Int,
           let statusRawValue = dict.value(forKey: "statusRawValue") as? String,
           let status = KindOfTaskStatus(rawValue: statusRawValue),
+          let styleRawValue = dict.value(forKey: "styleRawValue") as? String,
+          let style = Style(rawValue: styleRawValue),
           let text = dict.value(forKey: "text") as? String,
           let lastModified = dict.value(forKey: "lastModified") as? Double
     else { return nil }
@@ -113,6 +116,7 @@ extension KindOfTask {
     self.icon = icon
     self.index = index
     self.status = status
+    self.style = style
     self.text = text
     self.lastModified = lastModified
     self.userUID = Auth.auth().currentUser?.uid
