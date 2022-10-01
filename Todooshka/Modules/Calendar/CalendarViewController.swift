@@ -94,7 +94,7 @@ class CalendarViewController: UIViewController {
   private let disposeBag = DisposeBag()
   
   // MARK: - Rx DataSources
-  public var dataSource: [CalendarSectionModel] = []
+  public var dataSource: [CalendarSection] = []
   
   fileprivate var needsDelayedScrolling: ScrollToIndexPath = .Initial
   
@@ -273,7 +273,8 @@ class CalendarViewController: UIViewController {
       outputs.dataSource.drive(dataSourceBinder),
       outputs.settingsButtonClickHandler.drive(),
       outputs.shopButtonClickHandler.drive(),
-      outputs.selectionHandler.drive(),
+      outputs.openTaskList.drive(),
+      outputs.saveSelectedDate.drive(),
       outputs.featherScoreLabel.drive(featherLabel.rx.text),
       outputs.diamondScoreLabel.drive(diamondLabel.rx.text),
       outputs.featherBackgroundViewClickHandler.drive(),
@@ -325,7 +326,7 @@ class CalendarViewController: UIViewController {
         vc.calendarView.layoutIfNeeded()
         
         // получаем секцию куда будем скролить
-        guard let sectionIndex = self.dataSource.firstIndex(where: { $0.month == Date().month }) else { return }
+        guard let sectionIndex = self.dataSource.firstIndex(where: { $0.startOfPeriod.month == Date().month }) else { return }
         guard let layoutAttributesForSupplementaryElement = vc.calendarView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: sectionIndex)) else { return }
 
         // Скроллим
@@ -338,22 +339,24 @@ class CalendarViewController: UIViewController {
     })
   }
   
-  var dataSourceBinder: Binder<[CalendarSectionModel]> {
+  var dataSourceBinder: Binder<[CalendarSection]> {
     return Binder(self, binding: { vc, newDataSource in
       let oldDataSource = self.dataSource
       self.dataSource = newDataSource
       
       // Добавляем предыдущий месяц - если в новом dataSource первый месяц меньше, чем в старом dataSource
-      if let firstSectionOldDataSource = oldDataSource.first,
-         let firstSectionNewDataSource  = newDataSource.first,
-         firstSectionNewDataSource.year * 12 + firstSectionNewDataSource.month < firstSectionOldDataSource.year * 12 + firstSectionOldDataSource.month {
+      if let oldFirstSection = oldDataSource.first,
+         let newFirstSection = newDataSource.first,
+         case .Month(let oldFirstMonth) = oldFirstSection.type,
+         case .Month(let newFirstMonth) = newFirstSection.type,
+         oldFirstMonth > newFirstMonth {
         
         // получаем лейауты
         guard let firstSectionHeaderLayout = vc.calendarView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: 0)) else { return }
         guard let firstItemFirstSectionLayout = vc.calendarView.layoutAttributesForItem(at: IndexPath(item: 0, section: 0)) else { return }
         
         // получаем количество строк в первой секции
-        let firstSectionRowCount = ceilf(firstSectionNewDataSource.items.count.float / 7).cgFloat
+        let firstSectionRowCount = ceilf(newFirstSection.items.count.float / 7).cgFloat
         
         UIView.performWithoutAnimation {
           vc.calendarView.insertSections(IndexSet(integer: 0))
@@ -361,32 +364,31 @@ class CalendarViewController: UIViewController {
         }
       }
       
-      
-      // Добавляем будущий месяц - если в новом dataSource последний месяц больше, чем в старом dataSource
-      if let lastSectionOldDataSource = oldDataSource.last,
-         let lastSectionNewDataSource = newDataSource.last,
-         lastSectionNewDataSource.year * 12 + lastSectionNewDataSource.month > lastSectionOldDataSource.year * 12 + lastSectionOldDataSource.month {
-        UIView.performWithoutAnimation {
-          vc.calendarView.insertSections(IndexSet(integer: newDataSource.count - 1))
-        }
+      if let oldLastSection = oldDataSource.last,
+         let newLastSection = newDataSource.last,
+         case .Month(let oldLastMonth) = oldLastSection.type,
+         case .Month(let newLastMonth) = newLastSection.type,
+         oldLastMonth < newLastMonth {
+        vc.calendarView.insertSections(IndexSet(integer: newDataSource.count - 1))
       }
+      
       
       // Перегружаем выбранный месяц
       var previousSelectedDate: Date?
-      
-      for model in oldDataSource {
-        for day in model.items {
-          if day.isSelected {
-            previousSelectedDate = day.date
-          }
+
+      for section in oldDataSource {
+        for item in section.items {
+          guard case .Day(let date, let isSelected, let _) = item.type else { continue }
+          if isSelected { previousSelectedDate = date }
         }
       }
       
-      for (section, model) in newDataSource.enumerated() {
-        for (item, day) in model.items.enumerated() {
-          if day.date == previousSelectedDate || day.isSelected {
+      for (sectionIndex, section) in newDataSource.enumerated() {
+        for (itemIndex, item) in section.items.enumerated() {
+          guard case .Day(let date, let isSelected, let _) = item.type else { continue }
+          if date == previousSelectedDate || isSelected {
             UIView.performWithoutAnimation {
-              vc.calendarView.reloadItems(at: [IndexPath(item: item, section: section)])
+               vc.calendarView.reloadItems(at: [IndexPath(item: itemIndex, section: sectionIndex)])
             }
           }
         }
@@ -407,24 +409,36 @@ extension CalendarViewController: UICollectionViewDataSource {
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     switch dataSource[indexPath.section].type {
-    case .Month:
+    case .Month(let startOfMonth):
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
-      if indexPath.section < dataSource.count && indexPath.item < dataSource[indexPath.section].items.count {
-        cell.configure(calendarDay: dataSource[indexPath.section].items[indexPath.item])
+      let item = dataSource[indexPath.section].items[indexPath.item]
+      switch item.type {
+      case .Empty:
+        cell.configureAsEmpty()
+      case .Day(let date, let isSelected, let completedTasksCount):
+        cell.configure(date: date, isSelected: isSelected, completedTasksCount: completedTasksCount)
       }
       return cell
-    case .Year:
+    case .Year(let year):
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CalendarYearCell.reuseID, for: indexPath) as! CalendarYearCell
-      cell.configure(year: dataSource[indexPath.section].year)
+      cell.configure(year: year)
       return cell
     }
   }
   
   func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+
     let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CalendarReusableView.reuseID, for: indexPath) as! CalendarReusableView
+    
+    switch dataSource[indexPath.section].type {
+    case .Month(let startOfMonth):
+      header.label.text = startOfMonth.monthName()
+    case .Year(_):
+      header.label.text = nil
+    }
+    
     header.label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
     header.label.textAlignment = .left
-    header.label.text = formatter.standaloneMonthSymbols[dataSource[indexPath.section].month - 1]
     header.label.text?.firstCharacterUppercased()
     return header
   }

@@ -11,6 +11,7 @@ struct Palette {
   
   struct SingleColors {
     static let Amethyst = UIColor(named: "Amethyst")!
+    static let BlackPearl = UIColor(named: "BlackPearl")!
     static let BlueRibbon = UIColor(named: "BlueRibbon")!
     static let BlushPink = UIColor(named: "BlushPink")!
     static let BrandyPunch = UIColor(named: "BrandyPunch")!

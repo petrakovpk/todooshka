@@ -28,6 +28,12 @@ class TaskViewController: TDViewController {
     return label
   }()
   
+  private let textTextField: TDTaskTextField = {
+    let field = TDTaskTextField(placeholder: "Введите название задачи")
+    field.returnKeyType = .done
+    return field
+  }()
+  
   private let kindOfTaskLabel: UILabel = {
     let label = UILabel(text: "Тип")
     label.font = UIFont.systemFont(ofSize: 15.adjusted , weight: .medium)
@@ -35,25 +41,32 @@ class TaskViewController: TDViewController {
     return label
   }()
   
+  private let kindsOfTaskButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.setImage(UIImage(named: "settings")?.template , for: .normal)
+    button.tintColor = Theme.Buttons.RoundButton.tint
+    return button
+  }()
+  
+  private let plannedDateButton: UIButton = {
+    let button = UIButton(type: .system)
+    //button.setTitle("Никогда", for: .normal)
+    button.setTitleColor(Theme.App.text, for: .normal)
+    button.cornerRadius = 15
+    button.borderWidth = 1.0
+    button.borderColor = Theme.Cells.KindOfTask.Border
+    return button
+  }()
+  
+  private var collectionView: UICollectionView!
+  
   private let descriptionLabel: UILabel = {
-    let label = UILabel(text: "Комментарий (если требуется)")
+    let label = UILabel(text: "Комментарий")
     label.font = UIFont.systemFont(ofSize: 15.adjusted , weight: .medium)
     label.textAlignment = .left
     return label
   }()
-  
-  private let dividerView: UIView = {
-    let view = UIView()
-    view.backgroundColor = UIColor(red: 0.094, green: 0.105, blue: 0.233, alpha: 1)
-    return view
-  }()
-  
-  private let textTextField: TDTaskTextField = {
-    let field = TDTaskTextField(placeholder: "Введите название задачи")
-    field.returnKeyType = .done
-    return field
-  }()
-  
+
   private let descriptionTextView: UITextView = {
     let textView = UITextView()
     textView.borderWidth = 0
@@ -62,11 +75,10 @@ class TaskViewController: TDViewController {
     return textView
   }()
   
-  private let kindsOfTaskButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.setImage(UIImage(named: "settings")?.template , for: .normal)
-    button.tintColor = Theme.Buttons.RoundButton.tint
-    return button
+  private let dividerView: UIView = {
+    let view = UIView()
+    view.backgroundColor = UIColor(red: 0.094, green: 0.105, blue: 0.233, alpha: 1)
+    return view
   }()
   
   private let completeButton: UIButton = {
@@ -77,8 +89,6 @@ class TaskViewController: TDViewController {
     button.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
     return button
   }()
-  
-  private var collectionView: UICollectionView!
   
   // MARK: - Complete Task Alert UI Elements
   private let alertView: UIView = {
@@ -115,12 +125,6 @@ class TaskViewController: TDViewController {
     bindViewModel()
   }
   
-//  override func viewDidDisappear(_ animated: Bool) {
-//    if isModal && viewModel.services.tabBarService.selectedItem.value == .Left {
-//      //viewModel.services.actionService.runNestSceneActionsTrigger.accept(())
-//    }
-//  }
-  
   //MARK: - Configure UI
   private func configureUI() {
     
@@ -128,30 +132,32 @@ class TaskViewController: TDViewController {
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     
     // adding
-    view.addSubview(textLabel)
-    view.addSubview(textTextField)
-    view.addSubview(kindOfTaskLabel)
-    view.addSubview(kindsOfTaskButton)
-    view.addSubview(collectionView)
-    view.addSubview(descriptionLabel)
-    view.addSubview(descriptionTextView)
-    view.addSubview(dividerView)
-    view.addSubview(completeButton)
+    view.addSubviews([
+      textLabel,
+      textTextField,
+      kindOfTaskLabel,
+      kindsOfTaskButton,
+      collectionView,
+      plannedDateButton,
+      descriptionLabel,
+      descriptionTextView,
+      dividerView,
+      completeButton
+    ])
     
     // saveButton
     saveButton.isHidden = false
     
     // nameLabel
-    textLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21.superAdjusted, leftConstant: 16, rightConstant: 16)
+    textLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16)
     
     // nameTextField
-    textTextField.anchor(top: textLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 5.superAdjusted, leftConstant: 16, rightConstant: 16, heightConstant: 40.superAdjusted)
+    textTextField.anchor(top: textLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40.superAdjusted)
     
     // kindOfTaskLabel
-    kindOfTaskLabel.anchor(top: textTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16.superAdjusted, leftConstant: 16, rightConstant: 16)
+    kindOfTaskLabel.anchor(top: textTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16)
     
-    // configureTaskTypesButton
-   
+    // kindsOfTaskButton
     kindsOfTaskButton.centerYAnchor.constraint(equalTo: kindOfTaskLabel.centerYAnchor).isActive = true
     kindsOfTaskButton.anchor(right: view.rightAnchor, rightConstant: 16)
     
@@ -160,22 +166,24 @@ class TaskViewController: TDViewController {
     collectionView.clipsToBounds = false
     collectionView.isScrollEnabled = false
     collectionView.register(KindOfTaskCell.self, forCellWithReuseIdentifier: KindOfTaskCell.reuseID)
-    collectionView.anchor(top: kindOfTaskLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20.superAdjusted, leftConstant: 16, heightConstant: 100.superAdjusted )
+    collectionView.anchor(top: kindOfTaskLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, heightConstant: 100.superAdjusted )
     
     // descriptionLabel
-    descriptionLabel.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 20.superAdjusted, leftConstant: 16, rightConstant: 16)
+    descriptionLabel.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16)
+    
+    // plannedDateButton
+    plannedDateButton.centerYAnchor.constraint(equalTo: descriptionLabel.centerYAnchor).isActive = true
+    plannedDateButton.anchor(right: view.rightAnchor, rightConstant: 16, widthConstant: 100, heightConstant: 40)
     
     // descriptionTextView
-    descriptionTextView.anchor(top: descriptionLabel.bottomAnchor, left: view.leftAnchor,  right: view.rightAnchor, leftConstant: 16, bottomConstant: 16.superAdjusted, rightConstant: 16, heightConstant: 100)
+    descriptionTextView.anchor(top: descriptionLabel.bottomAnchor, left: view.leftAnchor,  right: view.rightAnchor, topConstant: 8, leftConstant: 16, bottomConstant: 16.superAdjusted, rightConstant: 16, heightConstant: 100)
     
     // dividerView
     dividerView.anchor(left: descriptionTextView.leftAnchor, bottom: descriptionTextView.bottomAnchor, right: descriptionTextView.rightAnchor,  heightConstant: 1.0)
     
     // completeTaskButton
     completeButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor,  leftConstant: 16, bottomConstant: 16, rightConstant: 16, heightConstant: 48.superAdjusted)
-    
-    // hideKeyboardWhenTappedAround
-   // hideKeyboardWhenTappedAround()
+
   }
   
   private func configureAlert() {
@@ -249,6 +257,7 @@ class TaskViewController: TDViewController {
       outputs.setDescriptionPlaceholder.drive(setDescriptionPlaceholderBinder),
       outputs.showAlertTrigger.drive(showAlertBinder),
       outputs.hideAlertTrigger.drive(hideAlertBinder),
+      outputs.plannedText.drive(plannedButtonTextBinder),
       outputs.taskIsNewTrigger.drive(taskIsNewBinder),
       outputs.taskIsNotNewTrigger.drive(taskIsNotNewBinder),
       outputs.textTextField.drive(textTextField.rx.text),
@@ -290,6 +299,14 @@ class TaskViewController: TDViewController {
       vc.alertButton.setTitle(texts.randomElement(), for: .normal)
     })
   }
+  
+  
+  var plannedButtonTextBinder: Binder<String> {
+    return Binder(self, binding: { (vc, text) in
+      vc.plannedDateButton.setTitle(text, for: .normal)
+    })
+  }
+  
   
   var hideAlertBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in

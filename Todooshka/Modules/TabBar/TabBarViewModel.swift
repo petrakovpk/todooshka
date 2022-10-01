@@ -40,7 +40,7 @@ class TabBarViewModel: Stepper {
     services.tabBarService.selectedItem.accept(selectedItem == 1 ? .Left : .Right)
 
     let createTask = input.createTaskButtonClickTrigger
-      .map { self.steps.accept(AppStep.CreateTaskIsRequired(status: .InProgress, createdDate: nil)) }
+      .map { self.steps.accept(AppStep.CreateTaskIsRequired) }
 
   
     return Output(

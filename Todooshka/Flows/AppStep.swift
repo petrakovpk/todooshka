@@ -32,6 +32,7 @@ enum AppStep: Step {
   case DeletedTaskListIsRequired
   case IdeaTaskListIsRequired
   case OverduedTaskListIsRequired
+  case PlannedTaskListIsRequired(date: Date)
   case TaskListIsCompleted
   
   // KindOfTask
@@ -39,7 +40,10 @@ enum AppStep: Step {
   case ShowKindOfTaskIsRequired(kindOfTask: KindOfTask)
   
   // Task
-  case CreateTaskIsRequired(status: TaskStatus, createdDate: Date?)
+ // case CreateTaskIsRequired(status: TaskStatus, plannedDate: Date?)
+  case CreateTaskIsRequired
+  case CreateIdeaTaskIsRequired
+  case CreatePlannedTaskIsRequired(plannedDate: Date)
   case ShowTaskIsRequired(task: Task)
   case TaskProcessingIsCompleted
   

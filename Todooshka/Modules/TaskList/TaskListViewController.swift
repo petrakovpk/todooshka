@@ -163,6 +163,7 @@ class TaskListViewController: TDViewController {
     
     [
       outputs.addTask.drive(),
+      outputs.addTaskButtonIsHidden.drive(addButton.rx.isHidden),
       outputs.change.drive(changeBinder),
       outputs.hideAlert.drive(hideAlertBinder),
       outputs.hideCell.drive(hideCellBinder),
@@ -173,7 +174,6 @@ class TaskListViewController: TDViewController {
       outputs.setAlertText.drive(alertLabel.rx.text),
       outputs.setDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.showAlert.drive(showAlertBinder),
-      outputs.showAddTaskButton.drive(showAddTaskButtonBinder),
       outputs.showRemovaAllButton.drive(showRemovaAllButtonBinder),
       outputs.title.drive(titleLabel.rx.text)
     ]
@@ -207,12 +207,7 @@ class TaskListViewController: TDViewController {
       vc.alertView.isHidden = false
     })
   }
-  
-  var showAddTaskButtonBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
-      vc.addButton.isHidden = false
-    })
-  }
+
   
   var showRemovaAllButtonBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in

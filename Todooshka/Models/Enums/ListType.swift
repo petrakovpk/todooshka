@@ -12,4 +12,5 @@ enum TaskListMode: Equatable {
   case Idea
   case Main
   case Overdued
+  case Planned(date: Date)
 }

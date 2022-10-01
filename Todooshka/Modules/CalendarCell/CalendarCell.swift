@@ -51,34 +51,25 @@ class CalendarCell: UICollectionViewCell {
     imageView.layer.zPosition = 0
   }
   
-  func configure(calendarDay: CalendarDay) {
+  func configureAsEmpty() {
+    contentView.borderWidth = 0.0
+    contentView.backgroundColor = .clear
+    imageView.image = nil
+    dateLabel.text = nil
+  }
+  
+  func configure(date: Date, isSelected: Bool, completedTasksCount: Int) {
     
-    if calendarDay.isEnabled {
-      // contentView
-      contentView.borderWidth = calendarDay.date.isInToday ? 1 : 0
-      contentView.backgroundColor = calendarDay.isSelected ? Theme.Cells.Calendar.Selected : UIColor.clear
-      
-      // imageView
-      imageView.image = getImage(count: calendarDay.completedTasksCount)
-      
-      // dateLabel
-      dateLabel.text = calendarDay.date.day.string
-      dateLabel.textColor = imageView.image == nil ? calendarDay.isSelected ? UIColor.white : Theme.App.text : UIColor(hexString: "#030410")
-      
-    } else {
-
-      // contentView
-      contentView.borderWidth = 0.0
-      contentView.backgroundColor = .clear
-      
-      // imageView
-      imageView.image = nil
-      
-      // dateLabel
-      dateLabel.text = ""
-      dateLabel.textColor = .systemGray
-    }
+    // contentView
+    contentView.borderWidth = date.isInToday ? 1 : 0
+    contentView.backgroundColor = isSelected ? Theme.Cells.Calendar.Selected : UIColor.clear
     
+    // imageView
+    imageView.image = getImage(count: completedTasksCount)
+    
+    // dateLabel
+    dateLabel.text = date.day.string
+    dateLabel.textColor = (imageView.image == nil) ? (isSelected ? UIColor.white : Theme.App.text) : Theme.Cells.Calendar.Text
     
   }
   

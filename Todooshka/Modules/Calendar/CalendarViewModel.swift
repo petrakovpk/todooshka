@@ -26,8 +26,13 @@ class CalendarViewModel: Stepper {
   let services: AppServices
   
   // Calendar
- // private let selectedDate = BehaviorRelay<Date>(value: Date())
-  private let selectedMonthComponents = BehaviorRelay<[Int]>(value: [-2,-1,0,1])
+  private let dataSourceMonths = BehaviorRelay<[Date]>(value: [
+    Date().adding(.month, value: -2).startOfMonth,
+    Date().adding(.month, value: -1).startOfMonth,
+    Date().startOfMonth,
+    Date().adding(.month, value: 1).startOfMonth
+  ])
+  
   private var dataSourceType: DataSourceType = .Initial
   
   struct Input {
@@ -53,23 +58,12 @@ class CalendarViewModel: Stepper {
     let featherBackgroundViewClickHandler: Driver<Void>
     let diamondBackgroundViewClickHandler: Driver<Void>
     // selection
-    let selectionHandler: Driver<Void>
+    let openTaskList: Driver<Void>
+    let saveSelectedDate: Driver<Void>
     // dataSource
-    let dataSource: Driver<[CalendarSectionModel]>
+    let dataSource: Driver<[CalendarSection]>
     let willDisplayCell: Driver<Void>
     let scrollToCurrentMonth: Driver<(trigger: Bool, withAnimation: Bool)>
-  }
-  
-  func appendPastData() {
-    self.selectedMonthComponents.accept(
-      [self.selectedMonthComponents.value.min()! - 1] +
-      self.selectedMonthComponents.value)
-  }
-  
-  func appendFutureData() {
-    self.selectedMonthComponents.accept(
-      self.selectedMonthComponents.value +
-      [self.selectedMonthComponents.value.max()! + 1])
   }
   
   // MARK: - Init
@@ -82,7 +76,7 @@ class CalendarViewModel: Stepper {
     
     // caledar
     let selectedDate = services.dataService.selectedDate.asDriver()
-    let selectedMonthComponents = selectedMonthComponents.asDriver()
+    let dataSourceMonths = dataSourceMonths.asDriver()
     
     // completed tasks
     let completedTasks = services.dataService
@@ -91,43 +85,31 @@ class CalendarViewModel: Stepper {
       .map { $0.filter { $0.closed != nil }}
       .asDriver(onErrorJustReturn: [])
     
-    // dataSource
-    let dataSource = Driver<([CalendarSectionModel])>
-      .combineLatest(selectedMonthComponents, selectedDate, completedTasks) { selectedMonthComponents, selectedDate, completedTasks -> [CalendarSectionModel] in
-        selectedMonthComponents.map { monthComponent -> CalendarSectionModel in
-          let date = Date().adding(.month, value: monthComponent)
-          let daysInMonth = Calendar.current.numberOfDaysInMonth(for: date)
-          var items: [CalendarDay] = []
-          
-          let addDaysBeforeStartOfMonth = self.addDaysBeforeStartOfMonth(date: date)
-          
-          if addDaysBeforeStartOfMonth > 0 {
-            for _ in 0 ... addDaysBeforeStartOfMonth - 1 {
-              items.append(CalendarDay(
-                date: date,
-                isSelected: false,
-                completedTasksCount: 0,
-                isEnabled: false))
-            }
-          }
-          
-          for dayComponent in 0 ... daysInMonth - 1 {
-            let day = date.startOfMonth.adding(.day, value: dayComponent)
-            items.append(CalendarDay(
-              date: day,
-              isSelected: Calendar.current.isDate(day, inSameDayAs: selectedDate),
-              completedTasksCount: completedTasks.filter { Calendar.current.isDate($0.closed!, inSameDayAs: day) }.count,
-              isEnabled: true))
-          }
-          
-          return CalendarSectionModel(
-            type: .Month,
-            year: date.year,
-            month: date.month,
-            items: items)
+    
+    let dataSource = Driver<[CalendarSection]>
+      .combineLatest(dataSourceMonths, selectedDate, completedTasks) { dataSourceMonths, selectedDate, completedTasks -> [CalendarSection] in
+        dataSourceMonths.map { startOfMonth -> CalendarSection in
+          CalendarSection(
+            type: .Month(startOfMonth: startOfMonth) ,
+            items:
+              // пустые дни
+            self.emptyDays(date: startOfMonth)
+              .countableRange
+              .map { _ in CalendarItem(type: .Empty) } +
+            // нормальные дни
+            Calendar.current.numberOfDaysInMonth(for: startOfMonth)
+              .countableRange
+              .map { startOfMonth.adding(.day, value: $0) }
+              .map { date -> CalendarItem in
+                CalendarItem(type: .Day(
+                  date: date,
+                  isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate) ,
+                  completedTasksCount: completedTasks.filter{ Calendar.current.isDate($0.closed!, inSameDayAs: date) }.count
+                ))
+              }
+          )
         }
       }
-      .asDriver()
     
     let scrollToCurrentMonth = services.preferencesService
       .scrollToCurrentMonthTrigger
@@ -135,19 +117,29 @@ class CalendarViewModel: Stepper {
     
     // selection
     let selectionHandler = input.selection
-      .withLatestFrom(dataSource) { indexPath, dataSource -> CalendarDay? in
-        if dataSource[indexPath.section].type == .Year || dataSource[indexPath.section].items[indexPath.item].isEnabled == false { return nil }
-        return dataSource[indexPath.section].items[indexPath.item]
-      }.compactMap { $0 }
-      .withLatestFrom(selectedDate) { calendarDay, selectedDate in
-        if calendarDay.date == selectedDate {
-          self.steps.accept(AppStep.CompletedTaskListIsRequired(date: calendarDay.date))
-          return
-        } else {
-          self.services.dataService.selectedDate.accept(calendarDay.date)
-          self.services.actionService.runBranchSceneActionsTrigger.accept(())
+      .withLatestFrom(dataSource) { indexPath, dataSource -> Date? in
+        switch dataSource[indexPath.section].items[indexPath.item].type {
+        case .Empty:
+          return nil
+        case .Day(let date, _, _):
+          return date
         }
       }
+      .compactMap { $0 }
+      .startWith(Date())
+    
+    let openTaskList = selectionHandler
+      .withLatestFrom(selectedDate) { date, selectedDate -> Date? in
+        date == selectedDate ? date : nil
+      }.compactMap{ $0 }
+      .map { $0 > Date() ? AppStep.PlannedTaskListIsRequired(date: $0) : AppStep.CompletedTaskListIsRequired(date: $0) }
+      .map { self.steps.accept($0) }
+    
+    let saveSelectedDate = selectionHandler
+      .withLatestFrom(selectedDate) { date, selectedDate -> Date? in
+        date == selectedDate ? nil : date
+      }.compactMap{ $0 }
+      .map { self.services.dataService.selectedDate.accept($0) }
    
     // score
     let featherScoreLabel = services.dataService.feathersCount
@@ -191,7 +183,8 @@ class CalendarViewModel: Stepper {
       featherBackgroundViewClickHandler: featherBackgroundViewClickHandler,
       diamondBackgroundViewClickHandler: diamondBackgroundViewClickHandler,
       // selection
-      selectionHandler: selectionHandler,
+      openTaskList: openTaskList,
+      saveSelectedDate: saveSelectedDate,
       // dataSource
       dataSource: dataSource,
       willDisplayCell: willDisplayCell,
@@ -199,14 +192,25 @@ class CalendarViewModel: Stepper {
     )
   }
   
-  func addDaysBeforeStartOfMonth(date: Date) -> Int {
+  func appendPastData() {
+    self.dataSourceMonths.accept(
+      [ self.dataSourceMonths.value.min()!.adding(.month, value: -1) ]
+      + self.dataSourceMonths.value
+    )
+  }
+  
+  func appendFutureData() {
+    self.dataSourceMonths.accept(
+      self.dataSourceMonths.value +
+      [ self.dataSourceMonths.value.max()!.adding(.month, value: 1) ]
+    )
+  }
+  
+  func emptyDays(date: Date) -> Int {
     switch date.weekday {
-    case 1:
-      return 6
-    case 2 ... 7:
-      return date.weekday - 2
-    default:
-      return -1
+    case 1: return 7 - 1
+    case 2 ... 7: return date.weekday - 1 - 1
+    default: return -1
     }
   }
 }

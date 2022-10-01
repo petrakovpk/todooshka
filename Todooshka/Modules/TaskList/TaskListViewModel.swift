@@ -51,6 +51,7 @@ class TaskListViewModel: Stepper {
   
   struct Output {
     let addTask: Driver<Void>
+    let addTaskButtonIsHidden: Driver<Bool>
     let change: Driver<Result<Void,Error>>
     let hideAlert: Driver<Void>
     let hideCell: Driver<IndexPath>
@@ -63,7 +64,6 @@ class TaskListViewModel: Stepper {
     let setDataSource: Driver<[TaskListSection]>
     let title: Driver<String>
     let showAlert: Driver<Void>
-    let showAddTaskButton: Driver<Void>
     let showRemovaAllButton: Driver<Void>
   }
   
@@ -90,6 +90,8 @@ class TaskListViewModel: Stepper {
             return task.status == .Idea
           case .Completed(let date):
             return task.status == .Completed && Calendar.current.isDate(date, inSameDayAs: task.closed ?? Date())
+          case .Planned(let planned):
+            return task.planned == planned
           }
         }
       }
@@ -221,14 +223,21 @@ class TaskListViewModel: Stepper {
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
 
     let addTask = input.addTaskButtonClickTrigger
-      .map { _ in self.steps.accept(AppStep.CreateTaskIsRequired(status: .Idea, createdDate: Date())) }
+      .compactMap { _ -> AppStep? in
+        switch self.mode {
+        case .Idea:
+          return AppStep.CreateIdeaTaskIsRequired
+        case .Planned(let date):
+          return AppStep.CreatePlannedTaskIsRequired(plannedDate: date)
+        default:
+          return nil
+        }
+      }.map{ self.steps.accept($0) }
     
     // title
      let title = Driver.just(self.getTitle(with: self.mode))
     
-    let showAddTaskButton = Driver.of(self.mode)
-      .filter { $0 == .Idea }
-      .map{ _ in () }
+    let addTaskButtonIsHidden = Driver<Bool>.of(self.addTaskButtonIsHidden())
     
     let showRemovaAllButton = Driver.of(self.mode)
       .filter { $0 == .Deleted }
@@ -253,24 +262,32 @@ class TaskListViewModel: Stepper {
 
     return Output(
       addTask: addTask,
+      addTaskButtonIsHidden: addTaskButtonIsHidden,
       change: change,
       hideAlert: hideAlert,
       hideCell: hideCell,
       navigateBack: navigateBack,
       openTask: openTask,
       removeAll: removeAll,
-//      removeAllTasksFromFirebase: removeAllTasksFromFirebase,
       removeTask: removeTask,
       reloadData: reloadData,
       setAlertText: alertText,
       setDataSource: dataSource,
       title: title,
       showAlert: showAlert,
-      showAddTaskButton: showAddTaskButton,
       showRemovaAllButton: showRemovaAllButton
     )
   }
-
+  
+  func addTaskButtonIsHidden() -> Bool {
+    switch self.mode {
+    case .Planned(_), .Idea:
+      return false
+    default:
+      return true
+    }
+  }
+  
   func getTitle(with mode: TaskListMode) -> String {
     switch mode {
     case .Completed(_):
@@ -281,6 +298,8 @@ class TaskListViewModel: Stepper {
       return "Ящик идей"
     case .Overdued:
       return "Просроченные задачи"
+    case .Planned(date: _):
+      return "Запланированные задачи"
     default:
       return ""
     }

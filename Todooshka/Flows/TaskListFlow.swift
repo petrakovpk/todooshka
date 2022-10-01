@@ -52,8 +52,8 @@ class TaskListFlow: Flow {
     case .ShowKindOfTaskIsRequired(let kindOfTask):
       return navigateToShowTaskType(kindOfTask: kindOfTask)
 
-    case .CreateTaskIsRequired(let status, let date):
-      return navigateToTask(taskUID: UUID().uuidString, status: status, closed: date)
+    case .CreateTaskIsRequired:
+      return navigateToTask()
     case .ShowTaskIsRequired(let task):
       return navigateToTask(taskUID: task.UID)
       
@@ -132,9 +132,9 @@ class TaskListFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
     
-    private func navigateToTask(taskUID: String, status: TaskStatus, closed: Date?) -> FlowContributors {
+    private func navigateToTask() -> FlowContributors {
       let viewController = TaskViewController()
-      let viewModel = TaskViewModel(services: services, taskUID: taskUID, status: status, closed: closed)
+      let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString)
       viewController.viewModel = viewModel
       rootViewController.tabBarController?.tabBar.isHidden = true
       rootViewController.pushViewController(viewController, animated: true)

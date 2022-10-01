@@ -54,8 +54,10 @@ class CalendarFlow: Flow {
       return navigateToChangingPassword()
       
       // Task
-    case .CreateTaskIsRequired(let status, let date):
-      return navigateToTask(taskUID: UUID().uuidString, status: status, closed: date)
+//    case .CreateTaskIsRequired(let status, let date):
+//      return navigateToTask(taskUID: UUID().uuidString, status: status, closed: date)
+    case .CreatePlannedTaskIsRequired(let planned):
+      return navigateToTask(planned: planned)
     case .ShowTaskIsRequired(let task):
       return navigateToTask(taskUID: task.UID)
     case .TaskProcessingIsCompleted:
@@ -72,6 +74,10 @@ class CalendarFlow: Flow {
       // Deleted Task Type List
     case .DeletedTaskTypeListIsRequired:
       return navigateToDeletedTaskTypeList()
+      
+      // Planned
+    case .PlannedTaskListIsRequired(let date):
+      return navigateToPlannedTaskList(date: date)
       
       // Diamond
     case .DiamondIsRequired:
@@ -145,6 +151,15 @@ class CalendarFlow: Flow {
   private func navigateToCompletedTaskList(date: Date) -> FlowContributors {
     let viewController = TaskListViewController()
     let viewModel = TaskListViewModel(services: services, mode: .Completed(date: date))
+    viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToPlannedTaskList(date: Date) -> FlowContributors {
+    let viewController = TaskListViewController()
+    let viewModel = TaskListViewModel(services: services, mode: .Planned(date: date))
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
@@ -225,9 +240,9 @@ class CalendarFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToTask(taskUID: String, status: TaskStatus, closed: Date?) -> FlowContributors {
+  private func navigateToTask(planned: Date) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, taskUID: taskUID, status: status, closed: closed)
+    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString, status: .Planned, planned: planned)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

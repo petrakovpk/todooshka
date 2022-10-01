@@ -15,6 +15,13 @@ protocol HasPreferencesService {
 
 class PreferencesService {
   
+  let midFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ru_RU")
+    formatter.dateFormat = "dd MMM"
+    return formatter
+  }()
+  
   let formatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ru_RU")

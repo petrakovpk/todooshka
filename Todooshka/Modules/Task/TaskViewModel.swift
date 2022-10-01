@@ -14,6 +14,7 @@ struct TaskAttr: Equatable {
   let closed: Date?
   let description: String
   let kindOfTask: KindOfTask
+  let planned: Date?
   let status: TaskStatus
   let text: String
 }
@@ -33,7 +34,7 @@ class TaskViewModel: Stepper {
   
   // task attr
   let taskUID: String
-  var closed: Date? = nil
+  var planned: Date? = nil
   var status: TaskStatus = .InProgress
   
   // helpers
@@ -65,6 +66,7 @@ class TaskViewModel: Stepper {
     let descriptionTextField: Driver<String>
     let hideAlertTrigger: Driver<Void>
     let navigateBack: Driver<Void>
+    let plannedText: Driver<String>
     let save: Driver<Result<Void,Error>>
     let setDescriptionPlaceholder: Driver<Void>
     let showAlertTrigger: Driver<Void>
@@ -79,12 +81,14 @@ class TaskViewModel: Stepper {
     self.taskUID = taskUID
   }
   
-  init(services: AppServices, taskUID: String, status: TaskStatus, closed: Date?) {
+  init(services: AppServices, taskUID: String, status: TaskStatus, planned: Date?) {
     self.services = services
     self.taskUID = taskUID
     self.status = status
-    self.closed = closed
+    self.planned = planned
   }
+  
+  
   
   //MARK: - Transform
   func transform(input: Input) -> Output {
@@ -101,7 +105,8 @@ class TaskViewModel: Stepper {
           kindOfTaskUID: KindOfTask.Standart.Simple.UID,
           status: self.status,
           created: Date(),
-          closed: self.closed)
+          closed: nil,
+          planned: self.planned)
       )
     
     let taskIsNewTrigger = tasks
@@ -116,6 +121,15 @@ class TaskViewModel: Stepper {
       .map{ $0.first(where: { $0.UID == self.taskUID }) }
       .filter{ $0 != nil }
       .map{ _ in () }
+    
+    let planned = task
+      .compactMap{ $0.planned }
+      .startWith(self.planned)
+    
+    let plannedText = planned
+      .compactMap{ self.services.preferencesService.midFormatter.string(for: $0) }
+      .startWith( "Когда-то" )
+      
     
     // kindsOfTask
     let kindsOfTask = services.dataService
@@ -171,8 +185,8 @@ class TaskViewModel: Stepper {
       .startWith(nil)
     
     let taskAttr = Driver
-      .combineLatest(text, description, kindOfTask, status, closed) { text, description, kindOfTask, status, closed in
-        TaskAttr(closed: closed, description: description, kindOfTask: kindOfTask, status: status, text: text)
+      .combineLatest(text, description, kindOfTask, planned, status, closed) { text, description, kindOfTask, planned, status, closed in
+        TaskAttr(closed: closed, description: description, kindOfTask: kindOfTask, planned: planned, status: status, text: text)
       }.distinctUntilChanged()
     
     // description
@@ -211,7 +225,8 @@ class TaskViewModel: Stepper {
           kindOfTaskUID: taskAttr.kindOfTask.UID,
           status: taskAttr.status,
           created: task.created,
-          closed: taskAttr.closed
+          closed: taskAttr.closed,
+          planned: taskAttr.planned
         )
       }.asObservable()
       .flatMapLatest({ self.managedContext.rx.update($0) })
@@ -242,6 +257,7 @@ class TaskViewModel: Stepper {
       descriptionTextField: description,
       hideAlertTrigger: hideAlertTrigger,
       navigateBack: navigateBack,
+      plannedText: plannedText,
       save: save,
       setDescriptionPlaceholder: setDescriptionPlaceholder,
       showAlertTrigger: showAlertTrigger,

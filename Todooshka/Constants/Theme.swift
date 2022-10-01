@@ -77,6 +77,7 @@ struct Theme {
     struct Calendar {
       static let Border = Palette.SingleColors.BlueRibbon
       static let Selected = Palette.SingleColors.BlueRibbon
+      static let Text = Palette.SingleColors.BlackPearl
     }
     struct KindOfTask {
       static let Border = Palette.DualColors.Periwinkle_200_202_255_PortGore_24_27_60
