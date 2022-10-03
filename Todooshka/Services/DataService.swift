@@ -31,7 +31,6 @@ class DataService {
   let diamonds: Driver<[Diamond]>
   let goldTasks: Driver<[Task]>
   let icons: Driver<[Icon]>
- // let feathers: Driver<[Feather]>
   let firebaseBirds: Driver<[BirdFirebase]>
   let feathersCount: Driver<Int>
   let firebaseTasks: Driver<[Task]>

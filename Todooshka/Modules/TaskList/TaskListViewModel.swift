@@ -95,6 +95,9 @@ class TaskListViewModel: Stepper {
           }
         }
       }
+      .map { tasks -> [Task] in
+        self.mode == .Idea ? tasks.sorted{ $0.text < $1.text } : tasks
+      }
       .asDriver(onErrorJustReturn: [])
     
     // kindsOfTask

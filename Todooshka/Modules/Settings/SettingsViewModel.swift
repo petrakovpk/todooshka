@@ -21,16 +21,16 @@ class SettingsViewModel: Stepper {
   private let showAlert = BehaviorRelay<Bool>(value: false)
   
   // auth
-  let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .logInIsRequired)
+  let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .LogInIsRequired)
   //data
-  let syncDataIsRequired = SettingsItem(imageName: "box-tick", text: "Синхронизировать данные", type: .syncDataIsRequired)
+  let syncDataIsRequired = SettingsItem(imageName: "box-tick", text: "Синхронизировать данные", type: .SyncDataIsRequired)
   // deleted
-  let deletedTaskTypeListIsRequired = SettingsItem(imageName: "trash", text: "Типы", type: .deletedTaskTypeListIsRequired)
-  let deletedTaskListIsRequired = SettingsItem(imageName: "trash", text: "Задачи", type: .deletedTaskListIsRequired)
+  let deletedTaskTypeListIsRequired = SettingsItem(imageName: "trash", text: "Типы", type: .DeletedTaskTypeListIsRequired)
+  let deletedTaskListIsRequired = SettingsItem(imageName: "trash", text: "Задачи", type: .DeletedTaskListIsRequired)
   // security
-  let removeAccount = SettingsItem(imageName: "remove", text: "Удалить аккаунт", type: .removeAccountIsRequired)
+  let removeAccount = SettingsItem(imageName: "remove", text: "Удалить аккаунт", type: .DeleteAccountIsRequired)
   // help
-  let askSupport = SettingsItem(imageName: "message-notif", text: "Обратиться в поддержку", type: .askSupport)
+  let askSupport = SettingsItem(imageName: "message-notif", text: "Обратиться в поддержку", type: .SupportIsRequired)
   
   struct Input {
     let backButtonClickTrigger: Driver<Void>
@@ -78,7 +78,7 @@ class SettingsViewModel: Stepper {
         SettingsItem(
           imageName: "user-square",
           text: $0,
-          type: .userProfileIsRequiared
+          type: .UserProfileIsRequiared
         )
       }
 
@@ -109,18 +109,20 @@ class SettingsViewModel: Stepper {
       .withLatestFrom(dataSource) { indexPath, dataSource in
         let item = dataSource[indexPath.section].items[indexPath.item]
         switch item.type {
-        case .deletedTaskListIsRequired:
+        case .DeletedTaskListIsRequired:
           self.steps.accept(AppStep.DeletedTaskListIsRequired)
-        case .deletedTaskTypeListIsRequired:
+        case .DeletedTaskTypeListIsRequired:
           self.steps.accept(AppStep.DeletedTaskTypeListIsRequired)
-        case .logInIsRequired:
+        case .LogInIsRequired:
           self.steps.accept(AppStep.AuthIsRequired)
-        case .userProfileIsRequiared:
+        case .UserProfileIsRequiared:
           self.steps.accept(AppStep.UserProfileIsRequired)
-        case .syncDataIsRequired:
+        case .SyncDataIsRequired:
           self.steps.accept(AppStep.SyncDataIsRequired)
-        default:
-          return
+        case .SupportIsRequired:
+          self.steps.accept(AppStep.SupportIsRequired)
+        case .DeleteAccountIsRequired:
+          self.steps.accept(AppStep.DeleteAccountIsRequired)
         }
       }
     

@@ -351,13 +351,14 @@ class TaskViewController: TDViewController {
       vc.alertAnimationView.play()
       
       // alertButton
+      vc.alertOkButton.isHidden = false
       vc.alertOkButton.setTitle(texts.randomElement(), for: .normal)
     })
   }
   
   var showDatePickerAlertTriggerBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
-      let texts = ["Да, я молодец!","Просто герой :)","Красавчик же","Светлое будущее приближается :)"]
+
       // alertView
       vc.alertBackgroundView.isHidden = false
       vc.alertDatePicker.isHidden = false

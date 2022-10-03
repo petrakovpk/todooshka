@@ -73,6 +73,5 @@ class ChangeNameViewModel: Stepper {
       save: save
     )
   }
-  
 }
 

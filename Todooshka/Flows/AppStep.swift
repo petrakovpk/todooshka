@@ -40,7 +40,6 @@ enum AppStep: Step {
   case ShowKindOfTaskIsRequired(kindOfTask: KindOfTask)
   
   // Task
- // case CreateTaskIsRequired(status: TaskStatus, plannedDate: Date?)
   case CreateTaskIsRequired
   case CreateIdeaTaskIsRequired
   case CreatePlannedTaskIsRequired(plannedDate: Date)
@@ -49,6 +48,9 @@ enum AppStep: Step {
   
   // Deleted Task Type List
   case DeletedTaskTypeListIsRequired
+  
+  // DeleteAccount
+  case DeleteAccountIsRequired
   
   // Diamond
   case DiamondIsRequired
@@ -80,6 +82,9 @@ enum AppStep: Step {
   
   // Settings
   case SettingsIsRequired
+  
+  // Support
+  case SupportIsRequired
   
   // Shop
   case ShopIsRequired

@@ -40,6 +40,7 @@ class BirdViewModel: Stepper {
     let birdImageView: Driver<UIImage?>
     let buyButtonIsHidden: Driver<Bool>
     let buyLabelIsHidden: Driver<Bool>
+    let currency: Driver<Currency>
     let eggImageView: Driver<UIImage?>
     let dataSource: Driver<[KindOfTaskForBirdSection]>
     let description: Driver<String>
@@ -91,6 +92,9 @@ class BirdViewModel: Stepper {
     let price = bird
       .map{ $0.price }
       .map{ $0.string }
+    
+    let currency = bird
+      .map{ $0.currency }
     
     let title = bird
       .map{ $0.style.text }
@@ -151,17 +155,27 @@ class BirdViewModel: Stepper {
       .filter { $0.isBought }
       .map{ _ in self.steps.accept(AppStep.KindOfTaskWithBird(birdUID: self.birdUID)) }
     
+    let diamondsCount = services.dataService.diamonds.map{ $0.count }
     let feathersCount = services.dataService.feathersCount
     
     let diamonds = services.dataService.diamonds
       .asDriver(onErrorJustReturn: [])
 
-   let alertBuyButtonIsEnabled = bird
-      .withLatestFrom(feathersCount) { $1 >= $0.price ? true : false }
+    let alertBuyButtonIsEnabled = Driver
+      .combineLatest(bird, feathersCount, diamondsCount) { bird, feathersCount, diamondsCount -> Bool in
+        bird.currency == .Feather ? feathersCount >= bird.price : diamondsCount >= bird.price
+      }
     
-    let alertLabelText = bird
-      .withLatestFrom(feathersCount) { $1 >= $0.price ? "Можете купить!" : "Не хватает \( $1 - $0.price ) перышек" }
-    
+    let alertLabelText = Driver
+      .combineLatest(bird, feathersCount, diamondsCount) { bird, feathersCount, diamondsCount -> String in
+        switch bird.currency {
+        case .Feather:
+          return feathersCount >= bird.price ? "Можете купить!" : "Не хватает \( abs(feathersCount - bird.price) ) перышек"
+        case .Diamond:
+          return diamondsCount >= bird.price ? "Можете купить!" : "Не хватает \( abs(diamondsCount - bird.price) ) бриллиантиков"
+        }
+      }
+
     let buy = input.alertBuyButtonClick
       .withLatestFrom(bird){ _, bird -> Bird in
         var bird = bird
@@ -192,6 +206,7 @@ class BirdViewModel: Stepper {
       birdImageView: birdImageView,
       buyButtonIsHidden: buyButtonIsHidden,
       buyLabelIsHidden: buyLabelIsHidden,
+      currency: currency,
       eggImageView: eggImageView,
       dataSource: dataSource,
       description: description,
@@ -199,7 +214,6 @@ class BirdViewModel: Stepper {
       navigateBack: navigateBack,
       plusButtonClickTrigger: plusButtonClickTrigger,
       price: price,
-      //selectedKindOfTask: selectedKindOfTask,
       title: title
     )
   }

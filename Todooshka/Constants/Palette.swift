@@ -16,6 +16,7 @@ struct Palette {
     static let BlushPink = UIColor(named: "BlushPink")!
     static let BrandyPunch = UIColor(named: "BrandyPunch")!
     static let BrightSun = UIColor(named: "BrightSun")!
+    static let BrilliantRose = UIColor(named: "BrilliantRose")!
     static let BrinkPink = UIColor(named: "BrinkPink")!
     static let Cerise = UIColor(named: "Cerise")!
     static let Corduroy = UIColor(named: "Corduroy")!
@@ -24,6 +25,7 @@ struct Palette {
     static let JungleGreen = UIColor(named: "JungleGreen")!
     static let Malibu = UIColor(named: "Malibu")!
     static let Orange = UIColor(named: "Orange")!
+    static let PictonBlue = UIColor(named: "PictonBlue")!
     static let Portage = UIColor(named: "Portage")!
     static let PurpleHeart = UIColor(named: "PurpleHeart")!
     static let SantasGray = UIColor(named: "SantasGray")!

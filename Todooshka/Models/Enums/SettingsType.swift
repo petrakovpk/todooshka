@@ -7,16 +7,15 @@
 
 enum SettingsType {
   // auth
-  case logInIsRequired
-  case userProfileIsRequiared
+  case LogInIsRequired
+  case UserProfileIsRequiared
   // sync
-  case syncDataIsRequired
-//  case loadDataIsRequired
+  case SyncDataIsRequired
   // deleted
-  case deletedTaskListIsRequired
-  case deletedTaskTypeListIsRequired
+  case DeletedTaskListIsRequired
+  case DeletedTaskTypeListIsRequired
   // help
-  case askSupport
+  case SupportIsRequired
   // security
-  case removeAccountIsRequired
+  case DeleteAccountIsRequired
 }

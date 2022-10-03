@@ -219,6 +219,10 @@
 		9DE96089286106B600E5981A /* DiamondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE96088286106B600E5981A /* DiamondViewController.swift */; };
 		9DE9608B286106BF00E5981A /* DiamondViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE9608A286106BF00E5981A /* DiamondViewModel.swift */; };
 		9DF7CA7428E4F121000AE2B6 /* BirdFirebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF7CA7328E4F121000AE2B6 /* BirdFirebase.swift */; };
+		9DF7CA7728EAF8E1000AE2B6 /* SupportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF7CA7628EAF8E1000AE2B6 /* SupportViewController.swift */; };
+		9DF7CA7928EAF8EA000AE2B6 /* SupportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF7CA7828EAF8EA000AE2B6 /* SupportViewModel.swift */; };
+		9DF7CA7C28EB0C2E000AE2B6 /* DeleteAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF7CA7B28EB0C2E000AE2B6 /* DeleteAccountViewController.swift */; };
+		9DF7CA7E28EB0C37000AE2B6 /* DeleteAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF7CA7D28EB0C37000AE2B6 /* DeleteAccountViewModel.swift */; };
 		EC76D2D28EE56CA1E54E5320 /* Pods_Todooshka.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14C5120E07403B8A370DEDC9 /* Pods_Todooshka.framework */; };
 /* End PBXBuildFile section */
 
@@ -438,6 +442,10 @@
 		9DE96088286106B600E5981A /* DiamondViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondViewController.swift; sourceTree = "<group>"; };
 		9DE9608A286106BF00E5981A /* DiamondViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondViewModel.swift; sourceTree = "<group>"; };
 		9DF7CA7328E4F121000AE2B6 /* BirdFirebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdFirebase.swift; sourceTree = "<group>"; };
+		9DF7CA7628EAF8E1000AE2B6 /* SupportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportViewController.swift; sourceTree = "<group>"; };
+		9DF7CA7828EAF8EA000AE2B6 /* SupportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportViewModel.swift; sourceTree = "<group>"; };
+		9DF7CA7B28EB0C2E000AE2B6 /* DeleteAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountViewController.swift; sourceTree = "<group>"; };
+		9DF7CA7D28EB0C37000AE2B6 /* DeleteAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -733,8 +741,8 @@
 				60AE9D702652E5AD00E51531 /* LaunchScreen.storyboard */,
 				60EB113D2656A30000992BF8 /* Models */,
 				60AE9DAD2652F53B00E51531 /* Modules */,
-				60AE9D6D2652E5AD00E51531 /* Preview Content */,
 				60AE9DB32652F69000E51531 /* Services */,
+				60AE9D6D2652E5AD00E51531 /* Preview Content */,
 				60F0719126DA70440048AB71 /* Style */,
 				60EB113C2656850C00992BF8 /* Todooshka.entitlements */,
 				60ED957627B52C4B005ACC33 /* Todooshka.xcdatamodeld */,
@@ -766,6 +774,7 @@
 				9D42C03B28CF22F8008F624F /* ChangeName */,
 				9D42C04C28CF29EA008F624F /* ChangePassword */,
 				60C8343D26D80615006E4FBE /* ConfirmRemoveTask */,
+				9DF7CA7A28EB0C1A000AE2B6 /* DeleteAccount */,
 				9DE960832861068A00E5981A /* Diamond */,
 				9DE960822861068100E5981A /* Feather */,
 				600718F827BE8E2A006F2FEF /* GameCurrency */,
@@ -790,6 +799,7 @@
 				6087D57D26E1F6C8008F018F /* SettingsCell */,
 				60FFF65527A9A5A800290331 /* Shop */,
 				6006F82727AA6BC800E5AE9E /* ShopCell */,
+				9DF7CA7528EAF8B9000AE2B6 /* Support */,
 				9DC65D3A28D3209A00221ED2 /* SyncData */,
 				6067D99D26B1EEF300F0FB72 /* TabBar */,
 				60855BD8265905F700079D75 /* Task */,
@@ -1153,6 +1163,24 @@
 			path = Diamond;
 			sourceTree = "<group>";
 		};
+		9DF7CA7528EAF8B9000AE2B6 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				9DF7CA7628EAF8E1000AE2B6 /* SupportViewController.swift */,
+				9DF7CA7828EAF8EA000AE2B6 /* SupportViewModel.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		9DF7CA7A28EB0C1A000AE2B6 /* DeleteAccount */ = {
+			isa = PBXGroup;
+			children = (
+				9DF7CA7B28EB0C2E000AE2B6 /* DeleteAccountViewController.swift */,
+				9DF7CA7D28EB0C37000AE2B6 /* DeleteAccountViewModel.swift */,
+			);
+			path = DeleteAccount;
+			sourceTree = "<group>";
+		};
 		9DFE70422899642800589DC5 /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
@@ -1336,6 +1364,7 @@
 				9D17D44128899D4200D3E304 /* CalendarYearCell.swift in Sources */,
 				9DE96081285E6D8100E5981A /* SettingsItem.swift in Sources */,
 				6053F85C2820347F0047C204 /* Palette.swift in Sources */,
+				9DF7CA7E28EB0C37000AE2B6 /* DeleteAccountViewModel.swift in Sources */,
 				602D0959266B779D00946D1D /* UIVIew.swift in Sources */,
 				60B3AE0427FD7CCD00B7E5BD /* Observable+withPrevious.swift in Sources */,
 				6067D99F26B1EF3A00F0FB72 /* TabBarViewModel.swift in Sources */,
@@ -1350,6 +1379,7 @@
 				9D42BF6928C76A38008F624F /* AuthSectionModel.swift in Sources */,
 				60E970472827025B00577484 /* SceneActionType.swift in Sources */,
 				9D44C0D328E0708E0022148C /* KindOfTaskCell.swift in Sources */,
+				9DF7CA7928EAF8EA000AE2B6 /* SupportViewModel.swift in Sources */,
 				602EA053274E67F000525D6C /* TDTaskTextField.swift in Sources */,
 				60AE9DB22652F5C300E51531 /* AppStep.swift in Sources */,
 				606FB75127F728A400782E17 /* TaskListCellMode.swift in Sources */,
@@ -1417,6 +1447,7 @@
 				60C1522926BC3A9E00F10284 /* KindOfTaskListCell.swift in Sources */,
 				9D42BF6A28C76A38008F624F /* AuthViewModel.swift in Sources */,
 				9D42C04228CF2866008F624F /* ChangeGenderViewController.swift in Sources */,
+				9DF7CA7C28EB0C2E000AE2B6 /* DeleteAccountViewController.swift in Sources */,
 				9D42C01728CA1495008F624F /* FIRDatabaseQuery+Rx.swift in Sources */,
 				9D42BF7928C76A5A008F624F /* LoginViewController.swift in Sources */,
 				6006F82D27AA6E7100E5AE9E /* Bird.swift in Sources */,
@@ -1433,6 +1464,7 @@
 				600DA58F27FEFC16004A4634 /* TaskFlowAction.swift in Sources */,
 				60EB113F2656A32500992BF8 /* Task.swift in Sources */,
 				600718FC27BE912E006F2FEF /* GameCurrencyViewModel.swift in Sources */,
+				9DF7CA7728EAF8E1000AE2B6 /* SupportViewController.swift in Sources */,
 				9D42BF5128C08D06008F624F /* Settings.swift in Sources */,
 				6053F858282014060047C204 /* ErrorType.swift in Sources */,
 				6049C4EE27EC7960005A7150 /* EggType.swift in Sources */,

@@ -209,13 +209,13 @@ class CalendarViewController: UIViewController {
     pointsBackgroundView.anchor(top: sceneView.bottomAnchor, left: view.leftAnchor, right: shopButton.leftAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 40)
     
     // featherBackgroundView
-    featherBackgroundView.borderColor = UIColor(hexString: "ec55d4")
+    featherBackgroundView.borderColor = Palette.SingleColors.BrilliantRose
     featherBackgroundView.borderWidth = 0.5
     featherBackgroundView.layer.cornerRadius = 15
     featherBackgroundView.anchor(top: pointsBackgroundView.topAnchor, left: pointsBackgroundView.leftAnchor, bottom: pointsBackgroundView.bottomAnchor, widthConstant: (UIScreen.main.bounds.width - 32) / 2 / 2 - 8 )
     
     // diamondBackroundView
-    diamondBackroundView.borderColor = UIColor(hexString: "499cee")
+    diamondBackroundView.borderColor = Palette.SingleColors.PictonBlue
     diamondBackroundView.borderWidth = 0.5
     diamondBackroundView.layer.cornerRadius = 15
     diamondBackroundView.anchor(top: pointsBackgroundView.topAnchor, bottom: pointsBackgroundView.bottomAnchor, right: pointsBackgroundView.rightAnchor, widthConstant: (UIScreen.main.bounds.width - 32) / 2 / 2 - 8 )

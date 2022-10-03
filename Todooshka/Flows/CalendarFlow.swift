@@ -53,9 +53,13 @@ class CalendarFlow: Flow {
     case .ChangingPasswordIsRequired:
       return navigateToChangingPassword()
       
+    case .SupportIsRequired:
+      return navigateToSupport()
+      
+    case .DeleteAccountIsRequired:
+      return navigateToDeleteAccount()
+      
       // Task
-//    case .CreateTaskIsRequired(let status, let date):
-//      return navigateToTask(taskUID: UUID().uuidString, status: status, closed: date)
     case .CreatePlannedTaskIsRequired(let planned):
       return navigateToTask(planned: planned)
     case .ShowTaskIsRequired(let task):
@@ -106,7 +110,6 @@ class CalendarFlow: Flow {
     case .ShowBirdIsRequired(let bird):
       return navigateToBird(bird: bird)
      
-      
       // Shop
     case .ShopIsRequired:
       return navigateToShop()
@@ -227,6 +230,22 @@ class CalendarFlow: Flow {
   private func navigateToBird(bird: Bird) -> FlowContributors {
     let viewController = BirdViewController()
     let viewModel = BirdViewModel(birdUID: bird.UID , services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToSupport() -> FlowContributors {
+    let viewController = SupportViewController()
+    let viewModel = SupportViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToDeleteAccount() -> FlowContributors {
+    let viewController = DeleteAccountViewController()
+    let viewModel = DeleteAccountViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

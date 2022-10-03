@@ -452,15 +452,15 @@ extension Reactive where Base: User {
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all FIRUser methods.
      
      */
-    public func delete() -> Observable<Void> {
+    public func delete() -> Observable<Result<Void,Error>> {
         return Observable.create { observer in
             self.base.delete { error in
                 guard let error = error else {
-                    observer.onNext(())
+                  observer.onNext(.success(()))
                     observer.onCompleted()
                     return
                 }
-                observer.onError(error)
+              observer.onNext(.failure(error))
             }
             return Disposables.create()
         }

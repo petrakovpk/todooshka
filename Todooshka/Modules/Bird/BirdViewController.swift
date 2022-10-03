@@ -75,13 +75,11 @@ class BirdViewController: TDViewController {
     let label = UILabel()
     label.textAlignment = .center
     label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
-    label.textColor = UIColor(hexString: "ec55d4")
     return label
   }()
   
   private let priceImageView: UIImageView = {
     let imageView = UIImageView()
-    imageView.image = UIImage(named: "feather")
     return imageView
   }()
   
@@ -237,6 +235,7 @@ class BirdViewController: TDViewController {
       outputs.birdImageView.drive(alertViewBackground.birdImageView.rx.image),
       outputs.buyButtonIsHidden.drive(buyButton.rx.isHidden),
       outputs.buyLabelIsHidden.drive(buyLabel.rx.isHidden),
+      outputs.currency.drive(currencyBinder),
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.description.drive(descriptionTextView.rx.text),
       outputs.eggImageView.drive(alertViewBackground.eggImageView.rx.image),
@@ -261,7 +260,19 @@ class BirdViewController: TDViewController {
     })
   }
   
-    
+  var currencyBinder: Binder<Currency> {
+    return Binder(self, binding: { (vc, currency) in
+      switch currency {
+      case .Diamond:
+        vc.priceImageView.image = UIImage(named: "diamond")
+        vc.priceLabel.textColor = Palette.SingleColors.PictonBlue
+      case .Feather:
+        vc.priceImageView.image = UIImage(named: "feather")
+        vc.priceLabel.textColor = Palette.SingleColors.BrilliantRose
+      }
+    })
+  }
+  
   // MARK: - Configure DataSource
   func configureDataSource() {
     collectionView.dataSource = nil
