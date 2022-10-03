@@ -763,7 +763,6 @@
 				60C8343A26D7FC4C006E4FBE /* CalendarCell */,
 				9D42C04528CF29AE008F624F /* ChangeBirthday */,
 				9D42C04028CF283F008F624F /* ChangeGender */,
-				9D42C05128CF3502008F624F /* ChangeGenderItem */,
 				9D42C03B28CF22F8008F624F /* ChangeName */,
 				9D42C04C28CF29EA008F624F /* ChangePassword */,
 				60C8343D26D80615006E4FBE /* ConfirmRemoveTask */,
@@ -907,6 +906,7 @@
 		60D5662926CC2C8000D865DD /* OnboardingCell */ = {
 			isa = PBXGroup;
 			children = (
+				9D42C05128CF3502008F624F /* ChangeGenderItem */,
 				60D5662726CC202B00D865DD /* OnboardingSectionModel.swift */,
 				60D5662A26CC2CA600D865DD /* OnboardingCollectionViewCell.swift */,
 				60D5662C26CC2CBB00D865DD /* OnboardingCollectionViewCellModel.swift */,
@@ -1641,7 +1641,7 @@
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Todooshka/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1669,7 +1669,7 @@
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Todooshka/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

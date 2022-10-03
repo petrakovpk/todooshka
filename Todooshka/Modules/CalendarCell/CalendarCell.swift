@@ -28,14 +28,47 @@ class CalendarCell: UICollectionViewCell {
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
+
+  private let leftDot: UIView = {
+    let view = UIView()
+    view.cornerRadius = 2
+    view.isHidden = true
+    view.backgroundColor = Palette.SingleColors.Shamrock
+    return view
+  }()
+  
+  private let centralDot: UIView = {
+    let view = UIView()
+    view.cornerRadius = 2
+    view.isHidden = true
+    view.backgroundColor = Palette.SingleColors.JungleGreen
+    return view
+  }()
+  
+  private let rightDot: UIView = {
+    let view = UIView()
+    view.cornerRadius = 2
+    view.isHidden = true
+    view.backgroundColor = Palette.SingleColors.Jevel
+    return view
+  }()
   
   // MARK: - Draw
   override func draw(_ rect: CGRect) {
     super.draw(rect)
     
+    leftDot.backgroundColor = Palette.SingleColors.Shamrock
+    centralDot.backgroundColor = Palette.SingleColors.JungleGreen
+    rightDot.backgroundColor = Palette.SingleColors.Jevel
+    
+    let stackView = UIStackView(arrangedSubviews: [leftDot, centralDot, rightDot])
+    
     // adding
-    contentView.addSubview(dateLabel)
-    contentView.addSubview(imageView)
+    contentView.addSubviews([
+      dateLabel,
+      imageView,
+      stackView
+    ])
     
     // contentView
     contentView.cornerRadius = bounds.width / 2
@@ -49,6 +82,14 @@ class CalendarCell: UICollectionViewCell {
     // imageView
     imageView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
     imageView.layer.zPosition = 0
+    
+    leftDot.anchor(widthConstant: 4, heightConstant: 4)
+    centralDot.anchor(widthConstant: 4, heightConstant: 4)
+    rightDot.anchor(widthConstant: 4, heightConstant: 4)
+    
+    // stackView
+    stackView.anchorCenterXToSuperview()
+    stackView.anchor(top: dateLabel.bottomAnchor, topConstant: 4, heightConstant: 4)
   }
   
   func configureAsEmpty() {
@@ -58,7 +99,7 @@ class CalendarCell: UICollectionViewCell {
     dateLabel.text = nil
   }
   
-  func configure(date: Date, isSelected: Bool, completedTasksCount: Int) {
+  func configure(date: Date, isSelected: Bool, completedTasksCount: Int, plannedTasksCount: Int) {
     
     // contentView
     contentView.borderWidth = date.isInToday ? 1 : 0
@@ -70,6 +111,28 @@ class CalendarCell: UICollectionViewCell {
     // dateLabel
     dateLabel.text = date.day.string
     dateLabel.textColor = (imageView.image == nil) ? (isSelected ? UIColor.white : Theme.App.text) : Theme.Cells.Calendar.Text
+    
+    // stackView
+    switch plannedTasksCount {
+    case 0:
+      leftDot.isHidden = true
+      centralDot.isHidden = true
+      rightDot.isHidden = true
+    case 1:
+      leftDot.isHidden = false
+      centralDot.isHidden = true
+      rightDot.isHidden = true
+    case 2:
+      leftDot.isHidden = false
+      centralDot.isHidden = false
+      rightDot.isHidden = true
+    case 3 ... Int.max:
+      leftDot.isHidden = false
+      centralDot.isHidden = false
+      rightDot.isHidden = false
+    default:
+      return
+    }
     
   }
   

@@ -258,13 +258,8 @@ class MainTaskListViewController: UIViewController {
     [
       // scene
       outputs.backgroundImage.drive(backgroundImageBinder),
-      // birds
-      outputs.birds.drive(birdsBinder),
       // dataSource
       outputs.dataSource.drive(sceneDataSourceBinder),
-      // force
-     // outputs.forceNestUpdate.drive(forceNestUpdateBinder),
-    //  outputs.forceBranchUpdate.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
@@ -372,22 +367,6 @@ class MainTaskListViewController: UIViewController {
     return Binder(self, binding: { (vc, image) in
       if let image = image, let scene = vc.scene {
         scene.setup(with: image)
-      }
-    })
-  }
-  
-//  var forceNestUpdateBinder: Binder<Void> {
-//    return Binder(self, binding: { (vc, nestSceneActions) in
-//      if let scene = vc.scene {
-//        scene.forceUpdate()
-//      }
-//    })
-//  }
-  
-  var birdsBinder: Binder<[Bird]> {
-    return Binder(self, binding: { (vc, birds) in
-      if let scene = vc.scene {
-//        scene.setup(with: birds)
       }
     })
   }

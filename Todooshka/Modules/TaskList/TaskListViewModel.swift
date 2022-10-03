@@ -91,7 +91,7 @@ class TaskListViewModel: Stepper {
           case .Completed(let date):
             return task.status == .Completed && Calendar.current.isDate(date, inSameDayAs: task.closed ?? Date())
           case .Planned(let planned):
-            return task.planned == planned
+            return task.status == .Planned && Calendar.current.isDate(planned, inSameDayAs: task.planned ?? Date())
           }
         }
       }
@@ -127,7 +127,9 @@ class TaskListViewModel: Stepper {
       .filter{ $0.status == .Idea }
       .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
         dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
-      }.change(status: .Idea)
+      }
+      .change(status: .Idea)
+      .change(planned: nil)
       .asObservable()
       .flatMapLatest({ self.managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
@@ -136,7 +138,9 @@ class TaskListViewModel: Stepper {
       .filter{ $0.status == .InProgress }
       .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
         dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
-      }.change(status: .InProgress)
+      }
+      .change(status: .InProgress)
+      .change(planned: Date())
       .change(created: Date())
       .asObservable()
       .flatMapLatest({ self.managedContext.rx.update($0) })

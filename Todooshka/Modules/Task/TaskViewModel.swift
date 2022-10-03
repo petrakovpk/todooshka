@@ -34,7 +34,7 @@ class TaskViewModel: Stepper {
   
   // task attr
   let taskUID: String
-  var planned: Date? = nil
+  var planned: Date? = Date()
   var status: TaskStatus = .InProgress
   
   // helpers
@@ -52,24 +52,32 @@ class TaskViewModel: Stepper {
     let selection: Driver<IndexPath>
     // buttons
     let backButtonClickTrigger: Driver<Void>
-    let configureTaskTypesButtonClickTrigger: Driver<Void>
-    let saveTaskButtonClickTrigger: Driver<Void>
     let completeButtonClickTrigger: Driver<Void>
+    let configureTaskTypesButtonClickTrigger: Driver<Void>
+    let datePickerButtonClickTrigger: Driver<Void>
+    let saveTaskButtonClickTrigger: Driver<Void>
     // alert
     let alertOkButtonClickTrigger: Driver<Void>
+    // datePicker
+    let alertDatePickerCancelButtonClick: Driver<Void>
+    let alertDatePickerDate: Driver<Date>
+    let alertDatePickerOKButtonClick: Driver<Void>
+    
   }
   
   struct Output {
     let clearDescriptionPlaceholder: Driver<Void>
     let configureKindsOfTask: Driver<Void>
     let dataSource: Driver<[KindOfTaskSection]>
+    let datePickerDate: Driver<Date>
     let descriptionTextField: Driver<String>
     let hideAlertTrigger: Driver<Void>
     let navigateBack: Driver<Void>
     let plannedText: Driver<String>
     let save: Driver<Result<Void,Error>>
     let setDescriptionPlaceholder: Driver<Void>
-    let showAlertTrigger: Driver<Void>
+    let showComleteAlertTrigger: Driver<Void>
+    let showDatePickerAlertTrigger: Driver<Void>
     let taskIsNewTrigger: Driver<Void>
     let taskIsNotNewTrigger: Driver<Void>
     let textTextField: Driver<String>
@@ -87,9 +95,7 @@ class TaskViewModel: Stepper {
     self.status = status
     self.planned = planned
   }
-  
-  
-  
+
   //MARK: - Transform
   func transform(input: Input) -> Output {
 
@@ -106,7 +112,8 @@ class TaskViewModel: Stepper {
           status: self.status,
           created: Date(),
           closed: nil,
-          planned: self.planned)
+          planned: self.planned
+        )
       )
     
     let taskIsNewTrigger = tasks
@@ -122,14 +129,29 @@ class TaskViewModel: Stepper {
       .filter{ $0 != nil }
       .map{ _ in () }
     
-    let planned = task
+    let startPlanned = task
       .compactMap{ $0.planned }
-      .startWith(self.planned)
-    
-    let plannedText = planned
-      .compactMap{ self.services.preferencesService.midFormatter.string(for: $0) }
-      .startWith( "Когда-то" )
+
+    let selectedPlanned = input.alertDatePickerOKButtonClick
+      .withLatestFrom(input.alertDatePickerDate) { $1 }
       
+    let planned = Driver
+      .of(selectedPlanned, startPlanned)
+      .merge()
+      .map { date -> Date? in date }
+      .startWith(nil)
+      .debug()
+
+    let plannedText = planned
+      .compactMap{ $0 }
+      .compactMap{ Calendar.current.isDate($0, inSameDayAs: Date()) ?
+        "Сегодня" : self.services.preferencesService.midFormatter.string(for: $0)
+      }.startWith( "Когда-то" )
+      
+    let changeStatusToPlanned = selectedPlanned
+      .withLatestFrom(task) { planned, task -> TaskStatus? in
+        planned.startOfDay > Date().startOfDay && task.status != .Idea ? TaskStatus.Planned : nil
+      }.compactMap{ $0 }
     
     // kindsOfTask
     let kindsOfTask = services.dataService
@@ -177,7 +199,8 @@ class TaskViewModel: Stepper {
     let status = Driver
       .of(
         task.compactMap{ $0.status }.distinctUntilChanged(),
-        input.alertOkButtonClickTrigger.map{ TaskStatus.Completed }
+        input.alertOkButtonClickTrigger.map{ TaskStatus.Completed },
+        changeStatusToPlanned
       ).merge()
     
     let closed = input.alertOkButtonClickTrigger
@@ -197,24 +220,22 @@ class TaskViewModel: Stepper {
         // Это когда перестаем редактировать
         input.descriptionTextViewDidEndEditing.withLatestFrom(description){ $1 }
       ).merge()
-      .filter{ $0.isEmpty }
-      .map{ _ in () }
-      .do{ _ in self.isDescriptionPlaceholderEnabled = true }
+      .filter { $0.isEmpty }
+      .map { _ in () }
+      .do { _ in self.isDescriptionPlaceholderEnabled = true }
     
     let clearDescriptionPlaceholder = input.descriptionTextViewDidBeginEditing
       .compactMap{ self.isDescriptionPlaceholderEnabled ? () : nil   }
       .do{ _ in self.isDescriptionPlaceholderEnabled = false }
       
     // save
-    let selectionTrigger = input.selection
-      .map{ _ in () }
-    
     let save = Driver
       .of(
         input.textFieldEditingDidEndOnExit,
         input.saveTaskButtonClickTrigger,
         input.alertOkButtonClickTrigger,
-        selectionTrigger
+        input.selection.map{ _ in () },
+        input.alertDatePickerOKButtonClick
       ).merge()
       .withLatestFrom(task){ $1 }
       .withLatestFrom(taskAttr) { task, taskAttr -> Task in
@@ -232,12 +253,22 @@ class TaskViewModel: Stepper {
       .flatMapLatest({ self.managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
-    let showAlertTrigger = input.completeButtonClickTrigger
-    let hideAlertTrigger = input.alertOkButtonClickTrigger
-
+    let showComleteAlertTrigger = input.completeButtonClickTrigger
+    let showDatePickerAlertTrigger = input.datePickerButtonClickTrigger
+    
+    let hideAlertTrigger = Driver.of(
+      input.alertOkButtonClickTrigger,
+      input.alertDatePickerCancelButtonClick,
+      input.alertDatePickerOKButtonClick
+    ).merge()
+      
     // configure task button click
     let configureKindsOfTask = input.configureTaskTypesButtonClickTrigger
-      .map {  self.steps.accept(AppStep.TaskTypesListIsRequired) }
+      .map { self.steps.accept(AppStep.TaskTypesListIsRequired) }
+    
+    let datePickerDate = planned
+      .compactMap{ $0 }
+      .startWith(Date())
     
     //  navigateBack
     let navigateBack = Driver
@@ -245,22 +276,24 @@ class TaskViewModel: Stepper {
         input.saveTaskButtonClickTrigger,
         input.textFieldEditingDidEndOnExit,
         input.backButtonClickTrigger,
-        hideAlertTrigger
+        input.alertOkButtonClickTrigger
       )
       .merge()
-      .map {  self.steps.accept(AppStep.TaskProcessingIsCompleted) }
+      .map { self.steps.accept(AppStep.TaskProcessingIsCompleted) }
 
     return Output(
       clearDescriptionPlaceholder: clearDescriptionPlaceholder,
       configureKindsOfTask: configureKindsOfTask,
       dataSource: dataSource,
+      datePickerDate: datePickerDate,
       descriptionTextField: description,
       hideAlertTrigger: hideAlertTrigger,
       navigateBack: navigateBack,
       plannedText: plannedText,
       save: save,
       setDescriptionPlaceholder: setDescriptionPlaceholder,
-      showAlertTrigger: showAlertTrigger,
+      showComleteAlertTrigger: showComleteAlertTrigger,
+      showDatePickerAlertTrigger: showDatePickerAlertTrigger,
       taskIsNewTrigger: taskIsNewTrigger,
       taskIsNotNewTrigger: taskIsNotNewTrigger,
       textTextField: text

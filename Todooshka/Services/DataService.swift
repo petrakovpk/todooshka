@@ -139,13 +139,30 @@ class DataService {
         goldTasks.count - birds.filter{ $0.isBought }.map{ $0.price }.sum()
       }
     
-    //feathers.drive().disposed(by: disposeBag)
     diamonds.drive().disposed(by: disposeBag)
     birds.drive().disposed(by: disposeBag)
     kindsOfTask.drive().disposed(by: disposeBag)
     tasks.drive().disposed(by: disposeBag)
     goldTasks.drive().disposed(by: disposeBag)
     feathersCount.drive().disposed(by: disposeBag)
+    
+    
+    // при открытии проверяем и делаем все плановые задачи с плановой датой выполнения == сегодня задачи в работе
+    tasks
+      .map{ $0.filter{ $0.status == .Planned } }
+      .map{ $0.filter{ $0.planned != nil } }
+      .map{ $0.filter{ Calendar.current.isDate($0.planned!, inSameDayAs: Date()) } }
+      .asObservable()
+      .flatMapLatest({ Observable.from($0) })
+      .map { task -> Task in
+        var task = task
+        task.status = .InProgress
+        task.created = Date().startOfDay
+        return task
+      }.flatMapLatest({ context.rx.update($0) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .drive()
+      .disposed(by: disposeBag)
 
     // MARK: - Clear
     allTasks

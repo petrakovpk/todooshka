@@ -27,6 +27,14 @@ extension SharedSequence where Element == Task {
     }
   }
   
+  func change(planned date: Date?) -> RxCocoa.SharedSequence<SharingStrategy, Task> {
+    return self.map { task in
+      var task = task
+      task.planned = date
+      return task
+    }
+  }
+  
   func change(status: TaskStatus) -> RxCocoa.SharedSequence<SharingStrategy, Task> {
     return self.map { task in
       var task = task

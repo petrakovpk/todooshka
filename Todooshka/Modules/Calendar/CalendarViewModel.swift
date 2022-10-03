@@ -85,9 +85,14 @@ class CalendarViewModel: Stepper {
       .map { $0.filter { $0.closed != nil }}
       .asDriver(onErrorJustReturn: [])
     
+    let plannedTasks = services.dataService
+      .tasks
+      .map { $0.filter { $0.status == .Planned }}
+      .map { $0.filter { $0.planned != nil }}
+      .asDriver(onErrorJustReturn: [])
     
     let dataSource = Driver<[CalendarSection]>
-      .combineLatest(dataSourceMonths, selectedDate, completedTasks) { dataSourceMonths, selectedDate, completedTasks -> [CalendarSection] in
+      .combineLatest(dataSourceMonths, selectedDate, completedTasks, plannedTasks) { dataSourceMonths, selectedDate, completedTasks, plannedTasks -> [CalendarSection] in
         dataSourceMonths.map { startOfMonth -> CalendarSection in
           CalendarSection(
             type: .Month(startOfMonth: startOfMonth) ,
@@ -104,7 +109,8 @@ class CalendarViewModel: Stepper {
                 CalendarItem(type: .Day(
                   date: date,
                   isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate) ,
-                  completedTasksCount: completedTasks.filter{ Calendar.current.isDate($0.closed!, inSameDayAs: date) }.count
+                  completedTasksCount: completedTasks.filter{ Calendar.current.isDate($0.closed!, inSameDayAs: date) }.count,
+                  plannedTasksCount: plannedTasks.filter{ Calendar.current.isDate($0.planned!, inSameDayAs: date) }.count
                 ))
               }
           )
@@ -121,7 +127,7 @@ class CalendarViewModel: Stepper {
         switch dataSource[indexPath.section].items[indexPath.item].type {
         case .Empty:
           return nil
-        case .Day(let date, _, _):
+        case .Day(let date, _, _, _):
           return date
         }
       }
@@ -166,11 +172,11 @@ class CalendarViewModel: Stepper {
     let willDisplayCell = input.willDisplayCell
       .map { $0.at.section }
       .distinctUntilChanged()
-      .withLatestFrom(dataSource) { section, dataSource -> Void in
-        if section == dataSource.count - 1 {
-          self.appendFutureData()
-        }
+      .withLatestFrom(dataSource) { section, dataSource -> Bool in
+        section == dataSource.count - 1
       }
+      .filter { $0 }
+      .map { _ in self.appendFutureData() }
     
     
     return Output(

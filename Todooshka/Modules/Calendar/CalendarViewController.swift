@@ -372,23 +372,20 @@ class CalendarViewController: UIViewController {
         vc.calendarView.insertSections(IndexSet(integer: newDataSource.count - 1))
       }
       
-      
-      // Перегружаем выбранный месяц
-      var previousSelectedDate: Date?
-
-      for section in oldDataSource {
-        for item in section.items {
-          guard case .Day(let date, let isSelected, let _) = item.type else { continue }
-          if isSelected { previousSelectedDate = date }
-        }
-      }
-      
-      for (sectionIndex, section) in newDataSource.enumerated() {
-        for (itemIndex, item) in section.items.enumerated() {
-          guard case .Day(let date, let isSelected, let _) = item.type else { continue }
-          if date == previousSelectedDate || isSelected {
-            UIView.performWithoutAnimation {
-               vc.calendarView.reloadItems(at: [IndexPath(item: itemIndex, section: sectionIndex)])
+      // Перегружаем
+      for (newSectionIndex, newSection) in newDataSource.enumerated() {
+        for oldSection in oldDataSource where oldSection.identity == newSection.identity {
+          for (newItemIndex, newItem) in newSection.items.enumerated() {
+            for oldItem in oldSection.items {
+              guard case .Day(let newDate, let newIsSelected, let newCompletedTasksCount, let newPlannedTasksCount) = newItem.type else { continue }
+              guard case .Day(let oldDate, let oldIsSelected, let oldCompletedTasksCount, let oldPlannedTasksCount) = oldItem.type else { continue }
+              guard Calendar.current.isDate(newDate, inSameDayAs: oldDate) else { continue }
+              if newIsSelected != oldIsSelected
+                  || newCompletedTasksCount != oldCompletedTasksCount
+                  || newPlannedTasksCount != oldPlannedTasksCount
+              {
+                vc.calendarView.reloadItems(at: [IndexPath(item: newItemIndex, section: newSectionIndex)])
+              }
             }
           }
         }
@@ -415,8 +412,8 @@ extension CalendarViewController: UICollectionViewDataSource {
       switch item.type {
       case .Empty:
         cell.configureAsEmpty()
-      case .Day(let date, let isSelected, let completedTasksCount):
-        cell.configure(date: date, isSelected: isSelected, completedTasksCount: completedTasksCount)
+      case .Day(let date, let isSelected, let completedTasksCount, let plannedTasksCount):
+        cell.configure(date: date, isSelected: isSelected, completedTasksCount: completedTasksCount, plannedTasksCount: plannedTasksCount)
       }
       return cell
     case .Year(let year):

@@ -20,6 +20,8 @@ struct Palette {
     static let Cerise = UIColor(named: "Cerise")!
     static let Corduroy = UIColor(named: "Corduroy")!
     static let Jaffa = UIColor(named: "Jaffa")!
+    static let Jevel = UIColor(named: "Jevel")!
+    static let JungleGreen = UIColor(named: "JungleGreen")!
     static let Malibu = UIColor(named: "Malibu")!
     static let Orange = UIColor(named: "Orange")!
     static let Portage = UIColor(named: "Portage")!

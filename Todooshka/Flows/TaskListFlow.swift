@@ -54,6 +54,8 @@ class TaskListFlow: Flow {
 
     case .CreateTaskIsRequired:
       return navigateToTask()
+    case .CreateIdeaTaskIsRequired:
+      return navigateToIdeaTask()
     case .ShowTaskIsRequired(let task):
       return navigateToTask(taskUID: task.UID)
       
@@ -131,15 +133,24 @@ class TaskListFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-    
-    private func navigateToTask() -> FlowContributors {
-      let viewController = TaskViewController()
-      let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString)
-      viewController.viewModel = viewModel
-      rootViewController.tabBarController?.tabBar.isHidden = true
-      rootViewController.pushViewController(viewController, animated: true)
-      return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-    }
+  
+  private func navigateToTask() -> FlowContributors {
+    let viewController = TaskViewController()
+    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString)
+    viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToIdeaTask() -> FlowContributors {
+    let viewController = TaskViewController()
+    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString, status: .Idea, planned: nil)
+    viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
   
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
     let viewController = TaskListViewController()

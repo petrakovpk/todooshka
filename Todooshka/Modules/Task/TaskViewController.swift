@@ -50,7 +50,6 @@ class TaskViewController: TDViewController {
   
   private let plannedDateButton: UIButton = {
     let button = UIButton(type: .system)
-    //button.setTitle("Никогда", for: .normal)
     button.setTitleColor(Theme.App.text, for: .normal)
     button.cornerRadius = 15
     button.borderWidth = 1.0
@@ -91,19 +90,20 @@ class TaskViewController: TDViewController {
   }()
   
   // MARK: - Complete Task Alert UI Elements
-  private let alertView: UIView = {
+  private let alertBackgroundView: UIView = {
     let view = UIView()
     view.backgroundColor = .black.withAlphaComponent(0.5)
     view.isHidden = true
     return view
   }()
   
-  private let alertButton: UIButton = {
+  private let alertOkButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 48.superAdjusted / 2
     button.setTitle("Да, я молодец :)", for: .normal)
     button.setTitleColor(.white, for: .normal)
     button.backgroundColor = UIColor(hexString: "#FF005C")
+    button.isHidden = true
     return button
   }()
   
@@ -113,8 +113,40 @@ class TaskViewController: TDViewController {
     animationView.contentMode = .scaleAspectFill
     animationView.loopMode = .repeat(3.0)
     animationView.animationSpeed = 1.0
+    animationView.isHidden = true
     return animationView
   }()
+  
+  private let alertDatePicker: UIDatePicker = {
+    let picker = UIDatePicker()
+    picker.datePickerMode = .date
+    picker.preferredDatePickerStyle = .inline
+    picker.backgroundColor = Theme.App.background
+    picker.cornerRadius = 15
+    picker.isHidden = true
+    return picker
+  }()
+  
+  private let alertDatePickerOkButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 12
+    button.setTitle("Выбрать", for: .normal)
+    button.setTitleColor(Theme.App.text, for: .normal)
+    button.backgroundColor = Palette.SingleColors.Portage
+    button.isHidden = true
+    return button
+  }()
+  
+  private let alertDatePickerCancelButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 12
+    button.setTitle("Отмена", for: .normal)
+    button.setTitleColor(Theme.App.text, for: .normal)
+    button.backgroundColor = Theme.App.background
+    button.isHidden = true
+    return button
+  }()
+  
   
   //MARK: - Lifecycle
   override func viewDidLoad() {
@@ -189,19 +221,35 @@ class TaskViewController: TDViewController {
   private func configureAlert() {
     
     // adding
-    view.addSubview(alertView)
-    view.addSubview(alertAnimationView)
-    alertAnimationView.addSubview(alertButton)
+    view.addSubviews([
+      alertBackgroundView,
+      alertAnimationView,
+      alertDatePicker,
+      alertDatePickerOkButton,
+      alertDatePickerCancelButton
+    ])
+    
+    alertAnimationView.addSubview(alertOkButton)
     
     // alertView
-    alertView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
     
     // alertAnimationView
     alertAnimationView.anchorCenterXToSuperview()
     alertAnimationView.anchorCenterYToSuperview()
     
+    // alertDatePicker
+    alertDatePicker.anchorCenterXToSuperview()
+    alertDatePicker.anchorCenterYToSuperview()
+    
+    // alertDatePickerOkButton
+    alertDatePickerOkButton.anchor(top: alertDatePicker.bottomAnchor, right: alertDatePicker.rightAnchor, topConstant: 8, widthConstant: alertDatePicker.bounds.width / 2 - 8, heightConstant: 50)
+    
+    // alertDatePickerCancelButton
+    alertDatePickerCancelButton.anchor(top: alertDatePicker.bottomAnchor, left: alertDatePicker.leftAnchor, topConstant: 8, widthConstant: alertDatePicker.bounds.width / 2 - 8, heightConstant: 50)
+    
     // alertButton
-    alertButton.anchor(top: completeButton.topAnchor, left: completeButton.leftAnchor, bottom: completeButton.bottomAnchor, right: completeButton.rightAnchor)
+    alertOkButton.anchor(top: completeButton.topAnchor, left: completeButton.leftAnchor, bottom: completeButton.bottomAnchor, right: completeButton.rightAnchor)
   }
   
   //MARK: - CollectionView
@@ -225,7 +273,7 @@ class TaskViewController: TDViewController {
   
   //MARK: - Bind
   func bindViewModel() {
-
+    
     let input = TaskViewModel.Input(
       // textTextField
       textTextFieldText: textTextField.rx.text.orEmpty.asDriver(),
@@ -238,11 +286,16 @@ class TaskViewController: TDViewController {
       selection: collectionView.rx.itemSelected.asDriver(),
       // buttons
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      configureTaskTypesButtonClickTrigger: kindsOfTaskButton.rx.tap.asDriver(),
-      saveTaskButtonClickTrigger: saveButton.rx.tap.asDriver(),
       completeButtonClickTrigger: completeButton.rx.tap.asDriver(),
+      configureTaskTypesButtonClickTrigger: kindsOfTaskButton.rx.tap.asDriver(),
+      datePickerButtonClickTrigger: plannedDateButton.rx.tap.asDriver(),
+      saveTaskButtonClickTrigger: saveButton.rx.tap.asDriver(),
       // Complete Task Alert
-      alertOkButtonClickTrigger: alertButton.rx.tap.asDriver()
+      alertOkButtonClickTrigger: alertOkButton.rx.tap.asDriver(),
+      // datePicker
+      alertDatePickerCancelButtonClick: alertDatePickerCancelButton.rx.tap.asDriver(),
+      alertDatePickerDate: alertDatePicker.rx.date.asDriver(),
+      alertDatePickerOKButtonClick: alertDatePickerOkButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
@@ -251,11 +304,13 @@ class TaskViewController: TDViewController {
       outputs.clearDescriptionPlaceholder.drive(clearDescriptionPlaceholderBinder),
       outputs.configureKindsOfTask.drive(),
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.datePickerDate.drive(alertDatePicker.rx.date),
       outputs.descriptionTextField.drive(descriptionTextView.rx.text),
       outputs.navigateBack.drive(),
       outputs.save.drive(),
       outputs.setDescriptionPlaceholder.drive(setDescriptionPlaceholderBinder),
-      outputs.showAlertTrigger.drive(showAlertBinder),
+      outputs.showComleteAlertTrigger.drive(showComleteAlertTriggerBinder),
+      outputs.showDatePickerAlertTrigger.drive(showDatePickerAlertTriggerBinder),
       outputs.hideAlertTrigger.drive(hideAlertBinder),
       outputs.plannedText.drive(plannedButtonTextBinder),
       outputs.taskIsNewTrigger.drive(taskIsNewBinder),
@@ -281,12 +336,12 @@ class TaskViewController: TDViewController {
     })
   }
   
-  var showAlertBinder: Binder<Void> {
+  var showComleteAlertTriggerBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       let texts = ["Да, я молодец!","Просто герой :)","Красавчик же","Светлое будущее приближается :)"]
       
       // alertView
-      vc.alertView.isHidden = false
+      vc.alertBackgroundView.isHidden = false
       
       // alertAnimationView
       vc.alertAnimationView.isHidden = false
@@ -296,7 +351,19 @@ class TaskViewController: TDViewController {
       vc.alertAnimationView.play()
       
       // alertButton
-      vc.alertButton.setTitle(texts.randomElement(), for: .normal)
+      vc.alertOkButton.setTitle(texts.randomElement(), for: .normal)
+    })
+  }
+  
+  var showDatePickerAlertTriggerBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      let texts = ["Да, я молодец!","Просто герой :)","Красавчик же","Светлое будущее приближается :)"]
+      // alertView
+      vc.alertBackgroundView.isHidden = false
+      vc.alertDatePicker.isHidden = false
+      vc.alertDatePickerOkButton.isHidden = false
+      vc.alertDatePickerCancelButton.isHidden = false
+      vc.dismissKeyboard()
     })
   }
   
@@ -310,8 +377,11 @@ class TaskViewController: TDViewController {
   
   var hideAlertBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
-      vc.alertView.isHidden = true
       vc.alertAnimationView.isHidden = true
+      vc.alertBackgroundView.isHidden = true
+      vc.alertDatePicker.isHidden = true
+      vc.alertDatePickerOkButton.isHidden = true
+      vc.alertDatePickerCancelButton.isHidden = true
     })
   }
   
