@@ -241,8 +241,14 @@ class DataService {
         }
       }
       .map { birds -> [Style] in // если куплена, то оставляем, иначе симл
-        birds.map{ bird -> Style in
-          bird.isBought ? bird.style : .Simple }
+        birds.compactMap { bird -> Style? in
+          switch bird.clade {
+          case .Dragon:
+            return bird.isBought ? bird.style : nil
+          default:
+            return bird.isBought ? bird.style : .Simple
+          }
+        }
       }
       .map { styles -> [EggActionType] in // получаем действия
         styles.map{ .Crack(style: $0) }
@@ -295,9 +301,15 @@ class DataService {
         style.enumerated().compactMap { index, style -> Bird? in
           birds.first(where: { $0.style == style && $0.clade == Clade(level: index + 1) })
         }
-      }.map { birds -> [Style] in // если куплена, то оставляем, иначе симл
-        birds.map { bird -> Style in
-          bird.isBought ? bird.style : .Simple
+      }
+      .map { birds -> [Style] in // если куплена, то оставляем, иначе симл
+        birds.compactMap { bird -> Style? in
+          switch bird.clade {
+          case .Dragon:
+            return bird.isBought ? bird.style : nil
+          default:
+            return bird.isBought ? bird.style : .Simple
+          }
         }
       }.withLatestFrom(selectedDate) { styles, closed -> [BirdActionType] in
         styles.map{ .Sitting(style: $0, closed: closed)
