@@ -132,6 +132,7 @@ class MainTaskListViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     scene?.reloadData()
+    viewModel.services.dataService.checkPlannedTasksTrigger.accept(())
     navigationController?.tabBarController?.tabBar.isHidden = false
   }
   

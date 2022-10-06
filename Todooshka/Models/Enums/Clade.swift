@@ -27,11 +27,11 @@ enum Clade: String {
   var level: Int {
     switch self {
     case .Chiken: return 1
-    case .Penguin: return 2
-    case .Ostrich: return 3
+    case .Ostrich: return 2
+    case .Owl: return 3
     case .Parrot: return 4
-    case .Eagle: return 5
-    case .Owl: return 6
+    case .Penguin: return 5
+    case .Eagle: return 6
     case .Dragon: return 7
     }
   }
@@ -40,11 +40,11 @@ enum Clade: String {
   var text: String {
     switch self {
     case .Chiken: return "1-я задача, Курица"
-    case .Penguin: return "2-я задача, Пингвин"
-    case .Ostrich: return "3-я задача, Страус"
+    case .Ostrich: return "2-я задача, Страус"
+    case .Owl: return "3-я задача, Сова"
     case .Parrot: return "4-я задача, Попугай"
-    case .Eagle: return "5-я задача, Орел"
-    case .Owl: return "6-я задача, Сова"
+    case .Penguin: return "5-я задача, Пингвин"
+    case .Eagle: return "6-я задача, Орел"
     case .Dragon: return "7-я задача, Дракон"
     }
   }
@@ -53,12 +53,12 @@ enum Clade: String {
   init(level: Int) {
     switch level {
     case 1: self = .Chiken
-    case 2: self = .Penguin
-    case 3: self = .Ostrich
+    case 2: self = .Ostrich
+    case 3: self = .Owl
     case 4: self = .Parrot
-    case 5: self = .Eagle
+    case 5: self = .Penguin
     case 6: self = .Owl
-    case 7: self = .Dragon
+    case 7: self = .Eagle
     default: self = .Chiken
     }
   }

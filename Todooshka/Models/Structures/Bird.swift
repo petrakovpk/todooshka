@@ -109,76 +109,76 @@ extension Bird {
   struct Chiken {
     static let Simple: Bird = Bird( clade: .Chiken, currency: .Feather, description: "Простая", name: "Курица", price: 0, style: .Simple,UID: "ChikenSimple", isBought: true, lastModified: 0)
     static let Student: Bird = Bird( clade: .Chiken, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 4, style: .Student,UID: "ChikenStudent", isBought: false, lastModified: 0)
-    static let Business: Bird = Bird( clade: .Chiken, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 7, style: .Business,UID: "ChikenBusiness", isBought: false, lastModified: 0)
-    static let Cook: Bird = Bird( clade: .Chiken, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 8, style: .Cook,UID: "ChikenCook", isBought: false, lastModified: 0)
-    static let Fashion: Bird = Bird( clade: .Chiken, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 9, style: .Fashion,UID: "ChikenFashion", isBought: false, lastModified: 0)
-    static let Kid: Bird = Bird( clade: .Chiken, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 10, style: .Kid,UID: "ChikenKid", isBought: false, lastModified: 0)
-    static let Sport: Bird = Bird( clade: .Chiken, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 15, style: .Sport,UID: "ChikenSport", isBought: false, lastModified: 0)
+    static let Business: Bird = Bird( clade: .Chiken, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 8, style: .Business,UID: "ChikenBusiness", isBought: false, lastModified: 0)
+    static let Cook: Bird = Bird( clade: .Chiken, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 12, style: .Cook,UID: "ChikenCook", isBought: false, lastModified: 0)
+    static let Fashion: Bird = Bird( clade: .Chiken, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 18, style: .Fashion,UID: "ChikenFashion", isBought: false, lastModified: 0)
+    static let Kid: Bird = Bird( clade: .Chiken, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 15, style: .Kid,UID: "ChikenKid", isBought: false, lastModified: 0)
+    static let Sport: Bird = Bird( clade: .Chiken, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 19, style: .Sport,UID: "ChikenSport", isBought: false, lastModified: 0)
   }
 
   // Ostrich
   struct Ostrich {
     static let Simple: Bird = Bird( clade: .Ostrich, currency: .Feather, description: "Простая", name: "Курица", price: 0, style: .Simple,UID: "OstrichSimple", isBought: true)
-    static let Student: Bird = Bird( clade: .Ostrich, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 4, style: .Student,UID: "OstrichStudent", isBought: false, lastModified: 0)
-    static let Business: Bird = Bird( clade: .Ostrich, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 7, style: .Business,UID: "OstrichBusiness", isBought: false, lastModified: 0)
-    static let Cook: Bird = Bird( clade: .Ostrich, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 8, style: .Cook,UID: "OstrichCook", isBought: false, lastModified: 0)
-    static let Fashion: Bird = Bird( clade: .Ostrich, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 9, style: .Fashion,UID: "OstrichFashion", isBought: false, lastModified: 0)
-    static let Kid: Bird = Bird( clade: .Ostrich, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 10, style: .Kid,UID: "OstrichKid", isBought: false, lastModified: 0)
-    static let Sport: Bird = Bird(clade: .Ostrich, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 15, style: .Sport,UID: "OstrichSport", isBought: false, lastModified: 0)
+    static let Student: Bird = Bird( clade: .Ostrich, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 5, style: .Student,UID: "OstrichStudent", isBought: false, lastModified: 0)
+    static let Business: Bird = Bird( clade: .Ostrich, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 9, style: .Business,UID: "OstrichBusiness", isBought: false, lastModified: 0)
+    static let Cook: Bird = Bird( clade: .Ostrich, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 13, style: .Cook,UID: "OstrichCook", isBought: false, lastModified: 0)
+    static let Fashion: Bird = Bird( clade: .Ostrich, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 19, style: .Fashion,UID: "OstrichFashion", isBought: false, lastModified: 0)
+    static let Kid: Bird = Bird( clade: .Ostrich, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 17, style: .Kid,UID: "OstrichKid", isBought: false, lastModified: 0)
+    static let Sport: Bird = Bird(clade: .Ostrich, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 21, style: .Sport,UID: "OstrichSport", isBought: false, lastModified: 0)
   }
 
   // Owl
   struct Owl {
     static let Simple: Bird = Bird( clade: .Owl, currency: .Feather, description: "Простая", name: "Курица", price: 0, style: .Simple,UID: "OwlSimple", isBought: true)
-    static let Student: Bird = Bird( clade: .Owl, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 4, style: .Student,UID: "OwlStudent", isBought: false, lastModified: 0)
-    static let Business: Bird = Bird( clade: .Owl, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 7, style: .Business,UID: "OwlBusiness", isBought: false, lastModified: 0)
-    static let Cook: Bird = Bird( clade: .Owl, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 8, style: .Cook,UID: "OwlCook", isBought: false, lastModified: 0)
-    static let Fashion: Bird = Bird( clade: .Owl, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 9, style: .Fashion,UID: "OwlFashion", isBought: false, lastModified: 0)
-    static let Kid: Bird = Bird( clade: .Owl, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 10, style: .Kid,UID: "OwlKid", isBought: false, lastModified: 0)
-    static let Sport: Bird = Bird( clade: .Owl, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 15, style: .Sport,UID: "OwlSport", isBought: false, lastModified: 0)
+    static let Student: Bird = Bird( clade: .Owl, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 6, style: .Student,UID: "OwlStudent", isBought: false, lastModified: 0)
+    static let Business: Bird = Bird( clade: .Owl, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 10, style: .Business,UID: "OwlBusiness", isBought: false, lastModified: 0)
+    static let Cook: Bird = Bird( clade: .Owl, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 14, style: .Cook,UID: "OwlCook", isBought: false, lastModified: 0)
+    static let Fashion: Bird = Bird( clade: .Owl, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 20, style: .Fashion,UID: "OwlFashion", isBought: false, lastModified: 0)
+    static let Kid: Bird = Bird( clade: .Owl, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 19, style: .Kid,UID: "OwlKid", isBought: false, lastModified: 0)
+    static let Sport: Bird = Bird( clade: .Owl, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 23, style: .Sport,UID: "OwlSport", isBought: false, lastModified: 0)
   }
 
   // Parrot
   struct Parrot {
     static let Simple: Bird = Bird( clade: .Parrot, currency: .Feather, description: "Простая", name: "Курица", price: 0, style: .Simple,UID: "ParrotSimple", isBought: true)
-    static let Student: Bird = Bird( clade: .Parrot, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 4, style: .Student,UID: "ParrotStudent", isBought: false, lastModified: 0)
-    static let Business: Bird = Bird( clade: .Parrot, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 7, style: .Business,UID: "ParrotBusiness", isBought: false, lastModified: 0)
-    static let Cook: Bird = Bird( clade: .Parrot, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 8, style: .Cook,UID: "ParrotCook", isBought: false, lastModified: 0)
-    static let Fashion: Bird = Bird( clade: .Parrot, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 9, style: .Fashion,UID: "ParrotFashion", isBought: false, lastModified: 0)
-    static let Kid: Bird = Bird( clade: .Parrot, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 10, style: .Kid,UID: "ParrotKid", isBought: false, lastModified: 0)
-    static let Sport: Bird = Bird( clade: .Parrot, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 15, style: .Sport,UID: "ParrotSport", isBought: false, lastModified: 0)
+    static let Student: Bird = Bird( clade: .Parrot, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 7, style: .Student,UID: "ParrotStudent", isBought: false, lastModified: 0)
+    static let Business: Bird = Bird( clade: .Parrot, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 11, style: .Business,UID: "ParrotBusiness", isBought: false, lastModified: 0)
+    static let Cook: Bird = Bird( clade: .Parrot, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 15, style: .Cook,UID: "ParrotCook", isBought: false, lastModified: 0)
+    static let Fashion: Bird = Bird( clade: .Parrot, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 21, style: .Fashion,UID: "ParrotFashion", isBought: false, lastModified: 0)
+    static let Kid: Bird = Bird( clade: .Parrot, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 21, style: .Kid,UID: "ParrotKid", isBought: false, lastModified: 0)
+    static let Sport: Bird = Bird( clade: .Parrot, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 25, style: .Sport,UID: "ParrotSport", isBought: false, lastModified: 0)
   }
 
   // Penguin
   struct Penguin {
     static let Simple: Bird = Bird( clade: .Penguin, currency: .Feather, description: "Простая", name: "Курица", price: 0, style: .Simple,UID: "PenguinSimple", isBought: true)
-    static let Student: Bird = Bird( clade: .Penguin, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 4, style: .Student,UID: "PenguinStudent", isBought: false, lastModified: 0)
-    static let Business: Bird = Bird( clade: .Penguin, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 7, style: .Business,UID: "PenguinBusiness", isBought: false, lastModified: 0)
-    static let Cook: Bird = Bird( clade: .Penguin, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 8, style: .Cook,UID: "PenguinCook", isBought: false, lastModified: 0)
-    static let Fashion: Bird = Bird( clade: .Penguin, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 9, style: .Fashion,UID: "PenguinFashion", isBought: false, lastModified: 0)
-    static let Kid: Bird = Bird( clade: .Penguin, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 10, style: .Kid,UID: "PenguinKid", isBought: false, lastModified: 0)
-    static let Sport: Bird = Bird( clade: .Penguin, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 15, style: .Sport,UID: "PenguinSport", isBought: false, lastModified: 0)
+    static let Student: Bird = Bird( clade: .Penguin, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 8, style: .Student,UID: "PenguinStudent", isBought: false, lastModified: 0)
+    static let Business: Bird = Bird( clade: .Penguin, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 12, style: .Business,UID: "PenguinBusiness", isBought: false, lastModified: 0)
+    static let Cook: Bird = Bird( clade: .Penguin, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 16, style: .Cook,UID: "PenguinCook", isBought: false, lastModified: 0)
+    static let Fashion: Bird = Bird( clade: .Penguin, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 20, style: .Fashion,UID: "PenguinFashion", isBought: false, lastModified: 0)
+    static let Kid: Bird = Bird( clade: .Penguin, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 23, style: .Kid,UID: "PenguinKid", isBought: false, lastModified: 0)
+    static let Sport: Bird = Bird( clade: .Penguin, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 27, style: .Sport,UID: "PenguinSport", isBought: false, lastModified: 0)
   }
 
   // Eagle
   struct Eagle {
     static let Simple: Bird = Bird( clade: .Eagle, currency: .Feather, description: "Простая", name: "Курица", price: 0, style: .Simple,UID: "EagleSimple", isBought: true)
-    static let Student: Bird = Bird( clade: .Eagle, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 4, style: .Student,UID: "EagleStudent", isBought: false, lastModified: 0)
-    static let Business: Bird = Bird( clade: .Eagle, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 7, style: .Business,UID: "EagleBusiness", isBought: false, lastModified: 0)
-    static let Cook: Bird = Bird( clade: .Eagle, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 8, style: .Cook,UID: "EagleCook", isBought: false, lastModified: 0)
-    static let Fashion: Bird = Bird( clade: .Eagle, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 9, style: .Fashion,UID: "EagleFashion", isBought: false, lastModified: 0)
-    static let Kid: Bird = Bird( clade: .Eagle, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 10, style: .Kid,UID: "EagleKid", isBought: false, lastModified: 0)
-    static let Sport: Bird = Bird( clade: .Eagle, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 15, style: .Sport,UID: "EagleSport", isBought: false, lastModified: 0)
+    static let Student: Bird = Bird( clade: .Eagle, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 9, style: .Student,UID: "EagleStudent", isBought: false, lastModified: 0)
+    static let Business: Bird = Bird( clade: .Eagle, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 13, style: .Business,UID: "EagleBusiness", isBought: false, lastModified: 0)
+    static let Cook: Bird = Bird( clade: .Eagle, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 17, style: .Cook,UID: "EagleCook", isBought: false, lastModified: 0)
+    static let Fashion: Bird = Bird( clade: .Eagle, currency: .Feather, description: "Так себе птица", name: "Ряба", price: 23, style: .Fashion,UID: "EagleFashion", isBought: false, lastModified: 0)
+    static let Kid: Bird = Bird( clade: .Eagle, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 25, style: .Kid,UID: "EagleKid", isBought: false, lastModified: 0)
+    static let Sport: Bird = Bird( clade: .Eagle, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 29, style: .Sport,UID: "EagleSport", isBought: false, lastModified: 0)
   }
 
   // Dragon
   struct Dragon {
-    static let Simple: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Простая", name: "Курица", price: 2, style: .Simple,UID: "DragonSimple", isBought: false)
-    static let Student: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 4, style: .Student,UID: "DragonStudent", isBought: false, lastModified: 0)
-    static let Business: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 7, style: .Business,UID: "DragonBusiness", isBought: false, lastModified: 0)
-    static let Cook: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 8, style: .Cook,UID: "DragonCook", isBought: false, lastModified: 0)
-    static let Fashion: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 9, style: .Fashion,UID: "DragonFashion", isBought: false, lastModified: 0)
-    static let Kid: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 10, style: .Kid,UID: "DragonKid", isBought: false, lastModified: 0)
-    static let Sport: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 15, style: .Sport,UID: "DragonSport", isBought: false, lastModified: 0)
+    static let Simple: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Простая", name: "Курица", price: 15, style: .Simple,UID: "DragonSimple", isBought: false)
+    static let Student: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 17, style: .Student,UID: "DragonStudent", isBought: false, lastModified: 0)
+    static let Business: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 21, style: .Business,UID: "DragonBusiness", isBought: false, lastModified: 0)
+    static let Cook: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 23, style: .Cook,UID: "DragonCook", isBought: false, lastModified: 0)
+    static let Fashion: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 25, style: .Fashion,UID: "DragonFashion", isBought: false, lastModified: 0)
+    static let Kid: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 27, style: .Kid,UID: "DragonKid", isBought: false, lastModified: 0)
+    static let Sport: Bird = Bird( clade: .Dragon, currency: .Diamond, description: "Так себе птица", name: "Ряба", price: 31, style: .Sport,UID: "DragonSport", isBought: false, lastModified: 0)
   }
 }

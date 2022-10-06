@@ -28,6 +28,7 @@ class DataService {
   let birds: Driver<[Bird]>
   let branchDataSource: Driver<[BirdActionType]>
   let colors: Driver<[UIColor]>
+  let checkPlannedTasksTrigger = BehaviorRelay<Void>(value: ())
   let diamonds: Driver<[Diamond]>
   let goldTasks: Driver<[Task]>
   let icons: Driver<[Icon]>
@@ -37,7 +38,6 @@ class DataService {
   let firebaseKindsOfTask: Driver<[KindOfTask]>
   let kindsOfTask: Driver<[KindOfTask]>
   let nestDataSource: Driver<[EggActionType]>
-  let reloadNestScene = BehaviorRelay<Void>(value: ())
   let selectedDate = BehaviorRelay<Date>(value: Date())
   let tasks: Driver<[Task]>
   let user: Driver<User?>
@@ -147,10 +147,13 @@ class DataService {
     
     
     // при открытии проверяем и делаем все плановые задачи с плановой датой выполнения == сегодня задачи в работе
-    tasks
+    let checkPlannedTasksTrigger = checkPlannedTasksTrigger.asDriver()
+    
+    Driver
+      .combineLatest(tasks, checkPlannedTasksTrigger) { tasks, _ in tasks }
       .map{ $0.filter{ $0.status == .Planned } }
       .map{ $0.filter{ $0.planned != nil } }
-      .map{ $0.filter{ Calendar.current.isDate($0.planned!, inSameDayAs: Date()) } }
+      .map{ $0.filter{ $0.planned!.startOfDay <= Date().startOfDay } }
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .map { task -> Task in

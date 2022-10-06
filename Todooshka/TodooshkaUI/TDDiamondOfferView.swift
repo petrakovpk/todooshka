@@ -81,21 +81,21 @@ class TDDiamondPackageOfferView: UIView {
     switch type {
     case .Small:
       offerNameLabel.text = "Компактный"
-      offerScoreLabel.text = "5  шт."
+      offerScoreLabel.text = "99  шт."
       priceLabel.text = "99 руб."
       diamondImageView.anchorCenterYToSuperview()
       diamondImageView.anchorCenterXToSuperview()
       diamondImageView.anchor(widthConstant: viewWidth / 6)
     case .Medium:
       offerNameLabel.text = "Оптимальный"
-      offerScoreLabel.text = "15 шт."
+      offerScoreLabel.text = "199 шт."
       priceLabel.text = "149 руб."
       diamondImageView.anchorCenterYToSuperview()
       diamondImageView.anchorCenterXToSuperview()
       diamondImageView.anchor(widthConstant: viewWidth / 5)
     case .Large:
       offerNameLabel.text = "Самый выгодный"
-      offerScoreLabel.text = "25 шт."
+      offerScoreLabel.text = "299 шт."
       priceLabel.text = "249 руб."
       diamondImageView.anchorCenterYToSuperview()
       diamondImageView.anchorCenterXToSuperview()
