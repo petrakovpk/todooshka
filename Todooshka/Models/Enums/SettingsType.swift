@@ -17,5 +17,5 @@ enum SettingsType {
   // help
   case SupportIsRequired
   // security
-  case DeleteAccountIsRequired
+ // case DeleteAccountIsRequired
 }

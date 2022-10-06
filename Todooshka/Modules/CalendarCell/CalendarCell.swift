@@ -131,7 +131,9 @@ class CalendarCell: UICollectionViewCell {
       centralDot.isHidden = false
       rightDot.isHidden = false
     default:
-      return
+      leftDot.isHidden = true
+      centralDot.isHidden = true
+      rightDot.isHidden = true
     }
     
   }

@@ -28,7 +28,7 @@ class SettingsViewModel: Stepper {
   let deletedTaskTypeListIsRequired = SettingsItem(imageName: "trash", text: "Типы", type: .DeletedTaskTypeListIsRequired)
   let deletedTaskListIsRequired = SettingsItem(imageName: "trash", text: "Задачи", type: .DeletedTaskListIsRequired)
   // security
-  let removeAccount = SettingsItem(imageName: "remove", text: "Удалить аккаунт", type: .DeleteAccountIsRequired)
+ // let removeAccount = SettingsItem(imageName: "remove", text: "Удалить аккаунт", type: .DeleteAccountIsRequired)
   // help
   let askSupport = SettingsItem(imageName: "message-notif", text: "Обратиться в поддержку", type: .SupportIsRequired)
   
@@ -97,10 +97,10 @@ class SettingsViewModel: Stepper {
             items: [self.deletedTaskTypeListIsRequired, self.deletedTaskListIsRequired]),
           SettingsCellSectionModel(
             header: "Поддержка",
-            items: [self.askSupport]),
-          SettingsCellSectionModel(
-            header: "Безопасность",
-            items: [self.removeAccount])
+            items: [self.askSupport])
+//          SettingsCellSectionModel(
+//            header: "Безопасность",
+//            items: [self.removeAccount])
         ]
       }
     
@@ -121,8 +121,6 @@ class SettingsViewModel: Stepper {
           self.steps.accept(AppStep.SyncDataIsRequired)
         case .SupportIsRequired:
           self.steps.accept(AppStep.SupportIsRequired)
-        case .DeleteAccountIsRequired:
-          self.steps.accept(AppStep.DeleteAccountIsRequired)
         }
       }
     

@@ -15,18 +15,22 @@ class UserProfileViewModel: Stepper {
   let reloadData = BehaviorRelay<Void>(value: ())
   let services: AppServices
   let steps = PublishRelay<Step>()
+  let showLogOffAlert = BehaviorRelay<Void?>(value: nil)
 
   struct Input {
+    let alertCancelButtonClickTrigger: Driver<Void>
+    let alertOkButtonClickTrigger: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
-    let logOutButtonClickTrigger: Driver<Void>
     let selection: Driver<IndexPath>
   }
   
   struct Output {
     let dataSource: Driver<[UserProfileSection]>
     let itemSelected: Driver<Void>
+    let hideLogOffAlert: Driver<Void>
     let logOut: Driver<Void>
     let navigateBack: Driver<Void>
+    let showLogOffAlert: Driver<Void>
     let title: Driver<String>
   }
   
@@ -90,12 +94,19 @@ class UserProfileViewModel: Stepper {
           UserProfileSection(header: "Личная информация", items: [
             UserProfileItem(type: .Name, leftText: "Имя", rightText: data.name),
             UserProfileItem(type: .Gender, leftText: "Пол", rightText: data.gender.rawValue ),
-            UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: data.birthday )]),
+            UserProfileItem(type: .Birthday, leftText: "Дата рождения", rightText: data.birthday )
+          ]),
           
-          UserProfileSection(header: "Вход в приложение", items: [
+          UserProfileSection(header: "Аккаунт", items: [
             UserProfileItem(type: .Phone, leftText: "Телефон", rightText: data.phone),
             UserProfileItem(type: .Email, leftText: "Email", rightText: data.email),
-            UserProfileItem(type: .Password, leftText: "Пароль", rightText: "Cменить пароль")]),
+            UserProfileItem(type: .Password, leftText: "Пароль", rightText: "Cменить пароль"),
+            UserProfileItem(type: .LogOut, leftText: "Завершить сессию", rightText: "Выйти из аккаунта")
+          ]),
+          
+          UserProfileSection(header: "Безопасность", items: [
+            UserProfileItem(type:.RemoveAccount, leftText: "Анонимность в сети", rightText: "Удалить аккаунт")
+          ]),
           
           UserProfileSection(header: "История покупок", items: [])
         ]
@@ -117,6 +128,10 @@ class UserProfileViewModel: Stepper {
           self.steps.accept(AppStep.ChangingEmailIsRequired)
         case .Password:
           self.steps.accept(AppStep.ChangingPasswordIsRequired)
+        case .LogOut:
+          self.showLogOffAlert.accept(())
+        case .RemoveAccount:
+          self.steps.accept(AppStep.DeleteAccountIsRequired)
         }
       }
     
@@ -128,14 +143,22 @@ class UserProfileViewModel: Stepper {
       .filter { $0 == nil }
       .map{ _ in () }
     
-    let logOut = input.logOutButtonClickTrigger
-      .do{ _ in
+    let logOut = input.alertOkButtonClickTrigger
+      .do { _ in
         do {
           try Auth.auth().signOut()
         } catch let signOutError as NSError {
           print("Error signing out: %@", signOutError)
         }
       }
+    
+    let hideLogOffAlert = Driver
+      .of(input.alertOkButtonClickTrigger, input.alertCancelButtonClickTrigger)
+      .merge()
+    
+    let showLogOffAlert = showLogOffAlert
+      .asDriver()
+      .compactMap{ $0 }
     
     let navigateBack = Driver
       .of(navigateBackIfUserLoggedOff, input.backButtonClickTrigger)
@@ -145,8 +168,10 @@ class UserProfileViewModel: Stepper {
     return Output(
       dataSource: dataSource,
       itemSelected: itemSelected,
+      hideLogOffAlert: hideLogOffAlert,
       logOut: logOut,
       navigateBack: navigateBack,
+      showLogOffAlert: showLogOffAlert,
       title: title
     )
   }

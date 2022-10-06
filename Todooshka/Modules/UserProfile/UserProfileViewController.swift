@@ -19,14 +19,46 @@ class UserProfileViewController: TDViewController {
   var tableView: UITableView!
   var viewModel: UserProfileViewModel!
   
-  // MARK: - UI Elements
-  private let logOutButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.setTitle("Выйти из аккаунта", for: .normal)
-    button.setTitleColor(.red, for: .normal)
-    button.cornerRadius = 15
-    button.borderWidth = 1
-    button.borderColor = UIColor.systemRed
+  // MARK: - Alert
+  private let alertBackgroundView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .black.withAlphaComponent(0.5)
+    view.isHidden = true
+    return view
+  }()
+  
+  private let alertWindowView: UIView = {
+    let view = UIView()
+    view.cornerRadius = 27
+    view.backgroundColor = Theme.App.background
+    return view
+  }()
+  
+  private let alertLabel: UILabel = {
+    let label = UILabel(text: "Выйти из аккаунта?")
+    label.textColor = Theme.App.text
+    label.textAlignment = .center
+    label.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
+    return label
+  }()
+  
+  private let alertOkButton: UIButton = {
+    let attrString = NSAttributedString(
+      string: "Выйти",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)]
+    )
+    let button = UIButton(type: .custom)
+    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    return button
+  }()
+  
+  private let alertCancelButton: UIButton = {
+    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)])
+    let button = UIButton(type: .custom)
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(Theme.App.text!.withAlphaComponent(0.5) , for: .normal)
     return button
   }()
   
@@ -34,6 +66,7 @@ class UserProfileViewController: TDViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
+    configureAlert()
     configureDataSource()
     bindViewModel()
   }
@@ -52,29 +85,57 @@ class UserProfileViewController: TDViewController {
     
     // adding
     view.addSubview(tableView)
-    view.addSubview(logOutButton)
 
-    
     // view
     view.backgroundColor = Theme.App.background
 
     // titleLabel
     titleLabel.text = "Настройки и конфеденциальность"
 
-    // logOutButton
-    logOutButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 16, rightConstant: 16, heightConstant: 50)
-    
     // tableView
     tableView.register(UserProfileCell.self, forCellReuseIdentifier: UserProfileCell.reuseID)
-    tableView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: logOutButton.topAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
+    tableView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
 
+  }
+  
+  func configureAlert() {
+    
+    // adding
+    view.addSubview(alertBackgroundView)
+    alertBackgroundView.addSubview(alertWindowView)
+    alertWindowView.addSubview(alertLabel)
+    alertWindowView.addSubview(alertOkButton)
+    alertWindowView.addSubview(alertCancelButton)
+    
+    // alertView
+    alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    
+    // alertSubView
+    alertWindowView.anchor(widthConstant: 287.adjusted, heightConstant: 171.adjusted)
+    alertWindowView.anchorCenterXToSuperview()
+    alertWindowView.anchorCenterYToSuperview()
+    
+    // alertLabel
+    alertLabel.anchorCenterXToSuperview()
+    alertLabel.anchorCenterYToSuperview(constant: -1 * 171.adjusted / 4)
+    
+    // alertDeleteButton
+    alertOkButton.anchor(widthConstant: 94.adjusted, heightConstant: 30.adjusted)
+    alertOkButton.cornerRadius = 15.adjusted
+    alertOkButton.anchorCenterXToSuperview()
+    alertOkButton.anchorCenterYToSuperview(constant: 15.adjusted)
+    
+    // alertCancelButton
+    alertCancelButton.anchor(top: alertOkButton.bottomAnchor, topConstant: 10.adjusted)
+    alertCancelButton.anchorCenterXToSuperview()
   }
   
   //MARK: - Bind To
   func bindViewModel() {
     let input = UserProfileViewModel.Input(
+      alertCancelButtonClickTrigger: alertCancelButton.rx.tap.asDriver(),
+      alertOkButtonClickTrigger: alertOkButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      logOutButtonClickTrigger: logOutButton.rx.tap.asDriver(),
       selection: tableView.rx.itemSelected.asDriver()
     )
     let output = viewModel.transform(input: input)
@@ -82,11 +143,25 @@ class UserProfileViewController: TDViewController {
     [
       output.dataSource.drive(tableView.rx.items(dataSource: dataSource)),
       output.itemSelected.drive(),
+      output.hideLogOffAlert.drive(hideLogOffAlertBinder),
       output.logOut.drive(),
       output.navigateBack.drive(),
+      output.showLogOffAlert.drive(showAlerLogOffBinder),
       output.title.drive(titleLabel.rx.text),
     ]
       .forEach{ $0.disposed(by: disposeBag) }
+  }
+  
+  var hideLogOffAlertBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertBackgroundView.isHidden = true
+    })
+  }
+  
+  var showAlerLogOffBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertBackgroundView.isHidden = false
+    })
   }
   
   func configureDataSource() {

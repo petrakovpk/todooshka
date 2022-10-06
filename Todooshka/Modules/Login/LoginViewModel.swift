@@ -246,6 +246,7 @@ class LoginViewModel: Stepper {
     
     // AUTH WITH PHONE
     let setOTPCodeStyle = next
+      .debug()
       .withLatestFrom(loginViewControllerStyle)
       .filter{ $0 == .Phone }
       .withLatestFrom(isPhoneValid)
@@ -256,9 +257,9 @@ class LoginViewModel: Stepper {
       .withLatestFrom(input.phoneTextFieldText) {
         "+" + $1.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
       }.asObservable()
-      .flatMapLatest { phone  in
+      .flatMapLatest { phone -> Observable<Result<String,Error>> in
         PhoneAuthProvider.provider().rx.verifyPhoneNumber(phone)
-      }
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
     let sendOTPCodeWithButton = input.sendOTPCodeButtonClickTriger
       .withLatestFrom(input.phoneTextFieldText) {
@@ -266,7 +267,7 @@ class LoginViewModel: Stepper {
       }.asObservable()
       .flatMapLatest { phone -> Observable<Result<String,Error>> in
         PhoneAuthProvider.provider().rx.verifyPhoneNumber(phone)
-      }
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
     let setSendOTPCodeButtonClickSuccess = sendOTPCodeWithButton
       .compactMap { result -> String? in
