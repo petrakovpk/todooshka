@@ -28,6 +28,7 @@ struct Palette {
     static let PictonBlue = UIColor(named: "PictonBlue")!
     static let Portage = UIColor(named: "Portage")!
     static let PurpleHeart = UIColor(named: "PurpleHeart")!
+    static let Rose = UIColor(named: "Rose")!
     static let SantasGray = UIColor(named: "SantasGray")!
     static let SeaGreen = UIColor(named: "SeaGreen")!
     static let Shamrock = UIColor(named: "Shamrock")!

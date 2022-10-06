@@ -59,10 +59,46 @@ class DiamondViewController: TDViewController {
     return button
   }()
   
+  // MARK: - Alert
+  private let alertBackgroundView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .black.withAlphaComponent(0.5)
+    view.isHidden = true
+    return view
+  }()
+  
+  private let alertWindowView: UIView = {
+    let view = UIView()
+    view.cornerRadius = 27
+    view.backgroundColor = Theme.App.background
+    return view
+  }()
+  
+  private let alertLabel: UILabel = {
+    let label = UILabel(text: "Пока такой возможности нет :(")
+    label.textColor = Theme.App.text
+    label.textAlignment = .center
+    label.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
+    return label
+  }()
+  
+  private let alertOkButton: UIButton = {
+    let attrString = NSAttributedString(
+      string: "Буду ждать!",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)]
+    )
+    let button = UIButton(type: .custom)
+    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
+    button.setAttributedTitle(attrString, for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    return button
+  }()
+  
   //MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
+    configureAlert()
     bindViewModel()
   }
   
@@ -107,6 +143,35 @@ class DiamondViewController: TDViewController {
     
     // buyButton
     buyButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 32, rightConstant: 16, heightConstant: 50)
+  }
+  
+  func configureAlert() {
+    view.addSubview(alertBackgroundView)
+    
+    alertBackgroundView.addSubviews([
+      alertWindowView,
+      alertLabel,
+      alertOkButton
+    ])
+    
+    // alertView
+    alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    
+    // alertSubView
+    alertWindowView.anchor(widthConstant: 287.adjusted, heightConstant: 171.adjusted)
+    alertWindowView.anchorCenterXToSuperview()
+    alertWindowView.anchorCenterYToSuperview()
+    
+    // alertLabel
+    alertLabel.anchorCenterXToSuperview()
+    alertLabel.anchorCenterYToSuperview(constant: -1 * 171.adjusted / 4)
+    
+    // alertOkButton
+    alertOkButton.anchor(widthConstant: 94.adjusted, heightConstant: 30.adjusted)
+    alertOkButton.cornerRadius = 15.adjusted
+    alertOkButton.anchorCenterXToSuperview()
+    alertOkButton.anchorCenterYToSuperview(constant: 15.adjusted)
+    
   }
   
   // MARK: - Bind To

@@ -27,9 +27,9 @@ class KindOfTaskListDeletedViewController: TDViewController {
   }()
   
   private let alertDeleteButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.backgroundColor = UIColor(hexString: "#FF005C")
     let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    let button = UIButton(type: .system)
+    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button

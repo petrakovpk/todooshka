@@ -59,7 +59,10 @@ class TDDiamondPackageOfferView: UIView {
   init(type: DiamondPackageType) {
     super.init(frame: .zero)
     layer.cornerRadius = 15
+   
     backgroundColor = Theme.GameCurrency.textViewBackground
+    borderWidth = 1.0
+    borderColor = Theme.Cells.KindOfTask.Border
     
     // adding
     addSubviews([offerBackgroundView, priceLabel])
@@ -96,7 +99,7 @@ class TDDiamondPackageOfferView: UIView {
     case .Large:
       offerNameLabel.text = "Самый выгодный"
       offerScoreLabel.text = "299 шт."
-      priceLabel.text = "249 руб."
+      priceLabel.text = "199 руб."
       diamondImageView.anchorCenterYToSuperview()
       diamondImageView.anchorCenterXToSuperview()
       diamondImageView.anchor(widthConstant: viewWidth / 4)

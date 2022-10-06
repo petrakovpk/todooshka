@@ -102,7 +102,7 @@ class TaskViewController: TDViewController {
     button.cornerRadius = 48.superAdjusted / 2
     button.setTitle("Да, я молодец :)", for: .normal)
     button.setTitleColor(.white, for: .normal)
-    button.backgroundColor = UIColor(hexString: "#FF005C")
+    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
     button.isHidden = true
     return button
   }()

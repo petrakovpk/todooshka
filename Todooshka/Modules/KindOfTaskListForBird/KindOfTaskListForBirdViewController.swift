@@ -42,7 +42,7 @@ class KindOfTaskListForBirdViewController: TDViewController {
   private let alertOkButton: UIButton = {
     let attrString = NSAttributedString(string: "Ok", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .system)
-    button.backgroundColor = Palette.SingleColors.Shamrock
+    button.backgroundColor = Theme.Buttons.AlertGreenButton.Background
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button

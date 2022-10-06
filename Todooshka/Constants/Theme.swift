@@ -20,12 +20,18 @@ struct Theme {
   }
   
   struct Buttons {
-    struct OverduedOrIdea {
-      static let Background = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
+    struct AlertGreenButton {
+      static let Background = Palette.SingleColors.Shamrock
+    }
+    struct AlertRoseButton {
+      static let Background = Palette.SingleColors.Rose
     }
     struct NextButton {
       static let EnabledBackground = Palette.SingleColors.BlueRibbon
       static let DisabledBackground = Palette.DualColors.Mischka_205_205_223_Mirage_23_25_51
+    }
+    struct OverduedOrIdea {
+      static let Background = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
     }
     struct RoundButton {
       static let background = Palette.DualColors.BlackPearl_White?.withAlphaComponent(0.1)
