@@ -98,9 +98,6 @@ class SettingsViewModel: Stepper {
           SettingsCellSectionModel(
             header: "Поддержка",
             items: [self.askSupport])
-//          SettingsCellSectionModel(
-//            header: "Безопасность",
-//            items: [self.removeAccount])
         ]
       }
     

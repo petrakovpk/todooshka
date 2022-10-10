@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21279" systemVersion="21G115" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CoreDataTask" representedClassName="CoreDataTask" syncable="YES">
         <attribute name="closedTimeIntervalSince1970" optional="YES" attributeType="Double" usesScalarValueType="NO"/>
         <attribute name="createdTimeIntervalSince1970" optional="YES" attributeType="Double" usesScalarValueType="NO"/>
         <attribute name="lastmodifiedtimeintervalsince1970" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="longText" optional="YES" attributeType="String"/>
         <attribute name="orderNumber" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="plannedTimeIntervalSince1970" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="repeatCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
@@ -22,8 +20,4 @@
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="uid" optional="YES" attributeType="String"/>
     </entity>
-    <elements>
-        <element name="CoreDataTask" positionX="69.09783935546875" positionY="-65.99549865722656" width="128" height="209"/>
-        <element name="CoreDataTaskType" positionX="-124.3328857421875" positionY="-20.75457763671875" width="128" height="119"/>
-    </elements>
 </model>

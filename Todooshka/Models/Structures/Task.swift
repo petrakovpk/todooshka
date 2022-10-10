@@ -16,22 +16,22 @@ struct Task: IdentifiableType, Equatable {
   
   // MARK: - Properites
   var identity: String { UID }
-  var UID: String { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var UID: String { didSet { lastModified = Date()}}
   
-  var text: String { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var description: String? { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var text: String { didSet { lastModified = Date()}}
+  var description: String? { didSet { lastModified = Date()}}
   
-  var status: TaskStatus { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var index: Int = 0 { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var status: TaskStatus { didSet { lastModified = Date()}}
+  var index: Int = 0 { didSet { lastModified = Date()}}
   
-  var created: Date { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var planned: Date? { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var closed: Date? { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var created: Date { didSet { lastModified = Date()}}
+  var planned: Date? { didSet { lastModified = Date()}}
+  var closed: Date? { didSet { lastModified = Date()}}
   
-  var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { didSet { lastModified = Date()}}
+  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date()}}
   
-  var lastModified: Double = Date().timeIntervalSince1970
+  var lastModified: Date = Date()
   
   // MARK: - Calculated Propertie
   var is24hoursPassed: Bool {
@@ -89,6 +89,7 @@ struct Task: IdentifiableType, Equatable {
     && lhs.planned == rhs.planned
     && lhs.index == rhs.index
     && lhs.userUID == rhs.userUID
+    && lhs.lastModified == rhs.lastModified
   }
   
 }
@@ -107,7 +108,7 @@ extension Task {
       "closed": closed?.timeIntervalSince1970,
       "planned": planned?.timeIntervalSince1970,
       "index": index,
-      "lastModified": lastModified
+      "lastModified": lastModified.timeIntervalSince1970
     ]
   }
   
@@ -119,9 +120,9 @@ extension Task {
           let statusRawValue = dict.value(forKey: "status") as? String,
           let status = TaskStatus(rawValue: statusRawValue),
           let kindOfTaskUID = dict.value(forKey: "kindOfTaskUID") as? String,
-          let created = dict.value(forKey: "created") as? TimeInterval,
+          let createdTimeInterval = dict.value(forKey: "created") as? TimeInterval,
           let index = dict.value(forKey: "index") as? Int,
-          let lastModified = dict.value(forKey: "lastModified") as? Double
+          let lastModifiedTimeInterval = dict.value(forKey: "lastModified") as? TimeInterval
     else { return nil }
     
     // init
@@ -130,17 +131,16 @@ extension Task {
     self.description = dict.value(forKey: "desc") as? String
     self.status = status
     self.kindOfTaskUID = kindOfTaskUID
-    self.created = Date(timeIntervalSince1970: created)
+    self.created = Date(timeIntervalSince1970: createdTimeInterval)
     self.index = index
     self.userUID = Auth.auth().currentUser?.uid
-    self.lastModified = lastModified
+    self.lastModified = Date(timeIntervalSince1970: lastModifiedTimeInterval)
     
-    if let closed = dict.value(forKey: "closed") as? TimeInterval {
-      self.closed = Date(timeIntervalSince1970: closed)
+    if let closedTimeInterval = dict.value(forKey: "closed") as? TimeInterval {
+      self.closed = Date(timeIntervalSince1970: closedTimeInterval)
     }
-    
-    if let planned = dict.value(forKey: "planned") as? TimeInterval {
-      self.planned = Date(timeIntervalSince1970: planned)
+    if let plannedTimeInterval = dict.value(forKey: "planned") as? TimeInterval {
+      self.planned = Date(timeIntervalSince1970: plannedTimeInterval)
     }
   }
 }
@@ -161,10 +161,10 @@ extension Task: Persistable {
     index = entity.value(forKey: "index") as! Int
     kindOfTaskUID = entity.value(forKey: "kindOfTaskUID") as! String
     planned = entity.value(forKey: "planned") as? Date
-    status = TaskStatus(rawValue: entity.value(forKey: "status") as! String) ?? TaskStatus.InProgress
+    status = TaskStatus(rawValue: entity.value(forKey: "statusRawValue") as! String) ?? TaskStatus.InProgress
     text = entity.value(forKey: "text") as! String
     userUID = entity.value(forKey: "userUID") as? String
-    lastModified = entity.value(forKey: "lastModified") as! Double
+    lastModified = entity.value(forKey: "lastModified") as! Date
   }
   
   func update(_ entity: T) {
@@ -175,7 +175,7 @@ extension Task: Persistable {
     entity.setValue(index, forKey: "index")
     entity.setValue(kindOfTaskUID, forKey: "kindOfTaskUID")
     entity.setValue(planned, forKey: "planned")
-    entity.setValue(status.rawValue, forKey: "status")
+    entity.setValue(status.rawValue, forKey: "statusRawValue")
     entity.setValue(text, forKey: "text")
     entity.setValue(userUID, forKey: "userUID")
     entity.setValue(lastModified, forKey: "lastModified")

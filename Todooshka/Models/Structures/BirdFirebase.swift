@@ -17,10 +17,10 @@ struct BirdFirebase: IdentifiableType, Equatable {
   // MARK: - Properties
   let UID: String
   
-  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date().timeIntervalSince1970} }
-  var isBought: Bool = false { didSet { lastModified = Date().timeIntervalSince1970} }
+  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date()} }
+  var isBought: Bool = false { didSet { lastModified = Date()} }
   
-  var lastModified: Double = Date().timeIntervalSince1970
+  var lastModified: Date = Date()
   
   // MARK: - Equatable
   static func == (lhs: BirdFirebase, rhs: BirdFirebase) -> Bool {
@@ -39,7 +39,7 @@ extension BirdFirebase {
   var data: [AnyHashable: Any] {
     [
       "isBought": isBought,
-      "lastModified": lastModified
+      "lastModified": lastModified.timeIntervalSince1970
     ]
   }
   
@@ -48,13 +48,13 @@ extension BirdFirebase {
     // check
     guard let dict = snapshot.value as? NSDictionary,
           let isBought = dict.value(forKey: "isBought") as? Bool,
-          let lastModified = dict.value(forKey: "lastModified") as? Double
+          let lastModifiedTimeInterval = dict.value(forKey: "lastModified") as? TimeInterval
     else { return nil }
     
     // init
     self.UID = snapshot.key
     self.isBought = isBought
-    self.lastModified = lastModified
+    self.lastModified = Date(timeIntervalSince1970: lastModifiedTimeInterval)
     self.userUID = Auth.auth().currentUser?.uid
   }
 }

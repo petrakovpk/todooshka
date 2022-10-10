@@ -5,45 +5,58 @@
         <attribute name="currencyRawValue" attributeType="String"/>
         <attribute name="desc" attributeType="String"/>
         <attribute name="isBought" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="lastModified" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="lastModified" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="price" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="styleRawValue" optional="YES" attributeType="String"/>
         <attribute name="uid" attributeType="String"/>
         <attribute name="userUID" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="CoreDataTask" representedClassName="CoreDataTask" syncable="YES">
+        <attribute name="closedTimeIntervalSince1970" optional="YES" attributeType="Double" usesScalarValueType="NO"/>
+        <attribute name="createdTimeIntervalSince1970" optional="YES" attributeType="Double" usesScalarValueType="NO"/>
+        <attribute name="lastmodifiedtimeintervalsince1970" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longText" optional="YES" attributeType="String"/>
+        <attribute name="orderNumber" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="uid" optional="YES" attributeType="String"/>
+        <attribute name="userUID" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="CoreDataTaskType" representedClassName="CoreDataTaskType" syncable="YES">
+        <attribute name="imageColorHex" optional="YES" attributeType="String"/>
+        <attribute name="imageName" optional="YES" attributeType="String"/>
+        <attribute name="ordernumber" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="uid" optional="YES" attributeType="String"/>
+    </entity>
     <entity name="Diamond" representedClassName="" syncable="YES">
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uid" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="Feather" representedClassName="" syncable="YES">
-        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="isSpent" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="taskUID" optional="YES" attributeType="String"/>
-        <attribute name="uid" attributeType="String"/>
-    </entity>
-    <entity name="KindOfTask" representedClassName="" elementID="CoreDataTaskType" syncable="YES">
-        <attribute name="associatedStyleRawValue" optional="YES" attributeType="String"/>
+    <entity name="KindOfTask" representedClassName="" syncable="YES">
         <attribute name="colorHexString" attributeType="String" versionHashModifier="CoreDataTaskType"/>
         <attribute name="iconRawValue" attributeType="String"/>
         <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" elementID="orderNumber"/>
         <attribute name="isStyleLocked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="lastModified" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="lastModified" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="statusRawValue" attributeType="String"/>
         <attribute name="styleRawValue" optional="YES" attributeType="String"/>
         <attribute name="text" attributeType="String"/>
         <attribute name="uid" attributeType="String"/>
         <attribute name="userUID" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="Task" representedClassName="" elementID="CoreDataTask" syncable="YES">
+    <entity name="Task" representedClassName="" syncable="YES">
         <attribute name="closed" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="desc" optional="YES" attributeType="String" elementID="longText"/>
         <attribute name="index" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="kindOfTaskUID" attributeType="String"/>
-        <attribute name="lastModified" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="lastModified" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="planned" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="status" attributeType="String"/>
+        <attribute name="statusRawValue" attributeType="String"/>
         <attribute name="text" attributeType="String"/>
         <attribute name="uid" attributeType="String"/>
         <attribute name="userUID" optional="YES" attributeType="String"/>

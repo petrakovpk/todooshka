@@ -124,6 +124,7 @@ class TaskViewController: TDViewController {
     picker.backgroundColor = Theme.App.background
     picker.cornerRadius = 15
     picker.isHidden = true
+    picker.locale = Locale(identifier: "ru_RU")
     return picker
   }()
   

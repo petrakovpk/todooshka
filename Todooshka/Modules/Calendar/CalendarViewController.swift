@@ -26,6 +26,12 @@ class CalendarViewController: UIViewController {
   private let itemSize = CGSize(width: 45, height: 45)
   private let sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
   private var needScrollToToday: Bool = true
+  private let monthFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ru_RU")
+    formatter.dateFormat = "LLLL"
+    return formatter
+  }()
   
   // MARK: - Sprite Kit
   private let scene: BranchScene? = {
@@ -429,7 +435,7 @@ extension CalendarViewController: UICollectionViewDataSource {
     
     switch dataSource[indexPath.section].type {
     case .Month(let startOfMonth):
-      header.label.text = startOfMonth.monthName()
+      header.label.text = monthFormatter.string(from: startOfMonth)
     case .Year(_):
       header.label.text = nil
     }

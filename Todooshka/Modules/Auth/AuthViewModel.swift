@@ -106,10 +106,7 @@ class AuthViewModel: Stepper {
     
     let authWithEmailOrPhone = input.emailOrPhoneAccountButtonClickTrigger
       .map { self.steps.accept(AppStep.AuthWithEmailOrPhoneInIsRequired) }
-    
-//    let logIn = input.logInButtonClickTrigger
-//      .map { self.steps.accept(AppStep.LogInIsRequired) }
-    
+
     let skip = input.skipButtonClickTrigger
       .map { self.steps.accept(AppStep.AuthIsCompleted) }
     
@@ -117,7 +114,6 @@ class AuthViewModel: Stepper {
       appleGetNonceString: appleGetNonceString,
       auth: updateUserData,
       authWithEmailOrPhone: authWithEmailOrPhone,
-     // logIn: logIn,
       skip: skip
     )
   }

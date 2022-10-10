@@ -21,14 +21,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   // serrvices
   let actionService = ActionService()
-  let preferencesService = PreferencesService()
   let dataService = DataService()
+  let migrationService = MigrationService()
+  let preferencesService = PreferencesService()
   let tabBarService = TabBarService()
   
   lazy var appServices = {
     return AppServices(
       actionService: actionService,
       dataService: dataService,
+      migrationService: migrationService,
       preferencesService: preferencesService,      
       tabBarService: tabBarService
     )

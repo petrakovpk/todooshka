@@ -22,13 +22,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate  {
     return GIDSignIn.sharedInstance.handle(url)
   }
   
+  var applicationDocumentsDirectory: URL {
+    FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
+  }
+  
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     
     // Initializing the AppMetrica SDK.
     let configuration = YMMYandexMetricaConfiguration.init(apiKey: "36538b4c-0eb1-408f-b8e5-c8786424d033")
     configuration?.sessionTimeout = 15
-    //    YMMYandexMetrica.activate(with: configuration!)
-    
+    YMMYandexMetrica.activate(with: configuration!)
     
     FirebaseApp.configure()
     
@@ -67,10 +70,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate  {
     let container = NSPersistentContainer(name: "Todooshka")
     
     /*add necessary support for migration*/
-    //    let description = NSPersistentStoreDescription()
-    //    description.shouldMigrateStoreAutomatically = true
-    //    description.shouldInferMappingModelAutomatically = true
-    //    container.persistentStoreDescriptions =  [description]
+    let description = NSPersistentStoreDescription()
+//    description.shouldMigrateStoreAutomatically = false
+//    description.shouldInferMappingModelAutomatically = false
+//    container.persistentStoreDescriptions =  [description]
     /*add necessary support for migration*/
     
     container.loadPersistentStores(completionHandler: { (storeDescription, error) in
@@ -87,6 +90,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate  {
          Check the error message to determine what the actual problem was.
          */
         fatalError("Unresolved error \(error), \(error.userInfo)")
+      } else {
+
       }
     })
     return container
@@ -105,6 +110,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate  {
         let nserror = error as NSError
         fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
       }
+    }
+  }
+  
+  func generateOldData() {
+    let oldModelUrl = Bundle.main.url(forResource: "Todooshka.momd/Todooshka", withExtension: "mom")!
+    let oldManagedObjectModel = NSManagedObjectModel.init(contentsOf: oldModelUrl)
+
+    let coordinator = NSPersistentStoreCoordinator.init(managedObjectModel: oldManagedObjectModel!)
+    let url = self.applicationDocumentsDirectory.appendingPathComponent("Todooshka.sqlite")
+
+    try! coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+    let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+    managedObjectContext.persistentStoreCoordinator = coordinator
+    
+    let coreDataTask = NSEntityDescription.insertNewObject(forEntityName: "CoreDataTask", into: managedObjectContext)
+    coreDataTask.setValue(UUID().uuidString, forKey: "uid")
+    coreDataTask.setValue("HELLO WORLD!!", forKey: "text")
+    coreDataTask.setValue(Date().timeIntervalSince1970, forKey: "createdTimeIntervalSince1970")
+    coreDataTask.setValue(Date().timeIntervalSince1970, forKey: "lastmodifiedtimeintervalsince1970")
+    coreDataTask.setValue("HEEEEYYY", forKey: "longText")
+    coreDataTask.setValue(1, forKey: "orderNumber")
+    coreDataTask.setValue("InProgress", forKey: "status")
+    coreDataTask.setValue("Student", forKey: "type")
+    coreDataTask.setValue(Auth.auth().currentUser?.uid, forKey: "userUID")
+
+    do {
+      print("1234", coreDataTask)
+      try managedObjectContext.save()
+    } catch {
+      print("1234", error.localizedDescription)
     }
   }
   

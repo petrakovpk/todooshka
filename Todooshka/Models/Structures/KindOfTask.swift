@@ -30,17 +30,17 @@ struct KindOfTask: IdentifiableType, Equatable  {
   var identity: String { UID }
   
   // MARK: - Properties
-  var UID: String { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var color: UIColor { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var icon: Icon { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var index: Int { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var isStyleLocked: Bool = false { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var status: KindOfTaskStatus = .Active { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var style: Style = .Simple { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var text: String { didSet { lastModified = Date().timeIntervalSince1970 }}
-  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date().timeIntervalSince1970 }}
+  var UID: String { didSet { lastModified = Date()}}
+  var color: UIColor { didSet { lastModified = Date()}}
+  var icon: Icon { didSet { lastModified = Date()}}
+  var index: Int { didSet { lastModified = Date()}}
+  var isStyleLocked: Bool = false { didSet { lastModified = Date()}}
+  var status: KindOfTaskStatus = .Active { didSet { lastModified = Date()}}
+  var style: Style = .Simple { didSet { lastModified = Date()}}
+  var text: String { didSet { lastModified = Date()}}
+  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date()}}
   
-  var lastModified: Double = Date().timeIntervalSince1970
+  var lastModified: Date = Date()
 
   // MARK: - Init
   init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int) {
@@ -89,7 +89,7 @@ extension KindOfTask {
       "statusRawValue": status.rawValue,
       "styleRawValue": style.rawValue,
       "text": text,
-      "lastModified": lastModified
+      "lastModified": lastModified.timeIntervalSince1970
     ]
   }
   
@@ -107,7 +107,7 @@ extension KindOfTask {
           let styleRawValue = dict.value(forKey: "styleRawValue") as? String,
           let style = Style(rawValue: styleRawValue),
           let text = dict.value(forKey: "text") as? String,
-          let lastModified = dict.value(forKey: "lastModified") as? Double
+          let lastModifiedTimeInterval = dict.value(forKey: "lastModified") as? TimeInterval
     else { return nil }
     
     // init
@@ -118,7 +118,7 @@ extension KindOfTask {
     self.status = status
     self.style = style
     self.text = text
-    self.lastModified = lastModified
+    self.lastModified = Date(timeIntervalSince1970: lastModifiedTimeInterval)
     self.userUID = Auth.auth().currentUser?.uid
   }
 }
@@ -137,7 +137,7 @@ extension KindOfTask: Persistable {
     isStyleLocked = entity.value(forKey: "isStyleLocked") as! Bool
     text = entity.value(forKey: "text") as! String
     userUID = entity.value(forKey: "userUID") as? String
-    lastModified = entity.value(forKey: "lastModified") as! Double
+    lastModified = entity.value(forKey: "lastModified") as! Date
     
     // color
     if let colorHexString = entity.value(forKey: "colorHexString") as? String, let color = UIColor(hexString: colorHexString) {
