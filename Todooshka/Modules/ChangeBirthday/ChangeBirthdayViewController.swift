@@ -30,6 +30,7 @@ class ChangeBirthdayViewController: TDViewController {
     let picker = UIDatePicker()
     picker.datePickerMode = .date
     picker.preferredDatePickerStyle = .wheels
+    picker.locale = Locale(identifier: "ru_RU")
     return picker
   }()
   
@@ -73,8 +74,8 @@ class ChangeBirthdayViewController: TDViewController {
     
     [
       outputs.dateText.drive(label.rx.text),
-      outputs.navigateBack.drive(),
       outputs.datePickerValue.drive(picker.rx.date),
+      outputs.navigateBack.drive(),
       outputs.save.drive(),
     ]
       .forEach({ $0.disposed(by: disposeBag) })

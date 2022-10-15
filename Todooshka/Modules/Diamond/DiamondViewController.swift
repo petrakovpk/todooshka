@@ -158,19 +158,19 @@ class DiamondViewController: TDViewController {
     alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
     
     // alertSubView
-    alertWindowView.anchor(widthConstant: 287.adjusted, heightConstant: 171.adjusted)
+    alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
     
     // alertLabel
     alertLabel.anchorCenterXToSuperview()
-    alertLabel.anchorCenterYToSuperview(constant: -1 * 171.adjusted / 4)
+    alertLabel.anchorCenterYToSuperview(constant: -1 * 171 / 4)
     
     // alertOkButton
-    alertOkButton.anchor(widthConstant: 94.adjusted, heightConstant: 30.adjusted)
-    alertOkButton.cornerRadius = 15.adjusted
+    alertOkButton.anchor(widthConstant: 120, heightConstant: 40)
+    alertOkButton.cornerRadius = 15
     alertOkButton.anchorCenterXToSuperview()
-    alertOkButton.anchorCenterYToSuperview(constant: 15.adjusted)
+    alertOkButton.anchor(bottom: alertWindowView.bottomAnchor, bottomConstant: 24)
     
   }
   
@@ -178,20 +178,35 @@ class DiamondViewController: TDViewController {
   func bindViewModel() {
     
     let input = DiamondViewModel.Input(
+      alertOkButtonClickTrigger: alertOkButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      buyButtonClickTrigger: buyButton.rx.tap.asDriver(),
       smallOfferBackgroundClickTrigger: smallOfferBackground.rx.tapGesture().when(.recognized).map{ _ in return ()}.asDriver(onErrorJustReturn: ()),
-      mediumOfferBackgroundClickTrigger: mediumOfferBackground.rx.tapGesture().when(.recognized).map{ _ in return ()}.asDriver(onErrorJustReturn: ()),
       largeOfferBackgroundClickTrigger: largeOfferBackground.rx.tapGesture().when(.recognized).map{ _ in return () }.asDriver(onErrorJustReturn: ()),
-      buyButtonClickTrigger: buyButton.rx.tap.asDriver()
+      mediumOfferBackgroundClickTrigger: mediumOfferBackground.rx.tapGesture().when(.recognized).map{ _ in return ()}.asDriver(onErrorJustReturn: ())
     )
     
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.backButtonClickHandler.drive(),
-      outputs.offerSelected.drive(offerSelectedBinder)
+      outputs.hideAlertTrigger.drive(hideAlertBinder),
+      outputs.navigateBack.drive(),
+      outputs.offerSelected.drive(offerSelectedBinder),
+      outputs.showAlertTrigger.drive(showAlertBinder),
     ]
       .forEach({ $0.disposed(by: disposeBag) })
+  }
+  
+  var hideAlertBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertBackgroundView.isHidden = true
+    })
+  }
+  
+  var showAlertBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.alertBackgroundView.isHidden = false
+    })
   }
   
   var offerSelectedBinder: Binder<DiamondPackageType> {

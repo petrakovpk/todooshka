@@ -68,7 +68,7 @@ class BranchScene: SKScene {
   
   // MARK: - DataSource
     func reloadData() {
-
+      
       let hiddenBirds = SKBirdNodes.filter{ $0.action == .Hide }
       
       for (index, node) in SKBirdNodes.enumerated() {

@@ -29,6 +29,7 @@ class TaskListViewModel: Stepper {
   let appDelegate = UIApplication.shared.delegate as! AppDelegate
   let changeStatusTrigger = BehaviorRelay<ChangeStatus?>(value: nil)
   let mode: TaskListMode
+  let reloadData = BehaviorRelay<Void>(value: ())
   let services: AppServices
   let steps = PublishRelay<Step>()
   
@@ -53,15 +54,15 @@ class TaskListViewModel: Stepper {
     let addTask: Driver<Void>
     let addTaskButtonIsHidden: Driver<Bool>
     let change: Driver<Result<Void,Error>>
+    let dataSource: Driver<[TaskListSection]>
     let hideAlert: Driver<Void>
     let hideCell: Driver<IndexPath>
     let navigateBack: Driver<Void>
     let openTask: Driver<Void>
     let removeAll: Driver<Result<Void, Error>>
     let removeTask: Driver<Result<Void, Error>>
-    let reloadData: Driver<[IndexPath]>
+    let reloadItems: Driver<[IndexPath]>
     let setAlertText: Driver<String>
-    let setDataSource: Driver<[TaskListSection]>
     let title: Driver<String>
     let showAlert: Driver<Void>
     let showRemovaAllButton: Driver<Void>
@@ -75,7 +76,9 @@ class TaskListViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    // tasks
+    let kindsOfTask = services.dataService
+      .kindsOfTask
+    
     let tasks = services.dataService.tasks
       .map {
         $0.filter { task in
@@ -95,32 +98,43 @@ class TaskListViewModel: Stepper {
           }
         }
       }
-      .map { tasks -> [Task] in
-        self.mode == .Idea ? tasks.sorted{ $0.text < $1.text } : tasks
-      }
-      .asDriver(onErrorJustReturn: [])
+
     
-    // kindsOfTask
-    let kindsOfTask = services.dataService
-      .kindsOfTask
-      .asDriver()
+    
+    let taskListSectionItems = Driver
+      .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+        tasks
+          .sorted { (prevTask, nextTask) -> Bool in
+            if self.mode == .Idea {
+              let prevIndex = kindsOfTask.first{ $0.UID == prevTask.kindOfTaskUID }?.index ?? 0
+              let nextIndex = kindsOfTask.first{ $0.UID == nextTask.kindOfTaskUID}?.index ?? 0
+              return prevIndex == nextIndex ? prevTask.text < nextTask.text : prevIndex < nextIndex
+            } else {
+              return prevTask.created < nextTask.created
+            }
+          }
+          .map { task in
+            TaskListSectionItem(
+              task: task,
+              kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
+            )
+          }
+      }
+    
     
     // dataSource
-    let dataSource = Driver
-      .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
-        tasks.map { task in
-          TaskListSectionItem(
-            task: task,
-            kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
-          )
-        }
-      }.map {[
+    let dataSource = taskListSectionItems
+      .map {[
         TaskListSection(
           header: "",
           mode: self.mode == .Main ? TaskCellMode.WithTimer : TaskCellMode.WithRepeatButton ,
           items: $0
         )
       ]}
+      .asDriver()
+      .do {
+        print("4321 datasource", $0.first?.items.count)
+      }
     
     let changeStatus = changeStatusTrigger
       .asDriver()
@@ -160,12 +174,13 @@ class TaskListViewModel: Stepper {
       .flatMapLatest({ self.managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
+    let changeToRemove = changeStatus
+      .filter{ $0.status == .Deleted }
+    
     let change = Driver
       .of(changeToIdea, changeToInProgress, changeToCompleted)
       .merge()
-    
-    let changeToRemove = changeStatus
-      .filter{ $0.status == .Deleted }
+      .do { _ in self.reloadData.accept(()) }
  
     // selection
     let openTask = input.selection
@@ -254,7 +269,7 @@ class TaskListViewModel: Stepper {
       .timer(.seconds(0), period: .seconds(1), scheduler: MainScheduler.instance)
       .asDriver(onErrorJustReturn: 0)
     
-    let reloadData = timer
+    let reloadItems = timer
       .withLatestFrom(dataSource) { _, dataSource -> [IndexPath] in
         dataSource.enumerated().flatMap { sectionIndex, section -> [IndexPath] in
           section.items.enumerated().compactMap { itemIndex, item -> IndexPath? in
@@ -271,15 +286,15 @@ class TaskListViewModel: Stepper {
       addTask: addTask,
       addTaskButtonIsHidden: addTaskButtonIsHidden,
       change: change,
+      dataSource: dataSource,
       hideAlert: hideAlert,
       hideCell: hideCell,
       navigateBack: navigateBack,
       openTask: openTask,
       removeAll: removeAll,
       removeTask: removeTask,
-      reloadData: reloadData,
+      reloadItems: reloadItems,
       setAlertText: alertText,
-      setDataSource: dataSource,
       title: title,
       showAlert: showAlert,
       showRemovaAllButton: showRemovaAllButton

@@ -8,6 +8,7 @@
 import RxFlow
 import RxSwift
 import RxCocoa
+import YandexMobileMetrica
 
 class DiamondViewModel: Stepper {
 
@@ -17,23 +18,19 @@ class DiamondViewModel: Stepper {
   
   // MARK: - Transform
   struct Input {
-    // button
+    let alertOkButtonClickTrigger: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
-    // offer
-    let smallOfferBackgroundClickTrigger: Driver<Void>
-    let mediumOfferBackgroundClickTrigger: Driver<Void>
-    let largeOfferBackgroundClickTrigger: Driver<Void>
-    // buy
     let buyButtonClickTrigger: Driver<Void>
+    let smallOfferBackgroundClickTrigger: Driver<Void>
+    let largeOfferBackgroundClickTrigger: Driver<Void>
+    let mediumOfferBackgroundClickTrigger: Driver<Void>
   }
   
   struct Output {
-    // button
-    let backButtonClickHandler: Driver<Void>
-    // offer
+    let hideAlertTrigger: Driver<Void>
+    let navigateBack: Driver<Void>
     let offerSelected: Driver<DiamondPackageType>
-    // buy button
-    let buyButtonClick: Driver<Void>
+    let showAlertTrigger: Driver<Void>
   }
   
   //MARK: - Init
@@ -44,8 +41,10 @@ class DiamondViewModel: Stepper {
   // MARK: - Transform
   func transform(input: Input) -> Output {
     
+    let compactUser = services.dataService.compactUser
+    
     // backButtonClickHandler
-    let backButtonClickHandler = input.backButtonClickTrigger
+    let navigateBack = input.backButtonClickTrigger
       .map { self.steps.accept(AppStep.NavigateBack) }
     
     // offerSelected
@@ -58,13 +57,21 @@ class DiamondViewModel: Stepper {
       .merge()
       .startWith(.Medium)
     
-    // buyButtonClick
-    let buyButtonClick = input.buyButtonClickTrigger
+    let hideAlertTrigger = input.alertOkButtonClickTrigger
+      .withLatestFrom(offerSelected) { $1 }
+      .withLatestFrom(compactUser) { offer, user in
+        let params: [AnyHashable : Any] = ["offer": offer.rawValue]
+        YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: nil)
+        return DB_USERS_REF.child(user.uid).child("BUY").child(Date().startOfDay.description).updateChildValues([Date().description : offer.rawValue])
+      }
+    
+    let showAlertTrigger = input.buyButtonClickTrigger
     
     return Output(
-      backButtonClickHandler: backButtonClickHandler,
+      hideAlertTrigger: hideAlertTrigger,
+      navigateBack: navigateBack,
       offerSelected: offerSelected,
-      buyButtonClick: buyButtonClick
+      showAlertTrigger: showAlertTrigger
     )
   }
 

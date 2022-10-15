@@ -17,8 +17,9 @@ class TaskListViewController: TDViewController {
   let disposeBag = DisposeBag()
   
   var collectionView: UICollectionView!
-  var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
+ // var dataSource2: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
   var viewModel: TaskListViewModel!
+  var dataSource: [TaskListSection] = []
   
   // alert
   private let alertView: UIView = {
@@ -65,26 +66,27 @@ class TaskListViewController: TDViewController {
     super.viewDidLoad()
     configureUI()
     configureAlert()
-    configureDataSource()
     bindViewModel()
   }
   
   //MARK: - Configure UI
   func configureUI() {
-
+    
     // collection view
     collectionView = UICollectionView(frame: view.bounds , collectionViewLayout: createCompositionalLayout())
-  
+    
     view.addSubview(collectionView)
     
     // view
     view.backgroundColor = Theme.App.background
-
+    
     // collectionView
     collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
     collectionView.register(TaskReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
+    collectionView.dataSource = self
+    
     collectionView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
   }
   
@@ -164,7 +166,8 @@ class TaskListViewController: TDViewController {
     [
       outputs.addTask.drive(),
       outputs.addTaskButtonIsHidden.drive(addButton.rx.isHidden),
-      outputs.change.drive(changeBinder),
+      outputs.change.drive(),
+      outputs.dataSource.drive(dataSourceBinder),
       outputs.hideAlert.drive(hideAlertBinder),
       outputs.hideCell.drive(hideCellBinder),
       outputs.navigateBack.drive(),
@@ -172,19 +175,20 @@ class TaskListViewController: TDViewController {
       outputs.removeAll.drive(),
       outputs.removeTask.drive(),
       outputs.setAlertText.drive(alertLabel.rx.text),
-      outputs.setDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.showAlert.drive(showAlertBinder),
       outputs.showRemovaAllButton.drive(showRemovaAllButtonBinder),
-      outputs.title.drive(titleLabel.rx.text)
+      outputs.title.drive(titleLabel.rx.text),
+      
     ]
       .forEach({ $0?.disposed(by: disposeBag) })
     
   }
   
   // MARK: - Binders
-  var changeBinder: Binder<Result<Void, Error>> {
-    return Binder(self, binding: { (vc, _) in
-      vc.collectionView.reloadData()
+  var dataSourceBinder: Binder<[TaskListSection]> {
+    return Binder(self, binding: { (vc, dataSource) in
+      self.dataSource = dataSource
+      self.collectionView.reloadData()
     })
   }
   
@@ -207,7 +211,7 @@ class TaskListViewController: TDViewController {
       vc.alertView.isHidden = false
     })
   }
-
+  
   
   var showRemovaAllButtonBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
@@ -227,28 +231,6 @@ class TaskListViewController: TDViewController {
     })
   }
   
-  func configureDataSource() {
-    collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(configureCell: { dataSource, collectionView, indexPath, item in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
-      cell.configure(with: dataSource[indexPath.section].mode)
-      cell.configure(with: item.task)
-      cell.configure(with: item.kindOfTask)
-      cell.delegate = self
-      cell.disposeBag = DisposeBag()
-      cell.repeatButton.rx.tap
-        .map{ _ -> IndexPath in indexPath }
-        .asDriver(onErrorJustReturn: nil)
-        .drive(self.repeatButtonBinder)
-        .disposed(by: cell.disposeBag)
-      return cell
-    }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
-      let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView
-      section.configure(text: dataSource[indexPath.section].header)
-      return section
-    })
-  }
-  
   var repeatButtonBinder: Binder<IndexPath?> {
     return Binder(self, binding: { (vc, indexPath) in
       guard let indexPath = indexPath else { return }
@@ -258,6 +240,50 @@ class TaskListViewController: TDViewController {
   
 }
 
+// MARK: - UICollectionViewDelegate
+extension TaskListViewController: UICollectionViewDelegate {
+  
+}
+
+// MARK: - UICollectionViewDelegate
+extension TaskListViewController: UICollectionViewDelegateFlowLayout {
+}
+
+
+
+// MARK: - UICollectionViewDataSource
+extension TaskListViewController: UICollectionViewDataSource {
+  
+  func numberOfSections(in collectionView: UICollectionView) -> Int {
+    dataSource.count
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    dataSource[section].items.count
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskCell.reuseID, for: indexPath) as! TaskCell
+    let item = dataSource[indexPath.section].items[indexPath.item]
+    cell.configure(with: dataSource[indexPath.section].mode)
+    cell.configure(with: item.task)
+    cell.configure(with: item.kindOfTask)
+    cell.delegate = self
+    cell.repeatButton.rx.tap
+      .map{ _ -> IndexPath in indexPath }
+      .asDriver(onErrorJustReturn: nil)
+      .drive(self.repeatButtonBinder)
+      .disposed(by: cell.disposeBag)
+    return cell
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TaskReusableView.reuseID, for: indexPath) as! TaskReusableView
+    section.configure(text: dataSource[indexPath.section].header)
+    return section
+  }
+  
+}
 
 extension TaskListViewController: SwipeCollectionViewCellDelegate {
   

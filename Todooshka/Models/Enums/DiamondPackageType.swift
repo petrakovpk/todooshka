@@ -5,6 +5,8 @@
 //  Created by Pavel Petakov on 20.07.2022.
 //
 
-enum DiamondPackageType {
-  case Small, Medium, Large
+enum DiamondPackageType: String {
+  case Small
+  case Medium
+  case Large
 }

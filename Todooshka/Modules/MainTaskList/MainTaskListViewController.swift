@@ -306,10 +306,10 @@ class MainTaskListViewController: UIViewController {
       outputs.hideCell.drive(hideCellBinder),
       outputs.openTask.drive(),
       outputs.removeTask.drive(),
-      outputs.reloadData.drive(reloadDataBinder),
+      outputs.reloadItems.drive(reloadItemsBinder),
       outputs.setAlertText.drive(alertLabel.rx.text),
-      outputs.setDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.setDataSource.drive(dataSourceBinder),
+      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.dataSource.drive(dataSourceBinder),
       outputs.showAlert.drive(showAlertBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
@@ -335,7 +335,7 @@ class MainTaskListViewController: UIViewController {
     })
   }
   
-  var reloadDataBinder: Binder<[IndexPath]> {
+  var reloadItemsBinder: Binder<[IndexPath]> {
     return Binder(self, binding: { (vc, indexPaths) in
       if self.listViewModel.editingIndexPath == nil {
         vc.collectionView.reloadData()
@@ -374,8 +374,8 @@ class MainTaskListViewController: UIViewController {
   
   var dataSourceBinder: Binder<[TaskListSection]> {
     return Binder(self, binding: { (vc, dataSource) in
-      if dataSource.count == 0 {
-        vc.animationView.play(toProgress: 1.0)
+      if dataSource.first?.items.count == 0 {
+        vc.animationView.play()
         vc.animationView.isHidden = false
       } else {
         vc.animationView.isHidden = true

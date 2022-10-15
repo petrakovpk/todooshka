@@ -16,20 +16,20 @@ struct Task: IdentifiableType, Equatable {
   
   // MARK: - Properites
   var identity: String { UID }
-  var UID: String { didSet { lastModified = Date()}}
+  var UID: String { willSet { lastModified = Date()}}
   
-  var text: String { didSet { lastModified = Date()}}
-  var description: String? { didSet { lastModified = Date()}}
+  var text: String { willSet { lastModified = Date()}}
+  var description: String? { willSet { lastModified = Date()}}
   
-  var status: TaskStatus { didSet { lastModified = Date()}}
-  var index: Int = 0 { didSet { lastModified = Date()}}
+  var status: TaskStatus { willSet { lastModified = Date()}}
+  var index: Int = 0 { willSet { lastModified = Date()}}
   
-  var created: Date { didSet { lastModified = Date()}}
-  var planned: Date? { didSet { lastModified = Date()}}
-  var closed: Date? { didSet { lastModified = Date()}}
+  var created: Date { willSet { lastModified = Date()}}
+  var planned: Date? { willSet { lastModified = Date()}}
+  var closed: Date? { willSet { lastModified = Date()}}
   
-  var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { didSet { lastModified = Date()}}
-  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date()}}
+  var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { willSet { lastModified = Date()}}
+  var userUID: String? = Auth.auth().currentUser?.uid { willSet { lastModified = Date()}}
   
   var lastModified: Date = Date()
   

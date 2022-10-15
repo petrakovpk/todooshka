@@ -22,6 +22,10 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     setValue(customTabBar, forKey: "tabBar")
   }
   
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+  }
+  
   //MARK: - Bind
   func bindViewModel() {
 
@@ -32,7 +36,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.createTask.drive(),
+      outputs.createTask.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }

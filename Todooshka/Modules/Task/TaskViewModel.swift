@@ -140,7 +140,6 @@ class TaskViewModel: Stepper {
       .merge()
       .map { date -> Date? in date }
       .startWith(nil)
-      .debug()
 
     let plannedText = planned
       .compactMap{ $0 }
@@ -203,9 +202,15 @@ class TaskViewModel: Stepper {
         changeStatusToPlanned
       ).merge()
     
-    let closed = input.alertOkButtonClickTrigger
+    let startClosed = task.map{ $0.closed }
+    let alertClosed = input.alertOkButtonClickTrigger
       .map{ Date() }
-      .startWith(nil)
+      .map{ date -> Date? in date }
+    
+    let closed = Driver
+      .of(startClosed, alertClosed)
+      .merge()
+      
     
     let taskAttr = Driver
       .combineLatest(text, description, kindOfTask, planned, status, closed) { text, description, kindOfTask, planned, status, closed in

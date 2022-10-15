@@ -352,8 +352,6 @@ class LoginViewModel: Stepper {
       setPhoneStyle,
       setEmailOrPhoneStyleWithBack,
       setPasswordOrRepeatPasswordStyle,
-//      setRepeatPasswordStyle,
-//      setPasswordStyle,
       setOTPCodeStyle
     )
       .merge()

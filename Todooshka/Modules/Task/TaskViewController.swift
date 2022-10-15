@@ -209,7 +209,7 @@ class TaskViewController: TDViewController {
     plannedDateButton.anchor(right: view.rightAnchor, rightConstant: 16, widthConstant: 100, heightConstant: 40)
     
     // descriptionTextView
-    descriptionTextView.anchor(top: descriptionLabel.bottomAnchor, left: view.leftAnchor,  right: view.rightAnchor, topConstant: 8, leftConstant: 16, bottomConstant: 16.superAdjusted, rightConstant: 16, heightConstant: 100)
+    descriptionTextView.anchor(top: descriptionLabel.bottomAnchor, left: view.leftAnchor,  right: view.rightAnchor, topConstant: 8, leftConstant: 16, bottomConstant: 16.superAdjusted, rightConstant: 16, heightConstant: 200)
     
     // dividerView
     dividerView.anchor(left: descriptionTextView.leftAnchor, bottom: descriptionTextView.bottomAnchor, right: descriptionTextView.rightAnchor,  heightConstant: 1.0)

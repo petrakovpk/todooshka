@@ -42,13 +42,13 @@ class UserProfileViewModel: Stepper {
   func transform(input: Input) -> Output {
     
     let reload = reloadData.asDriver()
-    let userListener = Auth.auth().rx.stateDidChange
-      .asDriver(onErrorJustReturn: nil)
-    
-    let user = Driver
-      .combineLatest(reload, userListener.compactMap{ $0 }) { $1 }
 
-    let snapshot = user
+    let user = Driver
+      .combineLatest(reload, services.dataService.user ) { $1 }
+    
+    let compactUser = services.dataService.compactUser
+
+    let snapshot = compactUser
       .asObservable()
       .flatMapLatest { user -> Observable<Result<DataSnapshot,Error>> in
         Database.database().reference().child("USERS").child(user.uid).child("PERSONAL").rx.observeEvent(.value)
@@ -76,11 +76,11 @@ class UserProfileViewModel: Stepper {
       .compactMap{ $0["name"] as? String }
       .startWith("Главный герой")
     
-    let email = user
+    let email = compactUser
       .compactMap{ $0.email }
       .startWith("")
     
-    let phoneNumber = user
+    let phoneNumber = compactUser
       .compactMap{ $0.phoneNumber }
       .startWith("")
     
@@ -135,13 +135,9 @@ class UserProfileViewModel: Stepper {
         }
       }
     
-    let title = user
+    let title = compactUser
       .map { $0.displayName ?? "Герой без имени" }
       .asDriver(onErrorJustReturn: "")
-    
-    let navigateBackIfUserLoggedOff = userListener
-      .filter { $0 == nil }
-      .map{ _ in () }
     
     let logOut = input.alertOkButtonClickTrigger
       .do { _ in
@@ -160,8 +156,12 @@ class UserProfileViewModel: Stepper {
       .asDriver()
       .compactMap{ $0 }
     
+    let navigateBackTrigger = user
+      .filter{ $0 == nil }
+      .map{ _ in () }
+    
     let navigateBack = Driver
-      .of(navigateBackIfUserLoggedOff, input.backButtonClickTrigger)
+      .of(navigateBackTrigger, input.backButtonClickTrigger)
       .merge()
       .map{ self.steps.accept(AppStep.NavigateBack) }
 

@@ -13,7 +13,6 @@ import SwifterSwift
 import UIKit
 import YandexMobileMetrica
 
-
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate  {
   

@@ -17,12 +17,8 @@ struct TaskListSectionItem: IdentifiableType, Equatable {
   }
   
   static func == (lhs: TaskListSectionItem, rhs: TaskListSectionItem) -> Bool {
-    return lhs.task.UID == rhs.task.UID
-    && lhs.task.text == rhs.task.text
-    && lhs.task.description == rhs.task.description
-    && lhs.task.status.rawValue == rhs.task.status.rawValue
-    && lhs.kindOfTask.UID == rhs.kindOfTask.UID
-
+    return lhs.task == rhs.task
+    && lhs.kindOfTask == rhs.kindOfTask
   }
   
 }

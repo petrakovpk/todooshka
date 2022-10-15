@@ -131,6 +131,8 @@ class LoginViewController: UIViewController {
   
   //MARK: - Configure UI
   func configureUI() {
+    
+    emailTextField.text = "petrakovpk@yandex.ru"
 
     // adding
     view.addSubview(headerView)

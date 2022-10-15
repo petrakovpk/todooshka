@@ -57,8 +57,8 @@ enum Clade: String {
     case 3: self = .Owl
     case 4: self = .Parrot
     case 5: self = .Penguin
-    case 6: self = .Owl
-    case 7: self = .Eagle
+    case 6: self = .Eagle
+    case 7: self = .Dragon
     default: self = .Chiken
     }
   }

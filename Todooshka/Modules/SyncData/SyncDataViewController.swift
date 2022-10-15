@@ -60,7 +60,7 @@ class SyncDataViewController: TDViewController {
   
   private let kindsOfTaskDeviceLabel: UILabel = {
     let label = UILabel()
-    label.text = "Задач на устройстве"
+    label.text = "Типов задач на устройстве"
     label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     label.textAlignment = .center
     return label
@@ -76,7 +76,7 @@ class SyncDataViewController: TDViewController {
   
   private let kindsOfTaskFirebaseLabel: UILabel = {
     let label = UILabel()
-    label.text = "Задач в облаке"
+    label.text = "Типов задач в облаке"
     label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     label.textAlignment = .center
     return label
@@ -93,7 +93,7 @@ class SyncDataViewController: TDViewController {
   private let kindsOfTaskSyncButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 13
-    button.setTitle("Загрузить типа задач из облака", for: .normal)
+    button.setTitle("Загрузить типы задач из облака", for: .normal)
     return button
   }()
   

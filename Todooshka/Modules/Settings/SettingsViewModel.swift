@@ -101,7 +101,6 @@ class SettingsViewModel: Stepper {
         ]
       }
     
-
     let itemSelected = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource in
         let item = dataSource[indexPath.section].items[indexPath.item]

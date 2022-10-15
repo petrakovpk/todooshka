@@ -71,7 +71,7 @@ class UserProfileViewController: TDViewController {
     bindViewModel()
   }
   
-  override func viewWillAppear(_ animated: Bool) {
+  override func viewDidAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     viewModel.reloadData.accept(())
   }

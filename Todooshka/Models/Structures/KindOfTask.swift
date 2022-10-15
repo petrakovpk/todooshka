@@ -14,31 +14,31 @@ struct KindOfTask: IdentifiableType, Equatable  {
 
   // MARK: - Staic
   struct Standart {
-    static let Simple = KindOfTask(UID: "Simple", icon: .Unlimited, isStyleLocked: true, color: Palette.SingleColors.Corduroy , text: "Без типа", index: 0, style: .Simple)
-    static let Student = KindOfTask(UID: "Student", icon: .Teacher, isStyleLocked: true, color: Palette.SingleColors.PurpleHeart, text: "Учеба", index: 1, style: .Student)
-    static let Business = KindOfTask(UID: "Business", icon: .Briefcase, isStyleLocked: true, color: Palette.SingleColors.PurpleHeart, text: "Работа", index: 2, style: .Business)
-    static let Cook = KindOfTask(UID: "Cook", icon: .Profile2user, isStyleLocked: true, color: Palette.SingleColors.Jaffa, text: "Готовка", index: 3, style: .Cook)
-    static let Home = KindOfTask(UID: "Home", icon: .House, isStyleLocked: false, color: Palette.SingleColors.Cerise, text: "Домашние дела", index: 4, style: .Simple)
-    static let Kid = KindOfTask(UID: "Kid", icon: .EmojiHappy, isStyleLocked: true, color: Palette.SingleColors.Amethyst, text: "Детишки", index: 5, style: .Kid)
-    static let Love = KindOfTask(UID: "Love", icon: .Lovely, isStyleLocked: false, color: Palette.SingleColors.Amethyst, text: "Вторая половинка", index: 6, style: .Simple)
-    static let Pet = KindOfTask(UID: "Pet", icon: .Pet, isStyleLocked: false, color: Palette.SingleColors.BrinkPink, text: "Домашнее животное", index: 7, style: .Simple)
-    static let Sport = KindOfTask(UID: "Sport", icon: .Dumbbell, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Спорт", index: 8, style: .Sport)
-    static let Fashion = KindOfTask(UID: "Fashion", icon: .Shop, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Быть модным", index: 9, style: .Fashion)
+    static let Simple = KindOfTask(UID: "Simple", icon: .Unlimited, isStyleLocked: true, color: Palette.SingleColors.Corduroy , text: "Без типа", index: 0, style: .Simple, lastModified: Date(timeIntervalSince1970: 1))
+    static let Student = KindOfTask(UID: "Student", icon: .Teacher, isStyleLocked: true, color: Palette.SingleColors.PurpleHeart, text: "Учеба", index: 1, style: .Student, lastModified: Date(timeIntervalSince1970: 1))
+    static let Business = KindOfTask(UID: "Business", icon: .Briefcase, isStyleLocked: true, color: Palette.SingleColors.PurpleHeart, text: "Работа", index: 2, style: .Business, lastModified: Date(timeIntervalSince1970: 1))
+    static let Cook = KindOfTask(UID: "Cook", icon: .Profile2user, isStyleLocked: true, color: Palette.SingleColors.Jaffa, text: "Готовка", index: 3, style: .Cook, lastModified: Date(timeIntervalSince1970: 1))
+    static let Home = KindOfTask(UID: "Home", icon: .House, isStyleLocked: false, color: Palette.SingleColors.Cerise, text: "Домашние дела", index: 4, style: .Simple, lastModified: Date(timeIntervalSince1970: 1))
+    static let Kid = KindOfTask(UID: "Kid", icon: .EmojiHappy, isStyleLocked: true, color: Palette.SingleColors.Amethyst, text: "Детишки", index: 5, style: .Kid, lastModified: Date(timeIntervalSince1970: 1))
+    static let Love = KindOfTask(UID: "Love", icon: .Lovely, isStyleLocked: false, color: Palette.SingleColors.Amethyst, text: "Вторая половинка", index: 6, style: .Simple, lastModified: Date(timeIntervalSince1970: 1))
+    static let Pet = KindOfTask(UID: "Pet", icon: .Pet, isStyleLocked: false, color: Palette.SingleColors.BrinkPink, text: "Домашнее животное", index: 7, style: .Simple, lastModified: Date(timeIntervalSince1970: 1))
+    static let Sport = KindOfTask(UID: "Sport", icon: .Dumbbell, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Спорт", index: 8, style: .Sport, lastModified: Date(timeIntervalSince1970: 1))
+    static let Fashion = KindOfTask(UID: "Fashion", icon: .Shop, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Быть модным", index: 9, style: .Fashion, lastModified: Date(timeIntervalSince1970: 1))
   }
   
   // MARK: - Identity
   var identity: String { UID }
   
   // MARK: - Properties
-  var UID: String { didSet { lastModified = Date()}}
-  var color: UIColor { didSet { lastModified = Date()}}
-  var icon: Icon { didSet { lastModified = Date()}}
-  var index: Int { didSet { lastModified = Date()}}
-  var isStyleLocked: Bool = false { didSet { lastModified = Date()}}
-  var status: KindOfTaskStatus = .Active { didSet { lastModified = Date()}}
-  var style: Style = .Simple { didSet { lastModified = Date()}}
-  var text: String { didSet { lastModified = Date()}}
-  var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date()}}
+  var UID: String { willSet { lastModified = Date()}}
+  var color: UIColor { willSet { lastModified = Date()}}
+  var icon: Icon { willSet { lastModified = Date()}}
+  var index: Int { willSet { lastModified = Date()}}
+  var isStyleLocked: Bool = false { willSet { lastModified = Date()}}
+  var status: KindOfTaskStatus = .Active { willSet { lastModified = Date()}}
+  var style: Style = .Simple { willSet { lastModified = Date()}}
+  var text: String { willSet { lastModified = Date()}}
+  var userUID: String? = Auth.auth().currentUser?.uid { willSet { lastModified = Date()}}
   
   var lastModified: Date = Date()
 
@@ -60,6 +60,17 @@ struct KindOfTask: IdentifiableType, Equatable  {
     self.isStyleLocked = isStyleLocked
     self.text = text
     self.style = style
+  }
+  
+  init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int, style: Style, lastModified: Date) {
+    self.UID = UID
+    self.color = color ?? UIColor.systemGray
+    self.icon = icon
+    self.index = index
+    self.isStyleLocked = isStyleLocked
+    self.text = text
+    self.style = style
+    self.lastModified = lastModified
   }
   
   // MARK: - Equatable

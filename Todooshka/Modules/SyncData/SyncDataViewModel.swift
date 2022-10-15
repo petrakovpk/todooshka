@@ -47,11 +47,14 @@ class SyncDataViewModel: Stepper {
       .map{ $0.count }
       .startWith(0)
     
-    let taskDeviceCountLabel = taskDeviceCount.map{ $0.string }
+    let taskDeviceCountLabel = taskDeviceCount
+      .map{ $0.string }
     
-    let firebaseTasks = services.dataService.firebaseTasks
+    let firebaseTasks = services.dataService
+      .firebaseTasks
+      .asDriver()
       .map{ $0.filter{ $0.status != .Archive } }
-    
+        
     let taskFirebaseCount = firebaseTasks
       .map{ $0.count }
       .startWith(0)
@@ -59,7 +62,8 @@ class SyncDataViewModel: Stepper {
     let taskFirebaseCountLabel = taskFirebaseCount
       .map{ $0.string }
     
-    let taskSyncButtonIsEnabled = Driver.combineLatest(taskDeviceCount, taskFirebaseCount) { $0 != $1 }
+    let taskSyncButtonIsEnabled = Driver
+      .combineLatest(taskDeviceCount, taskFirebaseCount) { $0 < $1 }
     
     let taskSync = Driver
       .combineLatest(input.taskSyncButtonClickTrigger, firebaseTasks ) { $1 }
@@ -77,7 +81,10 @@ class SyncDataViewModel: Stepper {
       .map{ $0.count }
       .startWith(0)
     
-    let firebaseKindsOfTask = services.dataService.firebaseKindsOfTask
+    let firebaseKindsOfTask = services.dataService
+      .firebaseKindsOfTask
+      .asDriver()
+      .compactMap{ $0 }
       .map{ $0.filter{ $0.status != .Archive } }
     
     let kindsOfTaskDeviceCountLabel = kindsOfTaskDeviceCount
@@ -90,7 +97,8 @@ class SyncDataViewModel: Stepper {
     let kindsOfTaskFirebaseCountLabel = kindsOfTaskFirebaseCount
       .map{ $0.string }
     
-    let kindsOfTaskSyncButtonIsEnabled = Driver.combineLatest(kindsOfTaskDeviceCount, kindsOfTaskFirebaseCount) { $0 != $1 }
+    let kindsOfTaskSyncButtonIsEnabled = Driver
+      .combineLatest(kindsOfTaskDeviceCount, kindsOfTaskFirebaseCount) { $0 < $1 }
     
     let kindsOfTaskSync = Driver
       .combineLatest(input.kindsOfTaskSyncButtonClickTrigger, firebaseKindsOfTask ) { $1 }

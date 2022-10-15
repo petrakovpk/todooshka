@@ -66,7 +66,9 @@ class KindOfTaskViewModel: Stepper {
     let selectedColor = selectedColor.asDriver()
     let selectedIcon = selectedIcon.asDriver()
     
-    let kindOfTask = services.dataService.kindsOfTask
+    let kindsOfTask = services.dataService.kindsOfTask
+     
+    let kindOfTask = kindsOfTask
       .compactMap{ $0.first(where: { $0.UID == self.kindOfTaskUID } ) }
     
     let isStyleLocked = kindOfTask
@@ -82,9 +84,15 @@ class KindOfTaskViewModel: Stepper {
     let kindOfTaskIcon = kindOfTask
       .map{ $0.icon }
     
-    let kindOfTaskIndex = kindOfTask
+    let kindOfTaskStartIndex = kindsOfTask
+      .map{ $0.count }
+    
+    let kindOfTaskExistIndex = kindOfTask
       .map{ $0.index }
-      .startWith(-1)
+      
+    let kindOfTaskIndex = Driver
+      .of(kindOfTaskStartIndex, kindOfTaskExistIndex)
+      .merge()
     
     let text = Driver
       .of(

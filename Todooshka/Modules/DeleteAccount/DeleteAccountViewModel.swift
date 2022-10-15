@@ -62,7 +62,13 @@ class DeleteAccountViewModel: Stepper {
     let sucessText = deleteAccountSuccess
       .map{ _ in "Аккаунт удален!" }
     
-    let navigateBack = input.backButtonClickTrigger
+    let navigateBackTrigger = services.dataService.user
+      .filter{ $0 == nil }
+      .map{ _ in () }
+    
+    let navigateBack = Driver
+      .of(navigateBackTrigger, input.backButtonClickTrigger)
+      .merge()
       .map { _ in self.steps.accept(AppStep.NavigateBack) }
 
     return Output(
