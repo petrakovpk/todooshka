@@ -28,7 +28,7 @@ class KindOfTaskCell: UICollectionViewCell {
     textView.textAlignment = .center
     textView.backgroundColor = .clear
     textView.textContainer.lineBreakMode = .byWordWrapping
-    textView.font = UIFont.systemFont(ofSize: 13.superAdjusted, weight: .medium)
+    textView.font = UIFont.systemFont(ofSize: 13, weight: .medium)
     textView.isUserInteractionEnabled = false
     return textView
   }()

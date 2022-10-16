@@ -23,7 +23,7 @@ class TaskViewController: TDViewController {
   // MARK: - Task UI Elements
   private let textLabel: UILabel = {
     let label = UILabel(text: "Задача")
-    label.font = UIFont.systemFont(ofSize: 15.adjusted , weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 15 , weight: .medium)
     label.textAlignment = .left
     return label
   }()
@@ -36,7 +36,7 @@ class TaskViewController: TDViewController {
   
   private let kindOfTaskLabel: UILabel = {
     let label = UILabel(text: "Тип")
-    label.font = UIFont.systemFont(ofSize: 15.adjusted , weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 15 , weight: .medium)
     label.textAlignment = .left
     return label
   }()
@@ -61,7 +61,7 @@ class TaskViewController: TDViewController {
   
   private let descriptionLabel: UILabel = {
     let label = UILabel(text: "Комментарий")
-    label.font = UIFont.systemFont(ofSize: 15.adjusted , weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 15 , weight: .medium)
     label.textAlignment = .left
     return label
   }()
@@ -70,7 +70,7 @@ class TaskViewController: TDViewController {
     let textView = UITextView()
     textView.borderWidth = 0
     textView.backgroundColor = .clear
-    textView.font = UIFont.systemFont(ofSize: 13.adjusted, weight: .medium)
+    textView.font = UIFont.systemFont(ofSize: 13, weight: .medium)
     return textView
   }()
   
@@ -82,7 +82,7 @@ class TaskViewController: TDViewController {
   
   private let completeButton: UIButton = {
     let button = UIButton(type: .system)
-    button.cornerRadius = 48.superAdjusted / 2
+    button.cornerRadius = 48 / 2
     button.setTitle("Выполнено!", for: .normal)
     button.setTitleColor(.black, for: .normal)
     button.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
@@ -99,7 +99,7 @@ class TaskViewController: TDViewController {
   
   private let alertOkButton: UIButton = {
     let button = UIButton(type: .system)
-    button.cornerRadius = 48.superAdjusted / 2
+    button.cornerRadius = Sizes.Buttons.alertOkButton.height / 2
     button.setTitle("Да, я молодец :)", for: .normal)
     button.setTitleColor(.white, for: .normal)
     button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
@@ -185,7 +185,7 @@ class TaskViewController: TDViewController {
     textLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16)
     
     // nameTextField
-    textTextField.anchor(top: textLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40.superAdjusted)
+    textTextField.anchor(top: textLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant)
     
     // kindOfTaskLabel
     kindOfTaskLabel.anchor(top: textTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16)
@@ -199,23 +199,57 @@ class TaskViewController: TDViewController {
     collectionView.clipsToBounds = false
     collectionView.isScrollEnabled = false
     collectionView.register(KindOfTaskCell.self, forCellWithReuseIdentifier: KindOfTaskCell.reuseID)
-    collectionView.anchor(top: kindOfTaskLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, heightConstant: 100.superAdjusted )
+    collectionView.anchor(
+      top: kindOfTaskLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      heightConstant: Sizes.Views.KindsOfTaskCollectionView.height
+    )
     
     // descriptionLabel
     descriptionLabel.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16)
     
     // plannedDateButton
     plannedDateButton.centerYAnchor.constraint(equalTo: descriptionLabel.centerYAnchor).isActive = true
-    plannedDateButton.anchor(right: view.rightAnchor, rightConstant: 16, widthConstant: 100, heightConstant: 40)
+    plannedDateButton.anchor(
+      right: view.rightAnchor,
+      rightConstant: 16,
+      widthConstant: Sizes.Buttons.planedButton.width,
+      heightConstant: Sizes.Buttons.planedButton.height
+    )
     
     // descriptionTextView
-    descriptionTextView.anchor(top: descriptionLabel.bottomAnchor, left: view.leftAnchor,  right: view.rightAnchor, topConstant: 8, leftConstant: 16, bottomConstant: 16.superAdjusted, rightConstant: 16, heightConstant: 200)
+    descriptionTextView.anchor(
+      top: descriptionLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16,
+      heightConstant: Sizes.TextViews.taskDescriptionTextView.height
+    )
     
     // dividerView
-    dividerView.anchor(left: descriptionTextView.leftAnchor, bottom: descriptionTextView.bottomAnchor, right: descriptionTextView.rightAnchor,  heightConstant: 1.0)
+    dividerView.anchor(
+      left: descriptionTextView.leftAnchor,
+      bottom: descriptionTextView.bottomAnchor,
+      right: descriptionTextView.rightAnchor,
+      heightConstant: 1.0
+    )
     
     // completeTaskButton
-    completeButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor,  leftConstant: 16, bottomConstant: 16, rightConstant: 16, heightConstant: 48.superAdjusted)
+    completeButton.anchor(
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16,
+      heightConstant: Sizes.Buttons.appButton.height
+    )
 
   }
   
@@ -261,10 +295,16 @@ class TaskViewController: TDViewController {
   }
   
   private func section() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(90.superAdjusted), heightDimension: .absolute(91.superAdjusted ))
+    let itemSize = NSCollectionLayoutSize(
+      widthDimension: .absolute(Sizes.Cells.KindOfTaskCell.width),
+      heightDimension: .absolute(Sizes.Cells.KindOfTaskCell.height)
+    )
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     item.contentInsets =  NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 10)
-    let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(90.superAdjusted), heightDimension: .estimated(91.superAdjusted))
+    let groupSize = NSCollectionLayoutSize(
+      widthDimension: .estimated(Sizes.Cells.KindOfTaskCell.width),
+      heightDimension: .estimated(Sizes.Cells.KindOfTaskCell.height)
+    )
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)

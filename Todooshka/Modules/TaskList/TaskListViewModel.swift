@@ -132,9 +132,6 @@ class TaskListViewModel: Stepper {
         )
       ]}
       .asDriver()
-      .do {
-        print("4321 datasource", $0.first?.items.count)
-      }
     
     let changeStatus = changeStatusTrigger
       .asDriver()

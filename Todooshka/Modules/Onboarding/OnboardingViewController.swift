@@ -33,7 +33,13 @@ final class OnboardingViewController: UIViewController {
     return label
   }()
   
-  private let skipButton = UIButton(type: .system)
+  private let skipButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 25
+    button.backgroundColor = Palette.SingleColors.BlueRibbon
+    button.setTitleColor(.white, for: .normal)
+    return button
+  }()
   
   private let authButton: UIButton = {
     let button = UIButton(type: .custom)
@@ -91,10 +97,15 @@ final class OnboardingViewController: UIViewController {
     backgroundImageView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor)
     
     // skipButton
-    skipButton.cornerRadius = 25
-    skipButton.backgroundColor = Palette.SingleColors.BlueRibbon
-    skipButton.setTitleColor(.white, for: .normal)
-    skipButton.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor , right: view.rightAnchor, leftConstant: 16, bottomConstant: (26 + 50).adjusted, rightConstant: 16, heightConstant: 50.adjusted)
+    skipButton.anchor(
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor,
+      leftConstant: 16,
+      bottomConstant: Sizes.Buttons.skipButton.width,
+      rightConstant: 16,
+      heightConstant: Sizes.Buttons.appButton.height
+    )
     
     // collectionView
     collectionView.isPagingEnabled = true
@@ -105,14 +116,14 @@ final class OnboardingViewController: UIViewController {
     
     // headerLabel
     headerLabel.textColor = Theme.App.text
-    headerLabel.anchor(bottom: collectionView.topAnchor, bottomConstant: 80.adjusted)
+    headerLabel.anchor(bottom: collectionView.topAnchor, bottomConstant: Sizes.Labels.onboardingHeaderLabel.bottomConstant)
     headerLabel.anchorCenterXToSuperview()
     
     // centralDot
     centralDot.cornerRadius = 3
     centralDot.backgroundColor = Theme.Onboarding.Dot
     centralDot.anchorCenterXToSuperview()
-    centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: 6, heightConstant: 6)
+    centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: Sizes.Views.Dot.bottomConstant , widthConstant: 6, heightConstant: 6)
     
     // leftDot
     leftDot.cornerRadius = 3
@@ -133,17 +144,35 @@ final class OnboardingViewController: UIViewController {
     // centralDot
     centralDot.removeAllConstraints()
     centralDot.anchorCenterXToSuperview()
-    centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: 74.adjusted , widthConstant: CGFloat(6 + 19 * centralDotPercent / 100).adjusted, heightConstant: 6)
+    centralDot.anchor(
+      bottom: skipButton.topAnchor,
+      bottomConstant: Sizes.Views.Dot.bottomConstant,
+      widthConstant: CGFloat(6 + 19 * centralDotPercent / 100).adjustByWidth,
+      heightConstant: 6
+    )
+    
     centralDotPercent == 0 ? (centralDot.backgroundColor = Theme.Onboarding.Dot) : (centralDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // leftDot
     leftDot.removeAllConstraints()
-    leftDot.anchor(top: centralDot.topAnchor, right: centralDot.leftAnchor, rightConstant: 10.0, widthConstant: CGFloat(6 + 19 * leftDotPercent / 100).adjusted, heightConstant: 6)
+    leftDot.anchor(
+      top: centralDot.topAnchor,
+      right: centralDot.leftAnchor,
+      rightConstant: 10.0,
+      widthConstant: CGFloat(6 + 19 * leftDotPercent / 100).adjustByWidth,
+      heightConstant: 6
+    )
     leftDotPercent == 0 ? (leftDot.backgroundColor = Theme.Onboarding.Dot) : (leftDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // rightDot
     rightDot.removeAllConstraints()
-    rightDot.anchor(top: centralDot.topAnchor, left: centralDot.rightAnchor, leftConstant: 10.0, widthConstant: CGFloat(6 + 19 * rightDotPercent / 100).adjusted, heightConstant: 6)
+    rightDot.anchor(
+      top: centralDot.topAnchor,
+      left: centralDot.rightAnchor,
+      leftConstant: 10.0,
+      widthConstant: CGFloat(6 + 19 * rightDotPercent / 100).adjustByWidth,
+      heightConstant: 6
+    )
     rightDotPercent == 0 ? (rightDot.backgroundColor = Theme.Onboarding.Dot) : (rightDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     self.view.layoutIfNeeded()

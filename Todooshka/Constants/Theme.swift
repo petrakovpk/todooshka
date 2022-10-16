@@ -39,23 +39,23 @@ struct Theme {
     }
   }
   
-  struct Calendar {
-    static let Background = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
-    static let Divider = Palette.DualColors.MoonRaker_PortGore
+  struct Cells {
+    struct Calendar {
+      static let Border = Palette.SingleColors.BlueRibbon
+      static let Selected = Palette.SingleColors.BlueRibbon
+      static let Text = Palette.SingleColors.BlackPearl
+    }
+    struct KindOfTask {
+      static let Border = Palette.DualColors.Periwinkle_200_202_255_PortGore_24_27_60
+      static let SelectedBackground = Palette.SingleColors.BlueRibbon
+      static let UnselectedBackground = Palette.DualColors.TitanWhite_244_245_255_Ebony_10_11_31
+    }
+    struct TaskList {
+      static let Description = Palette.DualColors.BlackPearl_a60_White_a60
+      static let TimeLeftViewBackground = Palette.DualColors.BlueBayoux_Haiti_10_13_36
+    }
   }
-  
-  struct Divider {
-    static let selected = Palette.SingleColors.BlueRibbon
-    static let unselected = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
-    static let selectedText = Theme.App.text
-    static let unselectedText = Palette.DualColors.Wistful_169_171_217_EastBay_81_85_132
-  }
-  
-  struct Header {
-    static let Background = Palette.DualColors.TitanWhite_228_229_254_Haiti_7_9_30
-    static let Divider = Palette.DualColors.Periwinkle_204_206_253_Haiti_17_20_52
-  }
-  
+
   struct Onboarding {
     static let Dot = Palette.DualColors.PeriwinkleGray_Fiord
     static let Text = Palette.SingleColors.SantasGray
@@ -79,26 +79,36 @@ struct Theme {
     static let Unselected = Palette.DualColors.BlackPearl_a50_White_a30
   }
   
-  struct Cells {
+  struct Views {
+    struct Alert {
+      static let Background = UIColor.black.withAlphaComponent(0.5)
+    }
+    
+    struct AuthDivider {
+      static let selected = Palette.SingleColors.BlueRibbon
+      static let unselected = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
+      static let selectedText = Theme.App.text
+      static let unselectedText = Palette.DualColors.Wistful_169_171_217_EastBay_81_85_132
+    }
+    
     struct Calendar {
-      static let Border = Palette.SingleColors.BlueRibbon
-      static let Selected = Palette.SingleColors.BlueRibbon
-      static let Text = Palette.SingleColors.BlackPearl
+      static let Background = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
     }
-    struct KindOfTask {
-      static let Border = Palette.DualColors.Periwinkle_200_202_255_PortGore_24_27_60
-      static let SelectedBackground = Palette.SingleColors.BlueRibbon
-      static let UnselectedBackground = Palette.DualColors.TitanWhite_244_245_255_Ebony_10_11_31
+    
+    struct CalendarDivider {
+      static let Background = Palette.DualColors.MoonRaker_PortGore
     }
-    struct TaskList {
-      static let Description = Palette.DualColors.BlackPearl_a60_White_a60
-      static let TimeLeftViewBackground = Palette.DualColors.BlueBayoux_Haiti_10_13_36
+    
+    struct GameCurrency {
+      static let textViewBackground = Palette.DualColors.TitanWhite_228_229_254_Haiti_17_20_52
+    }
+    
+    struct Header {
+      static let Background = Palette.DualColors.TitanWhite_228_229_254_Haiti_7_9_30
+      static let Divider = Palette.DualColors.Periwinkle_204_206_253_Haiti_17_20_52
     }
   }
   
-  struct GameCurrency {
-    static let textViewBackground = Palette.DualColors.TitanWhite_228_229_254_Haiti_17_20_52
-  }
   
   // Diamond
   struct Diamond {
@@ -116,33 +126,27 @@ struct Theme {
 
   // Alert
   struct BuyAlertView {
-    static let width = UIScreen.main.bounds.width * 2 / 3
-    static let height = UIScreen.main.bounds.height / 3
-    static let background = UIColor.black.withAlphaComponent(0.5)
     
-    struct eggImageView {
-      static let width = Theme.BuyAlertView.width / 4
-      static let height = Theme.BuyAlertView.eggImageView.width * 1.3
-      static let topConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2
-      static let leftConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2 + 16
-    }
+  //
     
-    struct birdImageView {
-      static let width = Theme.BuyAlertView.width / 4
-      static let height = Theme.BuyAlertView.eggImageView.width * 1.3
-      static let topConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2
-      static let rightConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2 + 16
-    }
+
     
-    struct cancelButton {
-      static let width = Theme.BuyAlertView.width / 2 - 16 - 8
-      static let height = 50
-    }
+//    struct birdImageView {
+//      static let width = Theme.BuyAlertView.width / 4
+//      static let height = Theme.BuyAlertView.eggImageView.width * 1.3
+//      static let topConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2
+//      static let rightConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2 + 16
+//    }
     
-    struct buyButton {
-      static let width = Theme.BuyAlertView.width / 2 - 16 - 8
-      static let height = 50
-    }
+//    struct cancelButton {
+//      static let width = Theme.BuyAlertView.width / 2 - 16 - 8
+//      static let height = 50
+//    }
+//    
+//    struct buyButton {
+//      static let width = Theme.BuyAlertView.width / 2 - 16 - 8
+//      static let height = 50
+//    }
   }
   
   struct Scene {

@@ -30,6 +30,7 @@ class DiamondViewModel: Stepper {
     let hideAlertTrigger: Driver<Void>
     let navigateBack: Driver<Void>
     let offerSelected: Driver<DiamondPackageType>
+    let sendOffer: Driver<Void>
     let showAlertTrigger: Driver<Void>
   }
   
@@ -58,6 +59,8 @@ class DiamondViewModel: Stepper {
       .startWith(.Medium)
     
     let hideAlertTrigger = input.alertOkButtonClickTrigger
+    
+    let sendOffer = compactUser
       .withLatestFrom(offerSelected) { $1 }
       .withLatestFrom(compactUser) { offer, user in
         let params: [AnyHashable : Any] = ["offer": offer.rawValue]
@@ -71,6 +74,7 @@ class DiamondViewModel: Stepper {
       hideAlertTrigger: hideAlertTrigger,
       navigateBack: navigateBack,
       offerSelected: offerSelected,
+      sendOffer: sendOffer,
       showAlertTrigger: showAlertTrigger
     )
   }

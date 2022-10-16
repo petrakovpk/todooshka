@@ -31,7 +31,7 @@ class AlertBuyView: UIView {
   
   public let cancelButton: UIButton = {
     let button = UIButton(type: .system)
-    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)])
+    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(Theme.App.text?.withAlphaComponent(0.5) , for: .normal)
     return button
@@ -39,7 +39,7 @@ class AlertBuyView: UIView {
   
   public let buyButton: AlertBuyButton = {
     let button = AlertBuyButton(type: .system)
-    let attrString = NSAttributedString(string: "Купить!", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)])
+    let attrString = NSAttributedString(string: "Купить!", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
     button.layer.cornerRadius = 15
     button.setTitleColor(.white, for: .normal)
@@ -47,13 +47,7 @@ class AlertBuyView: UIView {
   }()
   
   // MARK: - Private UI Properties
-  private let backgroundView: UIView = {
-    let view = UIView()
-    view.backgroundColor = Theme.BuyAlertView.background
-    return view
-  }()
-  
-  private let alertBackgroundView: UIView = {
+  private let windowView: UIView = {
     let view = UIView()
     view.backgroundColor = Theme.App.background
     return view
@@ -64,37 +58,75 @@ class AlertBuyView: UIView {
     super.init(frame: .zero)
     
     // adding
-    addSubview(backgroundView)
-    addSubview(alertBackgroundView)
-    addSubview(eggImageView)
-    addSubview(birdImageView)
-    addSubview(label)
-    addSubview(cancelButton)
-    addSubview(buyButton)
+    addSubview(windowView)
     
-    // backgroundView
-    backgroundView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor)
+    windowView.addSubviews([
+      eggImageView,
+      birdImageView,
+      label,
+      cancelButton,
+      buyButton
+    ])
+    
+    backgroundColor = Theme.Views.Alert.Background
     
     // alertBackgroundView
-    alertBackgroundView.layer.cornerRadius = 15
-    alertBackgroundView.anchorCenterXToSuperview()
-    alertBackgroundView.anchorCenterYToSuperview()
-    alertBackgroundView.anchor(widthConstant: Theme.BuyAlertView.width, heightConstant: Theme.BuyAlertView.height)
+    windowView.layer.cornerRadius = 15
+    windowView.anchorCenterXToSuperview()
+    windowView.anchorCenterYToSuperview()
+    windowView.anchor(widthConstant: Sizes.Views.alertBuyBirdView.width, heightConstant: Sizes.Views.alertBuyBirdView.height)
     
     // eggImageView
-    eggImageView.anchor(top: alertBackgroundView.topAnchor, left: alertBackgroundView.leftAnchor, topConstant: Theme.BuyAlertView.eggImageView.topConstant, leftConstant: Theme.BuyAlertView.eggImageView.leftConstant, widthConstant: Theme.BuyAlertView.eggImageView.width, heightConstant: Theme.BuyAlertView.eggImageView.height)
-    
+    eggImageView.anchor(
+      top: windowView.topAnchor,
+      left: windowView.leftAnchor,
+      topConstant: Sizes.ImageViews.alertEggImageView.TopConstant,
+      leftConstant: Sizes.ImageViews.alertEggImageView.LeftConstant,
+      widthConstant: Sizes.ImageViews.alertEggImageView.width,
+      heightConstant: Sizes.ImageViews.alertEggImageView.height
+    )
+
     // birdImageView
-    birdImageView.anchor(top: alertBackgroundView.topAnchor, right: alertBackgroundView.rightAnchor, topConstant: Theme.BuyAlertView.birdImageView.topConstant, rightConstant: Theme.BuyAlertView.birdImageView.rightConstant, widthConstant: Theme.BuyAlertView.birdImageView.width, heightConstant: Theme.BuyAlertView.birdImageView.height)
+    birdImageView.anchor(
+      top: windowView.topAnchor,
+      right: windowView.rightAnchor,
+      topConstant: Sizes.ImageViews.alertBirdImageView.TopConstant,
+      rightConstant: Sizes.ImageViews.alertBirdImageView.RightConstant,
+      widthConstant: Sizes.ImageViews.alertBirdImageView.width,
+      heightConstant: Sizes.ImageViews.alertBirdImageView.height
+    )
     
     // cancelButton
-    cancelButton.anchor(left: alertBackgroundView.leftAnchor, bottom: alertBackgroundView.bottomAnchor, leftConstant: 16, bottomConstant: 16, widthConstant: Theme.BuyAlertView.cancelButton.width, heightConstant: 50)
+    cancelButton.anchor(
+      left: windowView.leftAnchor,
+      bottom: windowView.bottomAnchor,
+      leftConstant: 16,
+      bottomConstant: 16,
+      widthConstant: Sizes.Buttons.alertBuyBirdButton.width,
+      heightConstant: Sizes.Buttons.alertBuyBirdButton.height
+    )
     
     // buyButton
-    buyButton.anchor(bottom: alertBackgroundView.bottomAnchor, right: alertBackgroundView.rightAnchor, bottomConstant: 16, rightConstant: 16, widthConstant: Theme.BuyAlertView.buyButton.width, heightConstant: 50)
+    buyButton.anchor(
+      bottom: windowView.bottomAnchor,
+      right: windowView.rightAnchor,
+      bottomConstant: 16,
+      rightConstant: 16,
+      widthConstant: Sizes.Buttons.alertBuyBirdButton.width,
+      heightConstant: Sizes.Buttons.alertBuyBirdButton.height
+    )
     
     // label
-    label.anchor(top: eggImageView.bottomAnchor, left: alertBackgroundView.leftAnchor, bottom: cancelButton.topAnchor, right: alertBackgroundView.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
+    label.anchor(
+      top: eggImageView.bottomAnchor,
+      left: windowView.leftAnchor,
+      bottom: cancelButton.topAnchor,
+      right: windowView.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16
+    )
   }
   
   required init?(coder: NSCoder) {

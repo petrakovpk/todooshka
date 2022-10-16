@@ -84,6 +84,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
     && lhs.status == rhs.status
     && lhs.userUID == rhs.userUID
     && lhs.lastModified == rhs.lastModified
+    && lhs.isStyleLocked == rhs.isStyleLocked
   }
 }
 
@@ -97,6 +98,7 @@ extension KindOfTask {
       "colorHexString": color.hexString,
       "iconRawValue": icon.rawValue,
       "index": index,
+      "isStyleLocked": isStyleLocked,
       "statusRawValue": status.rawValue,
       "styleRawValue": style.rawValue,
       "text": text,
@@ -113,6 +115,7 @@ extension KindOfTask {
           let iconRawValue = dict.value(forKey: "iconRawValue") as? String,
           let icon = Icon(rawValue: iconRawValue),
           let index = dict.value(forKey: "index") as? Int,
+          let isStyleLocked = dict.value(forKey: "isStyleLocked") as? Bool,
           let statusRawValue = dict.value(forKey: "statusRawValue") as? String,
           let status = KindOfTaskStatus(rawValue: statusRawValue),
           let styleRawValue = dict.value(forKey: "styleRawValue") as? String,
@@ -130,6 +133,7 @@ extension KindOfTask {
     self.style = style
     self.text = text
     self.lastModified = Date(timeIntervalSince1970: lastModifiedTimeInterval)
+    self.isStyleLocked = isStyleLocked
     self.userUID = Auth.auth().currentUser?.uid
   }
 }

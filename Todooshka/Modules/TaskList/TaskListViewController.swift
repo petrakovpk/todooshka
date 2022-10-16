@@ -40,12 +40,12 @@ class TaskListViewController: TDViewController {
     let label = UILabel(text: "")
     label.textColor = Theme.App.text
     label.textAlignment = .center
-    label.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     return label
   }()
   
   private let alertDeleteButton: UIButton = {
-    let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)])
+    let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .custom)
     button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
     button.setAttributedTitle(attrString, for: .normal)
@@ -55,7 +55,7 @@ class TaskListViewController: TDViewController {
   
   private let alertCancelButton: UIButton = {
     let button = UIButton(type: .custom)
-    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)])
+    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(Theme.App.text?.withAlphaComponent(0.5) , for: .normal)
     return button
@@ -101,22 +101,22 @@ class TaskListViewController: TDViewController {
     alertView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
     
     // alertSubView
-    alertSubView.anchor(widthConstant: 287.adjusted, heightConstant: 171.adjusted)
+    alertSubView.anchor(widthConstant: Sizes.Views.alertDeleteView.width, heightConstant: Sizes.Views.alertDeleteView.height)
     alertSubView.anchorCenterXToSuperview()
     alertSubView.anchorCenterYToSuperview()
     
     // alertLabel
     alertLabel.anchorCenterXToSuperview()
-    alertLabel.anchorCenterYToSuperview(constant: -1 * 171.adjusted / 4)
-    
+    alertLabel.anchorCenterYToSuperview(constant: -1 * Sizes.Views.alertDeleteView.height / 4)
+
     // alertDeleteButton
-    alertDeleteButton.anchor(widthConstant: 94.adjusted, heightConstant: 30.adjusted)
-    alertDeleteButton.cornerRadius = 15.adjusted
+    alertDeleteButton.anchor(widthConstant: Sizes.Buttons.alertOkButton.width, heightConstant: Sizes.Buttons.alertOkButton.height)
+    alertDeleteButton.cornerRadius = Sizes.Buttons.alertOkButton.height / 2
     alertDeleteButton.anchorCenterXToSuperview()
-    alertDeleteButton.anchorCenterYToSuperview(constant: 15.adjusted)
+    alertDeleteButton.anchorCenterYToSuperview(constant: 15)
     
     // alertCancelButton
-    alertCancelButton.anchor(top: alertDeleteButton.bottomAnchor, topConstant: 10.adjusted)
+    alertCancelButton.anchor(top: alertDeleteButton.bottomAnchor, topConstant: 10)
     alertCancelButton.anchorCenterXToSuperview()
   }
   

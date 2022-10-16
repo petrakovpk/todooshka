@@ -107,19 +107,35 @@ class KindOfTaskListForBirdViewController: TDViewController {
     // alertWindowView
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
-    alertWindowView.anchor(widthConstant: 287.adjusted, heightConstant: 171.adjusted)
+    alertWindowView.anchor(
+      widthConstant: Sizes.Views.alertDeleteView.width,
+      heightConstant:  Sizes.Views.alertDeleteView.height
+    )
    
     // alertTextViewBackground
-    alertTextView.anchor(top: alertWindowView.topAnchor, left: alertWindowView.leftAnchor, right: alertWindowView.rightAnchor, topConstant: 4, leftConstant: 4,  rightConstant: 4, heightConstant: 75)
+    alertTextView.anchor(
+      top: alertWindowView.topAnchor,
+      left: alertWindowView.leftAnchor,
+      right: alertWindowView.rightAnchor,
+      topConstant: 4,
+      leftConstant: 4,
+      rightConstant: 4,
+      heightConstant: 75
+    )
 
     // alertOkButton
-    alertOkButton.cornerRadius = 15.adjusted
+    alertOkButton.cornerRadius = 15
     alertOkButton.anchorCenterXToSuperview()
-    alertOkButton.anchor(top: alertTextView.bottomAnchor, topConstant: 8, widthConstant: 94.adjusted, heightConstant: 30.adjusted)
+    alertOkButton.anchor(
+      top: alertTextView.bottomAnchor,
+      topConstant: 8,
+      widthConstant: Sizes.Buttons.alertOkButton.width,
+      heightConstant: Sizes.Buttons.alertOkButton.height
+    )
    
     // alertCancelButton
     alertCancelButton.anchorCenterXToSuperview()
-    alertCancelButton.anchor(top: alertOkButton.bottomAnchor, topConstant: 10.adjusted)
+    alertCancelButton.anchor(top: alertOkButton.bottomAnchor, topConstant: 10)
   }
   
   //MARK: - Setup Collection View

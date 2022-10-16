@@ -60,7 +60,7 @@ class TDDiamondPackageOfferView: UIView {
     super.init(frame: .zero)
     layer.cornerRadius = 15
    
-    backgroundColor = Theme.GameCurrency.textViewBackground
+    backgroundColor = Theme.Views.GameCurrency.textViewBackground
     borderWidth = 1.0
     borderColor = Theme.Cells.KindOfTask.Border
     

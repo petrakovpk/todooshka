@@ -38,14 +38,14 @@ class UserProfileViewController: TDViewController {
     let label = UILabel(text: "Выйти из аккаунта?")
     label.textColor = Theme.App.text
     label.textAlignment = .center
-    label.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     return label
   }()
   
   private let alertOkButton: UIButton = {
     let attrString = NSAttributedString(
       string: "Выйти",
-      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)]
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)]
     )
     let button = UIButton(type: .custom)
     button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
@@ -55,7 +55,7 @@ class UserProfileViewController: TDViewController {
   }()
   
   private let alertCancelButton: UIButton = {
-    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)])
+    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .custom)
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(Theme.App.text!.withAlphaComponent(0.5) , for: .normal)
@@ -111,22 +111,22 @@ class UserProfileViewController: TDViewController {
     alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
     
     // alertSubView
-    alertWindowView.anchor(widthConstant: 287.adjusted, heightConstant: 171.adjusted)
+    alertWindowView.anchor(widthConstant: Sizes.Views.alertLogOutView.width, heightConstant: Sizes.Views.alertLogOutView.height)
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
     
     // alertLabel
     alertLabel.anchorCenterXToSuperview()
-    alertLabel.anchorCenterYToSuperview(constant: -1 * 171.adjusted / 4)
-    
-    // alertDeleteButton
-    alertOkButton.anchor(widthConstant: 94.adjusted, heightConstant: 30.adjusted)
-    alertOkButton.cornerRadius = 15.adjusted
+    alertLabel.anchorCenterYToSuperview(constant: -1 * Sizes.Views.alertLogOutView.height / 4)
+
+    // alertOkButton
+    alertOkButton.anchor(widthConstant: Sizes.Buttons.alertOkButton.width, heightConstant: Sizes.Buttons.alertOkButton.height)
+    alertOkButton.cornerRadius = 15
     alertOkButton.anchorCenterXToSuperview()
-    alertOkButton.anchorCenterYToSuperview(constant: 15.adjusted)
+    alertOkButton.anchorCenterYToSuperview(constant: 15)
     
     // alertCancelButton
-    alertCancelButton.anchor(top: alertOkButton.bottomAnchor, topConstant: 10.adjusted)
+    alertCancelButton.anchor(top: alertOkButton.bottomAnchor, topConstant: 10)
     alertCancelButton.anchorCenterXToSuperview()
   }
   

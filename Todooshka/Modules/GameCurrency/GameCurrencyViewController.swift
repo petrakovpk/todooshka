@@ -37,7 +37,7 @@ class ScoreViewController: UIViewController {
     textView.cornerRadius = 15
     textView.isEditable = false
     textView.isScrollEnabled = false
-    textView.backgroundColor = Theme.GameCurrency.textViewBackground
+    textView.backgroundColor = Theme.Views.GameCurrency.textViewBackground
     textView.textAlignment = .center
     textView.text = "Перышко. Зарабатываются за выполнение задач. Ежедневно можно получить не более 7 перышек.  Перышки можно потратить их на покупку обычных птиц."
     return textView
@@ -48,7 +48,7 @@ class ScoreViewController: UIViewController {
     textView.cornerRadius = 15
     textView.isEditable = false
     textView.isScrollEnabled = false
-    textView.backgroundColor = Theme.GameCurrency.textViewBackground
+    textView.backgroundColor = Theme.Views.GameCurrency.textViewBackground
     textView.textAlignment = .center
     textView.text = "Бриллиант. Приобретаются за деньги. Бриллианты можно потратить на покупку редких птиц."
     return textView
@@ -86,7 +86,7 @@ class ScoreViewController: UIViewController {
     textView.cornerRadius = 15
     textView.isEditable = false
     textView.isScrollEnabled = false
-    textView.backgroundColor = Theme.GameCurrency.textViewBackground
+    textView.backgroundColor = Theme.Views.GameCurrency.textViewBackground
     textView.textAlignment = .center
     textView.text = "Такого количества бриллиантов хватит что бы купить всех редких птиц! Этономия 50%"
     return textView

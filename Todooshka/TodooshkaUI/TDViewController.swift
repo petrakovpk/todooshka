@@ -82,12 +82,12 @@ class TDViewController: UIViewController {
     ])
 
     // safeAreaHeaderView
-    safeAreaHeaderView.backgroundColor = Theme.Header.Background
+    safeAreaHeaderView.backgroundColor = Theme.Views.Header.Background
     safeAreaHeaderView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor)
 
     // headerView
-    headerView.backgroundColor = Theme.Header.Background
-    headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: 55.adjusted)
+    headerView.backgroundColor = Theme.Views.Header.Background
+    headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: Sizes.Views.Header.height)
     
     // backButton
     backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
@@ -105,13 +105,13 @@ class TDViewController: UIViewController {
     removeAllButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
     
     // titleLabel
-    titleLabel.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
+    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     titleLabel.textAlignment = .center
     titleLabel.anchorCenterXToSuperview()
-    titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0, bottomConstant: 20.adjusted, rightConstant: 0)
+    titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0, bottomConstant: 20, rightConstant: 0)
     
     // dividerView
-    dividerView.backgroundColor = Theme.Header.Divider
+    dividerView.backgroundColor = Theme.Views.Header.Divider
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
   }
 }

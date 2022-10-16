@@ -23,8 +23,6 @@ enum ScrollToIndexPath{
 class CalendarViewController: UIViewController {
   
   // MARK: - Const
-  private let itemSize = CGSize(width: 45, height: 45)
-  private let sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
   private var needScrollToToday: Bool = true
   private let monthFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -76,8 +74,8 @@ class CalendarViewController: UIViewController {
     button.setTitle("Фабрика птиц", for: .normal)
     button.setTitleColor(.white, for: .normal)
     button.backgroundColor = Palette.SingleColors.Cerise
-    button.cornerRadius = 15
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    button.cornerRadius = Sizes.Buttons.calendarShopButton.height / 2
+    button.titleLabel?.font = UIFont.systemFont(ofSize: min(14.adjustByWidth, 14.adjustByHeight), weight: .medium)
     return button
   }()
   
@@ -88,8 +86,21 @@ class CalendarViewController: UIViewController {
     return label
   }()
   
-  private let calendarBackgroundView = UIView()
-  private let calendarDividerView = UIView()
+  private let calendarBackgroundView: UIView = {
+    let view = UIView()
+    view.backgroundColor = Theme.Views.Calendar.Background
+    view.cornerRadius = 11
+    return view
+  }()
+  
+  private let calendarDividerView: UIView = {
+    let view = UIView()
+    view.backgroundColor = Theme.Views.CalendarDivider.Background
+    return view
+  }()
+  
+ 
+  
   private var calendarView = CalendarView(frame: .zero, collectionViewLayout: CalendarViewLayout())
   
   // MARK: - MVVM
@@ -124,46 +135,6 @@ class CalendarViewController: UIViewController {
     sceneModel.willShow.accept(())
     navigationController?.tabBarController?.tabBar.isHidden = false
   }
-  
-  private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-      switch self.dataSource[sectionIndex].type {
-      case .Month:
-        return self.monthSection()
-      case .Year:
-        return self.yearSection()
-      }
-    }
-  }
-  
-
-  private func monthSection() -> NSCollectionLayoutSection{
-    let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(itemSize.width.adjusted), heightDimension: .estimated(itemSize.height.adjusted))
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: itemSize.heightDimension)
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    group.interItemSpacing = .fixed(0)
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(25.0))
-    let header = NSCollectionLayoutBoundarySupplementaryItem(
-      layoutSize: headerSize,
-      elementKind: UICollectionView.elementKindSectionHeader,
-      alignment: .top)
-    let section = NSCollectionLayoutSection(group: group)
-    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-    section.boundarySupplementaryItems = [header]
-    return section
-  }
-  
-  private func yearSection() -> NSCollectionLayoutSection{
-    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45.adjusted))
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(45.adjusted))
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    let section = NSCollectionLayoutSection(group: group)
-    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-    return section
-  }
-  
   
   //MARK: - Configure UI
   func configureScene() {
@@ -205,10 +176,24 @@ class CalendarViewController: UIViewController {
     
     // settingsButton
     settingsButton.configure(image: UIImage(named: "setting")?.template, blurEffect: false)
-    settingsButton.anchor(top: sceneView.bottomAnchor, right: view.rightAnchor, topConstant: 16, rightConstant: 16, widthConstant: 40.adjusted, heightConstant: 40.adjusted)
+    settingsButton.anchor(
+      top: sceneView.bottomAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      rightConstant: 16,
+      widthConstant: Sizes.Buttons.calendarSettingsButton.width,
+      heightConstant: Sizes.Buttons.calendarSettingsButton.height
+    )
     
     // shopButton
-    shopButton.anchor(top: sceneView.bottomAnchor, right: settingsButton.leftAnchor, topConstant: 16.superAdjusted, rightConstant: 16, widthConstant: (UIScreen.main.bounds.width - 32) / 2 - 56 - 8 , heightConstant: 40.superAdjusted)
+    shopButton.anchor(
+      top: sceneView.bottomAnchor,
+      right: settingsButton.leftAnchor,
+      topConstant: 16,
+      rightConstant: 16,
+      widthConstant: (UIScreen.main.bounds.width - 32) / 2 - 56 - 8,
+      heightConstant: Sizes.Buttons.calendarShopButton.height
+    )
     
     // pointsBackgroundView
     pointsBackgroundView.backgroundColor = .clear
@@ -241,16 +226,40 @@ class CalendarViewController: UIViewController {
     diamondLabel.anchor(top: diamondBackroundView.topAnchor, left: diamondBackroundView.leftAnchor, bottom: diamondBackroundView.bottomAnchor, right: diamondsImageView.leftAnchor, topConstant: 4, leftConstant: 8, bottomConstant: 4, rightConstant: 8)
     
     // calendarBackgroundView
-    calendarBackgroundView.backgroundColor = Theme.Calendar.Background
-    calendarBackgroundView.cornerRadius = 11
-    calendarBackgroundView.anchor(top: shopButton.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 30.superAdjusted, leftConstant: 16, bottomConstant: 32.superAdjusted, rightConstant: 16)
+    calendarBackgroundView.anchor(
+      top: shopButton.bottomAnchor,
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor,
+      topConstant: 30,
+      leftConstant: 16,
+      bottomConstant: 30,
+      rightConstant: 16
+    )
     
     // calendarHeaderView
-    calendarHeaderView.anchor(top: calendarBackgroundView.topAnchor, left: calendarBackgroundView.leftAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted, heightConstant: 30)
+    calendarHeaderView.anchor(
+      top: calendarBackgroundView.topAnchor,
+      left: calendarBackgroundView.leftAnchor,
+      right: calendarBackgroundView.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16,
+      heightConstant: 30
+    )
     
     //calendarDividerView
-    calendarDividerView.backgroundColor = Theme.Calendar.Divider
-    calendarDividerView.anchor(top: calendarHeaderView.bottomAnchor, left: calendarBackgroundView.leftAnchor, right: calendarBackgroundView.rightAnchor, topConstant: 8.superAdjusted, leftConstant: 16.adjusted, bottomConstant: 16.superAdjusted, rightConstant: 16.adjusted, heightConstant: 1)
+    calendarDividerView.anchor(
+      top: calendarHeaderView.bottomAnchor,
+      left: calendarBackgroundView.leftAnchor,
+      right: calendarBackgroundView.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16,
+      heightConstant: 1
+    )
     
     // calendarView
     calendarView.delegate = self
@@ -366,7 +375,7 @@ class CalendarViewController: UIViewController {
         
         UIView.performWithoutAnimation {
           vc.calendarView.insertSections(IndexSet(integer: 0))
-          vc.calendarView.contentOffset.y = vc.calendarView.contentOffset.y + firstSectionHeaderLayout.bounds.height + firstSectionRowCount * (firstItemFirstSectionLayout.bounds.height + vc.calendarView.layoutMargins.top) + self.sectionInset.bottom
+          vc.calendarView.contentOffset.y = vc.calendarView.contentOffset.y + firstSectionHeaderLayout.bounds.height + firstSectionRowCount * (firstItemFirstSectionLayout.bounds.height + vc.calendarView.layoutMargins.top) + Sizes.Views.Calendar.sectionInset.bottom
         }
       }
       
@@ -463,15 +472,17 @@ extension CalendarViewController: CalendarViewDelegate {
 extension CalendarViewController: UICollectionViewDelegateFlowLayout {
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    itemSize
+    CGSize(width: Sizes.Cells.CalendarCell.width, height: Sizes.Cells.CalendarCell.height)
   }
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-    sectionInset
+    Sizes.Views.Calendar.sectionInset
   }
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-    CGSize(width: collectionView.bounds.width, height: 30)
+    CGSize(width: collectionView.bounds.width, height: Sizes.Views.Calendar.headerSizeHeight)
   }
+  
+  
 }
 

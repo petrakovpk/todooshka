@@ -32,7 +32,7 @@ class DiamondViewController: TDViewController {
   private let descriptionBackgroundView: UIView = {
     let view = UIView()
     view.layer.cornerRadius = 15
-    view.backgroundColor = Theme.GameCurrency.textViewBackground
+    view.backgroundColor = Theme.Views.GameCurrency.textViewBackground
     return view
   }()
   
@@ -78,14 +78,14 @@ class DiamondViewController: TDViewController {
     let label = UILabel(text: "Пока такой возможности нет :(")
     label.textColor = Theme.App.text
     label.textAlignment = .center
-    label.font = UIFont.systemFont(ofSize: 17.adjusted, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: min(17.adjustByWidth, 17.adjustByHeight) , weight: .medium)
     return label
   }()
   
   private let alertOkButton: UIButton = {
     let attrString = NSAttributedString(
       string: "Буду ждать!",
-      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.adjusted, weight: .semibold)]
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)]
     )
     let button = UIButton(type: .custom)
     button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
@@ -158,19 +158,19 @@ class DiamondViewController: TDViewController {
     alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
     
     // alertSubView
-    alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
+    alertWindowView.anchor(widthConstant: Sizes.Views.alertDeleteView.width, heightConstant: Sizes.Views.alertDeleteView.height)
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
     
     // alertLabel
     alertLabel.anchorCenterXToSuperview()
-    alertLabel.anchorCenterYToSuperview(constant: -1 * 171 / 4)
+    alertLabel.anchorCenterYToSuperview(constant: -1 * Sizes.Views.alertDeleteView.height / 4)
     
     // alertOkButton
-    alertOkButton.anchor(widthConstant: 120, heightConstant: 40)
-    alertOkButton.cornerRadius = 15
+    alertOkButton.anchor(widthConstant: Sizes.Buttons.alertWillWaitButton.width, heightConstant: Sizes.Buttons.alertWillWaitButton.height)
+    alertOkButton.cornerRadius = Sizes.Buttons.alertWillWaitButton.height / 2
     alertOkButton.anchorCenterXToSuperview()
-    alertOkButton.anchor(bottom: alertWindowView.bottomAnchor, bottomConstant: 24)
+    alertOkButton.anchorCenterYToSuperview(constant: 25)
     
   }
   
@@ -192,6 +192,7 @@ class DiamondViewController: TDViewController {
       outputs.hideAlertTrigger.drive(hideAlertBinder),
       outputs.navigateBack.drive(),
       outputs.offerSelected.drive(offerSelectedBinder),
+      outputs.sendOffer.drive(),
       outputs.showAlertTrigger.drive(showAlertBinder),
     ]
       .forEach({ $0.disposed(by: disposeBag) })

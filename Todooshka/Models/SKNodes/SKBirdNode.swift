@@ -25,9 +25,6 @@ class SKBirdNode: SKSpriteNode {
   private let fadeOutAction = SKAction.fadeOut(withDuration: 0.5)
   private let waitAction = SKAction.wait(forDuration: 0.5)
   
-  private var setFrontTextureAction: SKAction { SKAction.setTexture(frontTexture, resize: true) }
-  private var setClosedEyesTextureAction: SKAction { SKAction.setTexture(closedEyesTexture, resize: true) }
-  private var raiseWingsTextureAction: SKAction { SKAction.setTexture(raisedWingsTexture, resize: true) }
   private var legsRunningAction: SKAction {
     SKAction.repeatForever(
       SKAction.animate(
@@ -45,25 +42,37 @@ class SKBirdNode: SKSpriteNode {
   // Other
   private let clade: Clade
   
-  private var style: Style {
-    didSet {
-      run(setFrontTextureAction)
-    }
+  private var style: Style
+
+  // func
+  func setFrontTextureAction() -> SKAction {
+    SKAction.setTexture(
+      SKTexture(image: UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.Normal.rawValue) ?? UIImage()),
+      resize: true
+    )
   }
   
-  // Image
-  private var frontImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.Normal.rawValue) ?? UIImage() }
+  func setClosedEyesTextureAction() -> SKAction {
+    SKAction.setTexture(
+      SKTexture(image: UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.ClosedEyes.rawValue) ?? UIImage()),
+      resize: true
+    )
+  }
+  
+  func setRaiseWingsTextureAction() -> SKAction {
+    SKAction.setTexture(
+      SKTexture(image: UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.RaisedWings.rawValue) ?? UIImage()),
+      resize: true
+    )
+  }
+  
+  //  private var frontImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.Normal.rawValue) ?? UIImage() }
   private var rightLegForwardImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.RightLegForward.rawValue) ?? UIImage() }
   private var leftLegForwardImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.LeftLegForward.rawValue) ?? UIImage() }
-  private var closedEyesImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.ClosedEyes.rawValue) ?? UIImage() }
-  private var raisedWingsImage: UIImage { UIImage(named: clade.rawValue + "_" + style.imageName + "_" + BirdState.RaisedWings.rawValue) ?? UIImage() }
   
   // Texture
-  private var frontTexture: SKTexture { SKTexture(image: frontImage) }
   private var rightLegForwardTexture: SKTexture { SKTexture(image: rightLegForwardImage) }
   private var leftLegForwardTexture: SKTexture { SKTexture(image: leftLegForwardImage) }
-  private var closedEyesTexture: SKTexture { SKTexture(image: closedEyesImage) }
-  private var raisedWingsTexture: SKTexture {  SKTexture(image: raisedWingsImage) }
 
   // MARK: - Init
   init(level: Int, style: Style) {
@@ -71,7 +80,6 @@ class SKBirdNode: SKSpriteNode {
     self.level = level
     self.clade = Clade(level: level)
     self.style = style
-   // self.scenePosition = scenePosition
     super.init(texture: nil, color: .clear, size: .zero)
     // Setup
     name = "Bird"
@@ -90,20 +98,20 @@ class SKBirdNode: SKSpriteNode {
     
     case (.Init, _):
       self.style = style
-      run(fadeInWithoutAnimationAction)
+      run(SKAction.sequence([setFrontTextureAction(), fadeInWithoutAnimationAction]))
     
     case (.Hide, true):
       self.style = style
-      run(SKAction.sequence([waitAction, fadeInWithAnimationAction]))
+      run(SKAction.sequence([waitAction, setFrontTextureAction(), fadeInWithAnimationAction]))
     
     case (.Hide, false):
       self.style = style
-      run(fadeInWithAnimationAction)
+      run(SKAction.sequence([setFrontTextureAction(), fadeInWithAnimationAction]))
     
     case (.Sitting(_, _), _):
       run(fadeOutAction) {
         self.style = style
-        self.run(self.fadeInWithAnimationAction)
+        self.run(SKAction.sequence([self.setFrontTextureAction(), self.fadeInWithAnimationAction]))
       }
     }
     
@@ -121,16 +129,12 @@ class SKBirdNode: SKSpriteNode {
     }
   }
   
-  func clapWithEyes() {
-    run(SKAction.sequence([setClosedEyesTextureAction, waitAction, setFrontTextureAction]))
-  }
-  
   func upWings() {
-    run(raiseWingsTextureAction)
+    run(setRaiseWingsTextureAction())
   }
   
   func dowsWings() {
-    run(setFrontTextureAction)
+    run(setFrontTextureAction())
   }
 
   func hide() {
@@ -141,17 +145,23 @@ class SKBirdNode: SKSpriteNode {
   }
   
   func doRandomStaff() {
+  
     let waitBefore = SKAction.wait(forDuration: 10, withRange: 10)
     
-    let clapWithEyes = SKAction.sequence([setClosedEyesTextureAction, waitAction, setFrontTextureAction])
-    let flapWithWings = SKAction.sequence([raiseWingsTextureAction, waitAction, setFrontTextureAction])
-    
     let randomAction = SKAction.run({
-      self.run(Int.random(in: 0...1) == 0 ? clapWithEyes : flapWithWings)
+      self.run(Int.random(in: 0...1) == 0 ? self.clapWithEyes() : self.flapWithWings())
     })
 
     let sequence = SKAction.sequence([waitBefore, randomAction])
     self.run(SKAction.repeatForever(sequence))
+  }
+  
+  func clapWithEyes() -> SKAction {
+    SKAction.sequence([setClosedEyesTextureAction(), waitAction, setFrontTextureAction()])
+  }
+  
+  func flapWithWings() -> SKAction {
+    SKAction.sequence([setRaiseWingsTextureAction(), waitAction, setFrontTextureAction()])
   }
 }
 

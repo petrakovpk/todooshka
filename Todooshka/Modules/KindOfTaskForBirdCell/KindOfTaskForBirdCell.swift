@@ -31,7 +31,7 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     textView.textAlignment = .center
     textView.backgroundColor = .clear
     textView.textContainer.lineBreakMode = .byWordWrapping
-    textView.font = UIFont.systemFont(ofSize: 10.superAdjusted, weight: .medium)
+    textView.font = UIFont.systemFont(ofSize: 10, weight: .medium)
     textView.isUserInteractionEnabled = false
     return textView
   }()

@@ -44,36 +44,36 @@ class KindOfTaskViewController: TDViewController {
     let label = UILabel()
     label.text = ""
     label.textColor = UIColor(red: 0.188, green: 0.2, blue: 0.325, alpha: 1)
-    label.font = UIFont.systemFont(ofSize: 12.adjusted, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
     return label
   }()
   
   private let colorLabel: UILabel = {
     let label = UILabel()
     label.text = "Цвет:"
-    label.font = UIFont.systemFont(ofSize: 15.adjusted, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     return label
   }()
   
   private var collectionViewColor: UICollectionView!
   private let collectionViewColorLayout: UICollectionViewFlowLayout = {
     let layout = UICollectionViewFlowLayout()
-    layout.itemSize = CGSize(width: 48.adjusted, height: 48.adjusted)
-    layout.minimumLineSpacing = 11.adjusted
+    layout.itemSize = CGSize(width: Sizes.Cells.ColorCell.width , height: Sizes.Cells.ColorCell.height)
+    layout.minimumLineSpacing = 11
     return layout
   }()
   
   private let imageLabel: UILabel = {
     let label = UILabel()
     label.text = "Значок:"
-    label.font = UIFont.systemFont(ofSize: 15.adjusted, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     return label
   }()
   
   private var collectionViewIcon: UICollectionView!
   private let collectionViewIconLayout: UICollectionViewFlowLayout = {
     let layout = UICollectionViewFlowLayout()
-    layout.itemSize = CGSize(width: 62.adjusted, height: 62.adjusted)
+    layout.itemSize = CGSize(width: Sizes.Cells.IconCell.width , height: Sizes.Cells.IconCell.height)
     layout.minimumLineSpacing = 8
     return layout
   }()
@@ -112,35 +112,53 @@ class KindOfTaskViewController: TDViewController {
     saveButton.isHidden = false
     
     // taskTypeImageContainerView
-    taskTypeImageContainerView.anchor(top: headerView.bottomAnchor, topConstant: 16, widthConstant: 68.adjusted, heightConstant: 68.adjusted)
     taskTypeImageContainerView.anchorCenterXToSuperview()
-    
+    taskTypeImageContainerView.anchor(
+      top: headerView.bottomAnchor,
+      topConstant: 16,
+      widthConstant: Sizes.Views.KindsOfTaskContainerView.width,
+      heightConstant: Sizes.Views.KindsOfTaskContainerView.height
+    )
+
     // taskTypeImageView
     taskTypeImageView.anchorCenterXToSuperview()
     taskTypeImageView.anchorCenterYToSuperview()
     
     // textLabel
     textLabel.text = "Название типа задач"
-    textLabel.font = UIFont.systemFont(ofSize: 15.adjusted, weight: .medium)
+    textLabel.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     textLabel.textAlignment = .left
-    textLabel.anchor(top: taskTypeImageContainerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21.adjusted, leftConstant: 16, rightConstant: 16)
+    textLabel.anchor(top: taskTypeImageContainerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21, leftConstant: 16, rightConstant: 16)
 
     // nameTextField
     textField.returnKeyType = .done
-    textField.anchor(top: textLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 40.adjusted)
+    textField.anchor(
+      top: textLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16, rightConstant: 16, heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant)
     
     // nameSymbolsCountLabel
     textLenLabel.anchor(top: textLabel.topAnchor, bottom: textLabel.bottomAnchor, right: view.rightAnchor, rightConstant: 16)
     
     // colorLabel
-    colorLabel.anchor(top: textField.bottomAnchor, left: view.leftAnchor, topConstant: 16.adjusted, leftConstant: 16)
+    colorLabel.anchor(top: textField.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
     
     // colorCollectionView
     collectionViewColor.register(KindOfTaskColorCell.self, forCellWithReuseIdentifier: KindOfTaskColorCell.reuseID)
     collectionViewColor.clipsToBounds = false
     collectionViewColor.isScrollEnabled = false
     collectionViewColor.backgroundColor = UIColor.clear
-    collectionViewColor.anchor(top: colorLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 14.adjusted, leftConstant: 16, rightConstant: 16, heightConstant: (48 + 48 + 10).adjusted)
+    collectionViewColor.anchor(
+      top: colorLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 14,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: (48 + 48 + 10).adjustByWidth
+    )
     
     // imageLabel
     imageLabel.anchor(top: collectionViewColor.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
@@ -150,7 +168,15 @@ class KindOfTaskViewController: TDViewController {
     collectionViewIcon.clipsToBounds = false
     collectionViewIcon.isScrollEnabled = false
     collectionViewIcon.backgroundColor = UIColor.clear
-    collectionViewIcon.anchor(top: imageLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16.adjusted, leftConstant: 16, rightConstant: 16, heightConstant: (62 * 4 + 8 * 3).adjusted)
+    collectionViewIcon.anchor(
+      top: imageLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: (62 * 4 + 8 * 3).adjustByWidth
+    )
   }
   
   //MARK: - Color CollectionView
