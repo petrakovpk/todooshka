@@ -347,22 +347,30 @@ class TaskViewController: TDViewController {
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.datePickerDate.drive(alertDatePicker.rx.date),
       outputs.descriptionTextField.drive(descriptionTextView.rx.text),
+      outputs.hideAlertTrigger.drive(hideAlertBinder),
+      outputs.hideCompleteButton.drive(hideCompleteButtonBinder),
       outputs.navigateBack.drive(),
       outputs.save.drive(),
       outputs.setDescriptionPlaceholder.drive(setDescriptionPlaceholderBinder),
       outputs.showComleteAlertTrigger.drive(showComleteAlertTriggerBinder),
       outputs.showDatePickerAlertTrigger.drive(showDatePickerAlertTriggerBinder),
-      outputs.hideAlertTrigger.drive(hideAlertBinder),
       outputs.plannedText.drive(plannedButtonTextBinder),
       outputs.taskIsNewTrigger.drive(taskIsNewBinder),
       outputs.taskIsNotNewTrigger.drive(taskIsNotNewBinder),
       outputs.textTextField.drive(textTextField.rx.text),
+      outputs.yandexMetrika.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
     
   }
   
   // MARK: - Binders
+  var hideCompleteButtonBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.completeButton.isHidden = true
+    })
+  }
+  
   var clearDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.descriptionTextView.textColor = Theme.App.text
@@ -429,14 +437,12 @@ class TaskViewController: TDViewController {
   
   var taskIsNewBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
-        vc.completeButton.isHidden = true
         vc.textTextField.becomeFirstResponder()
     })
   }
   
   var taskIsNotNewBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
-        vc.completeButton.isHidden = false
         vc.hideKeyboardWhenTappedAround()
     })
   }

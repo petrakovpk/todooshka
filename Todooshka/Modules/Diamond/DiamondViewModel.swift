@@ -60,7 +60,7 @@ class DiamondViewModel: Stepper {
     
     let hideAlertTrigger = input.alertOkButtonClickTrigger
     
-    let sendOffer = compactUser
+    let sendOffer = input.alertOkButtonClickTrigger
       .withLatestFrom(offerSelected) { $1 }
       .withLatestFrom(compactUser) { offer, user in
         let params: [AnyHashable : Any] = ["offer": offer.rawValue]

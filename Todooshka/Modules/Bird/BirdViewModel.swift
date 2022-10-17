@@ -81,7 +81,7 @@ class BirdViewModel: Stepper {
       .map{ !$0 }
     
     let description = bird
-      .map{ $0.description }
+      .map{ $0.style.description }
     
     let eggImageView = bird
       .map{ $0.eggImage }
@@ -97,7 +97,7 @@ class BirdViewModel: Stepper {
       .map{ $0.currency }
     
     let title = bird
-      .map{ $0.style.text }
+      .map{ $0.name }
     
     let kindOfTaskMain = Driver
       .combineLatest(kindsOfTask, bird) { kindsOfTask, bird -> [KindOfTask] in

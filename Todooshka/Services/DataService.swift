@@ -6,11 +6,12 @@
 //
 
 import CoreData
+import CoreMedia
 import Firebase
 import RxSwift
 import RxCocoa
 import YandexMobileMetrica
-import CoreMedia
+
 
 protocol HasDataService {
   var dataService: DataService { get }
@@ -506,16 +507,13 @@ class DataService {
     
     // скачиваем из облака кайнд оф таски
     firebaseKindsOfTask
-      .debug()
       .withLatestFrom(kindsOfTask) { firebaseKindsOfTask, kindsOfTask -> [KindOfTask] in
         guard let firebaseKindsOfTask = firebaseKindsOfTask else { return [] }
         return firebaseKindsOfTask.filter{ firebaseKindOfTask -> Bool in
           firebaseKindOfTask.lastModified > (kindsOfTask.first(where: { $0.UID == firebaseKindOfTask.UID })?.lastModified ?? Date(timeIntervalSince1970: 0))
         }
       }
-      .debug()
       .asObservable()
-      .debug()
       .flatMapLatest({ Observable.from($0) })
       .flatMapLatest({ kindOfTask -> Observable<Result<Void, Error>> in
         context.rx.update(kindOfTask)
@@ -557,7 +555,6 @@ class DataService {
         context.rx.delete(bird)
       })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      .debug()
       .drive()
       .disposed(by: disposeBag)
     
@@ -566,15 +563,15 @@ class DataService {
       .combineLatest(birds, firebaseBirds) { birds, firebaseBirds -> [Bird] in
         guard let firebaseBirds = firebaseBirds else { return [] }
         return birds.filter{ bird -> Bool in
-          bird.lastModified > (firebaseBirds.first(where: { $0.UID == bird.UID })?.lastModified ?? Date(timeIntervalSince1970: 0))
+          bird.lastModified > (firebaseBirds.first(where: { $0.UID == bird.UID })?.lastModified.adding(.second, value: 1) ?? Date(timeIntervalSince1970: 0))
         }
       }
-      .debug()
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .debug()
       .withLatestFrom(compactUser) { bird, user in
-        DB_USERS_REF.child(user.uid).child("BIRDS").child(bird.UID).updateChildValues(bird.data)
+        print("4321 UPDATE BIRDS")
+        return DB_USERS_REF.child(user.uid).child("BIRDS").child(bird.UID).updateChildValues(bird.data)
       }
       .asDriver(onErrorJustReturn: ())
       .drive()
@@ -592,6 +589,7 @@ class DataService {
           .compactMap { firebaseBird -> Bird? in
             guard var bird = birds.first(where: { $0.UID == firebaseBird.UID }) else { return nil }
             bird.isBought = firebaseBird.isBought
+            bird.lastModified = firebaseBird.lastModified
             return bird
           }
       }
@@ -705,7 +703,6 @@ class DataService {
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
-    
 
   }
 }

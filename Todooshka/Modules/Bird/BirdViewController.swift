@@ -62,6 +62,8 @@ class BirdViewController: TDViewController {
     textView.isScrollEnabled = false
     textView.layer.cornerRadius = 15
     textView.backgroundColor = .clear
+    textView.textAlignment = .center
+    textView.font = UIFont.systemFont(ofSize: 18, weight: .light)
     return textView
   }()
   
@@ -113,6 +115,11 @@ class BirdViewController: TDViewController {
     configureBody()
     configureDataSource()
     bindViewModel()
+  }
+  
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    descriptionTextView.centerVerticalText()
   }
   
   // MARK: - Configure
@@ -183,11 +190,10 @@ class BirdViewController: TDViewController {
     
     // descriptionBackgroundView
     descriptionBackgroundView.addSubview(descriptionTextView)
-    descriptionBackgroundView.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, bottom: buyButton.topAnchor, right: view.rightAnchor, topConstant: 32, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
+    descriptionBackgroundView.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, bottom: buyButton.topAnchor, right: view.rightAnchor, topConstant: 64, leftConstant: 16, bottomConstant: 64, rightConstant: 16)
 
     // descriptionTextView
-    descriptionTextView.anchorCenterXToSuperview()
-    descriptionTextView.anchorCenterYToSuperview()
+    descriptionTextView.anchor(top: descriptionBackgroundView.topAnchor, left: descriptionBackgroundView.leftAnchor, bottom: descriptionBackgroundView.bottomAnchor, right: descriptionBackgroundView.rightAnchor, topConstant: 12, leftConstant: 12, bottomConstant: 12, rightConstant: 12)
     
   }
   

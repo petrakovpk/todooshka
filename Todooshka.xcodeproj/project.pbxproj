@@ -627,7 +627,6 @@
 				9D42C06028D04E45008F624F /* AuthTextFieldType.swift */,
 				60E970352823F13700577484 /* BirdActionType.swift */,
 				6053F86C2822DAE90047C204 /* BirdState.swift */,
-				600935672804708E0028C9AA /* Style.swift */,
 				6006F82E27AA701F00E5AE9E /* Clade.swift */,
 				6075496127EDC5B400B96D20 /* CrackType.swift */,
 				604D1F7E27ADC13B00E05D09 /* Currency.swift */,
@@ -643,6 +642,7 @@
 				60AE65D627F5BFB100CFE7BB /* Result.swift */,
 				60E970462827025B00577484 /* SceneActionType.swift */,
 				9DE9607E285E6D4A00E5981A /* SettingsType.swift */,
+				600935672804708E0028C9AA /* Style.swift */,
 				600DA58E27FEFC16004A4634 /* TaskFlowAction.swift */,
 				606FB75027F728A400782E17 /* TaskListCellMode.swift */,
 				60ED956D27B520C1005ACC33 /* TaskStatus.swift */,
@@ -1700,7 +1700,7 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8.0;
+				CURRENT_PROJECT_VERSION = 12.0;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
@@ -1729,7 +1729,7 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8.0;
+				CURRENT_PROJECT_VERSION = 12.0;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;

@@ -3,10 +3,8 @@
     <entity name="Bird" representedClassName="" syncable="YES">
         <attribute name="cladeRawValue" attributeType="String"/>
         <attribute name="currencyRawValue" attributeType="String"/>
-        <attribute name="desc" attributeType="String"/>
         <attribute name="isBought" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastModified" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="name" attributeType="String"/>
         <attribute name="price" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="styleRawValue" optional="YES" attributeType="String"/>
         <attribute name="uid" attributeType="String"/>

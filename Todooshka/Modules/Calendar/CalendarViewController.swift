@@ -74,7 +74,7 @@ class CalendarViewController: UIViewController {
     button.setTitle("Фабрика птиц", for: .normal)
     button.setTitleColor(.white, for: .normal)
     button.backgroundColor = Palette.SingleColors.Cerise
-    button.cornerRadius = Sizes.Buttons.calendarShopButton.height / 2
+    button.cornerRadius = min(Sizes.Buttons.calendarShopButton.height / 2, 12.adjustByHeight)
     button.titleLabel?.font = UIFont.systemFont(ofSize: min(14.adjustByWidth, 14.adjustByHeight), weight: .medium)
     return button
   }()

@@ -74,6 +74,7 @@ class KindOfTaskListForBirdViewModel: Stepper {
       }
     
     let kindsOfTask = services.dataService.kindsOfTask
+      .map{ $0.filter{ $0.status != .Archive } }
    
     let kindsOfTaskNotLockedStyle = kindsOfTask
       .map { kindsOfTask -> [KindOfTask] in

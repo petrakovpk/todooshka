@@ -56,7 +56,8 @@ class ShopViewController: TDViewController {
       topConstant: 16,
       leftConstant: 16,
       bottomConstant: 16,
-      rightConstant: 16)
+      rightConstant: 16
+    )
   }
   
   func configureDataSource() {
@@ -81,7 +82,7 @@ class ShopViewController: TDViewController {
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(130), heightDimension: .absolute(160))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 10)
+    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 12, leading: 0, bottom: 0, trailing: 10)
     
     let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(130), heightDimension: .estimated(160))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])

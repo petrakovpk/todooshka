@@ -9,6 +9,7 @@ import CoreData
 import RxFlow
 import RxSwift
 import RxCocoa
+import YandexMobileMetrica
 
 struct TaskAttr: Equatable {
   let closed: Date?
@@ -72,6 +73,7 @@ class TaskViewModel: Stepper {
     let datePickerDate: Driver<Date>
     let descriptionTextField: Driver<String>
     let hideAlertTrigger: Driver<Void>
+    let hideCompleteButton: Driver<Void>
     let navigateBack: Driver<Void>
     let plannedText: Driver<String>
     let save: Driver<Result<Void,Error>>
@@ -81,6 +83,7 @@ class TaskViewModel: Stepper {
     let taskIsNewTrigger: Driver<Void>
     let taskIsNotNewTrigger: Driver<Void>
     let textTextField: Driver<String>
+    let yandexMetrika: Driver<Void>
   }
   
   //MARK: - Init
@@ -116,9 +119,12 @@ class TaskViewModel: Stepper {
         )
       )
     
-    let taskIsNewTrigger = tasks
-      .map{ $0.first(where: { $0.UID == self.taskUID }) }
-      .filter{ $0 == nil }
+    let taskIsNew = tasks
+      .map { $0.first(where: { $0.UID == self.taskUID }) }
+      .map { $0 == nil }
+    
+    let taskIsNewTrigger = taskIsNew
+      .filter{ $0 }
       .map{ _ in () }
     
     let taskIsNotNewTrigger = tasks
@@ -156,6 +162,15 @@ class TaskViewModel: Stepper {
     let kindsOfTask = services.dataService
       .kindsOfTask
       .map { $0.filter { $0.status == .Active }}
+    
+    
+    
+    let hideCompleteButton = Driver
+      .of(
+        taskIsNewTrigger,
+        task.filter{ $0.status == .Completed }.map{ _ in () }
+      )
+      .merge()
     
     // dataSource
     let dataSource = Driver
@@ -258,6 +273,17 @@ class TaskViewModel: Stepper {
       .flatMapLatest({ self.managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
     
+    let yandexMetrika = save
+      .withLatestFrom(taskIsNew) { $1 }
+      .filter{ $0 }
+      .withLatestFrom(taskAttr) { $1.text }
+      .distinctUntilChanged()
+      .map { text -> Void in
+        let params: [AnyHashable : Any] = ["text": text]
+        YMMYandexMetrica.reportEvent("Create Task", parameters: params, onFailure: nil)
+        return ()
+      }
+    
     let showComleteAlertTrigger = input.completeButtonClickTrigger
     let showDatePickerAlertTrigger = input.datePickerButtonClickTrigger
     
@@ -293,6 +319,7 @@ class TaskViewModel: Stepper {
       datePickerDate: datePickerDate,
       descriptionTextField: description,
       hideAlertTrigger: hideAlertTrigger,
+      hideCompleteButton: hideCompleteButton,
       navigateBack: navigateBack,
       plannedText: plannedText,
       save: save,
@@ -301,7 +328,8 @@ class TaskViewModel: Stepper {
       showDatePickerAlertTrigger: showDatePickerAlertTrigger,
       taskIsNewTrigger: taskIsNewTrigger,
       taskIsNotNewTrigger: taskIsNotNewTrigger,
-      textTextField: text
+      textTextField: text,
+      yandexMetrika: yandexMetrika
     )
   }
 }

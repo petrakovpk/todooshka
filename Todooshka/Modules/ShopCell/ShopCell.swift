@@ -17,6 +17,8 @@ class ShopCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     label.textAlignment = .center
+    label.numberOfLines = 0
+    label.lineBreakMode = .byCharWrapping
     return label
   }()
   
@@ -47,7 +49,7 @@ class ShopCollectionViewCell: UICollectionViewCell {
   
   // MARK: - Configure UI
   func configure(bird: Bird) {
-    nameLabel.text = bird.style.text
+    nameLabel.text = bird.name
     imageView.image = bird.getImageForState(state: .Normal)
     contentView.backgroundColor = bird.isBought ? .clear : .systemGray.withAlphaComponent(0.3)
   }

@@ -13,7 +13,11 @@ class ShopCollectionViewHeader: UICollectionReusableView {
   static var reuseID: String = "TaskListCollectionReusableView"
   
   // MARK: - UI Elements
-  public let label = UILabel()
+  public let label: UILabel = {
+    let label = UILabel()
+    label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+    return label
+  }()
   
   // MARK: - draw
   override func draw(_ rect: CGRect) {

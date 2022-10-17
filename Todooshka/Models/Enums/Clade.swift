@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 enum Clade: String {
   
   // Курица
@@ -36,16 +37,25 @@ enum Clade: String {
     }
   }
   
+  var gender: Gender {
+    switch self {
+    case .Chiken, .Owl:
+      return .Female
+    case .Dragon, .Eagle, .Ostrich, .Parrot, .Penguin:
+      return .Male
+    }
+  }
+  
   // text
   var text: String {
     switch self {
-    case .Chiken: return "1-я задача, Курица"
-    case .Ostrich: return "2-я задача, Страус"
-    case .Owl: return "3-я задача, Сова"
-    case .Parrot: return "4-я задача, Попугай"
-    case .Penguin: return "5-я задача, Пингвин"
-    case .Eagle: return "6-я задача, Орел"
-    case .Dragon: return "7-я задача, Дракон"
+    case .Chiken: return "Ряба"
+    case .Ostrich: return "Страус"
+    case .Owl: return "Сова"
+    case .Parrot: return "Попугай"
+    case .Penguin: return "Пингвин"
+    case .Eagle: return "Орел"
+    case .Dragon: return "Дракон"
     }
   }
   
