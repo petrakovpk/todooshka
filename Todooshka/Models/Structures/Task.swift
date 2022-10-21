@@ -98,18 +98,19 @@ struct Task: IdentifiableType, Equatable {
 extension Task {
   typealias D = DataSnapshot
   
-  var data: [AnyHashable: Any] {
+  var data: [String: Any] {
     [
-      "text": text,
-      "desc": description,
-      "status": status.rawValue,
-      "kindOfTaskUID": kindOfTaskUID,
-      "created": created.timeIntervalSince1970 ,
-      "closed": closed?.timeIntervalSince1970,
-      "planned": planned?.timeIntervalSince1970,
-      "index": index,
-      "lastModified": lastModified.timeIntervalSince1970
+        "text": text,
+        "desc": description,
+        "status": status.rawValue,
+        "kindOfTaskUID": kindOfTaskUID,
+        "created": created.timeIntervalSince1970 ,
+        "closed": closed?.timeIntervalSince1970,
+        "planned": planned?.timeIntervalSince1970,
+        "index": index,
+        "lastModified": lastModified.timeIntervalSince1970
     ]
+    
   }
   
   init?(snapshot: D) {
@@ -179,7 +180,9 @@ extension Task: Persistable {
     entity.setValue(text, forKey: "text")
     entity.setValue(userUID, forKey: "userUID")
     entity.setValue(lastModified, forKey: "lastModified")
-    
+  }
+  
+  func save(_ entity: T) {
     do {
       try entity.managedObjectContext?.save()
     } catch let error {

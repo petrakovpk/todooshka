@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "C4692503-3830-4EC7-A5FB-A7E1105D133A",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Todooshka.xcodeproj",
+        "identifier" : "9D08CDDF28FD7CB200689427",
+        "name" : "TodooshkaTests"
+      }
+    }
+  ],
+  "version" : 1
+}

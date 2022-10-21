@@ -12,6 +12,11 @@ import RxSwift
 import RxCocoa
 import YandexMobileMetrica
 
+enum SyncData<T: Persistable> {
+  case updateCoreData(data: [T])
+  case updateFirebase(data: [T])
+  case createInitData
+}
 
 protocol HasDataService {
   var dataService: DataService { get }
@@ -36,7 +41,7 @@ class DataService {
   let feathersCount: Driver<Int>
   let firebaseBirds = BehaviorRelay<[BirdFirebase]?>(value: nil)
   let firebaseKindsOfTask = BehaviorRelay<[KindOfTask]?>(value: nil)
-  let firebaseTasks = BehaviorRelay<[Task]>(value: [])
+  let firebaseTasks = BehaviorRelay<[Task]?>(value: nil)
   let kindsOfTask: Driver<[KindOfTask]>
   let nestDataSource: Driver<[EggActionType]>
   let selectedDate = BehaviorRelay<Date>(value: Date())
@@ -393,7 +398,7 @@ class DataService {
       } else {
         self.firebaseBirds.accept(nil)
         self.firebaseKindsOfTask.accept(nil)
-        self.firebaseTasks.accept([])
+        self.firebaseTasks.accept(nil)
       }
     }
 
@@ -402,7 +407,7 @@ class DataService {
     let tasksEmptyUser = allTasks
       .map { $0.filter { $0.userUID == nil } }
     
-    // загружаем в облако таски
+    // Проставляем User UID
     compactUser
       .withLatestFrom(tasksEmptyUser) { user, tasks -> [Task] in
         tasks.map { task -> Task in
@@ -412,44 +417,57 @@ class DataService {
         }.filter{ $0.status != .Archive }
       }
       .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ context.rx.update($0) })
+      .flatMapLatest({ context.rx.batchUpdate($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
     
-    tasks
-      .withLatestFrom(firebaseTasks) { tasks, firebaseTasks -> [Task] in
-        tasks.filter{ task -> Bool in
-          task.lastModified > (firebaseTasks.first(where: { $0.UID == task.UID })?.lastModified ?? Date(timeIntervalSince1970: 0))
+    // Tasks: Core Data -> Firebase
+     Driver
+      .combineLatest(tasks, firebaseTasks) { tasks, firebaseTasks -> [Task] in
+        tasks.filter { task -> Bool in
+          // Если пусто, то ничего не передаем
+          guard let firebaseTasks = firebaseTasks else { return false }
+          // если задачи нет в Firebase, то загружаем в Firebase
+          guard let firebaseTask = firebaseTasks.first(where: { $0.UID == task.UID }) else { return true }
+          // если дата обновления задачи больше чем в Firebase, то обновляем Firebase
+          return task.lastModified > firebaseTask.lastModified
         }
       }
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .withLatestFrom(compactUser) { task, user in
-        DB_USERS_REF.child(user.uid).child("TASKS").child(task.UID).updateChildValues(task.data)
+      .withLatestFrom(compactUser) { tasks, user in
+        DB_USERS_REF.child(user.uid).child("TASKS").runTransactionBlock({ currentData in
+          
+          var dict: [String : AnyObject] = currentData.value as? [String : AnyObject] ?? [:]
+          
+          tasks.forEach { task in
+            dict[task.UID] = task.data as AnyObject
+          }
+          
+          currentData.value = dict
+          return TransactionResult.success(withValue: currentData)
+        })
       }
-      .asDriver(onErrorJustReturn: ())
       .drive()
       .disposed(by: disposeBag)
     
-    // скачиваем из облака таски
-    firebaseTasks
-      .debug()
-      .withLatestFrom(tasks) { firebaseTasks, tasks -> [Task] in
-        firebaseTasks.filter{ firebaseTask -> Bool in
-          firebaseTask.lastModified > (tasks.first(where: { $0.UID == firebaseTask.UID })?.lastModified ?? Date(timeIntervalSince1970: 0))
-        }
-      }
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ task -> Observable<Result<Void, Error>> in
-        context.rx.update(task)
-      })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      .drive()
-      .disposed(by: disposeBag)
-    
+    // Tasks: Firebase -> Core Data
+    Driver
+      .combineLatest(firebaseTasks.compactMap{ $0 }, tasks) { firebaseTasks, tasks -> [Task] in
+       firebaseTasks.filter { firebaseTask -> Bool in
+         // если задачи нет в Firebase, то загружаем в Firebase
+         guard let task = tasks.first(where: { $0.UID == firebaseTask.UID }) else { return true }
+         // если дата обновления задачи больше чем в Firebase, то обновляем Firebase
+         return firebaseTask.lastModified > task.lastModified
+       }
+     }
+     .asObservable()
+     .flatMapLatest({ tasks -> Observable<Result<Void, Error>> in
+       context.rx.batchUpdate(tasks)
+     })
+     .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+     .drive()
+     .disposed(by: disposeBag)
+  
     // MARK: - Firebse KindsOfTask
     // кайнд оф таски без пользователя
     let kindsOfTaskEmptyUser = allKindsOfTask
@@ -466,9 +484,8 @@ class DataService {
         }
       }
       .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ kindOfTask -> Observable<Result<Void, Error>> in
-        context.rx.update(kindOfTask)
+      .flatMapLatest({
+        context.rx.batchUpdate($0)
       })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
@@ -479,48 +496,59 @@ class DataService {
       .filter{ $0 == nil }
       .withLatestFrom(allKindsOfTask) { $1 }
       .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ kindOfTask -> Observable<Result<Void, Error>> in
-        context.rx.delete(kindOfTask)
+      .flatMapLatest({
+        context.rx.batchDelete($0)
       })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .debug()
       .drive()
       .disposed(by: disposeBag)
     
-    // загружаем в облако кайнд оф таски
+    // KindsOfTask: Core Data -> Firebase
     Driver
       .combineLatest(kindsOfTask, firebaseKindsOfTask) { kindsOfTask, firebaseKindsOfTask -> [KindOfTask] in
-        guard let firebaseKindsOfTask = firebaseKindsOfTask else { return [] }
-        return kindsOfTask.filter { kindOfTask -> Bool in
-          kindOfTask.lastModified > (firebaseKindsOfTask.first(where: { $0.UID == kindOfTask.UID })?.lastModified ?? Date(timeIntervalSince1970: 0))
+        kindsOfTask.filter { kindOfTask -> Bool in
+          // если нет пользователя, то выходим
+          guard let firebaseKindsOfTask = firebaseKindsOfTask else { return false }
+          // если задачи нет в Firebase, то загружаем в Firebase
+          guard let firebaseKindOfTask = firebaseKindsOfTask.first(where: { $0.UID == kindOfTask.UID }) else { return true }
+          // если дата обновления задачи больше чем в Firebase, то обновляем Firebase
+          return kindOfTask.lastModified > firebaseKindOfTask.lastModified
         }
       }
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .withLatestFrom(compactUser) { kindOfTask, user in
-        DB_USERS_REF.child(user.uid).child("KINDSOFTASK").child(kindOfTask.UID).updateChildValues(kindOfTask.data)
-      }
-      .asDriver(onErrorJustReturn: ())
-      .drive()
-      .disposed(by: disposeBag)
-    
-    // скачиваем из облака кайнд оф таски
-    firebaseKindsOfTask
-      .withLatestFrom(kindsOfTask) { firebaseKindsOfTask, kindsOfTask -> [KindOfTask] in
-        guard let firebaseKindsOfTask = firebaseKindsOfTask else { return [] }
-        return firebaseKindsOfTask.filter{ firebaseKindOfTask -> Bool in
-          firebaseKindOfTask.lastModified > (kindsOfTask.first(where: { $0.UID == firebaseKindOfTask.UID })?.lastModified ?? Date(timeIntervalSince1970: 0))
+    .withLatestFrom(compactUser) { kindsOfTask, user in
+      DB_USERS_REF.child(user.uid).child("KINDSOFTASK").runTransactionBlock({ currentData in
+        
+        var dict: [String : AnyObject] = currentData.value as? [String : AnyObject] ?? [:]
+        
+        kindsOfTask.forEach { kindOfTask in
+          dict[kindOfTask.UID] = kindOfTask.data as AnyObject
         }
-      }
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ kindOfTask -> Observable<Result<Void, Error>> in
-        context.rx.update(kindOfTask)
+        
+        currentData.value = dict
+        return TransactionResult.success(withValue: currentData)
       })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      .drive()
-      .disposed(by: disposeBag)
+    }
+    .drive()
+    .disposed(by: disposeBag)
+  
+    // KindsOfTask: Firebase -> Core Data
+    Driver
+      .combineLatest(firebaseKindsOfTask.compactMap{ $0 }, kindsOfTask) { firebaseKindsOfTask, kindsOfTask -> [KindOfTask] in
+        firebaseKindsOfTask.filter { firebaseKindOfTask -> Bool in
+         // если задачи нет в Firebase, то загружаем в Firebase
+         guard let kindOfTask = kindsOfTask.first(where: { $0.UID == firebaseKindOfTask.UID }) else { return true }
+         // если дата обновления задачи больше чем в Firebase, то обновляем Firebase
+         return firebaseKindOfTask.lastModified > kindOfTask.lastModified
+       }
+     }
+     .asObservable()
+     .flatMapLatest({ tasks -> Observable<Result<Void, Error>> in
+       context.rx.batchUpdate(tasks)
+     })
+     .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+     .drive()
+     .disposed(by: disposeBag)
 
     // MARK: - Firebse Birds
     let birdsEmptyUser = birds
@@ -537,9 +565,8 @@ class DataService {
         }
       }
       .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ bird -> Observable<Result<Void, Error>> in
-        context.rx.update(bird)
+      .flatMapLatest({
+        context.rx.batchUpdate($0)
       })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
@@ -550,59 +577,64 @@ class DataService {
       .filter{ $0 == nil }
       .withLatestFrom(allBirds) { $1 }
       .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ bird -> Observable<Result<Void, Error>> in
-        context.rx.delete(bird)
+      .flatMapLatest({
+        context.rx.batchDelete($0)
       })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
     
-    // загружаем в облако birds
+    // Birds: Core Data -> Firebase
     Driver
       .combineLatest(birds, firebaseBirds) { birds, firebaseBirds -> [Bird] in
-        guard let firebaseBirds = firebaseBirds else { return [] }
-        return birds.filter{ bird -> Bool in
-          bird.lastModified > (firebaseBirds.first(where: { $0.UID == bird.UID })?.lastModified.adding(.second, value: 1) ?? Date(timeIntervalSince1970: 0))
+        birds.filter{ bird -> Bool in
+          // если нет пользователя, то выходим
+          guard let firebaseBirds = firebaseBirds else { return false }
+          // если задачи нет в Firebase, то загружаем в Firebase
+          guard let firebaseBird = firebaseBirds.first(where: { $0.UID == bird.UID }) else { return true }
+          // если дата обновления задачи больше чем в Firebase, то обновляем Firebase
+          return bird.lastModified > firebaseBird.lastModified
+        }
+      }
+      .withLatestFrom(compactUser) { birds, user in
+        DB_USERS_REF.child(user.uid).child("BIRDS").runTransactionBlock({ currentData in
+          
+          var dict: [String : AnyObject] = currentData.value as? [String : AnyObject] ?? [:]
+          
+          birds.forEach { bird in
+            dict[bird.UID] = bird.data as AnyObject
+          }
+          
+          currentData.value = dict
+          return TransactionResult.success(withValue: currentData)
+        })
+      }
+      .drive()
+      .disposed(by: disposeBag)
+    
+    // Birds: Firebase ->  Core Data
+    Driver
+      .combineLatest(firebaseBirds.compactMap{ $0 }, birds) { firebaseBirds, birds -> [Bird] in
+        firebaseBirds.filter { firebaseBird -> Bool in
+          // если задачи нет в Firebase, то загружаем в Firebase
+          guard let bird = birds.first(where: { $0.UID == firebaseBird.UID }) else { return true }
+          // если дата обновления задачи больше чем в Firebase, то обновляем Firebase
+          return firebaseBird.lastModified > bird.lastModified
+        }
+        .compactMap { firebaseBird -> Bird? in
+          guard var bird = birds.first(where: { $0.UID == firebaseBird.UID }) else { return nil }
+          bird.isBought = firebaseBird.isBought
+          bird.lastModified = firebaseBird.lastModified
+          return bird
         }
       }
       .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .debug()
-      .withLatestFrom(compactUser) { bird, user in
-        print("4321 UPDATE BIRDS")
-        return DB_USERS_REF.child(user.uid).child("BIRDS").child(bird.UID).updateChildValues(bird.data)
-      }
-      .asDriver(onErrorJustReturn: ())
-      .drive()
-      .disposed(by: disposeBag)
-    
-    // загружаем из облака birds
-    firebaseBirds
-      .debug()
-      .withLatestFrom(birds) { firebaseBirds, birds -> [Bird] in
-        guard let firebaseBirds = firebaseBirds else { return [] }
-        return firebaseBirds
-          .filter { firebaseBird -> Bool in
-            firebaseBird.lastModified > (birds.first(where: { $0.UID == firebaseBird.UID })?.lastModified ?? Date(timeIntervalSince1970: 0))
-          }
-          .compactMap { firebaseBird -> Bird? in
-            guard var bird = birds.first(where: { $0.UID == firebaseBird.UID }) else { return nil }
-            bird.isBought = firebaseBird.isBought
-            bird.lastModified = firebaseBird.lastModified
-            return bird
-          }
-      }
-      .debug()
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ bird -> Observable<Result<Void, Error>> in
-        context.rx.update(bird)
+      .flatMapLatest({
+        context.rx.batchUpdate($0)
       })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
-    
     
     // MARK: - Initial loading
     allKindsOfTask
@@ -622,8 +654,7 @@ class DataService {
         ]
       }
       .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ context.rx.update($0)})
+      .flatMapLatest({ context.rx.batchUpdate($0)})
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)
@@ -696,10 +727,8 @@ class DataService {
           Bird.Dragon.Fashion
         ]
       }
-      .debug()
       .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ context.rx.update($0) })
+      .flatMapLatest({ context.rx.batchUpdate($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
       .drive()
       .disposed(by: disposeBag)

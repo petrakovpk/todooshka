@@ -94,7 +94,6 @@ extension KindOfTask {
   
   var data: [AnyHashable: Any] {
     [
-      "uid": UID,
       "colorHexString": color.hexString,
       "iconRawValue": icon.rawValue,
       "index": index,
@@ -194,7 +193,9 @@ extension KindOfTask: Persistable {
     entity.setValue(text, forKey: "text")
     entity.setValue(userUID, forKey: "userUID")
     entity.setValue(lastModified, forKey: "lastModified")
-    
+  }
+  
+  func save(_ entity: T) {
     do {
       try entity.managedObjectContext?.save()
     } catch let error {

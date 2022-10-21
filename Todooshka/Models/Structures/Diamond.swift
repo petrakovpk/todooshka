@@ -42,7 +42,9 @@ extension Diamond: Persistable {
   func update(_ entity: T) {
     entity.setValue(UID, forKey: "uid")
     entity.setValue(created, forKey: "created")
-
+  }
+  
+  func save(_ entity: T) {
     do {
       try entity.managedObjectContext?.save()
     } catch let error {

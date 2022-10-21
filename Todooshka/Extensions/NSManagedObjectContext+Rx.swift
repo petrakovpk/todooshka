@@ -121,6 +121,24 @@ public extension Reactive where Base: NSManagedObjectContext {
     }
   }
   
+  func batchDelete<P: Persistable>(_ persistables: [P]) -> Observable<Result<Void, Error>> {
+    return Observable.create { observer in
+      do {
+        for persistable in persistables {
+          if let entity = try get(persistable) {
+            self.base.delete(entity)
+          }
+        }
+        try self.base.save()
+        observer.onNext(.success(()))
+        observer.onCompleted()
+      } catch {
+        observer.onNext(.failure(error))
+      }
+      return Disposables.create()
+    }
+  }
+  
   /**
    Creates and executes a fetch request and returns the fetched objects as an `Observable` array of `Persistable`.
    - parameter type: the `Persistable` concrete type; defaults to `Persistable`
@@ -151,7 +169,9 @@ public extension Reactive where Base: NSManagedObjectContext {
   func update<P: Persistable>(_ persistable: P) -> Observable<Result<Void, Error>> {
     return Observable.create { observer in
       do {
-        persistable.update(try get(persistable) ?? self.create(P.self))
+        let entity = try get(persistable) ?? self.create(P.self)
+        persistable.update(entity)
+        persistable.save(entity)
         observer.onNext(.success(()))
         observer.onCompleted()
       } catch {
@@ -160,5 +180,27 @@ public extension Reactive where Base: NSManagedObjectContext {
       return Disposables.create()
     }
   }
+  
+  func batchUpdate<P: Persistable>(_ persistables: [P]) -> Observable<Result<Void, Error>> {
+    return Observable.create { observer in
+      do {
+        for persistable in persistables {
+          let entity = try get(persistable) ?? self.create(P.self)
+          persistable.update(entity)
+        }
+        
+        try self.base.save()
+        observer.onNext(.success(()))
+        observer.onCompleted()
+      } catch {
+        observer.onNext(.failure(error))
+      }
+      return Disposables.create()
+    }
+  }
+  
+ // func batckUpdate
+  
+
   
 }

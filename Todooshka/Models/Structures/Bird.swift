@@ -143,7 +143,9 @@ extension Bird: Persistable {
     entity.setValue(isBought, forKey: "isBought")
     entity.setValue(userUID, forKey: "userUID")
     entity.setValue(lastModified, forKey: "lastModified")
-
+  }
+  
+  func save(_ entity: T) {
     do {
       try entity.managedObjectContext?.save()
     } catch let error {

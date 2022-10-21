@@ -105,11 +105,14 @@ class TaskListViewModel: Stepper {
       .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
         tasks
           .sorted { (prevTask, nextTask) -> Bool in
-            if self.mode == .Idea {
+            switch self.mode {
+            case .Idea:
               let prevIndex = kindsOfTask.first{ $0.UID == prevTask.kindOfTaskUID }?.index ?? 0
               let nextIndex = kindsOfTask.first{ $0.UID == nextTask.kindOfTaskUID}?.index ?? 0
               return prevIndex == nextIndex ? prevTask.text < nextTask.text : prevIndex < nextIndex
-            } else {
+            case .Completed(_):
+              return prevTask.closed ?? Date() < nextTask.closed ?? Date()
+            default:
               return prevTask.created < nextTask.created
             }
           }

@@ -53,6 +53,7 @@ class SyncDataViewModel: Stepper {
     let firebaseTasks = services.dataService
       .firebaseTasks
       .asDriver()
+      .compactMap{ $0 }
       .map{ $0.filter{ $0.status != .Archive } }
         
     let taskFirebaseCount = firebaseTasks

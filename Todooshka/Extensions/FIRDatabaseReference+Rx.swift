@@ -216,19 +216,35 @@ extension Reactive where Base: DatabaseReference {
    * @param completionBlock This block will be triggered once the transaction is complete, whether it was successful or not. It will indicate if there was an error, whether or not the data was committed, and what the current value of the data at this location is.
    * @param localEvents Set this to NO to suppress events raised for intermediate states, and only get events based on the final state of the transaction.
    */
-  public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult, withLocalEvents: Bool) -> Single<DatabaseReferenceTransactionResult> {
-    
-    return Single.create(subscribe: { (singleEventListener) -> Disposable in
+//  public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult, withLocalEvents: Bool) -> Single<DatabaseReferenceTransactionResult> {
+//    return Single.create(subscribe: { (singleEventListener) -> Disposable in
+//      self.base.runTransactionBlock(block, andCompletionBlock: { (error, committed, snapshot) in
+//        if let error = error {
+//          singleEventListener(.failure(error))
+//        }
+//        else {
+//          singleEventListener(.success(DatabaseReferenceTransactionResult(committed, snapshot)))
+//        }
+//      })
+//      return Disposables.create()
+//    })
+//  }
+  
+  public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult) -> Observable<Result<DatabaseReferenceTransactionResult, Error>> {
+    return Observable.create { observer in
       self.base.runTransactionBlock(block, andCompletionBlock: { (error, committed, snapshot) in
         if let error = error {
-          singleEventListener(.failure(error))
+          print("1234 error")
+          observer.onNext(.failure(error))
         }
         else {
-          singleEventListener(.success(DatabaseReferenceTransactionResult(committed, snapshot)))
+          print("1234 success")
+          observer.onNext(.success(DatabaseReferenceTransactionResult(committed, snapshot)))
+          observer.onCompleted()
         }
       })
       return Disposables.create()
-    })
+    }
   }
   
   /**
@@ -246,7 +262,7 @@ extension Reactive where Base: DatabaseReference {
    * @param block This block receives the current data at this location and must return an instance of FIRTransactionResult
    * @param completionBlock This block will be triggered once the transaction is complete, whether it was successful or not. It will indicate if there was an error, whether or not the data was committed, and what the current value of the data at this location is.
    */
-  public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult) -> Single<DatabaseReferenceTransactionResult> {
-    return self.runTransactionBlock(block, withLocalEvents: true)
-  }
+//  public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult) -> Single<DatabaseReferenceTransactionResult> {
+//    return self.runTransactionBlock(block, withLocalEvents: true)
+//  }
 }
