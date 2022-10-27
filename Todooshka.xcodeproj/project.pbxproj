@@ -466,7 +466,7 @@
 		9DC65D4A28D3AF8100221ED2 /* Task+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+Rx.swift"; sourceTree = "<group>"; };
 		9DC65D4D28D5DA5B00221ED2 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		9DC65D5028D883F400221ED2 /* Diamond.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diamond.swift; sourceTree = "<group>"; };
-		9DE7C49128E35103001F5C55 /* Todooshka.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todooshka.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DE7C49128E35103001F5C55 /* DragonDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DragonDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DE9607E285E6D4A00E5981A /* SettingsType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsType.swift; sourceTree = "<group>"; };
 		9DE96080285E6D8100E5981A /* SettingsItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsItem.swift; sourceTree = "<group>"; };
 		9DE96084286106A000E5981A /* FeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatherViewController.swift; sourceTree = "<group>"; };
@@ -757,7 +757,7 @@
 				28CADDF6EC08AC5007338DEA /* Frameworks */,
 				8C9A133C03866BF91C5572D0 /* Pods */,
 				60AE9D612652E5AA00E51531 /* Todooshka */,
-				9DE7C49128E35103001F5C55 /* Todooshka.app */,
+				9DE7C49128E35103001F5C55 /* DragonDo.app */,
 				9D08CDE128FD7CB200689427 /* TodooshkaTests */,
 			);
 			sourceTree = "<group>";
@@ -1253,9 +1253,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		60AE9D5E2652E5AA00E51531 /* Todooshka */ = {
+		60AE9D5E2652E5AA00E51531 /* DragoDo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 60AE9D8C2652E5AD00E51531 /* Build configuration list for PBXNativeTarget "Todooshka" */;
+			buildConfigurationList = 60AE9D8C2652E5AD00E51531 /* Build configuration list for PBXNativeTarget "DragoDo" */;
 			buildPhases = (
 				063CD34B8D717EC84AAD2FC4 /* [CP] Check Pods Manifest.lock */,
 				60AE9D5B2652E5AA00E51531 /* Sources */,
@@ -1267,7 +1267,7 @@
 			);
 			dependencies = (
 			);
-			name = Todooshka;
+			name = DragoDo;
 			packageProductDependencies = (
 				9D42C02A28CB6173008F624F /* PhoneNumberKit */,
 				9DC65D4828D378B000221ED2 /* Lottie */,
@@ -1275,7 +1275,7 @@
 				9DE7C48528E33FBD001F5C55 /* YandexMobileMetricaCrashes */,
 			);
 			productName = Todooshka;
-			productReference = 9DE7C49128E35103001F5C55 /* Todooshka.app */;
+			productReference = 9DE7C49128E35103001F5C55 /* DragonDo.app */;
 			productType = "com.apple.product-type.application";
 		};
 		9D08CDDF28FD7CB200689427 /* TodooshkaTests */ = {
@@ -1332,7 +1332,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				60AE9D5E2652E5AA00E51531 /* Todooshka */,
+				60AE9D5E2652E5AA00E51531 /* DragoDo */,
 				9D08CDDF28FD7CB200689427 /* TodooshkaTests */,
 			);
 		};
@@ -1639,7 +1639,7 @@
 /* Begin PBXTargetDependency section */
 		9D08CDE528FD7CB200689427 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 60AE9D5E2652E5AA00E51531 /* Todooshka */;
+			target = 60AE9D5E2652E5AA00E51531 /* DragoDo */;
 			targetProxy = 9D08CDE428FD7CB200689427 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1781,20 +1781,21 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12.0;
+				CURRENT_PROJECT_VERSION = 13.0;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Todooshka/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DragonDo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Piu.Todooshka;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = DragonDo;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1810,20 +1811,21 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12.0;
+				CURRENT_PROJECT_VERSION = 13.0;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Todooshka/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DragonDo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Piu.Todooshka;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = DragonDo;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1888,7 +1890,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		60AE9D8C2652E5AD00E51531 /* Build configuration list for PBXNativeTarget "Todooshka" */ = {
+		60AE9D8C2652E5AD00E51531 /* Build configuration list for PBXNativeTarget "DragoDo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				60AE9D8D2652E5AD00E51531 /* Debug */,

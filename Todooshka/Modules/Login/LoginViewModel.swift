@@ -246,7 +246,6 @@ class LoginViewModel: Stepper {
     
     // AUTH WITH PHONE
     let setOTPCodeStyle = next
-      .debug()
       .withLatestFrom(loginViewControllerStyle)
       .filter{ $0 == .Phone }
       .withLatestFrom(isPhoneValid)

@@ -66,7 +66,6 @@ class SupportViewModel: Stepper {
       .flatMapLatest { question in
         DB_REF.child("SUPPORT").child(UUID().uuidString).rx.updateChildValues(["email": question.email, "question": question.question])
       }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      .debug()
     
     let sendQuestionSuccess = sendQuestion
       .compactMap{ result -> Void? in

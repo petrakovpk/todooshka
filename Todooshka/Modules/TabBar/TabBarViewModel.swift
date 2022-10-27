@@ -42,17 +42,9 @@ class TabBarViewModel: Stepper {
 
     let createTask = input.createTaskButtonClickTrigger
       .map { self.steps.accept(AppStep.CreateTaskIsRequired) }
-//
-//    let firebaseKindsOfTask = services.dataService
-//      .firebaseKindsOfTask
-//      .map{ kindsOfTask -> [KindOfTask] in
-//        print("1234", kindsOfTask)
-//        return kindsOfTask
-//      }
-  
+
     return Output(
       createTask: createTask
-     // firebaseKindsOfTask: firebaseKindsOfTask
     )
   }
   
