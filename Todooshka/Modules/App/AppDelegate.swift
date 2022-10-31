@@ -135,10 +135,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate  {
     coreDataTask.setValue(Auth.auth().currentUser?.uid, forKey: "userUID")
 
     do {
-      print("1234", coreDataTask)
       try managedObjectContext.save()
     } catch {
-      print("1234", error.localizedDescription)
+      print(error.localizedDescription)
     }
   }
   

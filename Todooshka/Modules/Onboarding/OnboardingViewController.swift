@@ -29,7 +29,7 @@ final class OnboardingViewController: UIViewController {
   private let headerLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
-    label.text = "TODOOSHKA"
+    label.text = "DragoDo"
     return label
   }()
   
@@ -82,13 +82,15 @@ final class OnboardingViewController: UIViewController {
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: collectionViewLayout)
     
     // adding
-    view.addSubview(backgroundImageView)
-    view.addSubview(skipButton)
-    view.addSubview(collectionView)
-    view.addSubview(headerLabel)
-    view.addSubview(leftDot)
-    view.addSubview(centralDot)
-    view.addSubview(rightDot)
+    view.addSubviews([
+      backgroundImageView,
+      skipButton,
+      collectionView,
+      headerLabel,
+      leftDot,
+      centralDot,
+      rightDot
+    ])
     
     // view
     view.backgroundColor = Theme.App.background

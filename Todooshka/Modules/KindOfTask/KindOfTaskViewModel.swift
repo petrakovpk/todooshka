@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import Firebase
 import RxFlow
 import RxSwift
 import RxCocoa
@@ -85,7 +86,7 @@ class KindOfTaskViewModel: Stepper {
       .map{ $0.icon }
     
     let kindOfTaskStartIndex = kindsOfTask
-      .map{ $0.count }
+      .map{ $0.count + 1 }
     
     let kindOfTaskExistIndex = kindOfTask
       .map{ $0.index }
@@ -154,7 +155,8 @@ class KindOfTaskViewModel: Stepper {
           isStyleLocked: isStyleLocked,
           color: color,
           text: text,
-          index: index
+          index: index,
+          userUID: Auth.auth().currentUser?.uid
         )
       }
 

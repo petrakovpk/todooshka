@@ -22,6 +22,18 @@ class NestScene: SKScene {
     node.name = "background"
     return node
   }()
+  
+  private let backgroundBottom: SKSpriteNode = {
+    let node = SKSpriteNode()
+    let texture = SKTexture(image: UIImage(named: "корзина_низ") ?? UIImage())
+    let action = SKAction.setTexture(texture, resize: false)
+    node.run(action)
+    node.xScale = Theme.Scene.scale * 1.5
+    node.yScale = Theme.Scene.scale * 1.5
+    node.name = "backgroundBottom"
+    node.zPosition = 100
+    return node
+  }()
 
   // MARK: - Lifecycle
   override func didMove(to view: SKView) {
@@ -33,9 +45,11 @@ class NestScene: SKScene {
       
       // adding
       addChild(background)
+      addChild(backgroundBottom)
       
       // background
       background.position = CGPoint(x: position.x + 40, y: position.y)
+      backgroundBottom.position = background.position
       
       // nodes
       SKEggNodes = [
@@ -56,8 +70,8 @@ class NestScene: SKScene {
   }
   
   // MARK: - Setup
-  func setup(with backgroundImage: UIImage) {
-    let texture = SKTexture(image: backgroundImage)
+  func setup(withBackground image: UIImage) {
+    let texture = SKTexture(image: image)
     let action = SKAction.setTexture(texture, resize: false)
     background.run(action)
   }

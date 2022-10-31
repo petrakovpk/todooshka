@@ -234,11 +234,9 @@ extension Reactive where Base: DatabaseReference {
     return Observable.create { observer in
       self.base.runTransactionBlock(block, andCompletionBlock: { (error, committed, snapshot) in
         if let error = error {
-          print("1234 error")
           observer.onNext(.failure(error))
         }
         else {
-          print("1234 success")
           observer.onNext(.success(DatabaseReferenceTransactionResult(committed, snapshot)))
           observer.onCompleted()
         }

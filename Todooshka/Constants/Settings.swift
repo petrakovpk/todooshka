@@ -10,13 +10,13 @@ import CoreGraphics
 struct Settings {
   struct Birds {
     static let NestPosition: [Int: CGPoint] = [
-      1: CGPoint(x: -30, y: 20),
-      2: CGPoint(x: 20, y: 20),
-      3: CGPoint(x: 70, y: -5),
-      4: CGPoint(x: 35, y: -35),
-      5: CGPoint(x: -5, y: -40),
-      6: CGPoint(x: -45, y: -35),
-      7: CGPoint(x: -80, y: -5)
+      1: CGPoint(x: -10 - 30, y: 20),
+      2: CGPoint(x: -10 + 26, y: 20),
+      3: CGPoint(x: -10 + 80, y: -10),
+      4: CGPoint(x: -10 + 48, y: -30),
+      5: CGPoint(x: -10, y: -40),
+      6: CGPoint(x: -10 - 50, y: -30),
+      7: CGPoint(x: -10 - 90, y: -5)
     ]
     
     static let BranchPosition: [Int: CGPoint] = [
@@ -32,13 +32,13 @@ struct Settings {
   
   struct Eggs {
     static let NestPosition: [Int: CGPoint] = [
-      1: CGPoint(x: -30, y: 20),
-      2: CGPoint(x: 20, y: 20),
-      3: CGPoint(x: 70, y: -5),
-      4: CGPoint(x: 35, y: -35),
-      5: CGPoint(x: -5, y: -40),
-      6: CGPoint(x: -45, y: -35),
-      7: CGPoint(x: -80, y: -5)
+      1: CGPoint(x: -10 - 30, y: 20),
+      2: CGPoint(x: -10 + 26, y: 20),
+      3: CGPoint(x: -10 + 80, y: -10),
+      4: CGPoint(x: -10 + 48, y: -30),
+      5: CGPoint(x: -10, y: -40),
+      6: CGPoint(x: -10 - 50, y: -30),
+      7: CGPoint(x: -10 - 90, y: -5)
     ]
   }
 }
