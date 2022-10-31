@@ -50,7 +50,7 @@ class NestSceneModel: Stepper {
       .map{ _ in self.getBackgroundImage(date: Date()) }
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
-    
+
     let birds = services.dataService.birds
     
     let dataSource = services.dataService.nestDataSource
@@ -68,6 +68,7 @@ class NestSceneModel: Stepper {
 
     return Output(
       backgroundImage: backgroundImage,
+     // backgroundBottomImage: backgroundBottomImage,
       birds: birds,
       dataSource: dataSource,
       forceNestUpdate: forceNestUpdate,

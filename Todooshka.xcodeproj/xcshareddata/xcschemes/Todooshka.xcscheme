@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "60AE9D5E2652E5AA00E51531"
-               BuildableName = "DragonDo.app"
+               BuildableName = "DragoDo.app"
                BlueprintName = "DragoDo"
                ReferencedContainer = "container:Todooshka.xcodeproj">
             </BuildableReference>
@@ -84,7 +84,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "60AE9D5E2652E5AA00E51531"
-            BuildableName = "DragonDo.app"
+            BuildableName = "DragoDo.app"
             BlueprintName = "DragoDo"
             ReferencedContainer = "container:Todooshka.xcodeproj">
          </BuildableReference>
@@ -101,7 +101,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "60AE9D5E2652E5AA00E51531"
-            BuildableName = "DragonDo.app"
+            BuildableName = "DragoDo.app"
             BlueprintName = "DragoDo"
             ReferencedContainer = "container:Todooshka.xcodeproj">
          </BuildableReference>

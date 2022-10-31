@@ -367,7 +367,7 @@ class MainTaskListViewController: UIViewController {
   var backgroundImageBinder: Binder<UIImage?> {
     return Binder(self, binding: { (vc, image) in
       if let image = image, let scene = vc.scene {
-        scene.setup(with: image)
+        scene.setup(withBackground: image)
       }
     })
   }

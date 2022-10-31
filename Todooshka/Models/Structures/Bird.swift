@@ -48,41 +48,6 @@ struct Bird: IdentifiableType, Equatable {
     }
   }
   
-//  var name: String {
-//    switch (clade.gender, style) {
-//    case (.Male, .Simple):
-//      return "Мультизадачный"
-//    case (.Female, .Simple):
-//      return "Мультизадачная"
-//    case (.Male, .Business):
-//      return "Работяга"
-//    case (.Female, .Business):
-//      return "Работяга"
-//    case (.Male, .Student):
-//      return "Студент"
-//    case (.Female, .Student):
-//      return "Студентка"
-//    case (.Male, .Cook):
-//      return "Повар"
-//    case (.Female, .Cook):
-//      return "Повариха"
-//    case (.Male, .Fashion):
-//      return "Модник"
-//    case (.Female, .Fashion):
-//      return "Модница"
-//    case (.Male, .Kid):
-//      return "Малыш"
-//    case (.Female, .Kid):
-//      return "Малышка"
-//    case (.Male, .Sport):
-//      return "Спортсмен"
-//    case (.Female, .Sport):
-//      return "Спортсменка"
-//    default:
-//      return ""
-//    }
-//  }
-  
   // MARK: - Equatable
   static func == (lhs: Bird, rhs: Bird) -> Bool {
     lhs.identity == rhs.identity
@@ -223,7 +188,7 @@ extension Bird {
 
   // Dragon
   struct Dragon {
-    static let Simple: Bird = Bird( clade: .Dragon, currency: .Diamond, price: 15, style: .Simple,UID: "DragonSimple", isBought: false, lastModified: Date(timeIntervalSince1970: 0))
+    static let Simple: Bird = Bird(clade: .Dragon, currency: .Diamond, price: 15, style: .Simple,UID: "DragonSimple", isBought: true, lastModified: Date(timeIntervalSince1970: 0))
     static let Student: Bird = Bird( clade: .Dragon, currency: .Diamond, price: 17, style: .Student,UID: "DragonStudent", isBought: false, lastModified: Date(timeIntervalSince1970: 0))
     static let Business: Bird = Bird( clade: .Dragon, currency: .Diamond, price: 21, style: .Business,UID: "DragonBusiness", isBought: false, lastModified: Date(timeIntervalSince1970: 0))
     static let Cook: Bird = Bird( clade: .Dragon, currency: .Diamond, price: 23, style: .Cook,UID: "DragonCook", isBought: false, lastModified: Date(timeIntervalSince1970: 0))

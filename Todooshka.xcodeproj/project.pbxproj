@@ -384,10 +384,10 @@
 		7558BF1D43D39A86CC82AC0C /* Pods-Todooshka.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todooshka.release.xcconfig"; path = "Target Support Files/Pods-Todooshka/Pods-Todooshka.release.xcconfig"; sourceTree = "<group>"; };
 		9D08CDD828FB3EE100689427 /* Sizes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sizes.swift; sourceTree = "<group>"; };
 		9D08CDDA28FC0C9800689427 /* CalendarViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewLayout.swift; sourceTree = "<group>"; };
-		9D08CDE028FD7CB200689427 /* TodooshkaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = TodooshkaTests.xctest; path = "/Users/pavelpetakov/Проекты/Todooshka/build/Debug/TodooshkaTests.xctest"; sourceTree = "<absolute>"; };
 		9D08CDE228FD7CB200689427 /* TodooshkaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodooshkaTests.swift; sourceTree = "<group>"; };
 		9D08CDE928FD7CFC00689427 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		9D08CDEA2901763C00689427 /* Array+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Rx.swift"; sourceTree = "<group>"; };
+		9D08CDEC290AB79600689427 /* TodooshkaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodooshkaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D17D43C2886F3E400D3E304 /* TDDiamondOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDDiamondOfferView.swift; sourceTree = "<group>"; };
 		9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondPackageType.swift; sourceTree = "<group>"; };
 		9D17D44028899D4200D3E304 /* CalendarYearCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarYearCell.swift; sourceTree = "<group>"; };
@@ -466,7 +466,7 @@
 		9DC65D4A28D3AF8100221ED2 /* Task+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+Rx.swift"; sourceTree = "<group>"; };
 		9DC65D4D28D5DA5B00221ED2 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		9DC65D5028D883F400221ED2 /* Diamond.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diamond.swift; sourceTree = "<group>"; };
-		9DE7C49128E35103001F5C55 /* DragonDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DragonDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DE7C49128E35103001F5C55 /* DragoDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DragoDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DE9607E285E6D4A00E5981A /* SettingsType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsType.swift; sourceTree = "<group>"; };
 		9DE96080285E6D8100E5981A /* SettingsItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsItem.swift; sourceTree = "<group>"; };
 		9DE96084286106A000E5981A /* FeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatherViewController.swift; sourceTree = "<group>"; };
@@ -757,8 +757,9 @@
 				28CADDF6EC08AC5007338DEA /* Frameworks */,
 				8C9A133C03866BF91C5572D0 /* Pods */,
 				60AE9D612652E5AA00E51531 /* Todooshka */,
-				9DE7C49128E35103001F5C55 /* DragonDo.app */,
+				9DE7C49128E35103001F5C55 /* DragoDo.app */,
 				9D08CDE128FD7CB200689427 /* TodooshkaTests */,
+				9D08CDEC290AB79600689427 /* TodooshkaTests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1275,7 +1276,7 @@
 				9DE7C48528E33FBD001F5C55 /* YandexMobileMetricaCrashes */,
 			);
 			productName = Todooshka;
-			productReference = 9DE7C49128E35103001F5C55 /* DragonDo.app */;
+			productReference = 9DE7C49128E35103001F5C55 /* DragoDo.app */;
 			productType = "com.apple.product-type.application";
 		};
 		9D08CDDF28FD7CB200689427 /* TodooshkaTests */ = {
@@ -1293,7 +1294,7 @@
 			);
 			name = TodooshkaTests;
 			productName = TodooshkaTests;
-			productReference = 9D08CDE028FD7CB200689427 /* TodooshkaTests.xctest */;
+			productReference = 9D08CDEC290AB79600689427 /* TodooshkaTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -1781,21 +1782,21 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13.0;
+				CURRENT_PROJECT_VERSION = 1.2;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Todooshka/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DragonDo;
+				INFOPLIST_KEY_CFBundleDisplayName = DragoDo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.0;
+				MARKETING_VERSION = 6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Piu.Todooshka;
-				PRODUCT_NAME = DragonDo;
+				PRODUCT_NAME = DragoDo;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1811,21 +1812,21 @@
 				CODE_SIGN_ENTITLEMENTS = Todooshka/Todooshka.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13.0;
+				CURRENT_PROJECT_VERSION = 1.2;
 				DEVELOPMENT_ASSET_PATHS = "\"Todooshka/Preview Content\"";
 				DEVELOPMENT_TEAM = MDD4K93Q39;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Todooshka/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DragonDo;
+				INFOPLIST_KEY_CFBundleDisplayName = DragoDo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.0;
+				MARKETING_VERSION = 6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Piu.Todooshka;
-				PRODUCT_NAME = DragonDo;
+				PRODUCT_NAME = DragoDo;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
