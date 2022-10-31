@@ -387,7 +387,7 @@
 		9D08CDE928FD7CFC00689427 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		9D08CDEA2901763C00689427 /* Array+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Rx.swift"; sourceTree = "<group>"; };
 		9D08CDEC290AB79600689427 /* TodooshkaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodooshkaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9D0A8208290FCE07006D777C /* .gitignore.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = .gitignore.md; sourceTree = "<group>"; };
+		9D0A8209290FD0D7006D777C /* .gitignore.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = .gitignore.md; sourceTree = "<group>"; };
 		9D17D43C2886F3E400D3E304 /* TDDiamondOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDDiamondOfferView.swift; sourceTree = "<group>"; };
 		9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondPackageType.swift; sourceTree = "<group>"; };
 		9D17D44028899D4200D3E304 /* CalendarYearCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarYearCell.swift; sourceTree = "<group>"; };
@@ -747,12 +747,13 @@
 		60AE9D562652E5AA00E51531 = {
 			isa = PBXGroup;
 			children = (
+				9D0A8209290FD0D7006D777C /* .gitignore.md */,
+				9DE7C49128E35103001F5C55 /* DragoDo.app */,
+				FB745A0C7E3C8B65996DC6CB /* Frameworks */,
 				8C9A133C03866BF91C5572D0 /* Pods */,
 				60AE9D612652E5AA00E51531 /* Todooshka */,
-				9DE7C49128E35103001F5C55 /* DragoDo.app */,
 				9D08CDE128FD7CB200689427 /* TodooshkaTests */,
 				9D08CDEC290AB79600689427 /* TodooshkaTests.xctest */,
-				FB745A0C7E3C8B65996DC6CB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -777,7 +778,6 @@
 				60ED957627B52C4B005ACC33 /* Todooshka.xcdatamodeld */,
 				60AE9DE1265300AB00E51531 /* TodooshkaUI */,
 				9D6B6B0E284FEA0F000ABAE7 /* Typealias */,
-				9D0A8208290FCE07006D777C /* .gitignore.md */,
 			);
 			path = Todooshka;
 			sourceTree = "<group>";
@@ -1328,7 +1328,7 @@
 			mainGroup = 60AE9D562652E5AA00E51531;
 			packageReferences = (
 				9D42C02928CB6173008F624F /* XCRemoteSwiftPackageReference "PhoneNumberKit" */,
-				9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios.git" */,
+				9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				9DE7C48228E33FBD001F5C55 /* XCRemoteSwiftPackageReference "metrica-sdk-ios" */,
 			);
 			productRefGroup = 60AE9D562652E5AA00E51531;
@@ -1922,7 +1922,7 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios.git" */ = {
+		9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
@@ -1948,7 +1948,7 @@
 		};
 		9DC65D4828D378B000221ED2 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios.git" */;
+			package = 9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
 		};
 		9DE7C48328E33FBD001F5C55 /* YandexMobileMetrica */ = {
