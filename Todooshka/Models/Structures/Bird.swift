@@ -188,7 +188,7 @@ extension Bird {
 
   // Dragon
   struct Dragon {
-    static let Simple: Bird = Bird(clade: .Dragon, currency: .Diamond, price: 15, style: .Simple,UID: "DragonSimple", isBought: true, lastModified: Date(timeIntervalSince1970: 0))
+    static let Simple: Bird = Bird(clade: .Dragon, currency: .Feather, price: 0, style: .Simple,UID: "DragonSimple", isBought: true, lastModified: Date(timeIntervalSince1970: 0))
     static let Student: Bird = Bird( clade: .Dragon, currency: .Diamond, price: 17, style: .Student,UID: "DragonStudent", isBought: false, lastModified: Date(timeIntervalSince1970: 0))
     static let Business: Bird = Bird( clade: .Dragon, currency: .Diamond, price: 21, style: .Business,UID: "DragonBusiness", isBought: false, lastModified: Date(timeIntervalSince1970: 0))
     static let Cook: Bird = Bird( clade: .Dragon, currency: .Diamond, price: 23, style: .Cook,UID: "DragonCook", isBought: false, lastModified: Date(timeIntervalSince1970: 0))
