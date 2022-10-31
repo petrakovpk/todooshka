@@ -18,7 +18,7 @@ struct Bird: IdentifiableType, Equatable {
   let clade: Clade 
   let currency: Currency
   let price: Int
-  let style: Style
+  let style: BirdStyle
   let UID: String
   
   var userUID: String? = nil
@@ -91,7 +91,7 @@ extension Bird: Persistable {
     clade = Clade(rawValue: entity.value(forKey: "cladeRawValue") as! String) ?? Clade.Chiken
     currency = Currency(rawValue: entity.value(forKey: "currencyRawValue") as! String) ?? Currency.Feather
     price = entity.value(forKey: "price") as! Int
-    style = Style(rawValue: entity.value(forKey: "styleRawValue") as! String) ?? Style.Simple
+    style = BirdStyle(rawValue: entity.value(forKey: "styleRawValue") as! String) ?? BirdStyle.Simple
     isBought = entity.value(forKey: "isBought") as! Bool
     userUID = entity.value(forKey: "userUID") as? String
     lastModified = entity.value(forKey: "lastModified") as! Date

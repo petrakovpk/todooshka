@@ -16,7 +16,7 @@ class TDViewController: UIViewController {
   public let backButton: UIButton = {
     let button = UIButton(type: .system)
     button.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
-    button.tintColor = Theme.App.text
+    button.tintColor = Style.App.text
     return button
   }()
   
@@ -37,7 +37,7 @@ class TDViewController: UIViewController {
   public let refreshButton: UIButton = {
     let button = UIButton(type: .system)
     button.setImage(UIImage(named: "rotate-right")?.template, for: .normal)
-    button.tintColor = Theme.App.text
+    button.tintColor = Style.App.text
     button.isHidden = true
     return button
   }()
@@ -68,7 +68,7 @@ class TDViewController: UIViewController {
     ])
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     
     // headerView
     headerView.addSubviews([
@@ -82,11 +82,11 @@ class TDViewController: UIViewController {
     ])
 
     // safeAreaHeaderView
-    safeAreaHeaderView.backgroundColor = Theme.Views.Header.Background
+    safeAreaHeaderView.backgroundColor = Style.Views.Header.Background
     safeAreaHeaderView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor)
 
     // headerView
-    headerView.backgroundColor = Theme.Views.Header.Background
+    headerView.backgroundColor = Style.Views.Header.Background
     headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: Sizes.Views.Header.height)
     
     // backButton
@@ -111,7 +111,7 @@ class TDViewController: UIViewController {
     titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0, bottomConstant: 20, rightConstant: 0)
     
     // dividerView
-    dividerView.backgroundColor = Theme.Views.Header.Divider
+    dividerView.backgroundColor = Style.Views.Header.Divider
     dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,  heightConstant: 1.0)
   }
 }

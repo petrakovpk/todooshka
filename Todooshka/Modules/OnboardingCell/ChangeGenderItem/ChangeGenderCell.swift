@@ -37,7 +37,7 @@ class ChangeGenderCell: UITableViewCell {
     contentView.addSubview(isSelectedImageView)
     
     // contentView
-    contentView.backgroundColor = Theme.App.background
+    contentView.backgroundColor = Style.App.background
     
     // isSelectedImageView
     isSelectedImageView.anchorCenterYToSuperview()

@@ -25,8 +25,8 @@ class KindOfTaskViewController: TDViewController {
     let view = UIView()
     view.cornerRadius = 16
     view.layer.borderWidth = 1
-    view.layer.borderColor = Theme.Cells.KindOfTask.Border?.cgColor
-    view.backgroundColor = Theme.Cells.KindOfTask.UnselectedBackground
+    view.layer.borderColor = Style.Cells.KindOfTask.Border?.cgColor
+    view.backgroundColor = Style.Cells.KindOfTask.UnselectedBackground
     return view
   }()
   
@@ -103,7 +103,7 @@ class KindOfTaskViewController: TDViewController {
     taskTypeImageContainerView.addSubview(taskTypeImageView)
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     
     // keyboard
     hideKeyboardWhenTappedAround()

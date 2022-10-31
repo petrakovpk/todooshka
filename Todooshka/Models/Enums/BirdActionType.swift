@@ -10,6 +10,6 @@ import Foundation
 enum BirdActionType: Equatable {
   case Hide
   case Init
-  case Sitting(style: Style, closed: Date)
+  case Sitting(style: BirdStyle, closed: Date)
 }
 

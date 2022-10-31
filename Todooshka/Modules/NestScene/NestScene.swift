@@ -17,8 +17,8 @@ class NestScene: SKScene {
   // MARK: - UI Nodes
   private let background: SKSpriteNode = {
     let node = SKSpriteNode()
-    node.xScale = Theme.Scene.scale * 1.5
-    node.yScale = Theme.Scene.scale * 1.5
+    node.xScale = Style.Scene.scale * 1.5
+    node.yScale = Style.Scene.scale * 1.5
     node.name = "background"
     return node
   }()
@@ -28,8 +28,8 @@ class NestScene: SKScene {
     let texture = SKTexture(image: UIImage(named: "корзина_низ") ?? UIImage())
     let action = SKAction.setTexture(texture, resize: false)
     node.run(action)
-    node.xScale = Theme.Scene.scale * 1.5
-    node.yScale = Theme.Scene.scale * 1.5
+    node.xScale = Style.Scene.scale * 1.5
+    node.yScale = Style.Scene.scale * 1.5
     node.name = "backgroundBottom"
     node.zPosition = 100
     return node
@@ -130,7 +130,7 @@ class NestScene: SKScene {
     }
   }
   
-  func hatch(level: Int, style: Style) {
+  func hatch(level: Int, style: BirdStyle) {
 
     let node = SKBirdNode(level: level, style: style)
 

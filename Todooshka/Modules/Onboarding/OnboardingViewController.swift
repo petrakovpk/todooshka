@@ -93,7 +93,7 @@ final class OnboardingViewController: UIViewController {
     ])
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     
     // backgroundImageView
     backgroundImageView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor)
@@ -117,13 +117,13 @@ final class OnboardingViewController: UIViewController {
     collectionView.anchor(left: view.leftAnchor, bottom: skipButton.topAnchor, right: view.rightAnchor, topConstant: 0, bottomConstant: 0, heightConstant: UIScreen.main.bounds.height * 0.57)
     
     // headerLabel
-    headerLabel.textColor = Theme.App.text
+    headerLabel.textColor = Style.App.text
     headerLabel.anchor(bottom: collectionView.topAnchor, bottomConstant: Sizes.Labels.onboardingHeaderLabel.bottomConstant)
     headerLabel.anchorCenterXToSuperview()
     
     // centralDot
     centralDot.cornerRadius = 3
-    centralDot.backgroundColor = Theme.Onboarding.Dot
+    centralDot.backgroundColor = Style.Onboarding.Dot
     centralDot.anchorCenterXToSuperview()
     centralDot.anchor(bottom: skipButton.topAnchor, bottomConstant: Sizes.Views.Dot.bottomConstant , widthConstant: 6, heightConstant: 6)
     
@@ -135,7 +135,7 @@ final class OnboardingViewController: UIViewController {
     
     // rightDot
     rightDot.cornerRadius = 3
-    rightDot.backgroundColor = Theme.Onboarding.Dot
+    rightDot.backgroundColor = Style.Onboarding.Dot
     rightDot.removeAllConstraints()
     rightDot.anchor(top: centralDot.topAnchor, left: centralDot.rightAnchor, leftConstant: 10.0, widthConstant: 6, heightConstant: 6)
     
@@ -153,7 +153,7 @@ final class OnboardingViewController: UIViewController {
       heightConstant: 6
     )
     
-    centralDotPercent == 0 ? (centralDot.backgroundColor = Theme.Onboarding.Dot) : (centralDot.backgroundColor = Palette.SingleColors.BlueRibbon)
+    centralDotPercent == 0 ? (centralDot.backgroundColor = Style.Onboarding.Dot) : (centralDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // leftDot
     leftDot.removeAllConstraints()
@@ -164,7 +164,7 @@ final class OnboardingViewController: UIViewController {
       widthConstant: CGFloat(6 + 19 * leftDotPercent / 100).adjustByWidth,
       heightConstant: 6
     )
-    leftDotPercent == 0 ? (leftDot.backgroundColor = Theme.Onboarding.Dot) : (leftDot.backgroundColor = Palette.SingleColors.BlueRibbon)
+    leftDotPercent == 0 ? (leftDot.backgroundColor = Style.Onboarding.Dot) : (leftDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     // rightDot
     rightDot.removeAllConstraints()
@@ -175,7 +175,7 @@ final class OnboardingViewController: UIViewController {
       widthConstant: CGFloat(6 + 19 * rightDotPercent / 100).adjustByWidth,
       heightConstant: 6
     )
-    rightDotPercent == 0 ? (rightDot.backgroundColor = Theme.Onboarding.Dot) : (rightDot.backgroundColor = Palette.SingleColors.BlueRibbon)
+    rightDotPercent == 0 ? (rightDot.backgroundColor = Style.Onboarding.Dot) : (rightDot.backgroundColor = Palette.SingleColors.BlueRibbon)
     
     self.view.layoutIfNeeded()
   }

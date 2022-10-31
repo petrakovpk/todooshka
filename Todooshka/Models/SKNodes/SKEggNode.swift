@@ -45,8 +45,8 @@ class SKEggNode: SKSpriteNode {
     name = "Egg"
     size = noCracksTexture.size()
     texture = noCracksTexture
-    xScale = Theme.Scene.Egg.scale
-    yScale = Theme.Scene.Egg.scale
+    xScale = Style.Scene.Egg.scale
+    yScale = Style.Scene.Egg.scale
     alpha = 0.0
     
     switch level {

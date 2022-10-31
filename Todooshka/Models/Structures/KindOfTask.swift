@@ -23,7 +23,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
     static let Love = KindOfTask(UID: "Love", icon: .Lovely, isStyleLocked: false, color: Palette.SingleColors.Amethyst, text: "Вторая половинка", index: 6, style: .Simple, lastModified: Date(timeIntervalSince1970: 0))
     static let Pet = KindOfTask(UID: "Pet", icon: .Pet, isStyleLocked: false, color: Palette.SingleColors.BrinkPink, text: "Домашнее животное", index: 7, style: .Simple, lastModified: Date(timeIntervalSince1970: 0))
     static let Sport = KindOfTask(UID: "Sport", icon: .Dumbbell, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Спорт", index: 8, style: .Sport, lastModified: Date(timeIntervalSince1970: 0))
-    static let Fashion = KindOfTask(UID: "Fashion", icon: .Shop, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Быть модным", index: 9, style: .Fashion, lastModified: Date(timeIntervalSince1970: 0))
+    static let Fashion = KindOfTask(UID: "Fashion", icon: .Shop, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Мода", index: 9, style: .Fashion, lastModified: Date(timeIntervalSince1970: 0))
   }
   
   // MARK: - Identity
@@ -36,7 +36,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
   var index: Int { willSet { lastModified = Date()}}
   var isStyleLocked: Bool = false { willSet { lastModified = Date()}}
   var status: KindOfTaskStatus = .Active { willSet { lastModified = Date()}}
-  var style: Style = .Simple { willSet { lastModified = Date()}}
+  var style: BirdStyle = .Simple { willSet { lastModified = Date()}}
   var text: String { willSet { lastModified = Date()}}
   var userUID: String? = nil
   
@@ -62,7 +62,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
     self.userUID = userUID
   }
   
-  init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int, style: Style) {
+  init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int, style: BirdStyle) {
     self.UID = UID
     self.color = color ?? UIColor.systemGray
     self.icon = icon
@@ -72,7 +72,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
     self.style = style
   }
   
-  init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int, style: Style, lastModified: Date) {
+  init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int, style: BirdStyle, lastModified: Date) {
     self.UID = UID
     self.color = color ?? UIColor.systemGray
     self.icon = icon
@@ -128,7 +128,7 @@ extension KindOfTask {
           let statusRawValue = dict.value(forKey: "statusRawValue") as? String,
           let status = KindOfTaskStatus(rawValue: statusRawValue),
           let styleRawValue = dict.value(forKey: "styleRawValue") as? String,
-          let style = Style(rawValue: styleRawValue),
+          let style = BirdStyle(rawValue: styleRawValue),
           let text = dict.value(forKey: "text") as? String,
           let lastModifiedTimeInterval = dict.value(forKey: "lastModified") as? TimeInterval
     else { return nil }
@@ -185,7 +185,7 @@ extension KindOfTask: Persistable {
     }
     
     // style
-    if let styleRawValue = entity.value(forKey: "styleRawValue") as? String, let style = Style(rawValue: styleRawValue) {
+    if let styleRawValue = entity.value(forKey: "styleRawValue") as? String, let style = BirdStyle(rawValue: styleRawValue) {
       self.style = style
     } else {
       self.style = .Simple

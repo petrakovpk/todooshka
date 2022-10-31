@@ -30,17 +30,17 @@ class ChangePasswordViewController: TDViewController {
   
   private let newPasswordTextField: TDAuthTextField = {
     let textField = TDAuthTextField(type: .Password)
-    textField.borderColor = Theme.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Theme.TextFields.SettingsTextField.Tint
+    textField.borderColor = Style.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
+    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
     return textField
   }()
   
   private let repeatNewPasswordTextField: TDAuthTextField = {
     let textField = TDAuthTextField(type: .RepeatPassword)
-    textField.borderColor = Theme.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Theme.TextFields.SettingsTextField.Tint
+    textField.borderColor = Style.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
+    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
     return textField
   }()
   
@@ -127,8 +127,8 @@ class ChangePasswordViewController: TDViewController {
   
   var setPasswordButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
-      vc.setPasswordButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
-      vc.setPasswordButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.setPasswordButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
+      vc.setPasswordButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12) , for: .normal)
       vc.setPasswordButton.isEnabled = isEnabled
     })
   }

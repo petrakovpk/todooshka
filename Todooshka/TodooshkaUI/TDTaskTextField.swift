@@ -24,7 +24,7 @@ class TDTaskTextField: UITextField {
     leftView = spacer
     leftViewMode = .always
     attributedPlaceholder = NSAttributedString(string: placeholder,
-                                               attributes: [NSAttributedString.Key.foregroundColor: Theme.App.placeholder])
+                                               attributes: [NSAttributedString.Key.foregroundColor: Style.App.placeholder])
     font = UIFont.systemFont(ofSize: 13, weight: .medium)
   }
   

@@ -42,8 +42,8 @@ class CalendarViewController: UIViewController {
     let view = SKView(frame: CGRect(
       center: .zero,
       size: CGSize(
-        width: Theme.Scene.width,
-        height: Theme.Scene.height)))
+        width: Style.Scene.width,
+        height: Style.Scene.height)))
     return view
   }()
   
@@ -88,14 +88,14 @@ class CalendarViewController: UIViewController {
   
   private let calendarBackgroundView: UIView = {
     let view = UIView()
-    view.backgroundColor = Theme.Views.Calendar.Background
+    view.backgroundColor = Style.Views.Calendar.Background
     view.cornerRadius = 11
     return view
   }()
   
   private let calendarDividerView: UIView = {
     let view = UIView()
-    view.backgroundColor = Theme.Views.CalendarDivider.Background
+    view.backgroundColor = Style.Views.CalendarDivider.Background
     return view
   }()
   
@@ -172,7 +172,7 @@ class CalendarViewController: UIViewController {
     calendarBackgroundView.addSubview(calendarView)
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     
     // settingsButton
     settingsButton.configure(image: UIImage(named: "setting")?.template, blurEffect: false)

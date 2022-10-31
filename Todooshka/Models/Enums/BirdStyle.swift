@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum Style: String {
+enum BirdStyle: String {
   
   case Simple = "Simple"
   case Business = "Business"

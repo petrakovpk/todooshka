@@ -29,9 +29,9 @@ class SettingsCell: UITableViewCell {
     layer.borderWidth = 0
     
     imageView?.image = UIImage(named: imageName)?.template
-    imageView?.tintColor = Theme.App.text
+    imageView?.tintColor = Style.App.text
     textLabel?.text = text
-    textLabel?.textColor =  Theme.App.text
+    textLabel?.textColor =  Style.App.text
   }
 }
 

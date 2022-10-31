@@ -30,7 +30,7 @@ class FeatherViewController: TDViewController {
   private let descriptionBackgroundView: UIView = {
     let view = UIView()
     view.layer.cornerRadius = 15
-    view.backgroundColor = Theme.Views.GameCurrency.textViewBackground
+    view.backgroundColor = Style.Views.GameCurrency.textViewBackground
     return view
   }()
   

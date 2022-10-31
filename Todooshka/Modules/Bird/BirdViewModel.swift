@@ -106,7 +106,7 @@ class BirdViewModel: Stepper {
     
     let kindsOfTaskNotOpenedBird = birds
     // получаем неоткрытые стили на текущем уровне
-      .withLatestFrom(bird) { birds, bird -> [Style] in
+      .withLatestFrom(bird) { birds, bird -> [BirdStyle] in
         birds
           .filter { $0.clade == bird.clade }
           .filter { $0.isBought == false }

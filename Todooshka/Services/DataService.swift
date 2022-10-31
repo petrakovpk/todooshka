@@ -249,8 +249,8 @@ class DataService {
         completedTasks.prefix(openedBirdsNumber)
       }
       .map{ Array($0) }
-      .withLatestFrom(kindsOfTask) { tasks, kindsOfTask -> [Style] in // получаем для них стили
-        tasks.compactMap { task -> Style? in
+      .withLatestFrom(kindsOfTask) { tasks, kindsOfTask -> [BirdStyle] in // получаем для них стили
+        tasks.compactMap { task -> BirdStyle? in
           kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID })?.style
         }
       }
@@ -259,8 +259,8 @@ class DataService {
           birds.first(where: { $0.style == style && $0.clade == Clade(level: index + 1) })
         }
       }
-      .map { birds -> [Style] in // если куплена, то оставляем, иначе симл
-        birds.compactMap { bird -> Style? in
+      .map { birds -> [BirdStyle] in // если куплена, то оставляем, иначе симл
+        birds.compactMap { bird -> BirdStyle? in
           bird.isBought ? bird.style : .Simple
         }
       }
@@ -311,8 +311,8 @@ class DataService {
         completedTasksForSelectedDate.prefix(openedBirdsNumber)
       }
       .map { Array($0) }
-      .withLatestFrom(kindsOfTask) { tasks, kindsOfTask -> [Style] in // получаем для них стили
-        tasks.compactMap { task -> Style? in
+      .withLatestFrom(kindsOfTask) { tasks, kindsOfTask -> [BirdStyle] in // получаем для них стили
+        tasks.compactMap { task -> BirdStyle? in
           kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID })?.style
         }
       }.withLatestFrom(birds) { style, birds -> [Bird] in // получаем птиц
@@ -320,8 +320,8 @@ class DataService {
           birds.first(where: { $0.style == style && $0.clade == Clade(level: index + 1) })
         }
       }
-      .map { birds -> [Style] in // если куплена, то оставляем, иначе симл
-        birds.compactMap { bird -> Style? in
+      .map { birds -> [BirdStyle] in // если куплена, то оставляем, иначе симл
+        birds.compactMap { bird -> BirdStyle? in
           switch bird.clade {
           case .Dragon:
             return bird.isBought ? bird.style : nil
@@ -542,7 +542,6 @@ class DataService {
       .merge()
     
     syncDataKindsOfTask
-      .debug()
       .drive()
       .disposed(by: disposeBag)
     
@@ -654,7 +653,6 @@ class DataService {
       .merge()
     
     syncDataBirds
-      .debug()
       .drive()
       .disposed(by: disposeBag)
     

@@ -42,7 +42,7 @@ class SKBirdNode: SKSpriteNode {
   // Other
   private let clade: Clade
   
-  private var style: Style
+  private var style: BirdStyle
 
   // func
   func setFrontTextureAction() -> SKAction {
@@ -75,7 +75,7 @@ class SKBirdNode: SKSpriteNode {
   private var leftLegForwardTexture: SKTexture { SKTexture(image: leftLegForwardImage) }
 
   // MARK: - Init
-  init(level: Int, style: Style) {
+  init(level: Int, style: BirdStyle) {
     // Super Init
     self.level = level
     self.clade = Clade(level: level)
@@ -83,8 +83,8 @@ class SKBirdNode: SKSpriteNode {
     super.init(texture: nil, color: .clear, size: .zero)
     // Setup
     name = "Bird"
-    xScale = Theme.Scene.Egg.scale
-    yScale = Theme.Scene.Egg.scale
+    xScale = Style.Scene.Egg.scale
+    yScale = Style.Scene.Egg.scale
     zPosition = CGFloat(clade.level + 1)
   }
   
@@ -93,7 +93,7 @@ class SKBirdNode: SKSpriteNode {
   }
   
   // MARK: - Actions
-  func changeStyle(style: Style, withDelay: Bool) {
+  func changeStyle(style: BirdStyle, withDelay: Bool) {
     switch (action, withDelay) {
     
     case (.Init, _):

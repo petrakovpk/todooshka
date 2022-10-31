@@ -27,8 +27,8 @@ class TDAuthTextField: UITextField {
     leftView = spacer
     leftViewMode = .always
     returnKeyType = .done
-    borderColor = Theme.TextFields.AuthTextField.Border
-    backgroundColor = Theme.TextFields.AuthTextField.Background
+    borderColor = Style.TextFields.AuthTextField.Border
+    backgroundColor = Style.TextFields.AuthTextField.Background
     
     // spacer
     spacer.anchor(widthConstant: 54, heightConstant: 54)

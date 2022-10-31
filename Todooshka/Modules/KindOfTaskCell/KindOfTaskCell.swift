@@ -72,7 +72,7 @@ class KindOfTaskCell: UICollectionViewCell {
 
     // textView
     textView.text = kindOfTask.text
-    textView.textColor = isSelected ? .white : Theme.App.text
+    textView.textColor = isSelected ? .white : Style.App.text
     
     // imageView
     imageView.image = kindOfTask.icon.image
@@ -80,13 +80,13 @@ class KindOfTaskCell: UICollectionViewCell {
     
     // shapeLayer
     shapeLayer.borderWidth = isSelected ? 0 : 1
-    shapeLayer.borderColor = Theme.Cells.KindOfTask.Border?.cgColor
+    shapeLayer.borderColor = Style.Cells.KindOfTask.Border?.cgColor
     shapeLayer.shadowOpacity = isSelected ? 1 : 0
     shapeLayer.shadowRadius = isSelected ? 7 : 0
     shapeLayer.shadowPath = isSelected ? shapeLayer.path : nil
     shapeLayer.shadowOffset = isSelected ? CGSize(width: 0, height: 4) : CGSize(width: 0, height: 0)
-    shapeLayer.shadowColor = isSelected ? Theme.Cells.KindOfTask.SelectedBackground.cgColor : UIColor.clear.cgColor
-    shapeLayer.fillColor = isSelected ? Theme.Cells.KindOfTask.SelectedBackground.cgColor : Theme.Cells.KindOfTask.UnselectedBackground?.cgColor
+    shapeLayer.shadowColor = isSelected ? Style.Cells.KindOfTask.SelectedBackground.cgColor : UIColor.clear.cgColor
+    shapeLayer.fillColor = isSelected ? Style.Cells.KindOfTask.SelectedBackground.cgColor : Style.Cells.KindOfTask.UnselectedBackground?.cgColor
   }
 }
 

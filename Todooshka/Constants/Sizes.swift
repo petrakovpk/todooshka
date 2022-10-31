@@ -88,6 +88,10 @@ struct Sizes {
       static let width = 90.adjustByHeight
       static let height = 91.adjustByHeight
     }
+    struct ThemeCell {
+      static let width = 120.adjustByHeight
+      static let height = 120.adjustByHeight
+    }
   }
   
   struct ImageViews {
@@ -108,6 +112,10 @@ struct Sizes {
     struct birdImageView {
       static let width = 200.adjustByWidth
       static let height = 200.adjustByHeight
+    }
+    
+    struct dragonImageView {
+      static let height = 300.adjustByHeight
     }
   }
   
@@ -134,9 +142,9 @@ struct Sizes {
       static let height = 171.adjustByWidth
     }
     
-    struct animationView {
-      static let height = 222.0.adjustByHeight
-    }
+//    struct animationView {
+//      static let height = 222.0.adjustByHeight
+//    }
     
     struct Calendar {
       static let headerSizeHeight = min(25.adjustByHeight, 25.adjustByWidth)

@@ -38,7 +38,7 @@ class KindOfTaskListViewController: TDViewController {
   private let deleteAlertButton: UIButton = {
     let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .custom)
-    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
+    button.backgroundColor = Style.Buttons.AlertRoseButton.Background
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button
@@ -48,7 +48,7 @@ class KindOfTaskListViewController: TDViewController {
     let button = UIButton(type: .custom)
     let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
-    button.setTitleColor(Theme.App.text!.withAlphaComponent(0.5) , for: .normal)
+    button.setTitleColor(Style.App.text!.withAlphaComponent(0.5) , for: .normal)
     return button
   }()
 
@@ -77,12 +77,12 @@ class KindOfTaskListViewController: TDViewController {
     view.addSubview(collectionView)
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     
     // descriptionLabel
     descriptionLabel.text = "Перетащите типы в нужном порядке:"
     descriptionLabel.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-    descriptionLabel.textColor = Theme.App.text
+    descriptionLabel.textColor = Style.App.text
     descriptionLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, topConstant: 25, leftConstant: 16)
     
     // collectionView
@@ -109,14 +109,14 @@ class KindOfTaskListViewController: TDViewController {
     
     // alertWindowView
     alertWindowView.cornerRadius = 27
-    alertWindowView.backgroundColor = Theme.App.background
+    alertWindowView.backgroundColor = Style.App.background
     alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
     
     // alertLabel
     alertLabel.text = "Удалить тип?"
-    alertLabel.textColor = Theme.App.text
+    alertLabel.textColor = Style.App.text
     alertLabel.textAlignment = .center
     alertLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     alertLabel.anchorCenterXToSuperview()
@@ -258,7 +258,7 @@ extension KindOfTaskListViewController: SwipeCollectionViewCellDelegate {
     }
 
     configure(action: deleteAction, with: .trash)
-    deleteAction.backgroundColor = Theme.App.background
+    deleteAction.backgroundColor = Style.App.background
     return [deleteAction]
   }
 

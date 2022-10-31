@@ -19,7 +19,7 @@ class TDTaskCommentTextView: UITextView {
     backgroundColor = UIColor.clear
     clipsToBounds = false
     font = UIFont.systemFont(ofSize: 13, weight: .medium)
-    textColor = Theme.App.placeholder
+    textColor = Style.App.placeholder
     text = "Напишите комментарий"
   }
   

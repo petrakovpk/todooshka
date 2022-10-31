@@ -23,8 +23,8 @@ class ChangeNameViewContoller: TDViewController {
     let textField = UITextField()
     let spacer = UIView()
     textField.borderWidth = 1.0
-    textField.borderColor = Theme.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
+    textField.borderColor = Style.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
     textField.cornerRadius = 13
     textField.leftView = spacer
     textField.leftViewMode = .always

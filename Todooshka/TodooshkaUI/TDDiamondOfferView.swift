@@ -23,7 +23,7 @@ class TDDiamondPackageOfferView: UIView {
   private let offerBackgroundView: UIView = {
     let view = UIView()
     view.cornerRadius = 15
-    view.backgroundColor = Theme.Diamond.OfferCell.notSeleted.offerBackground
+    view.backgroundColor = Style.Diamond.OfferCell.notSeleted.offerBackground
     return view
   }()
   
@@ -60,9 +60,9 @@ class TDDiamondPackageOfferView: UIView {
     super.init(frame: .zero)
     layer.cornerRadius = 15
    
-    backgroundColor = Theme.Views.GameCurrency.textViewBackground
+    backgroundColor = Style.Views.GameCurrency.textViewBackground
     borderWidth = 1.0
-    borderColor = Theme.Cells.KindOfTask.Border
+    borderColor = Style.Cells.KindOfTask.Border
     
     // adding
     addSubviews([offerBackgroundView, priceLabel])
@@ -107,8 +107,8 @@ class TDDiamondPackageOfferView: UIView {
   }
   
   func configureIsSelected(isSelected: Bool) {
-    backgroundColor = isSelected ? Theme.Diamond.OfferCell.selected.background : Theme.Diamond.OfferCell.notSeleted.background
-    offerBackgroundView.backgroundColor = isSelected ? Theme.Diamond.OfferCell.selected.offerBackground : Theme.Diamond.OfferCell.notSeleted.offerBackground
+    backgroundColor = isSelected ? Style.Diamond.OfferCell.selected.background : Style.Diamond.OfferCell.notSeleted.background
+    offerBackgroundView.backgroundColor = isSelected ? Style.Diamond.OfferCell.selected.offerBackground : Style.Diamond.OfferCell.notSeleted.offerBackground
   }
   
   required init?(coder: NSCoder) {

@@ -72,7 +72,7 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
     
     // descriptionTextView
     descriptionTextView.backgroundColor = .clear
-    descriptionTextView.textColor = Theme.Onboarding.Text
+    descriptionTextView.textColor = Style.Onboarding.Text
     descriptionTextView.anchorCenterXToSuperview()
     descriptionTextView.anchor(
       left: contentView.leftAnchor,
@@ -85,7 +85,7 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
     )
    
     // headerLabel
-    headerLabel.textColor = Theme.App.text
+    headerLabel.textColor = Style.App.text
     headerLabel.anchorCenterXToSuperview()
     headerLabel.anchor(
       bottom: descriptionTextView.topAnchor,

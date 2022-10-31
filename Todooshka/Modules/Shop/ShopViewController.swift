@@ -41,7 +41,7 @@ class ShopViewController: TDViewController {
     view.addSubview(collectionView)
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     
     // collectionView
     collectionView.register(ShopCollectionViewCell.self, forCellWithReuseIdentifier: ShopCollectionViewCell.reuseID)

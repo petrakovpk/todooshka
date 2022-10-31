@@ -72,7 +72,7 @@ class CalendarCell: UICollectionViewCell {
     
     // contentView
     contentView.cornerRadius = bounds.width / 2
-    contentView.layer.borderColor = Theme.Cells.Calendar.Border.cgColor
+    contentView.layer.borderColor = Style.Cells.Calendar.Border.cgColor
     
     // dateLabel
     dateLabel.anchorCenterYToSuperview()
@@ -103,14 +103,14 @@ class CalendarCell: UICollectionViewCell {
     
     // contentView
     contentView.borderWidth = date.isInToday ? 1 : 0
-    contentView.backgroundColor = isSelected ? Theme.Cells.Calendar.Selected : UIColor.clear
+    contentView.backgroundColor = isSelected ? Style.Cells.Calendar.Selected : UIColor.clear
     
     // imageView
     imageView.image = getImage(count: completedTasksCount)
     
     // dateLabel
     dateLabel.text = date.day.string
-    dateLabel.textColor = (imageView.image == nil) ? (isSelected ? UIColor.white : Theme.App.text) : Theme.Cells.Calendar.Text
+    dateLabel.textColor = (imageView.image == nil) ? (isSelected ? UIColor.white : Style.App.text) : Style.Cells.Calendar.Text
     
     // stackView
     switch plannedTasksCount {

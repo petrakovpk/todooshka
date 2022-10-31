@@ -34,7 +34,7 @@ class MainTaskListViewController: UIViewController {
     return label
   }()
   
-  private let animationView = AnimationView(name: "task_animation")
+//  private let animationView = AnimationView(name: "task_animation")
   
   private let expandImageView: UIImageView = {
     let imageView = UIImageView()
@@ -54,13 +54,13 @@ class MainTaskListViewController: UIViewController {
   private let alertSubView: UIView = {
     let view = UIView()
     view.cornerRadius = 27
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     return view
   }()
   
   private let alertLabel: UILabel = {
     let label = UILabel(text: "")
-    label.textColor = Theme.App.text
+    label.textColor = Style.App.text
     label.textAlignment = .center
     label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     return label
@@ -69,7 +69,7 @@ class MainTaskListViewController: UIViewController {
   private let alertDeleteButton: UIButton = {
     let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .custom)
-    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
+    button.backgroundColor = Style.Buttons.AlertRoseButton.Background
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button
@@ -79,8 +79,18 @@ class MainTaskListViewController: UIViewController {
     let button = UIButton(type: .custom)
     let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
-    button.setTitleColor(Theme.App.text!.withAlphaComponent(0.5) , for: .normal)
+    button.setTitleColor(Style.App.text!.withAlphaComponent(0.5) , for: .normal)
     return button
+  }()
+  
+  private let dragonBackgroundView = UIView()
+  
+  private let dragonImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.image = UIImage(named: "дракон_главный_экран")
+    imageView.contentMode = .scaleAspectFit
+    imageView.alpha = 0.1
+    return imageView
   }()
   
   private let scene: NestScene? = {
@@ -93,27 +103,27 @@ class MainTaskListViewController: UIViewController {
     let view = SKView(frame: CGRect(
       center: .zero,
       size: CGSize(
-        width: Theme.Scene.width,
-        height: Theme.Scene.height)))
+        width: Style.Scene.width,
+        height: Style.Scene.height)))
     return view
   }()
   
   private let overduedTasksButton: UIButton = {
     let button = UIButton(type: .custom)
-    button.backgroundColor = Theme.Buttons.OverduedOrIdea.Background
+    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
     button.cornerRadius = 15
     button.setTitle("Просрочка", for: .normal)
-    button.setTitleColor(Theme.App.text, for: .normal)
+    button.setTitleColor(Style.App.text, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     return button
   }()
   
   private let ideaTasksButton: UIButton = {
     let button = UIButton(type: .custom)
-    button.backgroundColor = Theme.Buttons.OverduedOrIdea.Background
+    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
     button.cornerRadius = 15
     button.setTitle("Ящик идей", for: .normal)
-    button.setTitleColor(Theme.App.text, for: .normal)
+    button.setTitleColor(Style.App.text, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     return button
   }()
@@ -155,22 +165,18 @@ class MainTaskListViewController: UIViewController {
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
     
     // add
-    view.addSubview(animationView)
-    view.addSubview(overduedTasksButton)
-    view.addSubview(ideaTasksButton)
-    view.addSubview(collectionView)
+    view.addSubviews([
+      dragonBackgroundView,
+      overduedTasksButton,
+      ideaTasksButton,
+      collectionView
+    ])
     
+    dragonBackgroundView.addSubview(dragonImageView)
+
     // view
-    view.backgroundColor = Theme.App.background
-    
-    // animationView
-    animationView.contentMode = .scaleAspectFit
-    animationView.loopMode = .repeat(3.0)
-    animationView.animationSpeed = 1.0
-    animationView.anchorCenterXToSuperview()
-    animationView.anchorCenterYToSuperview()
-    animationView.anchor(heightConstant: Sizes.Views.animationView.height)
-    
+    view.backgroundColor = Style.App.background
+
     // expiredTasksButton
     overduedTasksButton.anchor(top: sceneView.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16, widthConstant: UIScreen.main.bounds.width / 2 - 16 - 8, heightConstant: 40)
     
@@ -184,6 +190,13 @@ class MainTaskListViewController: UIViewController {
     collectionView.backgroundColor = .clear
     collectionView.anchor(top: overduedTasksButton.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
     
+    // dragonBackgroundView
+    dragonBackgroundView.anchor(top: overduedTasksButton.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor)
+    
+    // dragonImageView
+    dragonImageView.anchorCenterXToSuperview()
+    dragonImageView.anchorCenterYToSuperview(constant: -20)
+    dragonImageView.anchor(heightConstant: Sizes.ImageViews.dragonImageView.height)
   }
   
   private func configureAlert() {
@@ -218,7 +231,7 @@ class MainTaskListViewController: UIViewController {
     alertCancelButton.anchorCenterXToSuperview()
   }
   
-  //MARK: - Configure Data Source
+  // MARK: - Configure Data Source
   private func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(
@@ -232,7 +245,7 @@ class MainTaskListViewController: UIViewController {
       })
   }
   
-  //MARK: - Setup CollectionView
+  // MARK: - Setup CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
     return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
       return self.section()
@@ -375,10 +388,12 @@ class MainTaskListViewController: UIViewController {
   var dataSourceBinder: Binder<[TaskListSection]> {
     return Binder(self, binding: { (vc, dataSource) in
       if dataSource.first?.items.count == 0 {
-        vc.animationView.play()
-        vc.animationView.isHidden = false
+        vc.dragonImageView.isHidden = false
+//        vc.animationView.play()
+//        vc.animationView.isHidden = false
       } else {
-        vc.animationView.isHidden = true
+        vc.dragonImageView.isHidden = true
+      //  vc.animationView.isHidden = true
       }
     })
   }
@@ -420,9 +435,9 @@ extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
     configure(action: ideaBoxAction, with: .idea)
     configure(action: completeTaskAction, with: .complete)
     
-    deleteAction.backgroundColor = Theme.App.background
-    ideaBoxAction.backgroundColor = Theme.App.background
-    completeTaskAction.backgroundColor = Theme.App.background
+    deleteAction.backgroundColor = Style.App.background
+    ideaBoxAction.backgroundColor = Style.App.background
+    completeTaskAction.backgroundColor = Style.App.background
     
     return [completeTaskAction, deleteAction, ideaBoxAction]
   }

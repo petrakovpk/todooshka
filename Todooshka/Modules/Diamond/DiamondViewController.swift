@@ -32,7 +32,7 @@ class DiamondViewController: TDViewController {
   private let descriptionBackgroundView: UIView = {
     let view = UIView()
     view.layer.cornerRadius = 15
-    view.backgroundColor = Theme.Views.GameCurrency.textViewBackground
+    view.backgroundColor = Style.Views.GameCurrency.textViewBackground
     return view
   }()
   
@@ -70,13 +70,13 @@ class DiamondViewController: TDViewController {
   private let alertWindowView: UIView = {
     let view = UIView()
     view.cornerRadius = 27
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     return view
   }()
   
   private let alertLabel: UILabel = {
     let label = UILabel(text: "Пока такой возможности нет :(")
-    label.textColor = Theme.App.text
+    label.textColor = Style.App.text
     label.textAlignment = .center
     label.font = UIFont.systemFont(ofSize: min(17.adjustByWidth, 17.adjustByHeight) , weight: .medium)
     return label
@@ -88,7 +88,7 @@ class DiamondViewController: TDViewController {
       attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)]
     )
     let button = UIButton(type: .custom)
-    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
+    button.backgroundColor = Style.Buttons.AlertRoseButton.Background
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button
@@ -105,7 +105,7 @@ class DiamondViewController: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     // titleLabel
-    titleLabel.text = "Бриллианты"
+    titleLabel.text = "Бриллиант"
     
     // adding
     view.addSubviews([

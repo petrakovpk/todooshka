@@ -30,13 +30,13 @@ class UserProfileViewController: TDViewController {
   private let alertWindowView: UIView = {
     let view = UIView()
     view.cornerRadius = 27
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     return view
   }()
   
   private let alertLabel: UILabel = {
     let label = UILabel(text: "Выйти из аккаунта?")
-    label.textColor = Theme.App.text
+    label.textColor = Style.App.text
     label.textAlignment = .center
     label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     return label
@@ -48,7 +48,7 @@ class UserProfileViewController: TDViewController {
       attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)]
     )
     let button = UIButton(type: .custom)
-    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
+    button.backgroundColor = Style.Buttons.AlertRoseButton.Background
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button
@@ -58,7 +58,7 @@ class UserProfileViewController: TDViewController {
     let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .custom)
     button.setAttributedTitle(attrString, for: .normal)
-    button.setTitleColor(Theme.App.text!.withAlphaComponent(0.5) , for: .normal)
+    button.setTitleColor(Style.App.text!.withAlphaComponent(0.5) , for: .normal)
     return button
   }()
   
@@ -81,13 +81,13 @@ class UserProfileViewController: TDViewController {
     
     // tableView
     tableView = UITableView(frame: .zero, style: .plain)
-    tableView.backgroundColor = Theme.App.background
+    tableView.backgroundColor = Style.App.background
     
     // adding
     view.addSubview(tableView)
 
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
 
     // titleLabel
     titleLabel.text = "Настройки и конфеденциальность"

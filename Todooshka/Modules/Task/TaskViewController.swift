@@ -21,12 +21,12 @@ class TaskViewController: TDViewController {
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskSection>!
   
   // MARK: - Task UI Elements
-  private let textLabel: UILabel = {
-    let label = UILabel(text: "Задача")
-    label.font = UIFont.systemFont(ofSize: 15 , weight: .medium)
-    label.textAlignment = .left
-    return label
-  }()
+//  private let textLabel: UILabel = {
+//    let label = UILabel(text: "Задача")
+//    label.font = UIFont.systemFont(ofSize: 15 , weight: .medium)
+//    label.textAlignment = .left
+//    return label
+//  }()
   
   private let textTextField: TDTaskTextField = {
     let field = TDTaskTextField(placeholder: "Введите название задачи")
@@ -44,16 +44,16 @@ class TaskViewController: TDViewController {
   private let kindsOfTaskButton: UIButton = {
     let button = UIButton(type: .system)
     button.setImage(UIImage(named: "settings")?.template , for: .normal)
-    button.tintColor = Theme.Buttons.RoundButton.tint
+    button.tintColor = Style.Buttons.RoundButton.tint
     return button
   }()
   
   private let plannedDateButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitleColor(Theme.App.text, for: .normal)
+    button.setTitleColor(Style.App.text, for: .normal)
     button.cornerRadius = 15
     button.borderWidth = 1.0
-    button.borderColor = Theme.Cells.KindOfTask.Border
+    button.borderColor = Style.Cells.KindOfTask.Border
     return button
   }()
   
@@ -102,7 +102,7 @@ class TaskViewController: TDViewController {
     button.cornerRadius = Sizes.Buttons.alertOkButton.height / 2
     button.setTitle("Да, я молодец :)", for: .normal)
     button.setTitleColor(.white, for: .normal)
-    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
+    button.backgroundColor = Style.Buttons.AlertRoseButton.Background
     button.isHidden = true
     return button
   }()
@@ -121,7 +121,7 @@ class TaskViewController: TDViewController {
     let picker = UIDatePicker()
     picker.datePickerMode = .date
     picker.preferredDatePickerStyle = .inline
-    picker.backgroundColor = Theme.App.background
+    picker.backgroundColor = Style.App.background
     picker.cornerRadius = 15
     picker.isHidden = true
     picker.locale = Locale(identifier: "ru_RU")
@@ -132,7 +132,7 @@ class TaskViewController: TDViewController {
     let button = UIButton(type: .system)
     button.cornerRadius = 12
     button.setTitle("Выбрать", for: .normal)
-    button.setTitleColor(Theme.App.text, for: .normal)
+    button.setTitleColor(Style.App.text, for: .normal)
     button.backgroundColor = Palette.SingleColors.Portage
     button.isHidden = true
     return button
@@ -142,8 +142,8 @@ class TaskViewController: TDViewController {
     let button = UIButton(type: .system)
     button.cornerRadius = 12
     button.setTitle("Отмена", for: .normal)
-    button.setTitleColor(Theme.App.text, for: .normal)
-    button.backgroundColor = Theme.App.background
+    button.setTitleColor(Style.App.text, for: .normal)
+    button.backgroundColor = Style.App.background
     button.isHidden = true
     return button
   }()
@@ -161,12 +161,15 @@ class TaskViewController: TDViewController {
   //MARK: - Configure UI
   private func configureUI() {
     
+    // title
+    titleLabel.text = "Задача"
+    
     // collectionView
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     
     // adding
     view.addSubviews([
-      textLabel,
+//      textLabel,
       textTextField,
       kindOfTaskLabel,
       kindsOfTaskButton,
@@ -181,11 +184,8 @@ class TaskViewController: TDViewController {
     // saveButton
     saveButton.isHidden = false
     
-    // nameLabel
-    textLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16)
-    
     // nameTextField
-    textTextField.anchor(top: textLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant)
+    textTextField.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant)
     
     // kindOfTaskLabel
     kindOfTaskLabel.anchor(top: textTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16)
@@ -203,7 +203,7 @@ class TaskViewController: TDViewController {
       top: kindOfTaskLabel.bottomAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
-      topConstant: 8,
+      topConstant: 12,
       leftConstant: 16,
       heightConstant: Sizes.Views.KindsOfTaskCollectionView.height
     )
@@ -212,7 +212,7 @@ class TaskViewController: TDViewController {
     descriptionLabel.anchor(top: collectionView.bottomAnchor, left: view.leftAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16)
     
     // plannedDateButton
-    plannedDateButton.centerYAnchor.constraint(equalTo: descriptionLabel.centerYAnchor).isActive = true
+    plannedDateButton.centerYAnchor.constraint(equalTo: descriptionLabel.centerYAnchor, constant: 6).isActive = true
     plannedDateButton.anchor(
       right: view.rightAnchor,
       rightConstant: 16,
@@ -225,7 +225,7 @@ class TaskViewController: TDViewController {
       top: descriptionLabel.bottomAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
-      topConstant: 8,
+      topConstant: 12,
       leftConstant: 16,
       bottomConstant: 16,
       rightConstant: 16,
@@ -373,14 +373,14 @@ class TaskViewController: TDViewController {
   
   var clearDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
-      vc.descriptionTextView.textColor = Theme.App.text
+      vc.descriptionTextView.textColor = Style.App.text
       vc.descriptionTextView.clear()
     })
   }
   
   var setDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
-      vc.descriptionTextView.textColor = Theme.App.placeholder
+      vc.descriptionTextView.textColor = Style.App.placeholder
       vc.descriptionTextView.text = "Напишите комментарий"
     })
   }

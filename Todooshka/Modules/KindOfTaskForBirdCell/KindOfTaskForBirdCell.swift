@@ -5,7 +5,6 @@
 //  Created by Петраков Павел Константинович on 19.04.2022.
 //
 
-
 import UIKit
 import Foundation
 
@@ -71,13 +70,13 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     // contentView
     contentView.backgroundColor = .clear
     contentView.borderWidth = 1.0
-    contentView.borderColor = Theme.App.text
+    contentView.borderColor = Style.App.text
 
     // imageView
     imageView.anchorCenterYToSuperview()
     imageView.anchorCenterXToSuperview()
     imageView.image = UIImage(named: "plus")?.template
-    imageView.tintColor = Theme.App.text
+    imageView.tintColor = Style.App.text
     
     // shapeLayer
     shapeLayer.fillColor = nil
@@ -94,10 +93,10 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     
     // contentView
     contentView.borderWidth = 1.0
-    contentView.borderColor = Theme.Cells.KindOfTask.Border
+    contentView.borderColor = Style.Cells.KindOfTask.Border
     
     // shapeLayer
-    shapeLayer.fillColor = isEnabled ? Theme.Cells.KindOfTask.UnselectedBackground?.cgColor : UIColor.systemGray.withAlphaComponent(0.3).cgColor
+    shapeLayer.fillColor = isEnabled ? Style.Cells.KindOfTask.UnselectedBackground?.cgColor : UIColor.systemGray.withAlphaComponent(0.3).cgColor
     
     // imageView
     imageView.anchorCenterXToSuperview()
@@ -108,10 +107,9 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     // textView
     textView.anchor(top: imageView.bottomAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
     textView.text = kindOfTask.text
-    textView.textColor = Theme.App.text
+    textView.textColor = Style.App.text
     
   }
-  
 }
 
 

@@ -67,6 +67,9 @@ enum AppStep: Step {
   // Logout
   case LogoutIsRequired
   
+  // Marketplace
+  case MarketplaceIsRequired
+  
   // NavigateBack
   case NavigateBack
   

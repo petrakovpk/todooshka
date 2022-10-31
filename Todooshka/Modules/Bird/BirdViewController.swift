@@ -23,7 +23,7 @@ class BirdViewController: TDViewController {
   private let changeButton: UIButton = {
     let button = UIButton(type: .system)
     button.setTitle("Изменить", for: .normal)
-    button.setTitleColor(Theme.App.text, for: .normal)
+    button.setTitleColor(Style.App.text, for: .normal)
     button.cornerRadius = 5
     button.backgroundColor = .systemGray.withAlphaComponent(0.3)
     return button
@@ -52,7 +52,7 @@ class BirdViewController: TDViewController {
     let view = UIView()
     view.layer.cornerRadius = 15
     view.layer.borderWidth = 1.0
-    view.layer.borderColor = Theme.App.text?.cgColor
+    view.layer.borderColor = Style.App.text?.cgColor
     return view
   }()
 
@@ -149,7 +149,7 @@ class BirdViewController: TDViewController {
     priceBackgroundView.addSubview(priceLabel)
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     
     // buyAlertView
     alertBuyView.isHidden = true

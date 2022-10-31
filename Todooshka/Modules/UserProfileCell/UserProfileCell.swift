@@ -45,7 +45,7 @@ class UserProfileCell: UITableViewCell {
     contentView.addSubview(rightTextLabel)
     
     // contentView
-    contentView.backgroundColor = Theme.App.background
+    contentView.backgroundColor = Style.App.background
     
     // leftText
     leftTextLabel.anchorCenterYToSuperview()

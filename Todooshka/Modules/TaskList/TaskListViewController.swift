@@ -32,13 +32,13 @@ class TaskListViewController: TDViewController {
   private let alertSubView: UIView = {
     let view = UIView()
     view.cornerRadius = 27
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     return view
   }()
   
   private let alertLabel: UILabel = {
     let label = UILabel(text: "")
-    label.textColor = Theme.App.text
+    label.textColor = Style.App.text
     label.textAlignment = .center
     label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     return label
@@ -47,7 +47,7 @@ class TaskListViewController: TDViewController {
   private let alertDeleteButton: UIButton = {
     let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .custom)
-    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
+    button.backgroundColor = Style.Buttons.AlertRoseButton.Background
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button
@@ -57,7 +57,7 @@ class TaskListViewController: TDViewController {
     let button = UIButton(type: .custom)
     let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
-    button.setTitleColor(Theme.App.text?.withAlphaComponent(0.5) , for: .normal)
+    button.setTitleColor(Style.App.text?.withAlphaComponent(0.5) , for: .normal)
     return button
   }()
   
@@ -78,7 +78,7 @@ class TaskListViewController: TDViewController {
     view.addSubview(collectionView)
     
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     
     // collectionView
     collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
@@ -320,9 +320,9 @@ extension TaskListViewController: SwipeCollectionViewCellDelegate {
     configure(action: ideaBoxAction, with: .idea)
     configure(action: completeTaskAction, with: .complete)
     
-    deleteAction.backgroundColor = Theme.App.background
-    ideaBoxAction.backgroundColor = Theme.App.background
-    completeTaskAction.backgroundColor = Theme.App.background
+    deleteAction.backgroundColor = Style.App.background
+    ideaBoxAction.backgroundColor = Style.App.background
+    completeTaskAction.backgroundColor = Style.App.background
     
     return [completeTaskAction, deleteAction, ideaBoxAction]
   }

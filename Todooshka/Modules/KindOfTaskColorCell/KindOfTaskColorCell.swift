@@ -38,14 +38,14 @@ class KindOfTaskColorCell: UICollectionViewCell {
     
     // iconImageView
     iconImageView.image = icon
-    iconImageView.tintColor = Theme.App.background
+    iconImageView.tintColor = Style.App.background
     iconImageView.anchorCenterXToSuperview()
     iconImageView.anchorCenterYToSuperview()
     
     // shapeLayer
     shapeLayer.lineWidth = 4.0
     shapeLayer.fillColor = UIColor.clear.cgColor
-    shapeLayer.strokeColor = Theme.App.background!.cgColor
+    shapeLayer.strokeColor = Style.App.background!.cgColor
     shapeLayer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: 2.0 * radius, height: 2.0 * radius), cornerRadius: radius).cgPath
     shapeLayer.position = CGPoint(x: contentView.center.x - radius, y: contentView.center.y - radius)
 

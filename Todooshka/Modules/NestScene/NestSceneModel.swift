@@ -78,8 +78,7 @@ class NestSceneModel: Stepper {
   
   // Helpers
   func getBackgroundImage(date: Date) -> UIImage? {
-    let hour = Date().hour
-    switch hour {
+    switch Date().hour {
     case 0...5: return UIImage(named: "ночь01")
     case 6...11: return UIImage(named: "утро01")
     case 12...17: return UIImage(named: "день01")

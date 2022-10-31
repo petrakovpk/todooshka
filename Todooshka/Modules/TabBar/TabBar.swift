@@ -22,12 +22,12 @@ class TabBar: UITabBar {
   override var selectedItem: UITabBarItem? {
     didSet {
       if selectedItem?.tag == 1 {
-        tabBarItem1.tintColor = Theme.TabBar.Selected
-        tabBarItem2.tintColor = Theme.TabBar.Unselected
+        tabBarItem1.tintColor = Style.TabBar.Selected
+        tabBarItem2.tintColor = Style.TabBar.Unselected
       }
       if selectedItem?.tag == 2 {
-        tabBarItem1.tintColor = Theme.TabBar.Unselected
-        tabBarItem2.tintColor = Theme.TabBar.Selected
+        tabBarItem1.tintColor = Style.TabBar.Unselected
+        tabBarItem2.tintColor = Style.TabBar.Selected
       }
     }
   }
@@ -85,8 +85,8 @@ class TabBar: UITabBar {
     gradientLayer.frame = bounds
     gradientLayer.mask = shapeLayer
     gradientLayer.colors = [
-      Theme.TabBar.Background!.cgColor,
-      Theme.TabBar.Background!.withAlphaComponent(0).cgColor
+      Style.TabBar.Background!.cgColor,
+      Style.TabBar.Background!.withAlphaComponent(0).cgColor
     ]
     
     // backgroundLayer
@@ -116,7 +116,7 @@ class TabBar: UITabBar {
     // backgroundLayer
     backgroundLayer.frame = bounds
     backgroundLayer.mask = shapeLayer
-    backgroundLayer.backgroundColor = Theme.TabBar.Background?.cgColor
+    backgroundLayer.backgroundColor = Style.TabBar.Background?.cgColor
     
     if let oldLayer = oldLayer {
       layer.replaceSublayer(oldLayer, with: backgroundLayer)

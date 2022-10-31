@@ -42,8 +42,8 @@ class SupportViewController: TDViewController {
     let textView = UITextView()
     textView.borderWidth = 1.0
     textView.cornerRadius = 13
-    textView.borderColor = Theme.TextFields.AuthTextField.Border
-    textView.backgroundColor = Theme.TextFields.AuthTextField.Background
+    textView.borderColor = Style.TextFields.AuthTextField.Border
+    textView.backgroundColor = Style.TextFields.AuthTextField.Background
     return textView
   }()
   
@@ -134,8 +134,8 @@ class SupportViewController: TDViewController {
   
   var sendButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
-      vc.sendButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
-      vc.sendButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.sendButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
+      vc.sendButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12) , for: .normal)
       vc.sendButton.isEnabled = isEnabled
     })
   }

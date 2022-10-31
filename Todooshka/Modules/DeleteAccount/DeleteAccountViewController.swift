@@ -25,7 +25,7 @@ class DeleteAccountViewController: TDViewController {
     textView.isEditable = false
     textView.isSelectable = false
     textView.cornerRadius = 13
-    textView.backgroundColor = Theme.TextFields.AuthTextField.Background
+    textView.backgroundColor = Style.TextFields.AuthTextField.Background
     textView.centerVerticalText()
     return textView
   }()

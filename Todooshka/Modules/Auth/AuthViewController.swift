@@ -26,7 +26,7 @@ class AuthViewController: UIViewController {
     let label = UILabel()
     label.text = "TODOOSHKA"
     label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
-    label.textColor = Theme.App.text
+    label.textColor = Style.App.text
     return label
   }()
   
@@ -34,7 +34,7 @@ class AuthViewController: UIViewController {
     let label = UILabel()
     label.text = "Войдите в аккаунт"
     label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-    label.textColor = Theme.App.text
+    label.textColor = Style.App.text
     return label
   }()
   
@@ -116,7 +116,7 @@ class AuthViewController: UIViewController {
     view.addSubview(skipButton)
     
     // view
-    view.backgroundColor = Theme.Auth.Background
+    view.backgroundColor = Style.Auth.Background
     
     // headerLabel
     headerLabel.anchor(top: view.topAnchor, topConstant: 84)

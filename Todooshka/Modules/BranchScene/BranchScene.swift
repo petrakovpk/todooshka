@@ -17,8 +17,8 @@ class BranchScene: SKScene {
   // MARK: - UI Nodes
   private let background: SKSpriteNode = {
     let node = SKSpriteNode()
-    node.xScale = Theme.Scene.scale * 1.5
-    node.yScale = Theme.Scene.scale * 1.5
+    node.xScale = Style.Scene.scale * 1.5
+    node.yScale = Style.Scene.scale * 1.5
     node.name = "background"
     return node
   }()

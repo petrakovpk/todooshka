@@ -39,9 +39,10 @@ class OnboardingViewModel: Stepper {
   
   func transform(input: Input) -> Output {
     
-    let onboardingSectionItem1 = OnboardingSectionItem(header: "Добро пожаловать в Тудушку!", description: "Хочешь разложить все дела по полочкам, не откладывая на завтра? \n Мы поможем это сделать сегодня, тебе понравится!", image: UIImage(named: "Onboarding1")!)
-    let onboardingSectionItem2 = OnboardingSectionItem(header: "Календарь", description: "Будь в курсе дел на каждый день, не забывай проверять календарь", image: UIImage(named: "Onboarding2")!)
-    let onboardingSectionItem3 = OnboardingSectionItem(header: "Герой", description: "Награда не заставит себя долго ждать, если ты выполнил поставленные задачи вовремя. Сам себя не похвалишь, зато это сделает Тудушка!", image: UIImage(named: "Onboarding3")!)
+    let onboardingSectionItem1 = OnboardingSectionItem(header: "Добро пожаловать в ДрагоДу!", description: "Хочешь разложить все дела по полочкам, не откладывая на завтра? \n Мы поможем это сделать сегодня, тебе понравится!", image: UIImage(named: "Onboarding1")!)
+    let onboardingSectionItem2 = OnboardingSectionItem(header: "Фабрика птиц", description: "Открывай новых птичек для каждого вида задач, пора пополнить свое гнездышко! Используй перышки и бриллианты, не заставляй Драго ждать.", image: UIImage(named: "Onboarding2")!)
+    let onboardingSectionItem3 = OnboardingSectionItem(header: "Календарь", description: "Будь в курсе дел на каждый день, не забывай проверять календарь", image: UIImage(named: "Onboarding3")!)
+    
     
     let dataSource = Driver<[OnboardingSectionModel]>.just([
       OnboardingSectionModel(items: [onboardingSectionItem1]),

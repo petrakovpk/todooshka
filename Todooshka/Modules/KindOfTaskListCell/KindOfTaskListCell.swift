@@ -82,8 +82,8 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
     // contentView
     contentView.cornerRadius = height / 2
     contentView.layer.borderWidth = 1
-    contentView.layer.borderColor = Theme.Cells.KindOfTask.Border?.cgColor
-    contentView.backgroundColor = Theme.Cells.KindOfTask.UnselectedBackground
+    contentView.layer.borderColor = Style.Cells.KindOfTask.Border?.cgColor
+    contentView.backgroundColor = Style.Cells.KindOfTask.UnselectedBackground
     contentView.layer.masksToBounds = false
     
     // leftImageView
@@ -121,7 +121,7 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
       repeatButton.isHidden = true
       rightImageView.isHidden = false
       rightImageView.image = kindOfTask.isStyleLocked ? UIImage(named: "lockWithRound")?.template : kindOfTask.style.image
-      rightImageView.tintColor = Theme.App.text
+      rightImageView.tintColor = Style.App.text
       
     }
   }

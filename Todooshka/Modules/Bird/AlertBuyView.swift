@@ -33,7 +33,7 @@ class AlertBuyView: UIView {
     let button = UIButton(type: .system)
     let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
-    button.setTitleColor(Theme.App.text?.withAlphaComponent(0.5) , for: .normal)
+    button.setTitleColor(Style.App.text?.withAlphaComponent(0.5) , for: .normal)
     return button
   }()
   
@@ -49,7 +49,7 @@ class AlertBuyView: UIView {
   // MARK: - Private UI Properties
   private let windowView: UIView = {
     let view = UIView()
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     return view
   }()
   
@@ -68,7 +68,7 @@ class AlertBuyView: UIView {
       buyButton
     ])
     
-    backgroundColor = Theme.Views.Alert.Background
+    backgroundColor = Style.Views.Alert.Background
     
     // alertBackgroundView
     windowView.layer.cornerRadius = 15

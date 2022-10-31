@@ -6,7 +6,7 @@
 //
 
 enum EggActionType: Equatable {
-  case Crack(style: Style)
+  case Crack(style: BirdStyle)
   case Hide
   case Init
   case NoCracks

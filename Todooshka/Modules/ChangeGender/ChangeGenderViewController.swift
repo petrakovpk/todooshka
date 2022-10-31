@@ -24,7 +24,7 @@ class ChangeGenderViewController: TDViewController {
   private let textField: UITextField = {
     let textField = UITextField()
     textField.borderWidth = 1.0
-    textField.borderColor = Theme.App.text
+    textField.borderColor = Style.App.text
     textField.cornerRadius = 5
     return textField
   }()
@@ -45,7 +45,7 @@ class ChangeGenderViewController: TDViewController {
     
     // tableView
     tableView = UITableView(frame: .zero, style: .plain)
-    tableView.backgroundColor = Theme.App.background
+    tableView.backgroundColor = Style.App.background
     
     // adding
     view.addSubview(tableView)

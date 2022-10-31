@@ -22,17 +22,17 @@ class SetPhoneViewController: TDViewController {
   // MARK: - UI Elemenets
   private let phoneNumberTextField: TDAuthTextField = {
     let textField = TDAuthTextField(type: .Phone)
-    textField.borderColor = Theme.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Theme.TextFields.SettingsTextField.Tint
+    textField.borderColor = Style.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
+    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
     return textField
   }()
   
   private let OTPCodeTextField: TDAuthTextField = {
     let textField = TDAuthTextField(type: .OTPCode)
-    textField.borderColor = Theme.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Theme.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Theme.TextFields.SettingsTextField.Tint
+    textField.borderColor = Style.TextFields.SettingsTextField.Border
+    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
+    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
     return textField
   }()
   
@@ -175,16 +175,16 @@ class SetPhoneViewController: TDViewController {
   
   var checkOTPCodeButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
-      vc.checkOTPCodeButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
-      vc.checkOTPCodeButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.checkOTPCodeButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
+      vc.checkOTPCodeButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12) , for: .normal)
       vc.checkOTPCodeButton.isEnabled = isEnabled
     })
   }
   
   var sendCodeButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
-      vc.sendOTPCodeButton.backgroundColor = isEnabled ? Theme.Buttons.NextButton.EnabledBackground : Theme.Buttons.NextButton.DisabledBackground
-      vc.sendOTPCodeButton.setTitleColor(isEnabled ? .white : Theme.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.sendOTPCodeButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
+      vc.sendOTPCodeButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12) , for: .normal)
       vc.sendOTPCodeButton.isEnabled = isEnabled
     })
   }

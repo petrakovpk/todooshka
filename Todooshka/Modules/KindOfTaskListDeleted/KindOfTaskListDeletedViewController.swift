@@ -29,7 +29,7 @@ class KindOfTaskListDeletedViewController: TDViewController {
   private let alertDeleteButton: UIButton = {
     let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .system)
-    button.backgroundColor = Theme.Buttons.AlertRoseButton.Background
+    button.backgroundColor = Style.Buttons.AlertRoseButton.Background
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button
@@ -39,7 +39,7 @@ class KindOfTaskListDeletedViewController: TDViewController {
     let button = UIButton(type: .system)
     let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
-    button.setTitleColor(Theme.App.text!.withAlphaComponent(0.5) , for: .normal)
+    button.setTitleColor(Style.App.text!.withAlphaComponent(0.5) , for: .normal)
     return button
   }()
   
@@ -69,7 +69,7 @@ class KindOfTaskListDeletedViewController: TDViewController {
     view.addSubview(collectionView)
 
     // view
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     
     // collectionView
     collectionView.register(KindOfTaskListCell.self, forCellWithReuseIdentifier: KindOfTaskListCell.reuseID)
@@ -93,13 +93,13 @@ class KindOfTaskListDeletedViewController: TDViewController {
     
     // alertWindowView
     alertWindowView.cornerRadius = 27
-    alertWindowView.backgroundColor = Theme.App.background
+    alertWindowView.backgroundColor = Style.App.background
     alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
     
     // alertLabel
-    alertLabel.textColor = Theme.App.text
+    alertLabel.textColor = Style.App.text
     alertLabel.textAlignment = .center
     alertLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     alertLabel.anchorCenterXToSuperview()

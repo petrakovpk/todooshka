@@ -35,14 +35,14 @@ class KindOfTaskListForBirdViewController: TDViewController {
     let button = UIButton(type: .system)
     let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
-    button.setTitleColor(Theme.App.text!.withAlphaComponent(0.5) , for: .normal)
+    button.setTitleColor(Style.App.text!.withAlphaComponent(0.5) , for: .normal)
     return button
   }()
   
   private let alertOkButton: UIButton = {
     let attrString = NSAttributedString(string: "Ok", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .system)
-    button.backgroundColor = Theme.Buttons.AlertGreenButton.Background
+    button.backgroundColor = Style.Buttons.AlertGreenButton.Background
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(.white, for: .normal)
     return button
@@ -51,7 +51,7 @@ class KindOfTaskListForBirdViewController: TDViewController {
   private let alertWindowView: UIView = {
     let view = UIView()
     view.cornerRadius = 27
-    view.backgroundColor = Theme.App.background
+    view.backgroundColor = Style.App.background
     return view
   }()
   
@@ -63,7 +63,7 @@ class KindOfTaskListForBirdViewController: TDViewController {
     textView.isSelectable = false
     textView.textContainer.lineBreakMode = .byWordWrapping
     textView.textAlignment = .center
-    textView.textColor = Theme.App.text
+    textView.textColor = Style.App.text
     return textView
   }()
   

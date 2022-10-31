@@ -49,10 +49,10 @@ class KindOfTaskIconCell: UICollectionViewCell {
       imageView.image = item.icon.image
     }
     
-    shapeLayer.fillColor =   item.isSelected ? Theme.Cells.KindOfTask.SelectedBackground.cgColor : Theme.Cells.KindOfTask.UnselectedBackground?.cgColor
-    shapeLayer.strokeColor = item.isSelected ? nil : Theme.Cells.KindOfTask.Border?.cgColor
+    shapeLayer.fillColor =   item.isSelected ? Style.Cells.KindOfTask.SelectedBackground.cgColor : Style.Cells.KindOfTask.UnselectedBackground?.cgColor
+    shapeLayer.strokeColor = item.isSelected ? nil : Style.Cells.KindOfTask.Border?.cgColor
     shapeLayer.shadowColor = item.isSelected ? Palette.SingleColors.BlueRibbon.cgColor : UIColor.clear.cgColor
-    imageView.tintColor =    item.isSelected ? UIColor.white : Theme.App.text
+    imageView.tintColor =    item.isSelected ? UIColor.white : Style.App.text
     
   }
 }

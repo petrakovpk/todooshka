@@ -6,7 +6,7 @@
 //
 import UIKit
 
-struct Theme {
+struct Style {
   
   struct App {
     static let background = Palette.DualColors.TitanWhite_235_236_255_Haiti_10_12_35
@@ -87,7 +87,7 @@ struct Theme {
     struct AuthDivider {
       static let selected = Palette.SingleColors.BlueRibbon
       static let unselected = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
-      static let selectedText = Theme.App.text
+      static let selectedText = Style.App.text
       static let unselectedText = Palette.DualColors.Wistful_169_171_217_EastBay_81_85_132
     }
     
@@ -109,7 +109,6 @@ struct Theme {
     }
   }
   
-  
   // Diamond
   struct Diamond {
     struct OfferCell {
@@ -127,26 +126,6 @@ struct Theme {
   // Alert
   struct BuyAlertView {
     
-  //
-    
-
-    
-//    struct birdImageView {
-//      static let width = Theme.BuyAlertView.width / 4
-//      static let height = Theme.BuyAlertView.eggImageView.width * 1.3
-//      static let topConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2
-//      static let rightConstant = (Theme.BuyAlertView.width / 2 - Theme.BuyAlertView.eggImageView.width) / 2 + 16
-//    }
-    
-//    struct cancelButton {
-//      static let width = Theme.BuyAlertView.width / 2 - 16 - 8
-//      static let height = 50
-//    }
-//    
-//    struct buyButton {
-//      static let width = Theme.BuyAlertView.width / 2 - 16 - 8
-//      static let height = 50
-//    }
   }
   
   struct Scene {
