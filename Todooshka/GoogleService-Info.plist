@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>422696095896-u0qjfclt9jhhlookg1be9ffv68i7ffgs.apps.googleusercontent.com</string>
+	<string>268120909804-34sf0qvhtsi6ut1a0e3rm9h7mud5prmr.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.422696095896-u0qjfclt9jhhlookg1be9ffv68i7ffgs</string>
+	<string>com.googleusercontent.apps.268120909804-34sf0qvhtsi6ut1a0e3rm9h7mud5prmr</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDOtAHQ2_KpkzfvmxwEmgEhoihO8E_FiSY</string>
+	<string>AIzaSyCvXdziIUK2BTQqM5Zmey_berDT-lFgyb0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>422696095896</string>
+	<string>268120909804</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>Piu.Todooshka</string>
 	<key>PROJECT_ID</key>
-	<string>tudushka-ab3f7</string>
+	<string>todooshka-7a48b</string>
 	<key>STORAGE_BUCKET</key>
-	<string>tudushka-ab3f7.appspot.com</string>
+	<string>todooshka-7a48b.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:422696095896:ios:d4f12e926b5accf4a7c0ed</string>
+	<string>1:268120909804:ios:db891b6706f38cac0942c9</string>
 	<key>DATABASE_URL</key>
-	<string>https://tudushka-ab3f7.firebaseio.com</string>
+	<string>https://todooshka-7a48b-default-rtdb.europe-west1.firebasedatabase.app</string>
 </dict>
 </plist>

@@ -148,8 +148,6 @@
 		9D0A8215290FEB4C006D777C /* ThemeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0A8214290FEB4C006D777C /* ThemeSection.swift */; };
 		9D0A8219290FEC41006D777C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0A8218290FEC41006D777C /* Theme.swift */; };
 		9D0A821B29100871006D777C /* MarketplaceFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0A821A29100871006D777C /* MarketplaceFlow.swift */; };
-		9D0A821D29105891006D777C /* TodooshkaTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = 9D08CDEC290AB79600689427 /* TodooshkaTests.xctest */; };
-		9D0A8220291059FA006D777C /* DragoDo.app in Resources */ = {isa = PBXBuildFile; fileRef = 9DE7C49128E35103001F5C55 /* DragoDo.app */; };
 		9D17D43D2886F3E400D3E304 /* TDDiamondOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D43C2886F3E400D3E304 /* TDDiamondOfferView.swift */; };
 		9D17D43F28881ED400D3E304 /* DiamondPackageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */; };
 		9D17D44128899D4200D3E304 /* CalendarYearCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D44028899D4200D3E304 /* CalendarYearCell.swift */; };
@@ -1383,7 +1381,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D0A8220291059FA006D777C /* DragoDo.app in Resources */,
 				60AE9D722652E5AD00E51531 /* LaunchScreen.storyboard in Resources */,
 				60ABAE1926C072A0000B07C0 /* task_animation.json in Resources */,
 				9D42BFB128C78FE3008F624F /* GoogleService-Info.plist in Resources */,
@@ -1400,7 +1397,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D0A821D29105891006D777C /* TodooshkaTests.xctest in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1842,7 +1838,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.0;
+				MARKETING_VERSION = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Piu.Todooshka;
 				PRODUCT_NAME = DragoDo;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1872,7 +1868,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.0;
+				MARKETING_VERSION = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Piu.Todooshka;
 				PRODUCT_NAME = DragoDo;
 				PROVISIONING_PROFILE_SPECIFIER = "";

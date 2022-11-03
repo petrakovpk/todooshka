@@ -22,7 +22,7 @@ class LoginViewController: UIViewController {
   
   fileprivate let headerLabel: UILabel = {
     let label = UILabel()
-    label.text = "TODOOSHKA"
+    label.text = "DragoDo"
     label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
     label.textColor = Style.App.text
     return label
