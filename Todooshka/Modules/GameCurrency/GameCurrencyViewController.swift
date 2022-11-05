@@ -148,7 +148,7 @@ class ScoreViewController: UIViewController {
 
     // dividerView
     dividerView.backgroundColor = UIColor(named: "navigationDividerViewBackgroundColor")
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,    heightConstant: 1.0)
+    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,     heightConstant: 1.0)
   }
 
   func configureBody() {

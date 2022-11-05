@@ -29,7 +29,7 @@ class TaskListViewModel: Stepper {
   // context
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
   var managedContext: NSManagedObjectContext? { appDelegate?.persistentContainer.viewContext }
-  
+
   // rx
   let services: AppServices
   let steps = PublishRelay<Step>()

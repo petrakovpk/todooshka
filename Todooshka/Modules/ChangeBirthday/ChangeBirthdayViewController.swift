@@ -43,21 +43,38 @@ class ChangeBirthdayViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
+
     // settings
     saveButton.isHidden = false
 
     // adding
-    view.addSubview(label)
-    view.addSubview(picker)
+    view.addSubviews([
+      label,
+      picker
+    ])
 
     //  header
     titleLabel.text = "Дата рождения"
 
     // label
-    label.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 32, leftConstant: 16, rightConstant: 16)
+    label.anchor(
+      top: headerView.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 32,
+      leftConstant: 16,
+      rightConstant: 16
+    )
 
     // picker
-    picker.anchor(left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
+    picker.anchor(
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16
+    )
   }
 
   // MARK: - Bind ViewModel

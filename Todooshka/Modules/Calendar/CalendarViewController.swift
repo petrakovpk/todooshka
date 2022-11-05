@@ -141,7 +141,7 @@ class CalendarViewController: UIViewController {
 
     // sceneView
     sceneView.presentScene(scene)
-    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,    heightConstant: sceneView.frame.height)
+    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,     heightConstant: sceneView.frame.height)
   }
 
   func configureUI() {
