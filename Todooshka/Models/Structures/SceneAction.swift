@@ -6,7 +6,7 @@
 //
 
 struct NestSceneAction: Equatable {
-  
+
   // MARK: - Properties
   let UID: String
   let action: NestSceneActionType
@@ -18,7 +18,7 @@ struct NestSceneAction: Equatable {
 }
 
 struct BranchSceneAction: Equatable {
-  
+
   // MARK: - Properties
   let UID: String
   let action: BranchSceneActionType

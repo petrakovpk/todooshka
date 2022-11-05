@@ -11,7 +11,7 @@ class IndicatorView: UIView {
     var color = UIColor.clear {
         didSet { setNeedsDisplay() }
     }
-    
+
     override func draw(_ rect: CGRect) {
         color.set()
         UIBezierPath(ovalIn: rect).fill()
@@ -20,20 +20,20 @@ class IndicatorView: UIView {
 
 enum ActionDescriptor {
     case idea, trash, complete
-    
+
     func title(forDisplayMode displayMode: ButtonDisplayMode) -> String? {
         guard displayMode != .imageOnly else { return nil }
-        
+
         switch self {
         case .idea: return "Идея"
         case .trash: return "Удалить"
         case .complete: return "Выполнено"
         }
     }
-    
+
     func image(forStyle style: ButtonStyle, displayMode: ButtonDisplayMode, size: CGSize) -> UIImage? {
         guard displayMode != .titleOnly else { return nil }
-        
+
     #if canImport(Combine)
         if #available(iOS 13.0, *) {
             let name: String
@@ -42,7 +42,7 @@ enum ActionDescriptor {
             case .trash: name = "trash"
             case .complete: name = "tick"
             }
-            
+
             if style == .backgroundColor {
                 let config = UIImage.SymbolConfiguration(pointSize: 12, weight: .regular)
                 return UIImage(systemName: name, withConfiguration: config)
@@ -56,7 +56,7 @@ enum ActionDescriptor {
     #endif
        return nil
     }
-    
+
     func color(forStyle style: ButtonStyle) -> UIColor {
         switch self {
         case .idea: return UIColor(red: 1, green: 0.36, blue: 0, alpha: 1)
@@ -64,7 +64,7 @@ enum ActionDescriptor {
         case .complete: return UIColor(red: 0.351, green: 0.85, blue: 0.64, alpha: 1)
         }
     }
-    
+
     func circularIcon(with color: UIColor, size: CGSize, icon: UIImage? = nil) -> UIImage? {
         let rect = CGRect(origin: .zero, size: size)
         UIGraphicsBeginImageContextWithOptions(size, false, 0.0)

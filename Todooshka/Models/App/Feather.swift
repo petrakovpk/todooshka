@@ -14,9 +14,9 @@ struct Feather: IdentifiableType {
   let created: Date
   let taskUID: String
   var isSpent: Bool
-  
+
   var identity: String { UID }
-  
+
   // MARK: - Init
   init(UID: String, created: Date, taskUID: String, isSpent: Bool) {
     self.UID = UID

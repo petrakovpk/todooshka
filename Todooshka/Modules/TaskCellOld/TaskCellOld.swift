@@ -11,9 +11,9 @@ import RxCocoa
 import Foundation
 import SwipeCellKit
 
-//class TaskCell: UICollectionViewCell {
+// class TaskCell: UICollectionViewCell {
 //  
-//  //MARK: - Properties
+// MARK: - Properties
 //  static var reuseID: String = "TaskCell"
 //  var viewModel: TaskCellModel!
 //  var disposeBag = DisposeBag()
@@ -22,7 +22,7 @@ import SwipeCellKit
 //  var oldLineGradientLayer: CAGradientLayer?
 //  var oldTimeLayer: CAGradientLayer?
 //  
-//  //MARK: - UI Elements
+// MARK: - UI Elements
 //  private let taskTypeImageView: UIImageView = {
 //    let imageView = UIImageView()
 //    imageView.contentMode = .scaleAspectFit
@@ -193,7 +193,7 @@ import SwipeCellKit
 //    oldTimeLayer = roundGradintLayer
 //  }
 //  
-//  //MARK: - Configure UI
+// MARK: - Configure UI
 //  func configureUI() {
 //    
 //    // contentView
@@ -294,7 +294,7 @@ import SwipeCellKit
 //    oldLineGradientLayer = lineGradientLayer
 //  }
 //  
-//  //MARK: - Bind
+// MARK: - Bind
 //  func bindViewModel(){
 //    
 //    let input = TaskCellModel.Input(
@@ -362,7 +362,4 @@ import SwipeCellKit
 //    })
 //  }
 //  
-//}
-
-
-
+// }

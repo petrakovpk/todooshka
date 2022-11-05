@@ -11,13 +11,13 @@ import RxCocoa
 import RxDataSources
 
 class ChangePasswordViewController: TDViewController {
-  
+
   // MARK: - Rx
   private let disposeBag = DisposeBag()
-  
+
   // MARK: - MVVM
   public var viewModel: ChangePasswordViewModel!
-  
+
   // MARK: - UI Elemenets
   private let textView: UITextView = {
     let textView = UITextView()
@@ -27,30 +27,30 @@ class ChangePasswordViewController: TDViewController {
     textView.backgroundColor = .clear
     return textView
   }()
-  
+
   private let newPasswordTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .Password)
+    let textField = TDAuthTextField(type: .password)
     textField.borderColor = Style.TextFields.SettingsTextField.Border
     textField.backgroundColor = Style.TextFields.SettingsTextField.Background
     textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
     return textField
   }()
-  
+
   private let repeatNewPasswordTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .RepeatPassword)
+    let textField = TDAuthTextField(type: .repeatPassword)
     textField.borderColor = Style.TextFields.SettingsTextField.Border
     textField.backgroundColor = Style.TextFields.SettingsTextField.Background
     textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
     return textField
   }()
-  
+
   private let setPasswordButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 13
     button.setTitle("Установить пароль", for: .normal)
     return button
   }()
-  
+
   private let errorTextView: UITextView = {
     let textView = UITextView()
     textView.textAlignment = .center
@@ -61,19 +61,19 @@ class ChangePasswordViewController: TDViewController {
     textView.backgroundColor = .clear
     return textView
   }()
-  
+
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
     bindViewModel()
   }
-  
+
   // MARK: - Configure UI
   func configureUI() {
     // settings
     saveButton.isHidden = false
-    
+
     // adding
     view.addSubviews([
       textView,
@@ -82,40 +82,79 @@ class ChangePasswordViewController: TDViewController {
       setPasswordButton,
       errorTextView
     ])
-    
+
     //  header
     titleLabel.text = "Сменить пароль"
-    
+
     // textView
-    textView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 30)
-    
+    textView.anchor(
+      top: headerView.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 30
+    )
+
     // passwordTextField
     newPasswordTextField.becomeFirstResponder()
-    newPasswordTextField.anchor(top: textView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-    
+    newPasswordTextField.anchor(
+      top: textView.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+
     // repeatPasswordTextField
-    repeatNewPasswordTextField.anchor(top: newPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-    
+    repeatNewPasswordTextField.anchor(
+      top: newPasswordTextField.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+
     // setPasswordButton
-    setPasswordButton.anchor(top: repeatNewPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-    
+    setPasswordButton.anchor(
+      top: repeatNewPasswordTextField.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+
     // errorTextView
-    errorTextView.anchor(top: setPasswordButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    errorTextView.anchor(
+      top: setPasswordButton.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
   }
-  
-  
+
   // MARK: - Bind ViewModel
   func bindViewModel() {
-    
+
     let input = ChangePasswordViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       passwordTextFieldText: newPasswordTextField.rx.text.orEmpty.asDriver(),
       repeatPasswordTextFieldText: repeatNewPasswordTextField.rx.text.orEmpty.asDriver(),
       setPasswordButtonClickTrigger: setPasswordButton.rx.tap.asDriver()
     )
-    
+
     let outputs = viewModel.transform(input: input)
-    
+
     [
       outputs.errorText.drive(errorTextView.rx.text),
       outputs.navigateBack.drive(),
@@ -124,15 +163,15 @@ class ChangePasswordViewController: TDViewController {
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
-  
+
   var setPasswordButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
       vc.setPasswordButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
-      vc.setPasswordButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.setPasswordButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.setPasswordButton.isEnabled = isEnabled
     })
   }
-  
+
   var setPasswordBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.newPasswordTextField.clear()

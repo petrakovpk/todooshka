@@ -10,36 +10,126 @@ import Firebase
 import RxDataSources
 import UIKit
 
-struct KindOfTask: IdentifiableType, Equatable  {
+struct KindOfTask: IdentifiableType, Equatable {
 
   // MARK: - Staic
   struct Standart {
-    static let Simple = KindOfTask(UID: "Simple", icon: .Unlimited, isStyleLocked: true, color: Palette.SingleColors.Corduroy , text: "Без типа", index: 0, style: .Simple, lastModified: Date(timeIntervalSince1970: 0))
-    static let Student = KindOfTask(UID: "Student", icon: .Teacher, isStyleLocked: true, color: Palette.SingleColors.PurpleHeart, text: "Учеба", index: 1, style: .Student, lastModified: Date(timeIntervalSince1970: 0))
-    static let Business = KindOfTask(UID: "Business", icon: .Briefcase, isStyleLocked: true, color: Palette.SingleColors.PurpleHeart, text: "Работа", index: 2, style: .Business, lastModified: Date(timeIntervalSince1970: 0))
-    static let Cook = KindOfTask(UID: "Cook", icon: .Profile2user, isStyleLocked: true, color: Palette.SingleColors.Jaffa, text: "Готовка", index: 3, style: .Cook, lastModified: Date(timeIntervalSince1970: 0))
-    static let Home = KindOfTask(UID: "Home", icon: .House, isStyleLocked: false, color: Palette.SingleColors.Cerise, text: "Домашние дела", index: 4, style: .Simple, lastModified: Date(timeIntervalSince1970: 0))
-    static let Kid = KindOfTask(UID: "Kid", icon: .EmojiHappy, isStyleLocked: true, color: Palette.SingleColors.Amethyst, text: "Детишки", index: 5, style: .Kid, lastModified: Date(timeIntervalSince1970: 0))
-    static let Love = KindOfTask(UID: "Love", icon: .Lovely, isStyleLocked: false, color: Palette.SingleColors.Amethyst, text: "Вторая половинка", index: 6, style: .Simple, lastModified: Date(timeIntervalSince1970: 0))
-    static let Pet = KindOfTask(UID: "Pet", icon: .Pet, isStyleLocked: false, color: Palette.SingleColors.BrinkPink, text: "Домашнее животное", index: 7, style: .Simple, lastModified: Date(timeIntervalSince1970: 0))
-    static let Sport = KindOfTask(UID: "Sport", icon: .Dumbbell, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Спорт", index: 8, style: .Sport, lastModified: Date(timeIntervalSince1970: 0))
-    static let Fashion = KindOfTask(UID: "Fashion", icon: .Shop, isStyleLocked: true, color: Palette.SingleColors.BlushPink, text: "Мода", index: 9, style: .Fashion, lastModified: Date(timeIntervalSince1970: 0))
+    static let Simple = KindOfTask(
+      UID: "Simple",
+      icon: .unlimited,
+      isStyleLocked: true,
+      color: Palette.SingleColors.Corduroy,
+      text: "Без типа",
+      index: 0,
+      style: .simple,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
+    static let Student = KindOfTask(
+      UID: "Student",
+      icon: .teacher,
+      isStyleLocked: true,
+      color: Palette.SingleColors.PurpleHeart,
+      text: "Учеба",
+      index: 1,
+      style: .student,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
+    static let Business = KindOfTask(
+      UID: "Business",
+      icon: .briefcase,
+      isStyleLocked: true,
+      color: Palette.SingleColors.PurpleHeart,
+      text: "Работа",
+      index: 2,
+      style: .business,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
+    static let Cook = KindOfTask(
+      UID: "Cook",
+      icon: .profile2user,
+      isStyleLocked: true,
+      color: Palette.SingleColors.Jaffa,
+      text: "Готовка",
+      index: 3,
+      style: .cook,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
+    static let Home = KindOfTask(
+      UID: "Home",
+      icon: .house,
+      isStyleLocked: false,
+      color: Palette.SingleColors.Cerise,
+      text: "Домашние дела",
+      index: 4,
+      style: .simple,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
+    static let Kid = KindOfTask(
+      UID: "Kid",
+      icon: .emojiHappy,
+      isStyleLocked: true,
+      color: Palette.SingleColors.Amethyst,
+      text: "Детишки",
+      index: 5,
+      style: .kid,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
+    static let Love = KindOfTask(
+      UID: "Love",
+      icon: .lovely,
+      isStyleLocked: false,
+      color: Palette.SingleColors.Amethyst,
+      text: "Вторая половинка",
+      index: 6,
+      style: .simple,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
+    static let Pet = KindOfTask(
+      UID: "Pet",
+      icon: .pet,
+      isStyleLocked: false,
+      color: Palette.SingleColors.BrinkPink,
+      text: "Домашнее животное",
+      index: 7,
+      style: .simple,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
+    static let Sport = KindOfTask(
+      UID: "Sport",
+      icon: .dumbbell,
+      isStyleLocked: true,
+      color: Palette.SingleColors.BlushPink,
+      text: "Спорт",
+      index: 8,
+      style: .sport,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
+    static let Fashion = KindOfTask(
+      UID: "Fashion",
+      icon: .shop,
+      isStyleLocked: true,
+      color: Palette.SingleColors.BlushPink,
+      text: "Мода",
+      index: 9,
+      style: .fashion,
+      lastModified: Date(timeIntervalSince1970: 0)
+    )
   }
-  
+
   // MARK: - Identity
   var identity: String { UID }
-  
+
   // MARK: - Properties
   var UID: String { willSet { lastModified = Date()}}
   var color: UIColor { willSet { lastModified = Date()}}
   var icon: Icon { willSet { lastModified = Date()}}
   var index: Int { willSet { lastModified = Date()}}
   var isStyleLocked: Bool = false { willSet { lastModified = Date()}}
-  var status: KindOfTaskStatus = .Active { willSet { lastModified = Date()}}
-  var style: BirdStyle = .Simple { willSet { lastModified = Date()}}
+  var status: KindOfTaskStatus = .active { willSet { lastModified = Date()}}
+  var style: BirdStyle = .simple { willSet { lastModified = Date()}}
   var text: String { willSet { lastModified = Date()}}
-  var userUID: String? = nil
-  
+  var userUID: String?
+
   var lastModified: Date = Date()
 
   // MARK: - Init
@@ -51,7 +141,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
     self.isStyleLocked = isStyleLocked
     self.text = text
   }
-  
+
   init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int, userUID: String?) {
     self.UID = UID
     self.color = color ?? UIColor.systemGray
@@ -61,7 +151,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
     self.text = text
     self.userUID = userUID
   }
-  
+
   init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int, style: BirdStyle) {
     self.UID = UID
     self.color = color ?? UIColor.systemGray
@@ -71,7 +161,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
     self.text = text
     self.style = style
   }
-  
+
   init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int, style: BirdStyle, lastModified: Date) {
     self.UID = UID
     self.color = color ?? UIColor.systemGray
@@ -82,7 +172,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
     self.style = style
     self.lastModified = lastModified
   }
-  
+
   // MARK: - Equatable
   static func == (lhs: KindOfTask, rhs: KindOfTask) -> Bool {
     lhs.UID == rhs.UID
@@ -101,7 +191,7 @@ struct KindOfTask: IdentifiableType, Equatable  {
 // MARK: - Firebase
 extension KindOfTask {
   typealias D = DataSnapshot
-  
+
   var data: [AnyHashable: Any] {
     [
       "colorHexString": color.hexString,
@@ -114,9 +204,9 @@ extension KindOfTask {
       "lastModified": lastModified.timeIntervalSince1970
     ]
   }
-  
+
   init?(snapshot: D) {
-    
+
     // check
     guard let dict = snapshot.value as? NSDictionary,
           let colorHexString = dict.value(forKey: "colorHexString") as? String,
@@ -132,7 +222,7 @@ extension KindOfTask {
           let text = dict.value(forKey: "text") as? String,
           let lastModifiedTimeInterval = dict.value(forKey: "lastModified") as? TimeInterval
     else { return nil }
-    
+
     // init
     self.UID = snapshot.key
     self.color = color
@@ -150,48 +240,57 @@ extension KindOfTask {
 // MARK: - Persistable
 extension KindOfTask: Persistable {
   typealias T = NSManagedObject
-  
+
   static var entityName: String { "KindOfTask" }
-  
+
   static var primaryAttributeName: String { "uid" }
-  
-  init(entity: T) {
-    UID = entity.value(forKey: "uid") as! String
-    index = entity.value(forKey: "index") as! Int
-    isStyleLocked = entity.value(forKey: "isStyleLocked") as! Bool
-    text = entity.value(forKey: "text") as! String
+
+  init?(entity: T) {
+    guard
+      let UID = entity.value(forKey: "uid") as? String,
+      let index = entity.value(forKey: "index") as? Int,
+      let isStyleLocked = entity.value(forKey: "isStyleLocked") as? Bool,
+      let text = entity.value(forKey: "text") as? String,
+      let lastModified = entity.value(forKey: "lastModified") as? Date
+    else { return nil }
+
+    self.UID = UID
+    self.index = index
+    self.isStyleLocked = isStyleLocked
+    self.text = text
+    self.lastModified = lastModified
+
     userUID = entity.value(forKey: "userUID") as? String
-    lastModified = entity.value(forKey: "lastModified") as! Date
-    
+
     // color
     if let colorHexString = entity.value(forKey: "colorHexString") as? String, let color = UIColor(hexString: colorHexString) {
       self.color = color
     } else {
       self.color = UIColor.systemGray
     }
-    
+
     // icon
     if let iconRawValue = entity.value(forKey: "iconRawValue") as? String, let icon = Icon(rawValue: iconRawValue) {
       self.icon = icon
     } else {
-      self.icon = .Unlimited
+      self.icon = .unlimited
     }
-    
+
     // status
     if let statusRawValue = entity.value(forKey: "statusRawValue") as? String, let status = KindOfTaskStatus(rawValue: statusRawValue) {
       self.status = status
     } else {
-      self.status = .Active
+      self.status = .active
     }
-    
+
     // style
     if let styleRawValue = entity.value(forKey: "styleRawValue") as? String, let style = BirdStyle(rawValue: styleRawValue) {
       self.style = style
     } else {
-      self.style = .Simple
+      self.style = .simple
     }
   }
-  
+
   func update(_ entity: T) {
     entity.setValue(UID, forKey: "uid")
     entity.setValue(color.hexString, forKey: "colorHexString")
@@ -204,7 +303,7 @@ extension KindOfTask: Persistable {
     entity.setValue(userUID, forKey: "userUID")
     entity.setValue(lastModified, forKey: "lastModified")
   }
-  
+
   func save(_ entity: T) {
     do {
       try entity.managedObjectContext?.save()

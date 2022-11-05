@@ -12,7 +12,7 @@ import FirebaseDatabase
 public typealias DatabaseReferenceTransactionResult = (committed: Bool, snapshot: DataSnapshot?)
 
 extension Reactive where Base: DatabaseReference {
-  
+
   /**
    * The same as setValue: with an additional priority to be attached to the data being written.
    * Priorities are used to order items.
@@ -25,15 +25,14 @@ extension Reactive where Base: DatabaseReference {
       self.base.setValue(value, andPriority: priority, withCompletionBlock: { (error, ref) in
         if let error = error {
           singleEventListener(.failure(error))
-        }
-        else {
+        } else {
           singleEventListener(.success(ref))
         }
       })
       return Disposables.create()
     })
   }
-  
+
   /**
    * Remove the data at this Firebase Database location. Any data at child locations will also be deleted.
    *
@@ -48,8 +47,7 @@ extension Reactive where Base: DatabaseReference {
       self.base.removeValue(completionBlock: { (error, ref) in
         if let error = error {
           observer.onNext(.failure(error))
-        }
-        else {
+        } else {
           observer.onNext(.success(ref))
           observer.onCompleted()
         }
@@ -57,7 +55,7 @@ extension Reactive where Base: DatabaseReference {
       return Disposables.create()
     }
   }
-  
+
   /**
    * Sets a priority for the data at this Firebase Database location.
    * Priorities can be used to provide a custom ordering for the children at a location
@@ -86,15 +84,14 @@ extension Reactive where Base: DatabaseReference {
       self.base.setPriority(priority, withCompletionBlock: { (error, ref) in
         if let error = error {
           singleEventListener(.failure(error))
-        }
-        else {
+        } else {
           singleEventListener(.success(ref))
         }
       })
       return Disposables.create()
     })
   }
-  
+
   /**
    * Updates the values at the specified paths in the dictionary without overwriting other
    * keys at this location.
@@ -106,8 +103,7 @@ extension Reactive where Base: DatabaseReference {
       self.base.updateChildValues(values, withCompletionBlock: { (error, ref) in
         if let error = error {
           observer.onNext(.failure(error))
-        }
-        else {
+        } else {
           observer.onNext(.success(ref))
           observer.onCompleted()
         }
@@ -115,7 +111,7 @@ extension Reactive where Base: DatabaseReference {
       return Disposables.create()
     }
   }
-  
+
   /**
    * Ensure the data at this location is set to the specified value and priority when
    * the client is disconnected (due to closing the browser, navigating
@@ -129,15 +125,14 @@ extension Reactive where Base: DatabaseReference {
       self.base.onDisconnectSetValue(value, andPriority: priority, withCompletionBlock: { (error, ref) in
         if let error = error {
           singleEventListener(.failure(error))
-        }
-        else {
+        } else {
           singleEventListener(.success(ref))
         }
       })
       return Disposables.create()
     })
   }
-  
+
   /**
    * Ensure the data at this location is removed when
    * the client is disconnected (due to closing the app, navigating
@@ -150,15 +145,14 @@ extension Reactive where Base: DatabaseReference {
       self.base.onDisconnectRemoveValue(completionBlock: { (error, ref) in
         if let error = error {
           singleEventListener(.failure(error))
-        }
-        else {
+        } else {
           singleEventListener(.success(ref))
         }
       })
       return Disposables.create()
     })
   }
-  
+
   /**
    * Ensure the data has the specified child values updated when
    * the client is disconnected (due to closing the browser, navigating
@@ -172,15 +166,14 @@ extension Reactive where Base: DatabaseReference {
       self.base.onDisconnectUpdateChildValues(values, withCompletionBlock: { (error, ref) in
         if let error = error {
           singleEventListener(.failure(error))
-        }
-        else {
+        } else {
           singleEventListener(.success(ref))
         }
       })
       return Disposables.create()
     })
   }
-  
+
   /**
    * Cancel any operations that are set to run on disconnect. If you previously called onDisconnectSetValue:,
    * onDisconnectRemoveValue:, or onDisconnectUpdateChildValues:, and no longer want the values updated when the
@@ -191,15 +184,14 @@ extension Reactive where Base: DatabaseReference {
       self.base.cancelDisconnectOperations(completionBlock: { (error, ref) in
         if let error = error {
           singleEventListener(.failure(error))
-        }
-        else {
+        } else {
           singleEventListener(.success(ref))
         }
       })
       return Disposables.create()
     })
   }
-  
+
   /**
    * Performs an optimistic-concurrency transactional update to the data at this location. Your block will be called with a FIRMutableData
    * instance that contains the current data at this location. Your block should update this data to the value you
@@ -210,33 +202,34 @@ extension Reactive where Base: DatabaseReference {
    *
    * When your block is run, you may decide to abort the transaction by return [FIRTransactionResult abort].
    *
-   * Since your block may be run multiple times, this client could see several immediate states that don't exist on the server. You can suppress those immediate states until the server confirms the final state of the transaction.
+   * Since your block may be run multiple times, this client could see several immediate states that don't exist on the server.
+   * You can suppress those immediate states until the server confirms the final state of the transaction.
    *
    * @param block This block receives the current data at this location and must return an instance of FIRTransactionResult
-   * @param completionBlock This block will be triggered once the transaction is complete, whether it was successful or not. It will indicate if there was an error, whether or not the data was committed, and what the current value of the data at this location is.
+   * @param completionBlock This block will be triggered once the transaction is complete, whether it was successful or not.
+   * It will indicate if there was an error, whether or not the data was committed, and what the current value of the data at this location is.
    * @param localEvents Set this to NO to suppress events raised for intermediate states, and only get events based on the final state of the transaction.
    */
-//  public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult, withLocalEvents: Bool) -> Single<DatabaseReferenceTransactionResult> {
-//    return Single.create(subscribe: { (singleEventListener) -> Disposable in
-//      self.base.runTransactionBlock(block, andCompletionBlock: { (error, committed, snapshot) in
-//        if let error = error {
-//          singleEventListener(.failure(error))
-//        }
-//        else {
-//          singleEventListener(.success(DatabaseReferenceTransactionResult(committed, snapshot)))
-//        }
-//      })
-//      return Disposables.create()
-//    })
-//  }
-  
+  //  public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult, withLocalEvents: Bool) -> Single<DatabaseReferenceTransactionResult> {
+  //    return Single.create(subscribe: { (singleEventListener) -> Disposable in
+  //      self.base.runTransactionBlock(block, andCompletionBlock: { (error, committed, snapshot) in
+  //        if let error = error {
+  //          singleEventListener(.failure(error))
+  //        }
+  //        else {
+  //          singleEventListener(.success(DatabaseReferenceTransactionResult(committed, snapshot)))
+  //        }
+  //      })
+  //      return Disposables.create()
+  //    })
+  //  }
+
   public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult) -> Observable<Result<DatabaseReferenceTransactionResult, Error>> {
     return Observable.create { observer in
       self.base.runTransactionBlock(block, andCompletionBlock: { (error, committed, snapshot) in
         if let error = error {
           observer.onNext(.failure(error))
-        }
-        else {
+        } else {
           observer.onNext(.success(DatabaseReferenceTransactionResult(committed, snapshot)))
           observer.onCompleted()
         }
@@ -244,7 +237,7 @@ extension Reactive where Base: DatabaseReference {
       return Disposables.create()
     }
   }
-  
+
   /**
    * Performs an optimistic-concurrency transactional update to the data at this location. Your block will be called with a FIRMutableData
    * instance that contains the current data at this location. Your block should update this data to the value you
@@ -255,12 +248,14 @@ extension Reactive where Base: DatabaseReference {
    *
    * When your block is run, you may decide to abort the transaction by return [FIRTransactionResult abort].
    *
-   * Since your block may be run multiple times, this client could see several immediate states that don't exist on the server. You can suppress those immediate states until the server confirms the final state of the transaction.
+   * Since your block may be run multiple times, this client could see several immediate states that don't exist on the server.
+   * You can suppress those immediate states until the server confirms the final state of the transaction.
    *
    * @param block This block receives the current data at this location and must return an instance of FIRTransactionResult
-   * @param completionBlock This block will be triggered once the transaction is complete, whether it was successful or not. It will indicate if there was an error, whether or not the data was committed, and what the current value of the data at this location is.
+   * @param completionBlock This block will be triggered once the transaction is complete, whether it was successful or not.
+   * It will indicate if there was an error, whether or not the data was committed, and what the current value of the data at this location is.
    */
-//  public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult) -> Single<DatabaseReferenceTransactionResult> {
-//    return self.runTransactionBlock(block, withLocalEvents: true)
-//  }
+  //  public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult) -> Single<DatabaseReferenceTransactionResult> {
+  //    return self.runTransactionBlock(block, withLocalEvents: true)
+  //  }
 }

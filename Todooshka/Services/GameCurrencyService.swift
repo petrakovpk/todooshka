@@ -9,11 +9,11 @@ import CoreData
 import RxSwift
 import RxCocoa
 //
-//protocol HasGameCurrencyService {
+// protocol HasGameCurrencyService {
 //  var gameCurrencyService: GameCurrencyService { get }
-//}
+// }
 //
-//class GameCurrencyService {
+// class GameCurrencyService {
 //  
 //  // MARK: - Core Data Properties
 //  let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -170,4 +170,4 @@ import RxCocoa
 //      }
 //    }
 //  }
-//}
+// }

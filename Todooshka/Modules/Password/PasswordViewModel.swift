@@ -10,28 +10,28 @@ import RxSwift
 import RxCocoa
 
 class PasswordViewModel: Stepper {
-    
+
     let disposeBag = DisposeBag()
     let steps = PublishRelay<Step>()
     let email: String
-    
+
     private let services: AppServices
-    
-    //MARK: - Inputs
+
+    // MARK: - Inputs
     let passwordTextInput = BehaviorRelay<String>(value: "")
     let repeatPasswordTextInput = BehaviorRelay<String>(value: "")
-    
-    //MARK: - Outputs
+
+    // MARK: - Outputs
     let isNewUser = BehaviorRelay<Bool>(value: false)
     let errorTextOutput = BehaviorRelay<String?>(value: "")
     let isLoadingOutput = BehaviorRelay<Bool>(value: false)
-    
+
     init(services: AppServices, email: String, isNewUser: Bool) {
         self.services = services
         self.email = email
         self.isNewUser.accept(isNewUser)
     }
-    
+
 //    func isPasswordsCorrect() -> Bool {
 //        isLoadingOutput.accept(true)
 //        errorTextOutput.accept("")

@@ -8,21 +8,21 @@ import UIKit
 import Foundation
 
 class KindOfTaskCell: UICollectionViewCell {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   static var reuseID: String = "KindOfTaskCell"
-  
+
   let shapeLayer = CAShapeLayer()
   var oldShapeLayer: CAShapeLayer?
-  
-  //MARK: - UI Elements
+
+  // MARK: - UI Elements
   private let imageView: UIImageView = {
     let imageView = UIImageView()
     imageView.tintColor = .white
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
-  
+
   private let textView: UITextView = {
     let textView = UITextView()
     textView.textAlignment = .center
@@ -32,52 +32,52 @@ class KindOfTaskCell: UICollectionViewCell {
     textView.isUserInteractionEnabled = false
     return textView
   }()
-  
+
   // draw
   override func draw(_ rect: CGRect) {
 
     // adding
     contentView.addSubview(imageView)
     contentView.addSubview(textView)
-    
+
     // contentView
     contentView.cornerRadius = 11
     contentView.clipsToBounds = false
     contentView.layer.masksToBounds = false
-    
+
     // taskTypeImageView
     imageView.anchorCenterXToSuperview()
     imageView.anchorCenterYToSuperview(constant: -1 * contentView.bounds.height / 6)
-    
+
     // taskTypeTextView
     textView.anchor(top: imageView.bottomAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
-    
+
     // shapeLayer
     shapeLayer.frame = bounds
     shapeLayer.lineWidth = 1
     shapeLayer.cornerRadius = 11
     shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 11).cgPath
-    
+
     if let oldShapeLayer = oldShapeLayer {
       contentView.layer.replaceSublayer(oldShapeLayer, with: shapeLayer)
     } else {
       contentView.layer.insertSublayer(shapeLayer, at: 0)
     }
-    
+
     oldShapeLayer = shapeLayer
   }
-  
+
   // MARK: - Configure
   func configure(kindOfTask: KindOfTask, isSelected: Bool) {
 
     // textView
     textView.text = kindOfTask.text
     textView.textColor = isSelected ? .white : Style.App.text
-    
+
     // imageView
     imageView.image = kindOfTask.icon.image
     imageView.tintColor = isSelected ? .white : kindOfTask.color
-    
+
     // shapeLayer
     shapeLayer.borderWidth = isSelected ? 0 : 1
     shapeLayer.borderColor = Style.Cells.KindOfTask.Border?.cgColor
@@ -89,5 +89,3 @@ class KindOfTaskCell: UICollectionViewCell {
     shapeLayer.fillColor = isSelected ? Style.Cells.KindOfTask.SelectedBackground.cgColor : Style.Cells.KindOfTask.UnselectedBackground?.cgColor
   }
 }
-
-

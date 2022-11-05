@@ -6,10 +6,9 @@
 //
 
 enum BirdState: String {
-  case Normal = "статика"
-  case ClosedEyes = "закрытые_глаза"
-  case RaisedWings = "взмах_крыла"
-  case LeftLegForward = "левая_вперед"
-  case RightLegForward = "правая_вперед"
+  case normal = "статика"
+  case closedEyes = "закрытые_глаза"
+  case raisedWings = "взмах_крыла"
+  case leftLegForward = "левая_вперед"
+  case rightLegForward = "правая_вперед"
 }
-

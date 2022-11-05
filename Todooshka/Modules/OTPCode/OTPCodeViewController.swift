@@ -10,13 +10,13 @@ import RxSwift
 import RxCocoa
 
 class OTPCodeViewController: UIViewController {
-    
-    //MARK: - Properties
+
+    // MARK: - Properties
     let disposeBag = DisposeBag()
-    
+
     var viewModel: OTPCodeViewModel!
-    
-    //MARK: - UI Components
+
+    // MARK: - UI Components
     private let appNameLabel: UILabel = {
         let label = UILabel()
         label.text = "Todooshka"
@@ -24,10 +24,10 @@ class OTPCodeViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
-    
+
     private let otpTextField: UITextField = {
         let placeholderString = NSAttributedString(string: "------", attributes: [NSAttributedString.Key.kern: 6.0])
-        
+
         let textField = UITextField()
         textField.layer.borderWidth = 0.5
         textField.layer.borderColor = UIColor.lightGray.cgColor
@@ -41,54 +41,54 @@ class OTPCodeViewController: UIViewController {
         textField.becomeFirstResponder()
         return textField
     }()
-    
+
     private let otpLabel: UILabel = {
         let label = UILabel()
         label.text = "Введите 6-значный код из SMS"
         label.textAlignment = .center
         return label
     }()
-    
+
     private let errorLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .light)
         label.textAlignment = .center
         return label
     }()
-    
+
     let rightBarButtonItem = UIBarButtonItem(title: "Next", style: .plain, target: self, action: nil)
-    
+
     override func viewDidLoad() {
         configureUI()
      //   setViewColor()
       //  setTextColor()
     }
-    
+
     func configureUI() {
-        
+
         navigationItem.rightBarButtonItem = rightBarButtonItem
         navigationItem.rightBarButtonItem?.setTitleTextAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .bold) ], for: .normal)
-        
+
         view.addSubview(appNameLabel)
-        appNameLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor,  right: view.rightAnchor, topConstant: 75, leftConstant: 16,  rightConstant: 16)
-        
+        appNameLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor,    right: view.rightAnchor, topConstant: 75, leftConstant: 16,    rightConstant: 16)
+
         view.addSubview(otpLabel)
-        otpLabel.anchor(top: appNameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16,  rightConstant: 16)
-        
+        otpLabel.anchor(top: appNameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16,    rightConstant: 16)
+
         view.addSubview(otpTextField)
         otpTextField.anchorCenterXToSuperview()
-        otpTextField.anchor(top: appNameLabel.bottomAnchor,  topConstant: 64, leftConstant: 16, rightConstant: 16, widthConstant: 150, heightConstant: 50)
-                
+        otpTextField.anchor(top: appNameLabel.bottomAnchor,    topConstant: 64, leftConstant: 16, rightConstant: 16, widthConstant: 150, heightConstant: 50)
+
         view.addSubview(errorLabel)
-        errorLabel.anchor(top: otpTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16,  rightConstant: 16)
+        errorLabel.anchor(top: otpTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16,    rightConstant: 16)
     }
-    
-    func setLoadingMode(isLoading:Bool) {
+
+    func setLoadingMode(isLoading: Bool) {
         otpTextField.isEnabled = !isLoading
         navigationItem.rightBarButtonItem?.isEnabled = !isLoading
         if !isLoading { otpTextField.becomeFirstResponder() }
     }
-    
+
     func bindTo(with viewModel: OTPCodeViewModel) {
 //        self.viewModel = viewModel
 //        
@@ -107,8 +107,8 @@ class OTPCodeViewController: UIViewController {
     }
 }
 
-//MARK: - TDConfigureColorProtocol
-//extension OTPCodeViewController: TDConfigureColorProtocol {
+// MARK: - TDConfigureColorProtocol
+// extension OTPCodeViewController: TDConfigureColorProtocol {
 //    func setViewColor() {
 //        view.backgroundColor = TDStyle.Colors.backgroundColor
 //    }
@@ -116,4 +116,4 @@ class OTPCodeViewController: UIViewController {
 //    func setTextColor() {
 //        errorLabel.textColor = UIColor.systemRed
 //    }
-//}
+// }

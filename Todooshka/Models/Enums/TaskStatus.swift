@@ -7,11 +7,11 @@
 
 import Foundation
 
-enum TaskStatus:String {
-  case Archive = "Archive"
-  case Completed = "Completed"
-  case Deleted = "Deleted"
-  case Idea = "Idea"
-  case InProgress = "InProgress"
-  case Planned = "Planned"
+enum TaskStatus: String {
+  case archive = "Archive"
+  case completed = "Completed"
+  case deleted = "Deleted"
+  case idea = "Idea"
+  case inProgress = "InProgress"
+  case planned = "Planned"
 }

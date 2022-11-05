@@ -6,10 +6,10 @@
 //
 //
 
-//import Foundation
-//import CoreData
+// import Foundation
+// import CoreData
 //
-//@objc(GameCurrencyCoreData)
-//public class GameCurrencyCoreData: NSManagedObject {
+// @objc(GameCurrencyCoreData)
+// public class GameCurrencyCoreData: NSManagedObject {
 //
-//}
+// }

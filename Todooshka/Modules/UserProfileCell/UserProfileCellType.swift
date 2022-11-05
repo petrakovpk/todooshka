@@ -6,12 +6,12 @@
 //
 
 enum UserProfileCellType: String {
-  case Birthday
-  case Email
-  case Gender
-  case LogOut
-  case Name
-  case Password
-  case Phone
-  case RemoveAccount
+  case birthday
+  case email
+  case gender
+  case logOut
+  case name
+  case password
+  case phone
+  case removeAccount
 }

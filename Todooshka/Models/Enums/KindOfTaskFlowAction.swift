@@ -11,4 +11,3 @@ enum KindOfTaskFlowAction {
   case create
   case show(kindOfTask: KindOfTask)
 }
-

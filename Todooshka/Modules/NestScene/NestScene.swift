@@ -9,11 +9,11 @@ import UIKit
 import SpriteKit
 
 class NestScene: SKScene {
-  
+
   // MARK: - Private
-  private var actions: [EggActionType] = [.Init, .Init, .Init, .Init, .Init, .Init, .Init]
+  private var actions: [EggActionType] = [.create, .create, .create, .create, .create, .create, .create]
   private var SKEggNodes: [SKEggNode] = []
-  
+
   // MARK: - UI Nodes
   private let background: SKSpriteNode = {
     let node = SKSpriteNode()
@@ -22,7 +22,7 @@ class NestScene: SKScene {
     node.name = "background"
     return node
   }()
-  
+
   private let backgroundBottom: SKSpriteNode = {
     let node = SKSpriteNode()
     let texture = SKTexture(image: UIImage(named: "корзина_низ") ?? UIImage())
@@ -38,19 +38,19 @@ class NestScene: SKScene {
   // MARK: - Lifecycle
   override func didMove(to view: SKView) {
     if let scene = scene {
-      
+
       // scene
       scene.size = view.size
       scene.backgroundColor = .clear
-      
+
       // adding
       addChild(background)
       addChild(backgroundBottom)
-      
+
       // background
       background.position = CGPoint(x: position.x + 40, y: position.y)
       backgroundBottom.position = background.position
-      
+
       // nodes
       SKEggNodes = [
         SKEggNode(level: 1),
@@ -61,65 +61,67 @@ class NestScene: SKScene {
         SKEggNode(level: 6),
         SKEggNode(level: 7)
       ]
-      
+
       for node in SKEggNodes {
         addChild(node)
         node.position = Settings.Eggs.NestPosition[node.level] ?? .zero
       }
     }
   }
-  
+
   // MARK: - Setup
   func setup(withBackground image: UIImage) {
     let texture = SKTexture(image: image)
     let action = SKAction.setTexture(texture, resize: false)
     background.run(action)
   }
-  
+
   func setup(with actions: [EggActionType]) {
     self.actions = actions
   }
-  
+
   // MARK: - DataSource
   func reloadData() {
-    
+
     for (index, node) in SKEggNodes.enumerated() {
-      
-      guard let action = actions[safe: index],
-            action != node.action else { continue }
-            
+
+      guard
+        let action = actions[safe: index],
+        action != node.action
+      else { continue }
+
       switch (node.action, action) {
-      case (.Init, .NoCracks):
-        node.show(state: .NoCracks, withAnimation: false , completion: nil)
+      case (.create, .noCracks):
+        node.show(state: .noCracks, withAnimation: false, completion: nil)
         node.action = action
         continue
 
-      case (.Init, .Crack(let style)):
-        node.show(state: .Crack(style: style), withAnimation: false, completion: nil)
+      case (.create, .crack(let style)):
+        node.show(state: .crack(style: style), withAnimation: false, completion: nil)
         node.action = action
         continue
 
-      case (.Hide, .NoCracks):
-        node.show(state: .NoCracks, withAnimation: true , completion: nil)
+      case (.hide, .noCracks):
+        node.show(state: .noCracks, withAnimation: true, completion: nil)
         node.action = action
         continue
 
-      case (.Hide, .Crack(let style)):
-        node.show(state: .Crack(style: style), withAnimation: true, completion: nil)
+      case (.hide, .crack(let style)):
+        node.show(state: .crack(style: style), withAnimation: true, completion: nil)
         node.action = action
         continue
 
-      case (.Crack(_), .NoCracks):
+      case (.crack, .noCracks):
         node.repair()
         node.action = action
         continue
 
-      case (.NoCracks, .Crack(let style)):
+      case (.noCracks, .crack(let style)):
         node.crack(completion: { self.hatch(level: node.level, style: style) })
         node.action = action
         continue
 
-      case (_, .Hide):
+      case (_, .hide):
         node.hide()
         node.action = action
         continue
@@ -129,7 +131,7 @@ class NestScene: SKScene {
       }
     }
   }
-  
+
   func hatch(level: Int, style: BirdStyle) {
 
     let node = SKBirdNode(level: level, style: style)
@@ -140,10 +142,9 @@ class NestScene: SKScene {
 
     // node
    // node.position = node.nestPosition
-    node.runFromNest() {
+    node.runFromNest {
      node.removeFromParent()
     }
   }
-  
 
 }

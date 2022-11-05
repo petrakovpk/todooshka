@@ -9,29 +9,29 @@ import UIKit
 import RxDataSources
 
 struct OnboardingSectionItem: IdentifiableType, Equatable {
-    
-    //MARK: - Properties
+
+    // MARK: - Properties
     var header: String
     var description: String
     var image: UIImage
-    
-    //MARK: - Identity
+
+    // MARK: - Identity
     var identity: String { return UUID().uuidString }
 }
 
 struct OnboardingSectionModel: AnimatableSectionModelType {
-    
-    //MARK: - Identity
+
+    // MARK: - Identity
     var identity: String { return UUID().uuidString }
-    
-    //MARK: - Properties
+
+    // MARK: - Properties
     var items: [OnboardingSectionItem]
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(items: [OnboardingSectionItem]) {
         self.items = items
     }
-    
+
     init(original: OnboardingSectionModel, items: [OnboardingSectionItem]) {
         self = original
         self.items = items

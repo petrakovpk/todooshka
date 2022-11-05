@@ -15,5 +15,5 @@ protocol HasCoreDataService {
 }
 
 class CoreDataService {
-  
+
 }

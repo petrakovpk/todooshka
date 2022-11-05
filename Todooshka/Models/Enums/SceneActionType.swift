@@ -7,29 +7,25 @@
 
 import Foundation
 
-//enum AddingEggType: Equatable {
-//  case Cracked
-//  case NotCracked
-//}
-
 enum RemovingEggType {
-  case Broken
-  case New
+  case broken
+  case new
 }
 
 enum BirdMovement {
-  case Running, Sitting
+  case running
+  case sitting
 }
 
 // Экран с задачами
 enum NestSceneActionType {
-  case Add(state: EggActionType)
-  case Hatch(typeUID: String)
-  case Remove(removingEggType: RemovingEggType)
+  case add(state: EggActionType)
+  case hatch(typeUID: String)
+  case remove(removingEggType: RemovingEggType)
 }
 
 // Экран с календарем
 enum BranchSceneActionType {
-  case Add(movement: BirdMovement, birds: [Bird], typeUID: String, withDelay: Bool)
-  case RemoveAllBirds
+  case add(movement: BirdMovement, birds: [Bird], typeUID: String, withDelay: Bool)
+  case removeAllBirds
 }

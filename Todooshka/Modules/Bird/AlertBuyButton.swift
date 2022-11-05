@@ -8,7 +8,7 @@
 import UIKit
 
 class AlertBuyButton: UIButton {
-  
+
   override var isEnabled: Bool {
     didSet {
       backgroundColor = isEnabled ? Palette.SingleColors.Cerise : Palette.SingleColors.SantasGray

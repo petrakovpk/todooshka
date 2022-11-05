@@ -9,7 +9,7 @@ import FirebaseAuth
 import RxSwift
 
 extension Reactive where Base: User {
-    
+
     /**
      @brief Updates the email address for the user. On success, the cached user profile data is
      updated.
@@ -51,7 +51,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Updates the password for the user. On success, the cached user profile data is updated.
      
@@ -73,7 +73,7 @@ extension Reactive where Base: User {
      
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all FIRUser methods.
      */
-    public func updatePassword(to password: String) -> Observable<Result<Void,Error>> {
+    public func updatePassword(to password: String) -> Observable<Result<Void, Error>> {
         return Observable.create { observer in
             self.base.updatePassword(to: password) { error in
                 guard let error = error else {
@@ -86,7 +86,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     #if os(iOS)
     /**
      @brief Updates the phone number for the user. On success, the cached user profile data is
@@ -121,7 +121,7 @@ extension Reactive where Base: User {
         }
     }
     #endif
-    
+
     /**
      @brief Reloads the user's profile data from the server.
      
@@ -134,7 +134,7 @@ extension Reactive where Base: User {
      
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all API methods.
      */
-    public func reload() -> Observable<Result<Void,Error>> {
+    public func reload() -> Observable<Result<Void, Error>> {
         return Observable.create { observer in
             self.base.reload { error in
                 guard let error = error else {
@@ -147,7 +147,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Renews the user's authentication tokens by validating a fresh set of credentials supplied
      by the user  and returns additional identity provider data.
@@ -197,7 +197,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Retrieves the Firebase authentication token, possibly refreshing it if it has expired.
      
@@ -219,7 +219,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Retrieves the Firebase authentication token, possibly refreshing it if it has expired.
      
@@ -246,7 +246,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Retrieves the Firebase authentication token, possibly refreshing it if it has expired.
      
@@ -268,7 +268,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /** @fn getIDTokenForcingRefresh:completion:
      @brief Retrieves the Firebase authentication token, possibly refreshing it if it has expired.
      
@@ -295,7 +295,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Associates a user account from a third-party identity provider with this user and
      returns additional identity provider data.
@@ -333,7 +333,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Disassociates a user account from a third-party identity provider with this user.
      
@@ -365,7 +365,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Initiates email verification for the user.
      
@@ -384,7 +384,7 @@ extension Reactive where Base: User {
      
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all FIRUser methods.
      */
-    public func sendEmailVerification() -> Observable<Result<Void,Error>> {
+    public func sendEmailVerification() -> Observable<Result<Void, Error>> {
         return Observable.create { observer in
             self.base.sendEmailVerification { error in
                 guard let error = error else {
@@ -397,7 +397,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Initiates email verification for the user.
      
@@ -435,7 +435,7 @@ extension Reactive where Base: User {
             return Disposables.create()
         }
     }
-    
+
     /**
      @brief Deletes the user account (also signs out the user, if this was the current user).
      
@@ -452,7 +452,7 @@ extension Reactive where Base: User {
      @remarks See `FIRAuthErrors` for a list of error codes that are common to all FIRUser methods.
      
      */
-    public func delete() -> Observable<Result<Void,Error>> {
+    public func delete() -> Observable<Result<Void, Error>> {
         return Observable.create { observer in
             self.base.delete { error in
                 guard let error = error else {

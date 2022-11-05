@@ -19,19 +19,19 @@ struct TypeAttr {
 }
 
 class KindOfTaskViewModel: Stepper {
-  
-  //MARK: - Properties
-  let appDelegate = UIApplication.shared.delegate as! AppDelegate
-  var managedContext: NSManagedObjectContext { self.appDelegate.persistentContainer.viewContext }
-  
+
+  // MARK: - Properties
+  let appDelegate = UIApplication.shared.delegate as? AppDelegate
+  var managedContext: NSManagedObjectContext? { self.appDelegate?.persistentContainer.viewContext }
+
   let disposeBag = DisposeBag()
   let services: AppServices
   let steps = PublishRelay<Step>()
-  
+
   var kindOfTaskUID: String
   let selectedColor = BehaviorRelay<UIColor?>(value: nil)
   let selectedIcon = BehaviorRelay<Icon?>(value: nil)
-  
+
   // MARK: - Input
   struct Input {
     let backButtonClickTrigger: Driver<Void>
@@ -40,81 +40,81 @@ class KindOfTaskViewModel: Stepper {
     let selectionIcon: Driver<IndexPath>
     let text: Driver<String>
   }
-  
+
   struct Output {
     let dataSourceColor: Driver<[KindOfTaskColorSection]>
     let dataSourceIcon: Driver<[KindOfTaskIconSection]>
     let navigateBack: Driver<Void>
     let save: Driver<Result<Void, Error>>
-    let selectColor:  Driver<UIColor>
+    let selectColor: Driver<UIColor>
     let selectIcon: Driver<UIImage>
     let text: Driver<String>
     let textLen: Driver<String>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices, kindOfTaskUID: String) {
     self.services = services
     self.kindOfTaskUID = kindOfTaskUID
   }
-  
-  //MARK: - Transform
+
+  // MARK: - Transform
   func transform(input: Input) -> Output {
-    
+
     let colors = services.dataService.colors
     let icons = services.dataService.icons
-    
+
     let selectedColor = selectedColor.asDriver()
     let selectedIcon = selectedIcon.asDriver()
-    
+
     let kindsOfTask = services.dataService.kindsOfTask
-     
+
     let kindOfTask = kindsOfTask
-      .compactMap{ $0.first(where: { $0.UID == self.kindOfTaskUID } ) }
-    
+      .compactMap { $0.first(where: { $0.UID == self.kindOfTaskUID }) }
+
     let isStyleLocked = kindOfTask
-      .map{ $0.isStyleLocked }
+      .map { $0.isStyleLocked }
       .startWith(false)
-    
+
     let kindOfTaskText = kindOfTask
-      .map{ $0.text }
-    
+      .map { $0.text }
+
     let kindOfTaskColor = kindOfTask
-      .map{ $0.color }
-    
+      .map { $0.color }
+
     let kindOfTaskIcon = kindOfTask
-      .map{ $0.icon }
-    
+      .map { $0.icon }
+
     let kindOfTaskStartIndex = kindsOfTask
-      .map{ $0.count + 1 }
-    
+      .map { $0.count + 1 }
+
     let kindOfTaskExistIndex = kindOfTask
-      .map{ $0.index }
-      
+      .map { $0.index }
+
     let kindOfTaskIndex = Driver
       .of(kindOfTaskStartIndex, kindOfTaskExistIndex)
       .merge()
-    
+
     let text = Driver
       .of(
         kindOfTaskText,
-        input.text.map{ $0.prefix(18) }.map{ String($0) }
+        input.text.map { $0.prefix(18) }.map { String($0) }
       ).merge()
-    
+
     let textLen = text
-      .map{ $0.count.string + "\\18" }
-    
+      .map { $0.count.string + "\\18" }
+
     // COLORS
     let dataSourceColors = Driver
       .combineLatest(colors, selectedColor) { colors, color -> [KindOfTaskColorSection] in
         [
           KindOfTaskColorSection(
             header: "",
-            items: colors.map{ KindOfTaskColorItem(color: $0, isSelected: $0.hexString == color?.hexString) }
+            items: colors.map { KindOfTaskColorItem(color: $0, isSelected: $0.hexString == color?.hexString) }
           )
         ]
       }
-    
+
     let selectColor = Driver.of(
       kindOfTaskColor,
       input.selectionColor.withLatestFrom(dataSourceColors) { indexPath, dataSource -> UIColor in
@@ -123,18 +123,18 @@ class KindOfTaskViewModel: Stepper {
     )
       .merge()
       .do { self.selectedColor.accept($0) }
-    
+
     // ICONS
     let dataSourceIcons = Driver
       .combineLatest(icons, selectedIcon) { icons, icon -> [KindOfTaskIconSection] in
         [
           KindOfTaskIconSection(
             header: "",
-            items: icons.map{ KindOfTaskIconItem(icon: $0, isSelected: $0.rawValue == icon?.rawValue) }
+            items: icons.map { KindOfTaskIconItem(icon: $0, isSelected: $0.rawValue == icon?.rawValue) }
           )
         ]
       }
-    
+
     let selectIcon = Driver.of(
       kindOfTaskIcon,
       input.selectionIcon.withLatestFrom(dataSourceIcons) { indexPath, dataSource -> Icon in
@@ -142,13 +142,19 @@ class KindOfTaskViewModel: Stepper {
       }
     )
       .merge()
-      .do{ self.selectedIcon.accept($0) }
-    
+      .do { self.selectedIcon.accept($0) }
+
     let selectImage = selectIcon
-      .map{ $0.image }
-    
+      .map { $0.image }
+
     let kindOfTaskAttr = Driver
-      .combineLatest(selectedColor.compactMap{ $0 }, selectedIcon.compactMap{ $0 }, text, kindOfTaskIndex, isStyleLocked) { color, icon, text, index, isStyleLocked -> KindOfTask in
+      .combineLatest(
+        selectedColor.compactMap { $0 },
+        selectedIcon.compactMap { $0 },
+        text,
+        kindOfTaskIndex,
+        isStyleLocked
+      ) { color, icon, text, index, isStyleLocked -> KindOfTask in
         KindOfTask(
           UID: self.kindOfTaskUID,
           icon: icon,
@@ -163,15 +169,15 @@ class KindOfTaskViewModel: Stepper {
     let save = input.saveButtonClickTrigger
       .withLatestFrom(kindOfTaskAttr) { $1 }
       .asObservable()
-      .flatMapLatest({ self.managedContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     // backButtonClick
     let navigateBack = Driver
       .of(input.backButtonClickTrigger, input.saveButtonClickTrigger)
       .merge()
-      .map { self.steps.accept(AppStep.NavigateBack) }
-    
+      .map { self.steps.accept(AppStep.navigateBack) }
+
     return Output(
       dataSourceColor: dataSourceColors,
       dataSourceIcon: dataSourceIcons,
@@ -183,6 +189,5 @@ class KindOfTaskViewModel: Stepper {
       textLen: textLen
     )
   }
-  
-  
+
 }

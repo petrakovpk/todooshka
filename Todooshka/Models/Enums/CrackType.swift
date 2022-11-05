@@ -6,19 +6,19 @@
 //
 
 enum CrackType: String {
-  
-  case NoCrack = "NoCrack"
-  case OneCrack = "OneCrack"
-  case ThreeCracks = "ThreeCracks"
-  
+
+  case noCrack = "noCrack"
+  case oneCrack = "oneCrack"
+  case threeCracks = "threeCracks"
+
   // imageName
   var stringForImage: String {
     switch self {
-    case .NoCrack:
+    case .noCrack:
       return "без_трещин"
-    case .OneCrack:
+    case .oneCrack:
       return "одна_трещина"
-    case .ThreeCracks:
+    case .threeCracks:
       return "три_трещины"
     }
   }

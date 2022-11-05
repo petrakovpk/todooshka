@@ -13,28 +13,28 @@ import RxDataSources
 import SwipeCellKit
 
 class KindOfTaskListViewController: TDViewController {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   let disposeBag = DisposeBag()
-  
+
   var collectionView: UICollectionView!
   var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>!
   var viewModel: KindOfTaskListViewModel!
-  
+
   let itemMoved = BehaviorRelay<ItemMovedEvent?>(value: nil)
-  
-  //MARK: - UI Elements
+
+  // MARK: - UI Elements
   private let descriptionLabel = UILabel()
- 
+
   private let alertBackgroundView: UIView = {
     let view = UIView()
     view.backgroundColor = .black.withAlphaComponent(0.5)
     view.isHidden = true
     return view
   }()
-  
+
   private let alertLabel = UILabel()
-  
+
   private let deleteAlertButton: UIButton = {
     let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .custom)
@@ -43,18 +43,18 @@ class KindOfTaskListViewController: TDViewController {
     button.setTitleColor(.white, for: .normal)
     return button
   }()
-  
+
   private let cancelAlertButton: UIButton = {
     let button = UIButton(type: .custom)
     let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
-    button.setTitleColor(Style.App.text!.withAlphaComponent(0.5) , for: .normal)
+    button.setTitleColor(Style.App.text!.withAlphaComponent(0.5), for: .normal)
     return button
   }()
 
   private let alertWindowView = UIView()
-  
-  //MARK: - Lifecycle
+
+  // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
@@ -63,57 +63,73 @@ class KindOfTaskListViewController: TDViewController {
     bindViewModel()
   }
 
-  //MARK: - Configure UI
+  // MARK: - Configure UI
   func configureUI() {
-    
+
     // settings
     addButton.isHidden = false
-    
+
     // collectionView
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
-    
+
     // adding
     view.addSubview(descriptionLabel)
     view.addSubview(collectionView)
-    
+
     // view
     view.backgroundColor = Style.App.background
-    
+
     // descriptionLabel
     descriptionLabel.text = "Перетащите типы в нужном порядке:"
     descriptionLabel.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     descriptionLabel.textColor = Style.App.text
     descriptionLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, topConstant: 25, leftConstant: 16)
-    
+
     // collectionView
     collectionView.backgroundColor = .clear
     collectionView.dragInteractionEnabled = true
     collectionView.dragDelegate = self
     collectionView.dropDelegate = self
-    collectionView.register(KindOfTaskListCell.self, forCellWithReuseIdentifier: KindOfTaskListCell.reuseID)
-    collectionView.register(KindOfTaskListReusableCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: KindOfTaskListReusableCell.reuseID)
-    collectionView.anchor(top: descriptionLabel.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
+    collectionView.register(
+      KindOfTaskListCell.self,
+      forCellWithReuseIdentifier: KindOfTaskListCell.reuseID
+    )
+    collectionView.register(
+      KindOfTaskListReusableCell.self,
+      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+      withReuseIdentifier: KindOfTaskListReusableCell.reuseID
+    )
+    collectionView.anchor(
+      top: descriptionLabel.bottomAnchor,
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16
+    )
   }
-  
+
   private func configureAlert() {
-    
+
     // adding
     view.addSubview(alertBackgroundView)
     alertBackgroundView.addSubview(alertWindowView)
     alertWindowView.addSubview(alertLabel)
     alertWindowView.addSubview(deleteAlertButton)
     alertWindowView.addSubview(cancelAlertButton)
-    
+
     // alertBackgroundView
     alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
-    
+
     // alertWindowView
     alertWindowView.cornerRadius = 27
     alertWindowView.backgroundColor = Style.App.background
     alertWindowView.anchor(widthConstant: 287, heightConstant: 171)
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
-    
+
     // alertLabel
     alertLabel.text = "Удалить тип?"
     alertLabel.textColor = Style.App.text
@@ -121,21 +137,21 @@ class KindOfTaskListViewController: TDViewController {
     alertLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     alertLabel.anchorCenterXToSuperview()
     alertLabel.anchorCenterYToSuperview(constant: -1 * 171 / 4)
-    
+
     // deleteAlertButton
     deleteAlertButton.anchor(widthConstant: 94, heightConstant: 30)
     deleteAlertButton.cornerRadius = 15
     deleteAlertButton.anchorCenterXToSuperview()
     deleteAlertButton.anchorCenterYToSuperview(constant: 15)
-    
+
     // cancelAlertButton
     cancelAlertButton.anchor(top: deleteAlertButton.bottomAnchor, topConstant: 10)
     cancelAlertButton.anchorCenterXToSuperview()
   }
 
-  //MARK: - Bind To
+  // MARK: - Bind To
   func bindViewModel() {
-    
+
     let input = KindOfTaskListViewModel.Input(
       addButtonClickTrigger: addButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
@@ -144,9 +160,9 @@ class KindOfTaskListViewController: TDViewController {
       moving: itemMoved.asDriver(),
       selection: collectionView.rx.itemSelected.asDriver()
     )
-    
+
     let outputs = viewModel.transform(input: input)
-    
+
     [
       outputs.addTask.drive(),
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
@@ -155,18 +171,18 @@ class KindOfTaskListViewController: TDViewController {
       outputs.moving.drive(),
       outputs.openKindOfTask.drive(),
       outputs.removeKindOfTask.drive(),
-      outputs.showAlert.drive(showAlertBinder),
+      outputs.showAlert.drive(showAlertBinder)
     ]
       .forEach({$0.disposed(by: disposeBag)})
   }
-  
+
   // MARK: - Binders
   var hideAlertBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.alertBackgroundView.isHidden = true
     })
   }
-  
+
   var showAlertBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.alertBackgroundView.isHidden = false
@@ -175,11 +191,11 @@ class KindOfTaskListViewController: TDViewController {
 
   // MARK: - Setup CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
-  
+
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -196,26 +212,32 @@ class KindOfTaskListViewController: TDViewController {
     section.boundarySupplementaryItems = [header]
     return section
   }
-  
-  //MARK: - Color CollectionView
+
+  // MARK: - Color CollectionView
   func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(
       configureCell: {(_, collectionView, indexPath, kindOfTask) in
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskListCell.reuseID, for: indexPath) as! KindOfTaskListCell
+        guard let cell = collectionView.dequeueReusableCell(
+          withReuseIdentifier: KindOfTaskListCell.reuseID,
+          for: indexPath
+        ) as? KindOfTaskListCell else { return UICollectionViewCell() }
         cell.delegate = self
-        cell.configure(with: kindOfTask, mode: .Empty)
+        cell.configure(with: kindOfTask, mode: .empty)
         return cell
-      }, configureSupplementaryView: { dataSource , collectionView, kind, indexPath in
-        let section = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: KindOfTaskListReusableCell.reuseID, for: indexPath) as! KindOfTaskListReusableCell
+      }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        guard let section = collectionView.dequeueReusableSupplementaryView(
+          ofKind: kind,
+          withReuseIdentifier: KindOfTaskListReusableCell.reuseID,
+          for: indexPath
+        ) as? KindOfTaskListReusableCell else { return UICollectionReusableView() }
         section.configure(text: dataSource[indexPath.section].header)
         return section
       })
   }
 }
 
-
-//MARK: - UICollectionViewDragDelegate
+// MARK: - UICollectionViewDragDelegate
 extension KindOfTaskListViewController: UICollectionViewDragDelegate {
   func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
     let item = dataSource[indexPath.section].items[indexPath.item]
@@ -226,18 +248,18 @@ extension KindOfTaskListViewController: UICollectionViewDragDelegate {
   }
 }
 
-//MARK: - UICollectionViewDropDelegate
+// MARK: - UICollectionViewDropDelegate
 extension KindOfTaskListViewController: UICollectionViewDropDelegate {
-  
+
   func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
     if collectionView.hasActiveDrag {
-      return UICollectionViewDropProposal(operation: .move,intent: .insertAtDestinationIndexPath )
+      return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath )
     }
     return UICollectionViewDropProposal(operation: .forbidden)
   }
-  
+
   func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-    
+
     if let destinationIndexPath = coordinator.destinationIndexPath,
        let sourceIndexPath = coordinator.items[0].sourceIndexPath {
       self.itemMoved.accept((sourceIndex: sourceIndexPath, destinationIndex: destinationIndexPath))

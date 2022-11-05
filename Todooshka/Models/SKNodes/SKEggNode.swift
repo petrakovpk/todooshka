@@ -8,10 +8,10 @@
 import SpriteKit
 
 class SKEggNode: SKSpriteNode {
-  
+
   // MARK: - Public
-  var action: EggActionType = .Init
-  
+  var action: EggActionType = .create
+
   // MARK: - Private
   // Actions
   private let fadeInWithoutDuration = SKAction.fadeIn(withDuration: 0.0)
@@ -23,32 +23,32 @@ class SKEggNode: SKSpriteNode {
   private var setOneCrackTexture: SKAction { SKAction.setTexture(oneCrackTexture, resize: false) }
   private var setThreeCracksTexture: SKAction { SKAction.setTexture(threeCracksTexture, resize: false) }
   private let wait = SKAction.wait(forDuration: 0.5)
-  
+
   // Other
   let level: Int
-  
+
   // Image
-  private var noCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.NoCrack.stringForImage) ?? UIImage() }
-  private var oneCrackImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.OneCrack.stringForImage) ?? UIImage() }
-  private var threeCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.ThreeCracks.stringForImage) ?? UIImage() }
-  
+  private var noCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.noCrack.stringForImage) ?? UIImage() }
+  private var oneCrackImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.oneCrack.stringForImage) ?? UIImage() }
+  private var threeCracksImage: UIImage { UIImage(named: "яйцо_" + Clade.init(level: level).rawValue + "_" + CrackType.threeCracks.stringForImage) ?? UIImage() }
+
   // Texture
   private var noCracksTexture: SKTexture { SKTexture(image: noCracksImage) }
   private var oneCrackTexture: SKTexture { SKTexture(image: oneCrackImage) }
   private var threeCracksTexture: SKTexture { SKTexture(image: threeCracksImage) }
-  
+
   // MARK: - Init
   init(level: Int) {
     self.level = level
     super.init(texture: nil, color: .clear, size: .zero)
-    
+
     name = "Egg"
     size = noCracksTexture.size()
     texture = noCracksTexture
     xScale = Style.Scene.Egg.scale
     yScale = Style.Scene.Egg.scale
     alpha = 0.0
-    
+
     switch level {
     case 1: zPosition = 3
     case 2: zPosition = 4
@@ -60,32 +60,32 @@ class SKEggNode: SKSpriteNode {
     default: return
     }
   }
-  
+
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-  
+
   // MARK: - Actions
   func show(state: EggActionType, withAnimation: Bool, completion: (() -> Void)?) {
 
     switch (state, withAnimation) {
-    case (.NoCracks, true):
+    case (.noCracks, true):
       run(SKAction.sequence([setNoCracksTexture, fadeInWithDuration]))
       return
-    case (.NoCracks, false):
+    case (.noCracks, false):
       run(SKAction.sequence([setNoCracksTexture, fadeInWithoutDuration]))
       return
-    case (.Crack(_), true):
+    case (.crack, true):
       run(SKAction.sequence([setThreeCracksTexture, fadeTo07WithDuration]))
       return
-    case (.Crack(_), false):
+    case (.crack, false):
       run(SKAction.sequence([setThreeCracksTexture, fadeTo07WithoutDuration]))
       return
     default:
       return
     }
   }
-  
+
   func crack(completion: (() -> Void)?) {
     run(SKAction.sequence([setOneCrackTexture, wait, setThreeCracksTexture, wait])) {
       self.alpha = 0.7

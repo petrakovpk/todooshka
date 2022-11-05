@@ -5,19 +5,22 @@
 //  Created by Петраков Павел Константинович on 24.06.2021.
 //
 
+import CoreData
+import Foundation
 import RxFlow
 import RxSwift
 import RxCocoa
-import Foundation
 
 class KindOfTaskListViewModel: Stepper {
-  
-  //MARK: - Properties
-  let appDelegate = UIApplication.shared.delegate as! AppDelegate
+
+  // MARK: - Properties
+  let appDelegate = UIApplication.shared.delegate as? AppDelegate
+  var managedContext: NSManagedObjectContext? { self.appDelegate?.persistentContainer.viewContext }
+
   let removeKindOfTaskIsRequired = BehaviorRelay<IndexPath?>(value: nil)
   let services: AppServices
   let steps = PublishRelay<Step>()
-  
+
   struct Input {
     let addButtonClickTrigger: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
@@ -26,47 +29,47 @@ class KindOfTaskListViewModel: Stepper {
     let moving: Driver<ItemMovedEvent?>
     let selection: Driver<IndexPath>
   }
-  
+
   struct Output {
     let addTask: Driver<Void>
     let dataSource: Driver<[KindOfTaskListSection]>
     let hideAlert: Driver<Void>
-    let moving: Driver<Result<Void,Error>>
+    let moving: Driver<Result<Void, Error>>
     let navigateBack: Driver<Void>
     let openKindOfTask: Driver<Void>
-    let removeKindOfTask: Driver<Result<Void,Error>>
+    let removeKindOfTask: Driver<Result<Void, Error>>
     let showAlert: Driver<Void>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-  
+
   func transform(input: Input) -> Output {
-    
+
     let addTask = input.addButtonClickTrigger
-      .map{ self.steps.accept(AppStep.CreateKindOfTaskIsRequired) }
-    
+      .map { self.steps.accept(AppStep.createKindOfTaskIsRequired) }
+
     let kindsOfTask = services.dataService
       .kindsOfTask
-      .map({ $0.filter{ $0.status == .Active } })
+      .map({ $0.filter { $0.status == .active } })
 
     // dataSource
     let dataSource = kindsOfTask
-      .map{[
+      .map {[
         KindOfTaskListSection(
           header: "",
           items: $0
         )
       ]}.asDriver()
-    
+
     let openKindOfTask = input.selection
-      .withLatestFrom(dataSource){ $1[$0.section].items[$0.item] }
-      .map{ self.steps.accept(AppStep.ShowKindOfTaskIsRequired(kindOfTask: $0)) }
+      .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
+      .map { self.steps.accept(AppStep.showKindOfTaskIsRequired(kindOfTask: $0)) }
 
     let moving = input.moving
-      .compactMap{ $0 }
+      .compactMap { $0 }
       .withLatestFrom(kindsOfTask) { itemMovedEvent, kindsOfTask -> [KindOfTask] in
         var kindsOfTask = kindsOfTask
         let element = kindsOfTask.remove(at: itemMovedEvent.sourceIndex.row)
@@ -82,17 +85,17 @@ class KindOfTaskListViewModel: Stepper {
         return kindsOfTask
       }.asObservable()
       .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ self.appDelegate.persistentContainer.viewContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-   
+      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let removeKindOfTaskIsRequired = removeKindOfTaskIsRequired
       .asDriver()
-      .compactMap{ $0 }
+      .compactMap { $0 }
 
     // alert
     let showAlert = removeKindOfTaskIsRequired
-      .map{ _ in () }
-    
+      .map { _ in () }
+
     let hideAlert = Driver
       .of(input.cancelAlertButtonClickTrigger, input.deleteAlertButtonClickTrigger)
       .merge()
@@ -100,17 +103,17 @@ class KindOfTaskListViewModel: Stepper {
     let removeKindOfTask = input.deleteAlertButtonClickTrigger
       .withLatestFrom(removeKindOfTaskIsRequired) { $1 }
       .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
-      .map{ kindOfTask -> KindOfTask in
+      .map { kindOfTask -> KindOfTask in
         var kindOfTask = kindOfTask
-        kindOfTask.status = .Deleted
+        kindOfTask.status = .deleted
         return kindOfTask
       }
       .asObservable()
-      .flatMapLatest({ self.appDelegate.persistentContainer.viewContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.NavigateBack) }
+      .map { self.steps.accept(AppStep.navigateBack) }
 
     return Output(
       addTask: addTask,
@@ -123,7 +126,7 @@ class KindOfTaskListViewModel: Stepper {
       showAlert: showAlert
     )
   }
-  
+
   func removeKindOfTaskIsRequired(indexPath: IndexPath) {
     removeKindOfTaskIsRequired.accept(indexPath)
   }

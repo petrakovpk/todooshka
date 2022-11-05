@@ -8,9 +8,9 @@
 import RxDataSources
 
 struct KindOfTaskColorItem: IdentifiableType, Equatable {
-  
+
   var identity: String { color.hexString + isSelected.string }
-  
+
   var color: UIColor
   var isSelected: Bool
 

@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-//extension GameCurrencyCoreData {
+// extension GameCurrencyCoreData {
 //  
 //  @nonobjc public class func fetchRequest() -> NSFetchRequest<GameCurrencyCoreData> {
 //    return NSFetchRequest<GameCurrencyCoreData>(entityName: "GameCurrencyCoreData")
@@ -27,4 +27,4 @@ import CoreData
 //    self.currency = gameCurrency.currency.rawValue
 //    self.taskUID = gameCurrency.taskUID
 //  }
-//}
+// }

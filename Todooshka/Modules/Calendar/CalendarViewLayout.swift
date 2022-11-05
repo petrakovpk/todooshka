@@ -7,7 +7,7 @@
 import UIKit
 
 class CalendarViewLayout: UICollectionViewFlowLayout {
-  
+
   override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
 
     // Определеяем collectionView
@@ -34,14 +34,23 @@ class CalendarViewLayout: UICollectionViewFlowLayout {
     let currentSection = itemsForMinSection > itemsForMaxSection ? minIndexPathsForVisibleItem.section : maxIndexPathsForVisibleItem.section
 
     // Определяем координаты текущей секции
-    guard let currentSectionLayoutAttributesForSupplementaryElement = collectionView.layoutAttributesForSupplementaryElement(ofKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: currentSection)) else { return super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity) }
+    guard
+      let currentSectionLayoutAttributesForSupplementaryElement = collectionView.layoutAttributesForSupplementaryElement(
+        ofKind: UICollectionView.elementKindSectionHeader,
+        at: IndexPath(item: 0, section: currentSection)
+      ) else {
+      return super.targetContentOffset(
+        forProposedContentOffset: proposedContentOffset,
+        withScrollingVelocity: velocity)
+    }
 
     invalidateLayout()
     prepare()
-        
+
     // возвращаем скролл к нужной секции
-    return CGPoint(x: 0, y: velocity.y == 0.0 ? currentSectionLayoutAttributesForSupplementaryElement.frame.origin.y : ( velocity.y < 0 ? minLayoutAttributesForSupplementaryElement.frame.origin.y : maxLayoutAttributesForSupplementaryElement.frame.origin.y ))
+    return CGPoint(
+      x: 0,
+      y: velocity.y == 0.0 ? currentSectionLayoutAttributesForSupplementaryElement.frame.origin.y :
+        ( velocity.y < 0 ? minLayoutAttributesForSupplementaryElement.frame.origin.y : maxLayoutAttributesForSupplementaryElement.frame.origin.y ))
   }
 }
-
-

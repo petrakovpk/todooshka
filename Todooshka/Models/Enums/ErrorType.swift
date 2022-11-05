@@ -6,8 +6,7 @@
 //
 
 enum ErrorType: Error {
-  case DriverError
-  case NotEnoughMoney
-  case StupidError
-  case UserNotFound
+  case driverError
+  case managedContextNotFound
+  case stupidError
 }

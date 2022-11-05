@@ -6,8 +6,8 @@
 //
 
 enum EggActionType: Equatable {
-  case Crack(style: BirdStyle)
-  case Hide
-  case Init
-  case NoCracks
+  case crack(style: BirdStyle)
+  case create
+  case hide
+  case noCracks
 }

@@ -8,102 +8,98 @@
 import RxFlow
 
 enum AppStep: Step {
-  
-  // Auth
-  case AuthIsRequired
-  case AuthIsCompleted
-  case AuthWithEmailOrPhoneInIsRequired
-  
-  // Tab Bar
-  case CalendarIsRequired
-  case TabBarIsRequired
-  case MainTaskListIsRequired
-  
-  // Changing
-  case ChangingNameIsRequired
-  case ChangingGenderIsRequired
-  case ChangingBirthdayIsRequired
-  case ChangingPhoneIsRequired
-  case ChangingEmailIsRequired
-  case ChangingPasswordIsRequired
-  
-  // Task List
-  case CompletedTaskListIsRequired(date: Date)
-  case DeletedTaskListIsRequired
-  case IdeaTaskListIsRequired
-  case OverduedTaskListIsRequired
-  case PlannedTaskListIsRequired(date: Date)
-  case TaskListIsCompleted
-  
-  // KindOfTask
-  case CreateKindOfTaskIsRequired
-  case ShowKindOfTaskIsRequired(kindOfTask: KindOfTask)
-  
-  // Task
-  case CreateTaskIsRequired
-  case CreateIdeaTaskIsRequired
-  case CreatePlannedTaskIsRequired(plannedDate: Date)
-  case ShowTaskIsRequired(task: Task)
-  case TaskProcessingIsCompleted
-  
-  // Deleted Task Type List
-  case DeletedTaskTypeListIsRequired
-  
-  // DeleteAccount
-  case DeleteAccountIsRequired
-  
-  // Diamond
-  case DiamondIsRequired
-  
-  // Dismiss
-  case Dismiss
-  
-  // Feather
-  case FeatherIsRequired
-  
-  // KindOfTaskWithBird
-  case KindOfTaskWithBird(birdUID: String)
-  
-  // Logout
-  case LogoutIsRequired
-  
-  // Marketplace
-  case MarketplaceIsRequired
-  
-  // NavigateBack
-  case NavigateBack
-  
-  // Sync
-  case SyncDataIsRequired
-  
-  // Onboarding
-  case OnboardingIsRequired
-  case OnboardingIsCompleted
-  
-  // Remove Task
-  case RemoveTaskIsRequired
-  
-  // Settings
-  case SettingsIsRequired
-  
-  // Support
-  case SupportIsRequired
-  
-  // Shop
-  case ShopIsRequired
-  case ShopIsCompleted
-  
-  // Show Bird
-  case ShowBirdIsRequired(bird: Bird)
-  
-  // Show Points
-  case ShowPointsIsRequired
 
-  // Type List
-  case TaskTypesListIsRequired
-  
+  // Auth
+  case authIsRequired
+  case authIsCompleted
+  case authWithEmailOrPhoneInIsRequired
+
+  // Tab Bar
+  case calendarIsRequired
+  case tabBarIsRequired
+  case mainTaskListIsRequired
+
+  // Changing
+  case changingNameIsRequired
+  case changingGenderIsRequired
+  case changingBirthdayIsRequired
+  case changingPhoneIsRequired
+  case changingEmailIsRequired
+  case changingPasswordIsRequired
+
+  // Task List
+  case completedTaskListIsRequired(date: Date)
+  case deletedTaskListIsRequired
+  case ideaTaskListIsRequired
+  case overduedTaskListIsRequired
+  case plannedTaskListIsRequired(date: Date)
+  case taskListIsCompleted
+
+  // KindOfTask
+  case createKindOfTaskIsRequired
+  case showKindOfTaskIsRequired(kindOfTask: KindOfTask)
+
+  // Task
+  case createTaskIsRequired
+  case createIdeaTaskIsRequired
+  case createPlannedTaskIsRequired(plannedDate: Date)
+  case showTaskIsRequired(task: Task)
+  case taskProcessingIsCompleted
+
+  // Deleted Task Type List
+  case deletedTaskTypeListIsRequired
+
+  // DeleteAccount
+  case deleteAccountIsRequired
+
+  // Diamond
+  case diamondIsRequired
+
+  // Dismiss
+  case dismiss
+
+  // Feather
+  case featherIsRequired
+
+  // KindsOfTask
+  case kindsOfTaskListIsRequired
+
+  // KindOfTaskWithBird
+  case kindOfTaskWithBird(birdUID: String)
+
+  // Logout
+  case logoutIsRequired
+
+  // Marketplace
+  case marketplaceIsRequired
+
+  // NavigateBack
+  case navigateBack
+
+  // Sync
+  case syncDataIsRequired
+
+  // Onboarding
+  case onboardingIsRequired
+  case onboardingIsCompleted
+
+  // Remove Task
+  case removeTaskIsRequired
+
+  // Settings
+  case settingsIsRequired
+
+  // Support
+  case supportIsRequired
+
+  // Shop
+  case shopIsRequired
+  case shopIsCompleted
+
+  // Show Bird
+  case showBirdIsRequired(bird: Bird)
+
   // UserProfile
-  case UserProfileIsRequired
-  
-  
+  case userProfileIsRequired
+
 }

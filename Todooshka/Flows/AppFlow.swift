@@ -10,42 +10,42 @@ import UIKit
 import RxFlow
 
 class AppFlow: Flow {
-    
+
     var root: Presentable {
         return self.rootViewController
     }
-    
+
     private lazy var rootViewController: UINavigationController = {
         let viewController = UINavigationController()
         viewController.setNavigationBarHidden(true, animated: false)
         return viewController
     }()
-    
+
     private let services: AppServices
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(services: AppServices) {
         self.services = services
     }
-    
+
     deinit {
         print("\(type(of: self)): \(#function)")
     }
-    
-    //MARK: - Navigate
+
+    // MARK: - Navigate
     func navigate(to step: Step) -> FlowContributors {
         guard let step = step as? AppStep else { return .none }
         switch step {
-        case .OnboardingIsRequired:
+        case .onboardingIsRequired:
             return navigateToOnboardingFlow()
-        case .OnboardingIsCompleted:
+        case .onboardingIsCompleted:
             return navigateToTabBarScreen()
         default:
             return .none
         }
     }
-    
-    //MARK: - Navigate func
+
+    // MARK: - Navigate func
     private func navigateToOnboardingFlow() -> FlowContributors {
         let viewController = OnboardingViewController()
         let viewModel = OnboardingViewModel(services: services)
@@ -53,11 +53,11 @@ class AppFlow: Flow {
         rootViewController.navigationBar.isHidden = true
         rootViewController.setViewControllers([viewController], animated: false)
         return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-        
+
     }
-    
+
     private func navigateToTabBarScreen() -> FlowContributors {
-                
+
         let tabBarFlow = TabBarFlow(withServices: services)
 
         Flows.use(tabBarFlow, when: .created) { [unowned self] root in
@@ -65,6 +65,6 @@ class AppFlow: Flow {
         }
 
         return .one(flowContributor: .contribute(withNextPresentable: tabBarFlow,
-                                                 withNextStepper: OneStepper(withSingleStep: AppStep.TabBarIsRequired)))
+                                                 withNextStepper: OneStepper(withSingleStep: AppStep.tabBarIsRequired)))
     }
 }

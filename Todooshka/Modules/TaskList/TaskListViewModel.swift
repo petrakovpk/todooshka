@@ -13,8 +13,8 @@ import RxCocoa
 import UIKit
 
 enum RemoveMode: Equatable {
-  case One(task: Task)
-  case All(tasks: [Task])
+  case one(task: Task)
+  case all(tasks: [Task])
 }
 
 struct ChangeStatus {
@@ -24,18 +24,21 @@ struct ChangeStatus {
 }
 
 class TaskListViewModel: Stepper {
-  
+
   // MARK: - Properties
-  let appDelegate = UIApplication.shared.delegate as! AppDelegate
-  let changeStatusTrigger = BehaviorRelay<ChangeStatus?>(value: nil)
-  let mode: TaskListMode
-  let reloadData = BehaviorRelay<Void>(value: ())
+  // context
+  let appDelegate = UIApplication.shared.delegate as? AppDelegate
+  var managedContext: NSManagedObjectContext? { appDelegate?.persistentContainer.viewContext }
+  
+  // rx
   let services: AppServices
   let steps = PublishRelay<Step>()
-  
+
+  let changeStatusTrigger = BehaviorRelay<ChangeStatus?>(value: nil)
   var editingIndexPath: IndexPath?
-  var managedContext: NSManagedObjectContext { self.appDelegate.persistentContainer.viewContext }
-  
+  let mode: TaskListMode
+  let reloadData = BehaviorRelay<Void>(value: ())
+
   struct Input {
     // selection
     let selection: Driver<IndexPath>
@@ -49,11 +52,11 @@ class TaskListViewModel: Stepper {
     // remove all
     let removeAllButtonClickTrigger: Driver<Void>
   }
-  
+
   struct Output {
     let addTask: Driver<Void>
     let addTaskButtonIsHidden: Driver<Bool>
-    let change: Driver<Result<Void,Error>>
+    let change: Driver<Result<Void, Error>>
     let dataSource: Driver<[TaskListSection]>
     let hideAlert: Driver<Void>
     let hideCell: Driver<IndexPath>
@@ -67,50 +70,48 @@ class TaskListViewModel: Stepper {
     let showAlert: Driver<Void>
     let showRemovaAllButton: Driver<Void>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices, mode: TaskListMode) {
     self.services = services
     self.mode = mode
   }
-  
+
   func transform(input: Input) -> Output {
-    
+
     let kindsOfTask = services.dataService
       .kindsOfTask
-    
+
     let tasks = services.dataService.tasks
       .map {
         $0.filter { task in
           switch self.mode {
-          case .Main:
-            return task.is24hoursPassed == false && task.status == .InProgress
-          case .Overdued:
-            return task.is24hoursPassed && task.status == .InProgress
-          case .Deleted:
-            return task.status == .Deleted
-          case .Idea:
-            return task.status == .Idea
-          case .Completed(let date):
-            return task.status == .Completed && Calendar.current.isDate(date, inSameDayAs: task.closed ?? Date())
-          case .Planned(let planned):
-            return task.status == .Planned && Calendar.current.isDate(planned, inSameDayAs: task.planned ?? Date())
+          case .main:
+            return task.is24hoursPassed == false && task.status == .inProgress
+          case .overdued:
+            return task.is24hoursPassed && task.status == .inProgress
+          case .deleted:
+            return task.status == .deleted
+          case .idea:
+            return task.status == .idea
+          case .completed(let date):
+            return task.status == .completed && Calendar.current.isDate(date, inSameDayAs: task.closed ?? Date())
+          case .planned(let planned):
+            return task.status == .planned && Calendar.current.isDate(planned, inSameDayAs: task.planned ?? Date())
           }
         }
       }
 
-    
-    
     let taskListSectionItems = Driver
       .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
         tasks
           .sorted { (prevTask, nextTask) -> Bool in
             switch self.mode {
-            case .Idea:
-              let prevIndex = kindsOfTask.first{ $0.UID == prevTask.kindOfTaskUID }?.index ?? 0
-              let nextIndex = kindsOfTask.first{ $0.UID == nextTask.kindOfTaskUID}?.index ?? 0
+            case .idea:
+              let prevIndex = kindsOfTask.first { $0.UID == prevTask.kindOfTaskUID }?.index ?? 0
+              let nextIndex = kindsOfTask.first { $0.UID == nextTask.kindOfTaskUID}?.index ?? 0
               return prevIndex == nextIndex ? prevTask.text < nextTask.text : prevIndex < nextIndex
-            case .Completed(_):
+            case .completed:
               return prevTask.closed ?? Date() < nextTask.closed ?? Date()
             default:
               return prevTask.created < nextTask.created
@@ -123,152 +124,151 @@ class TaskListViewModel: Stepper {
             )
           }
       }
-    
-    
+
     // dataSource
     let dataSource = taskListSectionItems
       .map {[
         TaskListSection(
           header: "",
-          mode: self.mode == .Main ? TaskCellMode.WithTimer : TaskCellMode.WithRepeatButton ,
+          mode: self.mode == .main ? .withTimer : .withRepeatButton,
           items: $0
         )
       ]}
       .asDriver()
-    
+
     let changeStatus = changeStatusTrigger
       .asDriver()
-      .compactMap{ $0 }
+      .compactMap { $0 }
 
     let changeToIdea = changeStatus
-      .filter{ $0.status == .Idea }
+      .filter { $0.status == .idea }
       .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
         dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
       }
-      .change(status: .Idea)
+      .change(status: .idea)
       .change(planned: nil)
       .asObservable()
-      .flatMapLatest({ self.managedContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-      
+      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let changeToInProgress = changeStatus
-      .filter{ $0.status == .InProgress }
+      .filter { $0.status == .inProgress }
       .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
         dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
       }
-      .change(status: .InProgress)
+      .change(status: .inProgress)
       .change(planned: Date())
       .change(created: Date())
       .asObservable()
-      .flatMapLatest({ self.managedContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let changeToCompleted = changeStatus
-      .filter{ $0.status == .Completed }
+      .filter { $0.status == .completed }
       .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
         var task = dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
-        task.status = .Completed
+        task.status = .completed
         task.closed = changeStatus.closed
         return task
       }.asObservable()
-      .flatMapLatest({ self.managedContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let changeToRemove = changeStatus
-      .filter{ $0.status == .Deleted }
-    
+      .filter { $0.status == .deleted }
+
     let change = Driver
       .of(changeToIdea, changeToInProgress, changeToCompleted)
       .merge()
       .do { _ in self.reloadData.accept(()) }
- 
+
     // selection
     let openTask = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> TaskListSectionItem in
         dataSource[indexPath.section].items[indexPath.item] }
-      .map { self.steps.accept(AppStep.ShowTaskIsRequired(task: $0.task )) }
-    
+      .map { self.steps.accept(AppStep.showTaskIsRequired(task: $0.task )) }
+
     let removeModeOne = changeToRemove
       .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
         dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
-      }.map{ RemoveMode.One(task: $0) }
-      
+      }.map { RemoveMode.one(task: $0) }
+
     let removeModeAll = input.removeAllButtonClickTrigger
       .withLatestFrom(tasks) { $1 }
-      .map{ RemoveMode.All(tasks: $0) }
-    
+      .map { RemoveMode.all(tasks: $0) }
+
     let removeMode = Driver
       .of(removeModeOne, removeModeAll)
       .merge()
-  
+
     // alert
     let alertText = removeMode
       .map { removeMode -> String in
-        if case .All(_) = removeMode { return "Удалить ВСЕ задачи?" } else {  return "Удалить задачу?" }
+        if case .all = removeMode { return "Удалить ВСЕ задачи?" } else {  return "Удалить задачу?" }
       }
-    
+
     let showAlert = removeMode
       .map { _ in () }
-    
+
     let hideAlert = Driver
       .of(input.alertCancelButtonClick, input.alertDeleteButtonClick)
       .merge()
-    
+
     let hideCell = hideAlert
       .withLatestFrom(changeStatus) { $1.indexPath }
-      .compactMap{ $0 }
-    
+      .compactMap { $0 }
+
     let removeTask = input.alertDeleteButtonClick
       .withLatestFrom(removeMode) { $1 }
       .compactMap { removeMode -> Task? in
-        guard case .One(let task) = removeMode else { return nil }
+        guard case .one(let task) = removeMode else { return nil }
         return task
-      }.change(status: .Deleted)
+      }.change(status: .deleted)
       .asObservable()
-      .flatMapLatest({ self.managedContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let removeAll = input.alertDeleteButtonClick
       .withLatestFrom(removeMode) { $1 }
       .compactMap { removeMode -> [Task]? in
-        guard case .All(let tasks) = removeMode else { return nil }
+        guard case .all(let tasks) = removeMode else { return nil }
         return tasks
       }
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .map { task -> Task in
         var task = task
-        task.status = .Archive
+        task.status = .archive
         return task
       }
-      .flatMapLatest({ self.managedContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
+      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     let addTask = input.addTaskButtonClickTrigger
       .compactMap { _ -> AppStep? in
         switch self.mode {
-        case .Idea:
-          return AppStep.CreateIdeaTaskIsRequired
-        case .Planned(let date):
-          return AppStep.CreatePlannedTaskIsRequired(plannedDate: date)
+        case .idea:
+          return AppStep.createIdeaTaskIsRequired
+        case .planned(let date):
+          return AppStep.createPlannedTaskIsRequired(plannedDate: date)
         default:
           return nil
         }
-      }.map{ self.steps.accept($0) }
-    
+      }.map { self.steps.accept($0) }
+
     // title
      let title = Driver.just(self.getTitle(with: self.mode))
-    
+
     let addTaskButtonIsHidden = Driver<Bool>.of(self.addTaskButtonIsHidden())
-    
+
     let showRemovaAllButton = Driver.of(self.mode)
-      .filter { $0 == .Deleted }
-      .map{ _ in () }
-    
+      .filter { $0 == .deleted }
+      .map { _ in () }
+
     let timer = Observable<Int>
       .timer(.seconds(0), period: .seconds(1), scheduler: MainScheduler.instance)
       .asDriver(onErrorJustReturn: 0)
-    
+
     let reloadItems = timer
       .withLatestFrom(dataSource) { _, dataSource -> [IndexPath] in
         dataSource.enumerated().flatMap { sectionIndex, section -> [IndexPath] in
@@ -277,10 +277,10 @@ class TaskListViewModel: Stepper {
           }
         }
     }
-    
+
     // navigateBack
     let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.TaskListIsCompleted) }
+      .map { self.steps.accept(AppStep.taskListIsCompleted) }
 
     return Output(
       addTask: addTask,
@@ -300,27 +300,27 @@ class TaskListViewModel: Stepper {
       showRemovaAllButton: showRemovaAllButton
     )
   }
-  
+
   func addTaskButtonIsHidden() -> Bool {
     switch self.mode {
-    case .Planned(_), .Idea:
+    case .planned, .idea:
       return false
     default:
       return true
     }
   }
-  
+
   func getTitle(with mode: TaskListMode) -> String {
     switch mode {
-    case .Completed(_):
+    case .completed:
       return "Выполненные задачи"
-    case .Deleted:
+    case .deleted:
       return "Удаленные задачи"
-    case .Idea:
+    case .idea:
       return "Ящик идей"
-    case .Overdued:
+    case .overdued:
       return "Просроченные задачи"
-    case .Planned(date: _):
+    case .planned(date: _):
       return "Запланированные задачи"
     default:
       return ""

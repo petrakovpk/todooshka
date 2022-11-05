@@ -9,7 +9,6 @@ import FirebaseAuth
 import RxCocoa
 import RxSwift
 
-
 extension Reactive where Base: Auth {
 
   /**
@@ -18,7 +17,7 @@ extension Reactive where Base: Auth {
    @param completion Optionally; a block invoked after the user of the calling Auth instance has
    been updated or an error was encountered.
    */
-  public func updateCurrentUser(_ user: User) -> Observable<Result<Void,Error>> {
+  public func updateCurrentUser(_ user: User) -> Observable<Result<Void, Error>> {
     return Observable.create { observer in
       self.base.updateCurrentUser(user) { error in
         guard let error = error else {
@@ -31,7 +30,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Fetches the list of IdPs that can be used for signing in with the provided email address.
    Useful for an "identifier-first" sign-in flow.
@@ -60,7 +59,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Fetches the list of all sign-in methods previously used for the provided email address.
    
@@ -88,7 +87,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Signs in using an email address and password.
    
@@ -123,7 +122,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Signs in using an email address and email sign-in link.
    
@@ -156,7 +155,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Asynchronously signs in to Firebase with the given 3rd-party credentials (e.g. a Facebook
    login Access Token, a Google ID Token/Access Token pair, etc.) and returns additional
@@ -210,7 +209,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Asynchronously creates and becomes an anonymous user.
    @param completion Optionally; a block which is invoked when the sign in finishes, or is
@@ -239,7 +238,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Asynchronously signs in to Firebase with the given Auth token.
    
@@ -271,7 +270,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Creates and, on success, signs in a user with the given email address and password.
    
@@ -307,7 +306,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Resets the password given a code sent to the user outside of the app and a new password
    for the user.
@@ -340,7 +339,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Checks the validity of an out of band code.
    
@@ -361,7 +360,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Checks the validity of a verify password reset code.
    
@@ -382,7 +381,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Applies out of band code.
    
@@ -406,7 +405,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Initiates a password reset for the given email address.
    
@@ -438,7 +437,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Initiates a password reset for the given email address and @FIRActionCodeSettings object.
    
@@ -480,7 +479,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Sends a sign in with email link to provided email address.
    
@@ -503,7 +502,7 @@ extension Reactive where Base: Auth {
       return Disposables.create()
     }
   }
-  
+
   /**
    @brief Registers a block as an "auth state did change" listener. To be invoked when:
    
@@ -532,7 +531,7 @@ extension Reactive where Base: Auth {
       }
     }
   }
-  
+
   /**
    @brief Registers a block as an "ID token did change" listener. To be invoked when:
    

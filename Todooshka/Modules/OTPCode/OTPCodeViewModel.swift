@@ -10,15 +10,15 @@ import RxSwift
 import RxCocoa
 
 class OTPCodeViewModel: Stepper {
-    
+
     let disposeBag = DisposeBag()
     let steps = PublishRelay<Step>()
     let verificationID: String
-    
-    //MARK: - Inputs
+
+    // MARK: - Inputs
 //    let OTPCodeTextInput = BehaviorRelay<String>(value: "")
 //
-//    //MARK: - Outputs
+// MARK: - Outputs
 //    let OTPCodeTextOutput = BehaviorRelay<String>(value: "")
 //    let errorTextOutput = BehaviorRelay<String>(value: "")
 //    let isLoadingOutput = BehaviorRelay<Bool>(value: false)

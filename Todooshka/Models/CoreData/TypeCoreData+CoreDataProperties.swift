@@ -6,10 +6,10 @@
 //
 //
 //
-//import Foundation
-//import CoreData
+// import Foundation
+// import CoreData
 //
-//extension TypeCoreData {
+// extension TypeCoreData {
 //  
 //  @nonobjc public class func fetchRequest() -> NSFetchRequest<TypeCoreData> {
 //    return NSFetchRequest<TypeCoreData>(entityName: "TypeCoreData")
@@ -41,4 +41,4 @@
 //    self.icon = type.icon.rawValue
 //    self.color = type.color.rawValue
 //  }
-//}
+// }

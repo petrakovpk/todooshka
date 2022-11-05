@@ -12,33 +12,33 @@ import RxDataSources
 import SwipeCellKit
 
 class KindOfTaskListForBirdViewController: TDViewController {
-  
+
   // MARK: - Properties
   // Rx
   let disposeBag = DisposeBag()
   var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>!
-  
+
   // MVVM
   var viewModel: KindOfTaskListForBirdViewModel!
-  
+
   // UI
   private var collectionView: UICollectionView!
-  
+
   private let alertBackgroundView: UIView = {
     let view = UIView()
     view.backgroundColor = .black.withAlphaComponent(0.5)
     view.isHidden = true
     return view
   }()
-  
+
   private let alertCancelButton: UIButton = {
     let button = UIButton(type: .system)
     let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
-    button.setTitleColor(Style.App.text!.withAlphaComponent(0.5) , for: .normal)
+    button.setTitleColor(Style.App.text!.withAlphaComponent(0.5), for: .normal)
     return button
   }()
-  
+
   private let alertOkButton: UIButton = {
     let attrString = NSAttributedString(string: "Ok", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .system)
@@ -47,14 +47,14 @@ class KindOfTaskListForBirdViewController: TDViewController {
     button.setTitleColor(.white, for: .normal)
     return button
   }()
-  
+
   private let alertWindowView: UIView = {
     let view = UIView()
     view.cornerRadius = 27
     view.backgroundColor = Style.App.background
     return view
   }()
-  
+
   private let alertTextView: UITextView = {
     let textView = UITextView()
     textView.backgroundColor = .clear
@@ -66,8 +66,8 @@ class KindOfTaskListForBirdViewController: TDViewController {
     textView.textColor = Style.App.text
     return textView
   }()
-  
-  //MARK: - Lifecycle
+
+  // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
@@ -75,15 +75,15 @@ class KindOfTaskListForBirdViewController: TDViewController {
     configureDataSource()
     bindViewModel()
   }
-  
-  //MARK: - Configure UI
+
+  // MARK: - Configure UI
   func configureUI() {
-    
+
     // titleLabel
     titleLabel.text = "Типы задач"
 
     // collection view
-    collectionView = UICollectionView(frame: .zero , collectionViewLayout: createCompositionalLayout())
+    collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
 
     view.addSubview(collectionView)
 
@@ -91,9 +91,18 @@ class KindOfTaskListForBirdViewController: TDViewController {
     collectionView.register(KindOfTaskListCell.self, forCellWithReuseIdentifier: KindOfTaskListCell.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
-    collectionView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
+    collectionView.anchor(
+      top: headerView.bottomAnchor,
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16
+    )
   }
-  
+
   private func configureAlert() {
     view.addSubview(alertBackgroundView)
     alertBackgroundView.addSubview(alertWindowView)
@@ -108,10 +117,10 @@ class KindOfTaskListForBirdViewController: TDViewController {
     alertWindowView.anchorCenterXToSuperview()
     alertWindowView.anchorCenterYToSuperview()
     alertWindowView.anchor(
-      widthConstant: Sizes.Views.alertDeleteView.width,
-      heightConstant:  Sizes.Views.alertDeleteView.height
+      widthConstant: Sizes.Views.AlertDeleteView.width,
+      heightConstant: Sizes.Views.AlertDeleteView.height
     )
-   
+
     // alertTextViewBackground
     alertTextView.anchor(
       top: alertWindowView.topAnchor,
@@ -129,22 +138,22 @@ class KindOfTaskListForBirdViewController: TDViewController {
     alertOkButton.anchor(
       top: alertTextView.bottomAnchor,
       topConstant: 8,
-      widthConstant: Sizes.Buttons.alertOkButton.width,
-      heightConstant: Sizes.Buttons.alertOkButton.height
+      widthConstant: Sizes.Buttons.AlertOkButton.width,
+      heightConstant: Sizes.Buttons.AlertOkButton.height
     )
-   
+
     // alertCancelButton
     alertCancelButton.anchorCenterXToSuperview()
     alertCancelButton.anchor(top: alertOkButton.bottomAnchor, topConstant: 10)
   }
-  
-  //MARK: - Setup Collection View
+
+  // MARK: - Setup Collection View
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
-  
+
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -155,24 +164,20 @@ class KindOfTaskListForBirdViewController: TDViewController {
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
     return section
   }
-  
-  //MARK: - Bind To
+
+  // MARK: - Bind To
   func bindViewModel() {
-    
+
     let input = KindOfTaskListForBirdViewModel.Input(
       // selection
       selection: collectionView.rx.itemSelected.asDriver(),
-//      // alert
+      // alert
       alertCancelButtonClick: alertCancelButton.rx.tap.asDriver(),
       alertOkButtonClick: alertOkButton.rx.tap.asDriver(),
       // back
       backButtonClickTrigger: backButton.rx.tap.asDriver()
-      // add
-//      addTaskButtonClickTrigger: addButton.rx.tap.asDriver(),
-//      // remove all
-//      removeAllButtonClickTrigger: removeAllButton.rx.tap.asDriver()
     )
-//
+
     let outputs = viewModel.transform(input: input)
 
     [
@@ -181,109 +186,54 @@ class KindOfTaskListForBirdViewController: TDViewController {
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.hideAlert.drive(hideAlertBinder),
       outputs.navigateBack.drive(),
-      outputs.showAlert.drive(showAlertBinder),
-//      outputs.openTask.drive(),
-//      outputs.removeAllTasks.drive(),
-//      outputs.removeTask.drive(),
-//      outputs.setAlertText.drive(alertLabel.rx.text),
-      
-//      outputs.showAlert.drive(showAlertBinder),
-//      outputs.showAddTaskButton.drive(showAddTaskButtonBinder),
-//      outputs.showRemovaAllButton.drive(showRemovaAllButtonBinder),
-//      outputs.title.drive(titleLabel.rx.text)
+      outputs.showAlert.drive(showAlertBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
 
   }
-  
+
   // MARK: - Binders
-//  var changeBinder: Binder<Result<Void, Error>> {
-//    return Binder(self, binding: { (vc, _) in
-//      vc.collectionView.reloadData()
-//    })
-//  }
-//
-  
   var textViewTextBinder: Binder<String> {
     return Binder(self, binding: { (vc, text) in
       vc.alertTextView.text = text
       vc.alertTextView.centerVerticalText()
     })
   }
-  
+
   var hideAlertBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.alertBackgroundView.isHidden = true
     })
   }
-//
-//  var hideCellBinder: Binder<IndexPath> {
-//    return Binder(self, binding: { (vc, indexPath) in
-//      if let cell = vc.collectionView.cellForItem(at: indexPath) as? TaskCell {
-//        cell.hideSwipe(animated: true)
-//      }
-//    })
-//  }
-//
+
   var showAlertBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.alertBackgroundView.isHidden = false
     })
   }
-//
-//  var showAddTaskButtonBinder: Binder<Void> {
-//    return Binder(self, binding: { (vc, _) in
-//      vc.addButton.isHidden = false
-//    })
-//  }
-//
-//  var showRemovaAllButtonBinder: Binder<Void> {
-//    return Binder(self, binding: { (vc, _) in
-//      vc.removeAllButton.isHidden = false
-//    })
-//  }
-//
-//  var addTaskButtonIsHiddenBinder: Binder<Bool> {
-//    return Binder(self, binding: { (vc, isHidden) in
-//      vc.addButton.isHidden = isHidden
-//    })
-//  }
-//
-//  var removeAllDeletedTasksButtonIsHiddenBinder: Binder<Bool> {
-//    return Binder(self, binding: { (vc, isHidden) in
-//      vc.removeAllButton.isHidden = isHidden
-//    })
-//  }
-  
+
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(configureCell: { dataSource, collectionView, indexPath, kindOfTask in
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindOfTaskListCell.reuseID, for: indexPath) as! KindOfTaskListCell
-      cell.configure(with: kindOfTask, mode: .WithRightImage )
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(configureCell: { _, collectionView, indexPath, kindOfTask in
+      guard let cell = collectionView.dequeueReusableCell(
+        withReuseIdentifier: KindOfTaskListCell.reuseID,
+        for: indexPath
+      ) as? KindOfTaskListCell else { return UICollectionViewCell() }
+      cell.configure(with: kindOfTask, mode: .withRightImage )
       return cell
     })
   }
-  
-//  var repeatButtonBinder: Binder<IndexPath?> {
-//    return Binder(self, binding: { (vc, indexPath) in
-//      guard let indexPath = indexPath else { return }
-//      self.viewModel.changeStatus(indexPath: indexPath, status: .InProgress, completed: nil)
-//    })
-//  }
-  
+
 }
 
-
-import UIKit
-
 extension UITextView {
-  
+
   /// Modifies the top content inset to center the text vertically.
   ///
   /// Use KVO on the UITextView contentSize and call this method inside observeValue(forKeyPath:of:change:context:)
   func alignTextVerticallyInContainer() {
     var topCorrect = (self.bounds.size.height - self.contentSize.height * self.zoomScale) / 2
-    topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
+    topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect
     self.contentInset.top = topCorrect
   }
 }

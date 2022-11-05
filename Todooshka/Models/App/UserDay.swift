@@ -7,7 +7,7 @@
 import RxDataSources
 import UIKit
 
-//class UserDay: IdentifiableType, Equatable {
+// class UserDay: IdentifiableType, Equatable {
 //
 //    var identity: String { return self.UID }
 //    var UID: String
@@ -89,4 +89,4 @@ import UIKit
 //        if index >= Array(closedTasksDictionary).count { return nil }
 //        return Array(closedTasksDictionary)[index].value.count.string
 //    }
-//}
+// }

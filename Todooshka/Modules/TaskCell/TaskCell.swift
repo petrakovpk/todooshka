@@ -12,10 +12,10 @@ import Foundation
 import SwipeCellKit
 
 class TaskCell: SwipeCollectionViewCell {
-  
+
   // MARK: - Public
   static let reuseID: String = "TaskCell"
-  
+
   var disposeBag = DisposeBag()
   var drawCompleted: Bool = false
 
@@ -27,36 +27,36 @@ class TaskCell: SwipeCollectionViewCell {
     button.backgroundColor = Palette.SingleColors.BlueRibbon
     button.cornerRadius = 15
     button.setTitleColor(.white, for: .normal)
-    button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4);
-    button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0);
-    
-    let attributedTitle = NSAttributedString(string: "В работу", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 11, weight: .semibold)])
-    button.setAttributedTitle(attributedTitle , for: .normal)
-    
+    button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
+    button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0)
+
+    let attributedTitle = NSAttributedString(string: "В работу", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11, weight: .semibold)])
+    button.setAttributedTitle(attributedTitle, for: .normal)
+
     return button
   }()
-  
+
   // MARK: - Private
   // Properties
   private var isEnabled: Bool = true
   private var oldLayer: CALayer?
   private var oldLineGradientLayer: CAGradientLayer?
   private var oldTimeLayer: CAGradientLayer?
-  
+
   // UI
   private let taskTypeImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
-  
+
   private let taskTextLabel: UILabel = {
     let label = UILabel()
     label.textAlignment = .left
     label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
     return label
   }()
-  
+
   private let descriptionTextLabel: UILabel = {
     let label = UILabel()
     label.textAlignment = .left
@@ -64,7 +64,7 @@ class TaskCell: SwipeCollectionViewCell {
     label.textColor = Style.Cells.TaskList.Description
     return label
   }()
-  
+
   private let taskTimeLeftView: UIView = {
     let view = UIView()
     view.cornerRadius = 15
@@ -72,9 +72,9 @@ class TaskCell: SwipeCollectionViewCell {
     view.backgroundColor = Style.Cells.TaskList.TimeLeftViewBackground
     return view
   }()
-  
+
   private let taskTimeLeftImageView = UIImageView(image: UIImage(named: "timer"))
-  
+
   private let taskTimeLeftLabel: UILabel = {
     let label = UILabel()
     label.textAlignment = .center
@@ -83,13 +83,13 @@ class TaskCell: SwipeCollectionViewCell {
     label.textColor = .white
     return label
   }()
-  
+
   private let taskTimeLeftLineView: UIView = {
     let view = UIView()
     view.backgroundColor = .systemBlue
     return view
   }()
-  
+
   // MARK: - Lifecycle
   override func prepareForReuse() {
     super.prepareForReuse()
@@ -101,9 +101,9 @@ class TaskCell: SwipeCollectionViewCell {
     configureUI()
     drawCompleted = true
   }
-  
+
   func drawLightMode() {
-    
+
     let backgroundLayer = CALayer()
     backgroundLayer.frame = bounds
     backgroundLayer.cornerRadius = 11
@@ -113,23 +113,23 @@ class TaskCell: SwipeCollectionViewCell {
     backgroundLayer.shadowOffset = CGSize(width: 5, height: 5)
     backgroundLayer.shadowColor = UIColor(red: 0.693, green: 0.702, blue: 0.875, alpha: 0.6).cgColor
     backgroundLayer.backgroundColor = UIColor(red: 244/255, green: 245/255, blue: 1, alpha: 1).cgColor
-    
+
     if let oldLayer = oldLayer {
       contentView.layer.replaceSublayer(oldLayer, with: backgroundLayer)
     } else {
       contentView.layer.insertSublayer(backgroundLayer, at: 0)
     }
-    
+
     oldLayer = backgroundLayer
   }
-  
+
   func drawDarkMode() {
-    
+
     let gradientLayer = CAGradientLayer()
     let shapeLayer = CAShapeLayer()
-    
+
     // gradientLayer
-    gradientLayer.locations = [0,1]
+    gradientLayer.locations = [0, 1]
     gradientLayer.startPoint = CGPoint(x: 0, y: 0)
     gradientLayer.endPoint = CGPoint(x: 0, y: 1)
     gradientLayer.frame = bounds
@@ -138,7 +138,7 @@ class TaskCell: SwipeCollectionViewCell {
       UIColor(red: 0.074, green: 0.09, blue: 0.217, alpha: 1).cgColor,
       UIColor(red: 0.074, green: 0.09, blue: 0.217, alpha: 0).cgColor
     ]
-    
+
     // shapeLayer
     shapeLayer.frame = bounds
     shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 11).cgPath
@@ -146,27 +146,27 @@ class TaskCell: SwipeCollectionViewCell {
     shapeLayer.fillColor = UIColor.clear.cgColor
     shapeLayer.lineWidth = 1
     shapeLayer.insertSublayer(gradientLayer, at: 0)
-    
+
     if let oldLayer = oldLayer {
       contentView.layer.replaceSublayer(oldLayer, with: shapeLayer)
     } else {
       contentView.layer.insertSublayer(shapeLayer, at: 0)
     }
-    
+
     oldLayer = shapeLayer
   }
-  
+
   func configureTimerRound() {
     let path = UIBezierPath()
     let animation = CAKeyframeAnimation(keyPath: "position")
     let roundGradintLayer = CAGradientLayer()
     let size = CGSize(width: contentView.bounds.width, height: contentView.bounds.height)
     let cornerRadius = CGFloat(11)
-    
+
     // path
     path.move(to: CGPoint(x: size.width / 2, y: 0))
     path.addLine(to: CGPoint(x: size.width - cornerRadius, y: 0))
-    path.addArc(withCenter: CGPoint(x: size.width - cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: -.pi / 2 , endAngle: 0, clockwise: true)
+    path.addArc(withCenter: CGPoint(x: size.width - cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: -.pi / 2, endAngle: 0, clockwise: true)
     path.addLine(to: CGPoint(x: size.width, y: size.height - cornerRadius))
     path.addArc(withCenter: CGPoint(x: size.width - cornerRadius, y: size.height - cornerRadius), radius: cornerRadius, startAngle: 0, endAngle: .pi / 2, clockwise: true)
     path.addLine(to: CGPoint(x: cornerRadius, y: size.height))
@@ -174,14 +174,14 @@ class TaskCell: SwipeCollectionViewCell {
     path.addLine(to: CGPoint(x: 0, y: cornerRadius))
     path.addArc(withCenter: CGPoint(x: cornerRadius, y: cornerRadius), radius: cornerRadius, startAngle: .pi, endAngle: -.pi / 2, clockwise: true)
     path.addLine(to: CGPoint(x: size.width / 2, y: 0))
-    
+
     // animation
     animation.path = path.cgPath
     animation.duration = 60
     animation.repeatCount = .infinity
-    
+
     // roundGradintLayer
-    roundGradintLayer.locations = [0,1]
+    roundGradintLayer.locations = [0, 1]
     roundGradintLayer.startPoint = CGPoint(x: 0.5, y: 0.5)
     roundGradintLayer.endPoint = CGPoint(x: 1, y: 1)
     roundGradintLayer.frame = CGRect(x: -5, y: -5, width: 10, height: 10)
@@ -190,21 +190,21 @@ class TaskCell: SwipeCollectionViewCell {
     roundGradintLayer.type = .radial
     roundGradintLayer.colors = [
       UIColor(hexString: "#fc3e08")!.withAlphaComponent(1).cgColor,
-      UIColor(hexString: "#fc3e08")!.withAlphaComponent(0).cgColor,
+      UIColor(hexString: "#fc3e08")!.withAlphaComponent(0).cgColor
     ]
-    
+
     if let oldTimeLayer = oldTimeLayer {
       contentView.layer.replaceSublayer(oldTimeLayer, with: roundGradintLayer)
     } else {
       contentView.layer.insertSublayer(roundGradintLayer, at: 0)
     }
-    
+
     oldTimeLayer = roundGradintLayer
   }
-  
-  //MARK: - Configure UI
+
+  // MARK: - Configure UI
   func configureUI() {
-    
+
     // contentView
     contentView.addSubview(repeatButton)
     contentView.addSubview(taskTextLabel)
@@ -213,32 +213,32 @@ class TaskCell: SwipeCollectionViewCell {
     contentView.addSubview(taskTimeLeftView)
     taskTimeLeftView.addSubview(taskTimeLeftImageView)
     taskTimeLeftView.addSubview(taskTimeLeftLabel)
-    
+
     traitCollection.userInterfaceStyle == .dark ? drawDarkMode() : drawLightMode()
-    
+
     // contentView
     contentView.cornerRadius = 11
     contentView.layer.borderWidth = 0
     contentView.layer.borderColor = UIColor(hexString: "#15183C")?.cgColor
     contentView.layer.masksToBounds = false
     contentView.tintColor = .white
-    
+
     // taskTypeImageView
     taskTypeImageView.anchorCenterYToSuperview()
     taskTypeImageView.anchor(left: contentView.leftAnchor, leftConstant: 8, widthConstant: 20, heightConstant: 20)
-    
+
     // taskTimeLeftView
     taskTimeLeftView.anchorCenterYToSuperview()
     taskTimeLeftView.anchor(right: contentView.rightAnchor, rightConstant: 8, widthConstant: 110, heightConstant: 30)
-    
+
     // taskTimeLeftImageView
     taskTimeLeftImageView.anchorCenterYToSuperview()
     taskTimeLeftImageView.anchor(left: taskTimeLeftView.leftAnchor, leftConstant: 10, widthConstant: 13, heightConstant: 13)
-    
+
     // taskTimeLeftLabel
     taskTimeLeftLabel.anchorCenterYToSuperview()
     taskTimeLeftLabel.anchor(left: taskTimeLeftImageView.rightAnchor, right: taskTimeLeftView.rightAnchor, leftConstant: 3, rightConstant: 10, widthConstant: 40)
-    
+
     // repeatButton
     repeatButton.anchorCenterYToSuperview()
     repeatButton.anchor(right: contentView.rightAnchor, rightConstant: 8, widthConstant: 110, heightConstant: 30)
@@ -250,34 +250,34 @@ class TaskCell: SwipeCollectionViewCell {
       taskTextLabel.anchor(top: contentView.topAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 12, leftConstant: 8, rightConstant: 8)
       descriptionTextLabel.anchor(top: taskTextLabel.bottomAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 3, leftConstant: 8, rightConstant: 8)
     }
-    
+
   }
-  
+
   func configure(with mode: TaskCellMode) {
     switch mode {
-    case .WithTimer:
+    case .withTimer:
       taskTimeLeftView.isHidden = false
       repeatButton.isHidden = true
-    case .WithRepeatButton:
+    case .withRepeatButton:
       taskTimeLeftView.isHidden = true
       repeatButton.isHidden = false
-    case .WithFeather:
+    case .withFeather:
       taskTimeLeftView.isHidden = true
       repeatButton.isHidden = true
     }
   }
-  
+
   func configure(with task: Task) {
     descriptionTextLabel.text = task.description
     taskTextLabel.text = task.text
     taskTimeLeftLabel.text = task.timeLeftText
-    
+
     configureLineLayout(with: task.timeLeftPercent)
-    
+
     if drawCompleted {
       taskTextLabel.removeAllConstraints()
       descriptionTextLabel.removeAllConstraints()
-      
+
       if descriptionTextLabel.text == "" {
         taskTextLabel.anchorCenterYToSuperview()
         taskTextLabel.anchor(left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, leftConstant: 8, rightConstant: 8)
@@ -287,22 +287,22 @@ class TaskCell: SwipeCollectionViewCell {
       }
     }
   }
-  
+
   func configure(with kindOfTask: KindOfTask) {
     taskTypeImageView.image = kindOfTask.icon.image
     taskTypeImageView.tintColor = kindOfTask.color
   }
-  
+
   // MARK: - Configure UI
   private func configureLineLayout(with percent: Double) {
-    
+
     let widthConstant = percent * (contentView.frame.width.double - 22)
     let roundGradintLayer = CAGradientLayer()
     let lineGradientLayer = CAGradientLayer()
-    
+
     // roundGradintLayer
     roundGradintLayer.type = .radial
-    roundGradintLayer.locations = [0,1]
+    roundGradintLayer.locations = [0, 1]
     roundGradintLayer.startPoint = CGPoint(x: 0.5, y: 0.5)
     roundGradintLayer.endPoint = CGPoint(x: 1, y: 1)
     roundGradintLayer.frame = CGRect(x: -5, y: -5, width: 10, height: 10)
@@ -310,11 +310,11 @@ class TaskCell: SwipeCollectionViewCell {
     roundGradintLayer.isHidden = widthConstant == 0
     roundGradintLayer.colors = [
       UIColor(hexString: "#fc3e08")!.withAlphaComponent(1).cgColor,
-      UIColor(hexString: "#fc3e08")!.withAlphaComponent(0).cgColor,
+      UIColor(hexString: "#fc3e08")!.withAlphaComponent(0).cgColor
     ]
-    
+
     // lineGradientLayer
-    lineGradientLayer.locations = [0,1]
+    lineGradientLayer.locations = [0, 1]
     lineGradientLayer.startPoint = CGPoint(x: 1, y: 0)
     lineGradientLayer.endPoint = CGPoint(x: 0, y: 0)
     lineGradientLayer.frame = CGRect(x: 11, y: contentView.height.double, width: widthConstant, height: 1.0)
@@ -323,15 +323,15 @@ class TaskCell: SwipeCollectionViewCell {
     lineGradientLayer.zPosition = 10
     lineGradientLayer.colors = [
       UIColor(hexString: "#fc3e08")!.withAlphaComponent(1).cgColor,
-      UIColor(hexString: "#fc3e08")!.withAlphaComponent(0).cgColor,
+      UIColor(hexString: "#fc3e08")!.withAlphaComponent(0).cgColor
     ]
-    
+
     if let oldLineGradientLayer = oldLineGradientLayer {
       contentView.layer.replaceSublayer(oldLineGradientLayer, with: lineGradientLayer)
     } else {
       contentView.layer.insertSublayer(lineGradientLayer, at: 0)
     }
-    
+
     oldLineGradientLayer = lineGradientLayer
   }
 }

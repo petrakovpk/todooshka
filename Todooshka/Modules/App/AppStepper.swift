@@ -10,16 +10,16 @@ import RxSwift
 import RxCocoa
 
 class AppStepper: Stepper {
-  
+
   let steps = PublishRelay<Step>()
   private let appServices: AppServices
   private let disposalBag = DisposeBag()
-  
+
   init(withServices services: AppServices) {
     self.appServices = services
   }
-  
+
   var initialStep: Step {
-    UserDefaults.standard.bool(forKey: "isOnboardingCompleted") ? AppStep.OnboardingIsCompleted : AppStep.OnboardingIsRequired
+    UserDefaults.standard.bool(forKey: "isOnboardingCompleted") ? AppStep.onboardingIsCompleted : AppStep.onboardingIsRequired
   }
 }

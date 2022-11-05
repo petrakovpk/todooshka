@@ -13,15 +13,15 @@ import RxSwift
 import UIKit
 
 class AuthViewController: UIViewController {
-  
+
   // MARK: - Public
   var viewModel: AuthViewModel!
-  
-  //MARK: - Private
+
+  // MARK: - Private
   private let disposeBag = DisposeBag()
   private var currentNonce: String?
-  
-  //MARK: - UI Elements
+
+  // MARK: - UI Elements
   private let headerLabel: UILabel = {
     let label = UILabel()
     label.text = "DragoDo"
@@ -29,7 +29,7 @@ class AuthViewController: UIViewController {
     label.textColor = Style.App.text
     return label
   }()
-  
+
   private let secondHeaderLabel: UILabel = {
     let label = UILabel()
     label.text = "Войдите в аккаунт"
@@ -37,7 +37,7 @@ class AuthViewController: UIViewController {
     label.textColor = Style.App.text
     return label
   }()
-  
+
   private let headerDescriptionTextView: UITextView = {
     let textView = UITextView()
     textView.text = "Авторизация позволит вам сохранять задачи в облаке"
@@ -50,62 +50,77 @@ class AuthViewController: UIViewController {
     textView.textColor = Palette.SingleColors.SantasGray
     return textView
   }()
-  
+
   private let emailOrPhoneAccountButton: UIButton = {
+    let attrString = NSAttributedString(
+      string: "Войти через почту / телефон",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)]
+    )
     let button = UIButton(type: .custom)
     button.cornerRadius = 25
     button.backgroundColor = .white
     button.setTitleColor(UIColor(red: 0.039, green: 0.047, blue: 0.137, alpha: 1), for: .normal)
-    let attrString = NSAttributedString(string: "Войти через почту / телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
-  
+
   private let appleButton: UIButton = {
+    let attrString = NSAttributedString(
+      string: "Продолжить с Apple",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)]
+    )
     let button = UIButton(type: .custom)
     button.cornerRadius = 25
     button.backgroundColor = UIColor(red: 0.128, green: 0.13, blue: 0.154, alpha: 1)
     button.setTitleColor(.white, for: .normal)
-    let attrString = NSAttributedString(string: "Продолжить с Apple", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
-  
+
   private let googleButton: UIButton = {
+    let attrString = NSAttributedString(
+      string: "Продолжить с Google",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)]
+    )
     let button = UIButton(type: .custom)
     button.backgroundColor = UIColor(red: 0.937, green: 0.408, blue: 0.322, alpha: 1)
     button.setTitleColor(.white, for: .normal)
     button.cornerRadius = 25
-    let attrString = NSAttributedString(string: "Продолжить с Google", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
-  
+
   private let skipButton: UIButton = {
+    let attrString = NSAttributedString(
+      string: "Продолжить без регистрации",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)]
+    )
     let button = UIButton(type: .custom)
     button.setTitleColor(UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1), for: .normal)
-    let attrString = NSAttributedString(string: "Продолжить без регистрации", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
-  
+
   private let privacyButton: UIButton = {
+    let attrString = NSAttributedString(
+      string: "Правила и условия",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)]
+    )
     let button = UIButton(type: .custom)
     button.setTitleColor(UIColor(red: 0.583, green: 0.592, blue: 0.696, alpha: 1), for: .normal)
-    let attrString = NSAttributedString(string: "Правила и условия", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
-  
-  //MARK: - Lifecycle
+
+  // MARK: - Lifecycle
   override func viewDidLoad() {
     configureUI()
     bindViewModel()
   }
-  
-  //MARK: - Configure UI
+
+  // MARK: - Configure UI
   func configureUI() {
-    
+
     // adding
     view.addSubview(headerLabel)
     view.addSubview(secondHeaderLabel)
@@ -114,77 +129,108 @@ class AuthViewController: UIViewController {
     view.addSubview(appleButton)
     view.addSubview(googleButton)
     view.addSubview(skipButton)
-    
+
     // view
     view.backgroundColor = Style.Auth.Background
-    
+
     // headerLabel
     headerLabel.anchor(top: view.topAnchor, topConstant: 84)
     headerLabel.anchorCenterXToSuperview()
-    
+
     // secondHeaderLabel
     secondHeaderLabel.anchor(top: headerLabel.bottomAnchor, topConstant: 31)
     secondHeaderLabel.anchorCenterXToSuperview()
-    
+
     // headerDescriptionTextView
-    headerDescriptionTextView.anchor(top: secondHeaderLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 15, leftConstant: 29, rightConstant: 29)
     headerDescriptionTextView.anchorCenterXToSuperview()
-    
+    headerDescriptionTextView.anchor(
+      top: secondHeaderLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 15,
+      leftConstant: 29,
+      rightConstant: 29
+    )
+
     // createButton
-    emailOrPhoneAccountButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 71, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-    
+    emailOrPhoneAccountButton.anchor(
+      top: headerDescriptionTextView.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 71,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+
     // appleButton
-    appleButton.anchor(top: emailOrPhoneAccountButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-    
+    appleButton.anchor(
+      top: emailOrPhoneAccountButton.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 12,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+
     // googleButton
-    googleButton.anchor(top: appleButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-    
+    googleButton.anchor(
+      top: appleButton.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 12,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+
     // skipButton
     skipButton.anchor(top: googleButton.bottomAnchor, topConstant: 25)
     skipButton.anchorCenterXToSuperview()
 
   }
-  
-  //MARK: - Bind
+
+  // MARK: - Bind
   func bindViewModel() {
-    
+
     let input = AuthViewModel.Input(
       appleButtonClickTrigger: appleButton.rx.tap.asDriver(),
       emailOrPhoneAccountButtonClickTrigger: emailOrPhoneAccountButton.rx.tap.asDriver(),
       googleButtonClickTrigger: googleButton.rx.tap.asDriver().map { _ in self },
       skipButtonClickTrigger: skipButton.rx.tap.asDriver()
     )
-    
+
     let output = viewModel.transform(input: input)
-    
+
     [
       output.appleGetNonceString.drive(signInWithAppleBinder),
       output.auth.drive(),
       output.authWithEmailOrPhone.drive(),
       output.skip.drive()
     ]
-      .forEach{ $0.disposed(by: disposeBag) }
+      .forEach { $0.disposed(by: disposeBag) }
   }
-  
+
   var signInWithAppleBinder: Binder<String> {
     return Binder(self, binding: { (vc, currentNonce) in
       vc.currentNonce = currentNonce
-      
+
       let appleIDProvider = ASAuthorizationAppleIDProvider()
       let request = appleIDProvider.createRequest()
       request.requestedScopes = [.fullName, .email]
       request.nonce = self.sha256(currentNonce)
-      
+
       let authorizationController = ASAuthorizationController(authorizationRequests: [request])
       authorizationController.delegate = self
       authorizationController.presentationContextProvider = self
-      
+
       // self
       authorizationController.performRequests()
-      
+
     })
   }
-  
+
   @available(iOS 13, *)
   private func sha256(_ input: String) -> String {
     let inputData = Data(input.utf8)
@@ -192,18 +238,18 @@ class AuthViewController: UIViewController {
     let hashString = hashedData.compactMap {
       return String(format: "%02x", $0)
     }.joined()
-    
+
     return hashString
   }
-  
+
 }
 
 // MARK: - Apple Sign In delegate
 @available(iOS 13.0, *)
 extension AuthViewController: ASAuthorizationControllerDelegate {
-  
+
   func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-    
+
     if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
       guard let nonce = currentNonce else {
         fatalError("Invalid state: A login callback was received, but no login request was sent.")
@@ -224,7 +270,7 @@ extension AuthViewController: ASAuthorizationControllerDelegate {
       viewModel.credential.accept(credential)
     }
   }
-  
+
   func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
     // Handle error.
     print("Sign in with Apple errored: \(error)")

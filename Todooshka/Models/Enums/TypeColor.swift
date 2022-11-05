@@ -5,10 +5,10 @@
 //  Created by Петраков Павел Константинович on 07.04.2022.
 //
 //
-//import UIKit
-//import RxDataSources
+// import UIKit
+// import RxDataSources
 //
-//enum TypeColor: String, IdentifiableType, Equatable  {
+// enum TypeColor: String, IdentifiableType, Equatable  {
 //
 //  // MARK: - Icons
 //  case Amethyst = "Amethyst"
@@ -34,9 +34,7 @@
 //    return UIColor(named: self.rawValue)!
 //  }
 //
-//  //MARK: - Identity
+// MARK: - Identity
 //  var identity: String { return self.rawValue }
-//}
+// }
 //
-
-

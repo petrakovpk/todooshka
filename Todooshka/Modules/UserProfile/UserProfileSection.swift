@@ -10,22 +10,21 @@ import RxDataSources
 import UIKit
 
 struct UserProfileSection: AnimatableSectionModelType {
-  
+
   var identity: String {
     header
   }
-  
+
   var header: String
   var items: [UserProfileItem]
-  
+
   init(header: String, items: [UserProfileItem]) {
     self.header = header
     self.items = items
   }
-  
+
   init(original: UserProfileSection, items: [UserProfileItem]) {
     self = original
     self.items = items
   }
 }
-

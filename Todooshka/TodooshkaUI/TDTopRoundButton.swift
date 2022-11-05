@@ -8,22 +8,21 @@
 import UIKit
 
 class TDRoundButton: UIButton {
-  
+
   // MARK: - Draw
   override func draw(_ rect: CGRect) {
     cornerRadius = bounds.width / 2
   }
-  
+
   // MARK: - Configure
   func configure(image: UIImage?, blurEffect: Bool) {
-    
-    
+
     // def
     let imageView = UIImageView(image: image)
-    
+
     // adding
     addSubview(imageView)
-    
+
     // blurEffect
     if blurEffect {
       let blurEffect = UIBlurEffect(style: .systemUltraThinMaterial)
@@ -33,12 +32,11 @@ class TDRoundButton: UIButton {
     } else {
       backgroundColor = Style.Buttons.RoundButton.background
     }
-    
+
     // imageView
     imageView.tintColor = Style.Buttons.RoundButton.tint
     imageView.anchorCenterXToSuperview()
     imageView.anchorCenterYToSuperview()
   }
-  
-}
 
+}

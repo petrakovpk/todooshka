@@ -8,22 +8,22 @@
 import RxDataSources
 
 enum CalendarItemType {
-  case Empty
-  case Day(date: Date, isSelected: Bool, completedTasksCount: Int, plannedTasksCount: Int)
+  case empty
+  case day(date: Date, isSelected: Bool, completedTasksCount: Int, plannedTasksCount: Int)
 }
 
 struct CalendarItem: IdentifiableType, Equatable {
-  
+
   // IdentifiableType
   var identity: String {
     switch type {
-    case .Empty:
+    case .empty:
       return "Empty"
-    case .Day(let date, let isSelected, let completedTasksCount, let plannedTasksCount):
+    case .day(let date, let isSelected, let completedTasksCount, let plannedTasksCount):
       return date.timeIntervalSince1970.string + isSelected.string + completedTasksCount.string + plannedTasksCount.string
     }
   }
-  
+
   var type: CalendarItemType
 
   // MARK: - Equatable

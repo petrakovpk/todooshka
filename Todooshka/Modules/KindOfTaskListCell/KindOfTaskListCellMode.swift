@@ -8,7 +8,7 @@
 import UIKit
 
 enum KindOfTaskListCellMode {
-  case Empty
-  case WithRepeatButton
-  case WithRightImage
+  case empty
+  case withRepeatButton
+  case withRightImage
 }

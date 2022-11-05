@@ -7,15 +7,15 @@
 
 enum Currency: String {
   // Перо
-  case Feather = "Feather"
+  case feather = "Feather"
   // Бриллиант
-  case Diamond = "Diamond"
+  case diamond = "Diamond"
   // index
   var index: Int {
     switch self {
-    case .Feather:
+    case .feather:
       return 0
-    case .Diamond:
+    case .diamond:
       return 1
     }
   }

@@ -8,28 +8,28 @@
 import RxDataSources
 
 struct AuthSectionItem: IdentifiableType, Equatable {
-    
-    //MARK: - Properties
+
+    // MARK: - Properties
     var placeholder: String
     var imageName: String
-    
-    //MARK: - Identity
+
+    // MARK: - Identity
     var identity: String { return UUID().uuidString }
 }
 
 struct AuthSectionModel: AnimatableSectionModelType {
-    
-    //MARK: - Identity
+
+    // MARK: - Identity
     var identity: String { return UUID().uuidString }
-    
-    //MARK: - Properties
+
+    // MARK: - Properties
     var items: [AuthSectionItem]
-    
-    //MARK: - Init
+
+    // MARK: - Init
     init(items: [AuthSectionItem]) {
         self.items = items
     }
-    
+
     init(original: AuthSectionModel, items: [AuthSectionItem]) {
         self = original
         self.items = items

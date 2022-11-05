@@ -10,8 +10,3 @@ import UIKit
 protocol ConfigureColorProtocol {
     func configureColor()
 }
-
-
-
-
-

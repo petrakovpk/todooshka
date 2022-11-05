@@ -7,18 +7,18 @@
 import UIKit
 
 struct Style {
-  
+
   struct App {
     static let background = Palette.DualColors.TitanWhite_235_236_255_Haiti_10_12_35
     static let text = Palette.DualColors.BlackPearl_White
     static let textInverted = Palette.DualColors.White_BlackPearl
     static let placeholder = Palette.DualColors.Martinique_a30_Martinique
   }
-  
+
   struct Auth {
     static let Background = Palette.DualColors.TitanWhite_235_236_255_BlackPerl_3_4_16
   }
-  
+
   struct Buttons {
     struct AlertGreenButton {
       static let Background = Palette.SingleColors.Shamrock
@@ -38,7 +38,7 @@ struct Style {
       static let tint = Palette.DualColors.BlackPearl_White
     }
   }
-  
+
   struct Cells {
     struct Calendar {
       static let Border = Palette.SingleColors.BlueRibbon
@@ -60,7 +60,7 @@ struct Style {
     static let Dot = Palette.DualColors.PeriwinkleGray_Fiord
     static let Text = Palette.SingleColors.SantasGray
   }
-  
+
   struct TextFields {
     struct AuthTextField {
       static let Background = Palette.DualColors.TitanWhite_224_226_255_Haiti_10_12_35
@@ -72,51 +72,51 @@ struct Style {
       static let Tint = Palette.DualColors.HawkesBlue_196_200_251_Martinique_45_48_80
     }
   }
-  
+
   struct TabBar {
     static let Background = Palette.DualColors.Snuff_212_213_234_Haiti_18_22_55
     static let Selected = Palette.DualColors.BlueRibbon_White
     static let Unselected = Palette.DualColors.BlackPearl_a50_White_a30
   }
-  
+
   struct Views {
     struct Alert {
       static let Background = UIColor.black.withAlphaComponent(0.5)
     }
-    
+
     struct AuthDivider {
       static let selected = Palette.SingleColors.BlueRibbon
       static let unselected = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
       static let selectedText = Style.App.text
       static let unselectedText = Palette.DualColors.Wistful_169_171_217_EastBay_81_85_132
     }
-    
+
     struct Calendar {
       static let Background = Palette.DualColors.Selago_220_222_251_PortGore_26_29_67
     }
-    
+
     struct CalendarDivider {
       static let Background = Palette.DualColors.MoonRaker_PortGore
     }
-    
+
     struct GameCurrency {
       static let textViewBackground = Palette.DualColors.TitanWhite_228_229_254_Haiti_17_20_52
     }
-    
+
     struct Header {
       static let Background = Palette.DualColors.TitanWhite_228_229_254_Haiti_7_9_30
       static let Divider = Palette.DualColors.Periwinkle_204_206_253_Haiti_17_20_52
     }
   }
-  
+
   // Diamond
   struct Diamond {
     struct OfferCell {
-      struct selected {
+      struct Selected {
         static let background = Palette.DualColors.Sundown_254_174_181
         static let offerBackground = Palette.DualColors.LavenderRose_254_158_242
       }
-      struct notSeleted {
+      struct NotSeleted {
         static let background = Palette.DualColors.TitanWhite_228_229_254_Haiti_17_20_52
         static let offerBackground = Palette.DualColors.TitanWhite_196_198_216_Haiti_7_9_30
       }
@@ -125,17 +125,16 @@ struct Style {
 
   // Alert
   struct BuyAlertView {
-    
+
   }
-  
+
   struct Scene {
     static let width = UIScreen.main.bounds.width
     static let height = UIScreen.main.bounds.width * UIImage(named: "день01")!.size.height / UIImage(named: "день01")!.size.width * 1.5
     static let scale = UIScreen.main.bounds.width / UIImage(named: "день01")!.size.width
-    
+
     struct Egg {
       static let scale = UIScreen.main.bounds.width / UIImage(named: "день01")!.size.width / 1.5
     }
   }
 }
-

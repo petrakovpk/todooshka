@@ -9,11 +9,11 @@ import CoreData
 import Firebase
 
 class CoreDataTaskToTaskV1toV2: NSEntityMigrationPolicy {
-  
+
   override func createDestinationInstances(forSource sInstance: NSManagedObject, in mapping: NSEntityMapping, manager: NSMigrationManager) throws {
 
     try super.createDestinationInstances(forSource: sInstance, in: mapping, manager: manager)
-  
+
     guard let destinationTask = manager.destinationInstances(forEntityMappingName: mapping.name, sourceInstances: [sInstance]).last else { return }
 
     let longText = sInstance.primitiveValue(forKey: "longText") as? String
@@ -43,7 +43,7 @@ class CoreDataTaskToTaskV1toV2: NSEntityMigrationPolicy {
     destinationTask.setValue(statusRawValue, forKey: "statusRawValue")
     destinationTask.setValue(text, forKey: "text")
     destinationTask.setValue(uid, forKey: "uid")
-    destinationTask.setValue(userUID ?? Auth.auth().currentUser?.uid , forKey: "userUID")
+    destinationTask.setValue(userUID ?? Auth.auth().currentUser?.uid, forKey: "userUID")
 
     manager.associate(sourceInstance: sInstance, withDestinationInstance: destinationTask, for: mapping)
   }

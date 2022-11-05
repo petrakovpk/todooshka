@@ -6,10 +6,10 @@
 //
 //
 
-//import Foundation
-//import CoreData
+// import Foundation
+// import CoreData
 //
-//@objc(BirdCoreData)
-//public class BirdCoreData: NSManagedObject {
+// @objc(BirdCoreData)
+// public class BirdCoreData: NSManagedObject {
 //
-//}
+// }

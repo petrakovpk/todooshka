@@ -5,10 +5,10 @@
 //  Created by Петраков Павел Константинович on 24.03.2022.
 //
 //
-//import UIKit
-//import Differentiator
+// import UIKit
+// import Differentiator
 //
-//struct Egg {
+// struct Egg {
 //  
 //  // MARK: - Properties
 //  let UID: String // task UID
@@ -38,4 +38,4 @@
 //    self.created = created
 //    self.cracks = cracks
 //  }
-//}
+// }

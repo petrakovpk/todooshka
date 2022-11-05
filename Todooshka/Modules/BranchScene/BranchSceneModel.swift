@@ -11,16 +11,16 @@ import RxCocoa
 import UIKit
 
 class BranchSceneModel: Stepper {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
   let willShow = BehaviorRelay<Void?>(value: nil)
 
   struct Input {
-   
+
   }
-  
+
   struct Output {
     // background
     let background: Driver<UIImage?>
@@ -32,36 +32,36 @@ class BranchSceneModel: Stepper {
     let forceNestUpdate: Driver<Void>
     let forceBranchUpdate: Driver<Void>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-  
+
   func transform(input: Input) -> Output {
 
     // force
     let forceNestUpdate = willShow
-      .compactMap{ $0 }
+      .compactMap { $0 }
       .asDriver(onErrorJustReturn: ())
       .map { self.services.actionService.forceNestSceneTrigger.accept(()) }
-    
+
     let forceBranchUpdate = services.actionService.forceBranchSceneTrigger
-      .compactMap{ $0 }
+      .compactMap { $0 }
       .asDriver(onErrorJustReturn: ())
 
     // timer
     let timer = Driver<Int>
       .interval(RxTimeInterval.seconds(5))
-    
+
     // background
     let background = timer
-      .map{ _ in self.getBackgroundImage(date: Date()) }
+      .map { _ in self.getBackgroundImage(date: Date()) }
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
 
     let birds = services.dataService.birds
-    
+
     let dataSource = services.dataService.branchDataSource
 
     return Output(
@@ -72,7 +72,7 @@ class BranchSceneModel: Stepper {
       forceBranchUpdate: forceBranchUpdate
     )
   }
-  
+
   // Helpers
   func getBackgroundImage(date: Date) -> UIImage? {
     let hour = Date().hour
@@ -85,4 +85,3 @@ class BranchSceneModel: Stepper {
     }
   }
 }
-

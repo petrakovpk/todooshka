@@ -6,10 +6,10 @@
 //
 //
 //
-//import Foundation
-//import CoreData
+// import Foundation
+// import CoreData
 //
-//extension TaskCoreData {
+// extension TaskCoreData {
 //
 //  @nonobjc public class func fetchRequest() -> NSFetchRequest<TaskCoreData> {
 //    return NSFetchRequest<TaskCoreData>(entityName: "TaskCoreData")
@@ -52,4 +52,4 @@
 //    self.closed = task.closed
 //    self.userUID = ""
 //  }
-//}
+// }

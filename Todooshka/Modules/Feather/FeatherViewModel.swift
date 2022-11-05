@@ -14,32 +14,32 @@ class FeatherViewModel: Stepper {
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
-  
+
   // MARK: - Transform
   struct Input {
     let backButtonClickTrigger: Driver<Void>
   }
-  
+
   struct Output {
     let dataSource: Driver<[TaskListSection]>
     let navigateBack: Driver<Void>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-  
+
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    
+
     // tasks
     let tasks = services.dataService.goldTasks
-    
+
     let kindsOfTask = services.dataService.kindsOfTask.asDriver()
-    
+
     let taskListSectionItems = Driver<[TaskListSectionItem]>
-      .combineLatest(tasks,kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+      .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
         tasks.map { task in
           TaskListSectionItem(
             task: task,
@@ -47,7 +47,6 @@ class FeatherViewModel: Stepper {
           )
         }
       }
-    
 
     // dataSource
     let dataSource = taskListSectionItems
@@ -56,14 +55,14 @@ class FeatherViewModel: Stepper {
           .init(grouping: $0, by: { $0.task.closed!.startOfDay })
           .sorted(by: { $0.key > $1.key })
           .map { key, value in
-            TaskListSection(header: self.services.preferencesService.formatter.string(from: key), mode: .WithFeather, items: value)
+            TaskListSection(header: self.services.preferencesService.formatter.string(from: key), mode: .withFeather, items: value)
           }
       }
-    
+
     // backButtonClickHandler
     let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.NavigateBack) }
-    
+      .map { self.steps.accept(AppStep.navigateBack) }
+
     return Output(
       dataSource: dataSource,
       navigateBack: navigateBack
@@ -71,5 +70,3 @@ class FeatherViewModel: Stepper {
   }
 
 }
-
-

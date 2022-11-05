@@ -18,7 +18,7 @@ struct Settings {
       6: CGPoint(x: -10 - 50, y: -30),
       7: CGPoint(x: -10 - 90, y: -5)
     ]
-    
+
     static let BranchPosition: [Int: CGPoint] = [
       1: CGPoint(x: 150, y: 0),
       2: CGPoint(x: -150, y: 0),
@@ -29,7 +29,7 @@ struct Settings {
       7: CGPoint(x: 0, y: 0)
     ]
   }
-  
+
   struct Eggs {
     static let NestPosition: [Int: CGPoint] = [
       1: CGPoint(x: -10 - 30, y: 20),

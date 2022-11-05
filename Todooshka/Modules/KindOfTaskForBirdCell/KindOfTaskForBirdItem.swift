@@ -13,10 +13,10 @@ enum KindOfTaskForBirdItemType: Equatable {
 }
 
 struct KindOfTaskForBirdItem: IdentifiableType, Equatable {
-  
+
   let kindOfTaskType: KindOfTaskForBirdItemType
-  
-  //MARK: - Identity
+
+  // MARK: - Identity
   var identity: String {
     switch kindOfTaskType {
     case .isPlusButton:
@@ -25,7 +25,7 @@ struct KindOfTaskForBirdItem: IdentifiableType, Equatable {
       return kindOfTask.UID + isEnabled.string
     }
   }
-  
+
   // MARK: - Equatable
   static func == (lhs: KindOfTaskForBirdItem, rhs: KindOfTaskForBirdItem) -> Bool {
     lhs.identity == rhs.identity

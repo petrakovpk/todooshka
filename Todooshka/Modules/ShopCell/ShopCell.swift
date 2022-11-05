@@ -8,10 +8,10 @@
 import UIKit
 
 class ShopCollectionViewCell: UICollectionViewCell {
-  
+
   // MARK: - Properties
   static var reuseID: String = "ShopCollectionViewCell"
-  
+
   // MARK: - UI elements
   private let nameLabel: UILabel = {
     let label = UILabel()
@@ -21,20 +21,20 @@ class ShopCollectionViewCell: UICollectionViewCell {
     label.lineBreakMode = .byCharWrapping
     return label
   }()
-  
+
   private let imageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     imageView.layer.cornerRadius = 15
     return imageView
   }()
-  
+
   // MARK: - draw
   override func draw(_ rect: CGRect) {
-    
+
     // contentView
     contentView.cornerRadius = 11
-    
+
     // adding
     contentView.addSubview(nameLabel)
     contentView.addSubview(imageView)
@@ -42,15 +42,24 @@ class ShopCollectionViewCell: UICollectionViewCell {
     // nameLabel
     nameLabel.anchorCenterXToSuperview()
     nameLabel.anchor(bottom: contentView.bottomAnchor, bottomConstant: 8)
-    
+
     // imageView
-    imageView.anchor(top: contentView.topAnchor, left: contentView.leftAnchor, bottom: nameLabel.topAnchor, right: contentView.rightAnchor, topConstant: 16, leftConstant: 16, bottomConstant: 16, rightConstant: 16)
+    imageView.anchor(
+      top: contentView.topAnchor,
+      left: contentView.leftAnchor,
+      bottom: nameLabel.topAnchor,
+      right: contentView.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16
+    )
   }
-  
+
   // MARK: - Configure UI
   func configure(bird: Bird) {
     nameLabel.text = bird.name
-    imageView.image = bird.getImageForState(state: .Normal)
+    imageView.image = bird.getImageForState(state: .normal)
     contentView.backgroundColor = bird.isBought ? .clear : .systemGray.withAlphaComponent(0.3)
   }
 }

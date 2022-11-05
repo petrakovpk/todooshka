@@ -6,10 +6,10 @@
 //
 //
 //
-//import Foundation
-//import CoreData
+// import Foundation
+// import CoreData
 //
-//@objc(TaskCoreData)
-//public class TaskCoreData: NSManagedObject {
+// @objc(TaskCoreData)
+// public class TaskCoreData: NSManagedObject {
 //
-//}
+// }

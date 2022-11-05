@@ -5,11 +5,11 @@
 //  Created by Петраков Павел Константинович on 10.06.2021.
 //
 
-//import Firebase
+// import Firebase
 import RxSwift
 import RxCocoa
 
-//extension DatabaseReference {
+// extension DatabaseReference {
 //    
 //    func rx_observe(eventType: DataEventType = .value) -> Observable<DataSnapshot> {
 //        
@@ -44,5 +44,4 @@ import RxCocoa
 //            return Disposables.create()
 //        })
 //    }
-//}
-
+// }

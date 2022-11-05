@@ -8,22 +8,22 @@
 import UIKit
 
 class RemoveConfirmationViewController: UIViewController {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   var viewModel: RemoveConfirmationViewModel!
-  
-  //MARK: - Lifecycle
+
+  // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
   }
-  
-  //MARK: - ConfigureUI
+
+  // MARK: - ConfigureUI
   func configureUI() {
     view.backgroundColor = .black
   }
-  
-  //MARK: - Bind
+
+  // MARK: - Bind
   func bindTo(with viewModel: RemoveConfirmationViewModel) {
     self.viewModel = viewModel
   }

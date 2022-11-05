@@ -6,7 +6,7 @@
 //
 
 enum KindOfTaskStatus: String, Codable {
-  case Active = "Active"
-  case Archive = "Archive"
-  case Deleted = "Deleted" 
+  case active = "Active"
+  case archive = "Archive"
+  case deleted = "Deleted"
 }

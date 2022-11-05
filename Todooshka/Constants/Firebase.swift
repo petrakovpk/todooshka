@@ -12,11 +12,8 @@ typealias DatabaseCompletion = ((Error?, DatabaseReference) -> Void)
 typealias FirestoreCompletion = ((Error?) -> Void)?
 typealias AuthCompletion = ((AuthDataResult?, Error?) -> Void)
 
-
 // MARK: - Root References
-let DB_REF = Database.database().reference()
+let dbRef = Database.database().reference()
 
 // MARK: - DB Childs
-let DB_USERS_REF = DB_REF.child("USERS")
-
-
+let dbUserRef = dbRef.child("USERS")

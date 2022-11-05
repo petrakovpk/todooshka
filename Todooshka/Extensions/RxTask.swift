@@ -15,4 +15,3 @@ public struct TaskDriverSharingStrategy: SharingStrategyProtocol {
         source.share(replay: 1, scope: .whileConnected)
     }
 }
-

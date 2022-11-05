@@ -5,16 +5,15 @@
 //  Created by Петраков Павел Константинович on 15.02.2022.
 //
 
-
 import CoreData
 import RxSwift
 import RxCocoa
 
-//protocol HasBirdTypeService {
+// protocol HasBirdTypeService {
 //  var birdTypeService: BirdTypeService { get }
-//}
+// }
 //
-//class BirdTypeService {
+// class BirdTypeService {
 //  
 //  // MARK: - Core Data Properties
 //  let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -28,9 +27,8 @@ import RxCocoa
 //   
 //  }
 //  
-//  //MARK: - Initial Birds
+// MARK: - Initial Birds
 //  func initData() {
 //
 //  }
-//}
-
+// }

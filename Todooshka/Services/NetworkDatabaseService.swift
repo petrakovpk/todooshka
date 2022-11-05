@@ -9,11 +9,11 @@ import RxSwift
 import RxCocoa
 import CoreData
 //
-//protocol HasDatabaseNetworkServiceProtocol {
+// protocol HasDatabaseNetworkServiceProtocol {
 //    var networkDatabaseService: NetworkDatabaseService { get }
-//}
+// }
 //
-//class NetworkDatabaseService {
+// class NetworkDatabaseService {
 //    
 //    func removeTaskFromDatabase(task: Task, completion:  @escaping(DatabaseCompletion)) {
 //        guard let user = Auth.auth().currentUser else { return }
@@ -27,4 +27,4 @@ import CoreData
 //        TASKS_REF.child(user.uid).updateChildValues(dictionary, withCompletionBlock: completion)
 //    }
 //
-//}
+// }

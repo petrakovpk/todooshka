@@ -8,8 +8,7 @@
 import Foundation
 
 enum BirdActionType: Equatable {
-  case Hide
-  case Init
-  case Sitting(style: BirdStyle, closed: Date)
+  case create
+  case hide
+  case sitting(style: BirdStyle, closed: Date)
 }
-

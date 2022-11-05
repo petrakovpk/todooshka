@@ -13,32 +13,32 @@ import Foundation
 import SwipeCellKit
 
 class OnboardingCollectionViewCellModel: Stepper {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   let disposeBag = DisposeBag()
   let steps = PublishRelay<Step>()
-  
+
   private let services: AppServices
   private let onboardingSectionItem: OnboardingSectionItem
-  
+
   struct Output {
     let headerText: Driver<String>
     let descriptionText: Driver<String>
     let image: Driver<UIImage>
   }
 
-  //MARK: - Init
+  // MARK: - Init
   init(services: AppServices, onboardingSectionItem: OnboardingSectionItem) {
     self.services = services
     self.onboardingSectionItem = onboardingSectionItem
   }
-  
+
   func transform() -> Output {
-    
+
     let headerText = Driver<String>.just(onboardingSectionItem.header)
     let descriptionText = Driver<String>.just(onboardingSectionItem.description)
     let image = Driver<UIImage>.just(onboardingSectionItem.image)
-    
+
     return Output(
       headerText: headerText,
       descriptionText: descriptionText,
@@ -46,4 +46,3 @@ class OnboardingCollectionViewCellModel: Stepper {
     )
   }
 }
-

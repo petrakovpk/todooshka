@@ -12,14 +12,14 @@ import RxCocoa
 import RxDataSources
 
 class LoginViewController: UIViewController {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   var viewModel: LoginViewModel!
   private let disposeBag = DisposeBag()
-  
-  //MARK: - UI Elements
+
+  // MARK: - UI Elements
   fileprivate let headerView = UIView()
-  
+
   fileprivate let headerLabel: UILabel = {
     let label = UILabel()
     label.text = "DragoDo"
@@ -27,7 +27,7 @@ class LoginViewController: UIViewController {
     label.textColor = Style.App.text
     return label
   }()
-  
+
   fileprivate let secondHeaderLabel: UILabel = {
     let label = UILabel()
     label.text = "Создаем аккаунт"
@@ -35,7 +35,7 @@ class LoginViewController: UIViewController {
     label.textColor = Style.App.text
     return label
   }()
-  
+
   fileprivate let errorTextView: UITextView = {
     let textView = UITextView()
     textView.textAlignment = .center
@@ -46,7 +46,7 @@ class LoginViewController: UIViewController {
     textView.backgroundColor = .clear
     return textView
   }()
-  
+
   fileprivate let headerDescriptionTextView: UITextView = {
     let textView = UITextView()
     textView.text = "Спасибо, что решили зарегестрировать в приложении! Это поможет вам сохранять онлайн задачи и загружать их на других устройствах!"
@@ -59,27 +59,27 @@ class LoginViewController: UIViewController {
     textView.textColor = Palette.SingleColors.SantasGray
     return textView
   }()
-  
+
   fileprivate let emailButton: UIButton = {
     let button = UIButton(type: .custom)
     let attrString = NSAttributedString(string: "Email", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium) ])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
-  
+
   fileprivate let phoneButton: UIButton = {
     let button = UIButton(type: .custom)
     let attrString = NSAttributedString(string: "Телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
-  
-  fileprivate let emailTextField = TDAuthTextField(type: .Email)
-  fileprivate let passwordTextField = TDAuthTextField(type: .Password)
-  fileprivate let repeatPasswordTextField = TDAuthTextField(type: .RepeatPassword)
-  fileprivate let phoneTextField = TDAuthTextField(type: .Phone)
-  fileprivate let OTPCodeTextField = TDAuthTextField(type: .OTPCode)
-  
+
+  fileprivate let emailTextField = TDAuthTextField(type: .email)
+  fileprivate let passwordTextField = TDAuthTextField(type: .password)
+  fileprivate let repeatPasswordTextField = TDAuthTextField(type: .repeatPassword)
+  fileprivate let phoneTextField = TDAuthTextField(type: .phone)
+  fileprivate let OTPCodeTextField = TDAuthTextField(type: .otp)
+
   fileprivate let resetPasswordButton: UIButton = {
     let button = UIButton(type: .system)
     button.setTitle("Забыли пароль?\nОтправить письмо для восстановления пароля", for: .normal)
@@ -88,7 +88,7 @@ class LoginViewController: UIViewController {
     button.titleLabel?.textAlignment = .center
     return button
   }()
-  
+
   fileprivate let sendOTPCodeButton: UIButton = {
     let button = UIButton(type: .system)
     button.setTitle("Отправить код повторно", for: .normal)
@@ -97,39 +97,39 @@ class LoginViewController: UIViewController {
     button.titleLabel?.textAlignment = .center
     return button
   }()
-  
+
   fileprivate let nextButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 48 / 2
     button.setTitle("Далее", for: .normal)
     return button
   }()
-  
+
   fileprivate let backButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
     button.tintColor = Style.App.text
     return button
   }()
-  
+
   fileprivate let leftDividerView: UIView = {
     let view = UIView()
     return view
   }()
-  
+
   fileprivate let rightDividerView: UIView = {
     let view = UIView()
     return view
   }()
-  
-  //MARK: - Lifecycle
+
+  // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
     bindViewModel()
   }
-  
-  //MARK: - Configure UI
+
+  // MARK: - Configure UI
   func configureUI() {
     // adding
     view.addSubview(headerView)
@@ -150,76 +150,76 @@ class LoginViewController: UIViewController {
     view.addSubview(resetPasswordButton)
     view.addSubview(sendOTPCodeButton)
     headerView.addSubview(backButton)
-    
+
     // view
     view.backgroundColor = Style.Auth.Background
-    
+
     // headerView
     headerView.anchor(top: view.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: 96)
-    
+
     // backButton
     backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
-    
+
     // headerLabel
     headerLabel.anchor(top: view.topAnchor, topConstant: 84)
     headerLabel.anchorCenterXToSuperview()
-    
+
     // secondHeaderLabel
     secondHeaderLabel.anchor(top: headerLabel.bottomAnchor, topConstant: 31)
     secondHeaderLabel.anchorCenterXToSuperview()
-    
+
     // headerDescriptionTextView
     headerDescriptionTextView.anchor(top: secondHeaderLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 15, leftConstant: 29, rightConstant: 29)
     headerDescriptionTextView.anchorCenterXToSuperview()
-    
+
     // emailButton
-    emailButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor,  topConstant: 20, widthConstant: UIScreen.main.bounds.width / 2, heightConstant: 50)
-    
+    emailButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor,    topConstant: 20, widthConstant: UIScreen.main.bounds.width / 2, heightConstant: 50)
+
     // phoneButton
     phoneButton.anchor(top: headerDescriptionTextView.bottomAnchor, right: view.rightAnchor, topConstant: 20, widthConstant: UIScreen.main.bounds.width / 2, heightConstant: 50)
-    
+
     // leftDividerView
     leftDividerView.anchor(top: emailButton.bottomAnchor, left: view.leftAnchor, right: emailButton.rightAnchor, heightConstant: 1)
-    
+
     // rightDividerView
     rightDividerView.anchor(top: phoneButton.bottomAnchor, left: phoneButton.leftAnchor, right: view.rightAnchor, heightConstant: 1)
-    
+
     // emailTextField
-    
+
     emailTextField.anchor(top: emailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 54)
-    
+
     // passwordTextField
-   
+
     passwordTextField.anchor(top: emailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 54)
-    
+
     // resetPasswordButton
     resetPasswordButton.anchor(top: passwordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 54)
-    
+
     // sendOTPCodeButton
     sendOTPCodeButton.anchor(top: passwordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 54)
-    
+
     // phoneTextField
-    
+
     phoneTextField.anchor(top: emailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 54)
-    
+
     // codeTextField
-    
+
     OTPCodeTextField.anchor(top: emailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 54)
-    
+
     // repeatPasswordTextField
-    
+
     repeatPasswordTextField.anchor(top: emailTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 54)
-    
+
     // nextButton
     nextButton.anchor(top: repeatPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 48)
-    
+
     // errorTextView
-    errorTextView.anchor(top: nextButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16,  heightConstant: 50)
+    errorTextView.anchor(top: nextButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16,    heightConstant: 50)
   }
-  
-  //MARK: - Bind
+
+  // MARK: - Bind
   func bindViewModel() {
-    
+
     let input = LoginViewModel.Input(
       emailTextFieldText: emailTextField.rx.text.orEmpty.asDriver(),
       OTPCodeTextFieldText: OTPCodeTextField.rx.text.orEmpty.asDriver(),
@@ -230,7 +230,7 @@ class LoginViewController: UIViewController {
       emailButtonClickTrigger: emailButton.rx.tap.asDriver(),
       nextButtonClickTrigger: nextButton.rx.tap.asDriver(),
       phoneButtonClickTrigger: phoneButton.rx.tap.asDriver(),
-      emailTextFieldDidEndEditing: emailTextField.rx.controlEvent(.editingDidEndOnExit).asDriver() ,
+      emailTextFieldDidEndEditing: emailTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
       passwordTextFieldDidEndEditing: passwordTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
       repeatPasswordTextFieldDidEndEditing: repeatPasswordTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
       phoneTextFieldDidEndEditing: phoneTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
@@ -238,9 +238,9 @@ class LoginViewController: UIViewController {
       resetPasswordButtonClickTrigger: resetPasswordButton.rx.tap.asDriver(),
       sendOTPCodeButtonClickTriger: sendOTPCodeButton.rx.tap.asDriver()
     )
-    
+
     let output = viewModel.transform(input: input)
-    
+
     [
       output.auth.drive(),
       output.correctNumber.drive(phoneTextField.rx.text),
@@ -254,43 +254,42 @@ class LoginViewController: UIViewController {
       output.setResetPasswordButtonClickSuccess.drive(setResetPasswordButtonClickSuccessBinder),
       output.setSendOTPCodeButtonClickSuccess.drive(setSendOTPCodeButtonClickSuccessBinder)
     ]
-      .forEach{ $0.disposed(by: disposeBag) }
+      .forEach { $0.disposed(by: disposeBag) }
   }
-  
+
   var setNextButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
       vc.nextButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
-      vc.nextButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.nextButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.nextButton.isEnabled = isEnabled
     })
   }
-  
+
   var setSendOTPCodeButtonClickSuccessBinder: Binder<String> {
     return Binder(self, binding: { (vc, text) in
       vc.sendOTPCodeButton.setTitle(text, for: .normal)
     })
   }
-  
+
   var setResetPasswordButtonClickSuccessBinder: Binder<String> {
     return Binder(self, binding: { (vc, text) in
       vc.resetPasswordButton.setTitle(text, for: .normal)
     })
   }
-  
+
   var setFocusOnRepeatPasswordTextFieldBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.repeatPasswordTextField.becomeFirstResponder()
     })
   }
-  
-  
+
   var loginViewControllerStyleBinder: Binder<LoginViewControllerStyle> {
     return Binder(self, binding: { (vc, loginViewControllerStyle) in
       switch loginViewControllerStyle {
-      case .Email:
+      case .email:
         vc.leftDividerView.backgroundColor = Style.Views.AuthDivider.selected
         vc.rightDividerView.backgroundColor = Style.Views.AuthDivider.unselected
-        vc.emailButton.setTitleColor(Style.Views.AuthDivider.selectedText , for: .normal)
+        vc.emailButton.setTitleColor(Style.Views.AuthDivider.selectedText, for: .normal)
         vc.phoneButton.setTitleColor(Style.Views.AuthDivider.unselectedText, for: .normal)
         vc.emailTextField.isHidden = false
         vc.phoneTextField.isHidden = true
@@ -300,7 +299,7 @@ class LoginViewController: UIViewController {
         vc.resetPasswordButton.isHidden = true
         vc.sendOTPCodeButton.isHidden = true
         vc.emailTextField.becomeFirstResponder()
-      case .Password:
+      case .password:
         vc.leftDividerView.backgroundColor = Style.Views.AuthDivider.selected
         vc.rightDividerView.backgroundColor = Style.Views.AuthDivider.unselected
         vc.emailButton.setTitleColor(Style.Views.AuthDivider.selectedText, for: .normal)
@@ -316,7 +315,7 @@ class LoginViewController: UIViewController {
         vc.repeatPasswordTextField.clear()
         vc.passwordTextField.becomeFirstResponder()
         vc.resetPasswordButton.setTitle("Забыли пароль?\nОтправить письмо для восстановления пароля", for: .normal)
-      case .RepeatPassword:
+      case .repeatPassword:
         vc.leftDividerView.backgroundColor = Style.Views.AuthDivider.selected
         vc.rightDividerView.backgroundColor = Style.Views.AuthDivider.unselected
         vc.emailButton.setTitleColor(Style.Views.AuthDivider.selectedText, for: .normal)
@@ -331,7 +330,7 @@ class LoginViewController: UIViewController {
         vc.passwordTextField.clear()
         vc.repeatPasswordTextField.clear()
         vc.passwordTextField.becomeFirstResponder()
-      case .Phone:
+      case .phone:
         vc.leftDividerView.backgroundColor = Style.Views.AuthDivider.unselected
         vc.rightDividerView.backgroundColor = Style.Views.AuthDivider.selected
         vc.emailButton.setTitleColor(Style.Views.AuthDivider.unselectedText, for: .normal)
@@ -344,7 +343,7 @@ class LoginViewController: UIViewController {
         vc.resetPasswordButton.isHidden = true
         vc.sendOTPCodeButton.isHidden = true
         vc.phoneTextField.becomeFirstResponder()
-      case .OTPCode:
+      case .otp:
         vc.leftDividerView.backgroundColor = Style.Views.AuthDivider.unselected
         vc.rightDividerView.backgroundColor = Style.Views.AuthDivider.selected
         vc.emailButton.setTitleColor(Style.Views.AuthDivider.unselectedText, for: .normal)
@@ -355,7 +354,7 @@ class LoginViewController: UIViewController {
         vc.repeatPasswordTextField.isHidden = true
         vc.OTPCodeTextField.isHidden = false
         vc.resetPasswordButton.isHidden = true
-        vc.sendOTPCodeButton.isHidden = false 
+        vc.sendOTPCodeButton.isHidden = false
         vc.OTPCodeTextField.becomeFirstResponder()
         vc.OTPCodeTextField.clear()
         vc.sendOTPCodeButton.setTitle("Отправить код повторно", for: .normal)

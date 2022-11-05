@@ -9,18 +9,15 @@ import RxDataSources
 
 struct ThemeItem: IdentifiableType, Equatable {
 
-  
-  //MARK: - Identity
+  // MARK: - Identity
   var identity: String {
     theme.UID
   }
-  
+
   let theme: Theme
-  
+
   // MARK: - Equatable
   static func == (lhs: ThemeItem, rhs: ThemeItem) -> Bool {
      lhs.theme == rhs.theme
   }
 }
-
-

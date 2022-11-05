@@ -15,14 +15,14 @@ class BirdViewModel: Stepper {
 
   // MARK: - Properties
   // context
-  let appDelegate = UIApplication.shared.delegate as! AppDelegate
-  var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
+  let appDelegate = UIApplication.shared.delegate as? AppDelegate
+  var managedContext: NSManagedObjectContext? { appDelegate?.persistentContainer.viewContext }
   // rx
   let steps = PublishRelay<Step>()
   let services: AppServices
   // bird
   let birdUID: String
-  
+
   // MARK: - Transform
   struct Input {
     let alertBuyButtonClick: Driver<Void>
@@ -31,7 +31,7 @@ class BirdViewModel: Stepper {
     let buyButtonClickTrigger: Driver<Void>
     let selection: Driver<IndexPath>
   }
-  
+
   struct Output {
     let alertBuyButtonIsEnabled: Driver<Bool>
     let alertLabelText: Driver<String>
@@ -46,64 +46,64 @@ class BirdViewModel: Stepper {
     let description: Driver<String>
     let kindOfTaskImageView: Driver<UIImage?>
     let navigateBack: Driver<Void>
-    let plusButtonClickTrigger:  Driver<Void>
+    let plusButtonClickTrigger: Driver<Void>
     let price: Driver<String>
     let title: Driver<String>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(birdUID: String, services: AppServices) {
     self.birdUID = birdUID
     self.services = services
   }
-  
+
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    
+
     let birds = services.dataService
       .birds
-    
+
     let bird = birds
-      .compactMap{ $0.first(where: { $0.UID == self.birdUID }) }
+      .compactMap { $0.first(where: { $0.UID == self.birdUID }) }
 
     let kindsOfTask = services.dataService.kindsOfTask.asDriver()
-    
+
     let kindOfTaskImageView = kindsOfTask
       .withLatestFrom(bird) { kindsOfTask, bird -> KindOfTask? in
         kindsOfTask.first(where: { $0.UID == bird.style.rawValue })
-      }.map{ $0?.icon.image }
+      }.map { $0?.icon.image }
       .asDriver(onErrorJustReturn: nil)
 
     let buyButtonIsHidden = bird
-      .map{ $0.isBought }
-    
+      .map { $0.isBought }
+
     let buyLabelIsHidden = buyButtonIsHidden
-      .map{ !$0 }
-    
+      .map { !$0 }
+
     let description = bird
-      .map{ $0.style.description }
-    
+      .map { $0.style.description }
+
     let eggImageView = bird
-      .map{ $0.eggImage }
-    
+      .map { $0.eggImage }
+
     let birdImageView = bird
-      .map{ $0.getImageForState(state: .Normal) }
-    
+      .map { $0.getImageForState(state: .normal) }
+
     let price = bird
-      .map{ $0.price }
-      .map{ $0.string }
-    
+      .map { $0.price }
+      .map { $0.string }
+
     let currency = bird
-      .map{ $0.currency }
-    
+      .map { $0.currency }
+
     let title = bird
-      .map{ $0.name }
-    
+      .map { $0.name }
+
     let kindOfTaskMain = Driver
       .combineLatest(kindsOfTask, bird) { kindsOfTask, bird -> [KindOfTask] in
-        kindsOfTask.filter{ $0.style.rawValue == bird.style.rawValue }
+        kindsOfTask.filter { $0.style.rawValue == bird.style.rawValue }
       }
-    
+
     let kindsOfTaskNotOpenedBird = birds
     // получаем неоткрытые стили на текущем уровне
       .withLatestFrom(bird) { birds, bird -> [BirdStyle] in
@@ -122,7 +122,7 @@ class BirdViewModel: Stepper {
 
     let kindsOfTaskForDataSource = Driver
       .combineLatest(bird, kindOfTaskMain, kindsOfTaskNotOpenedBird) { bird, kindOfTaskMain, kindsOfTaskNotOpenedBird -> [KindOfTask] in
-        bird.style == .Simple ? kindOfTaskMain + kindsOfTaskNotOpenedBird : kindOfTaskMain
+        bird.style == .simple ? kindOfTaskMain + kindsOfTaskNotOpenedBird : kindOfTaskMain
       }
 
     // dataSource
@@ -141,63 +141,67 @@ class BirdViewModel: Stepper {
 
     // navigate back
     let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.NavigateBack) }
-    
+      .map { self.steps.accept(AppStep.navigateBack) }
+
     // selectedKindOfTask
     let selection = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTaskForBirdItem in
         dataSource[indexPath.section].items[indexPath.item]
       }
-    
+
     let plusButtonClickTrigger = selection
       .filter { $0.kindOfTaskType == .isPlusButton }
       .withLatestFrom(bird) { $1 }
       .filter { $0.isBought }
-      .map{ _ in self.steps.accept(AppStep.KindOfTaskWithBird(birdUID: self.birdUID)) }
-    
-    let diamondsCount = services.dataService.diamonds.map{ $0.count }
+      .map { _ in self.steps.accept(AppStep.kindOfTaskWithBird(birdUID: self.birdUID)) }
+
+    let diamondsCount = services.dataService.diamonds.map { $0.count }
     let feathersCount = services.dataService.feathersCount
-    
+
     let diamonds = services.dataService.diamonds
       .asDriver(onErrorJustReturn: [])
 
     let alertBuyButtonIsEnabled = Driver
       .combineLatest(bird, feathersCount, diamondsCount) { bird, feathersCount, diamondsCount -> Bool in
-        bird.currency == .Feather ? feathersCount >= bird.price : diamondsCount >= bird.price
+        bird.currency == .feather ? feathersCount >= bird.price : diamondsCount >= bird.price
       }
-    
+
     let alertLabelText = Driver
       .combineLatest(bird, feathersCount, diamondsCount) { bird, feathersCount, diamondsCount -> String in
         switch bird.currency {
-        case .Feather:
+        case .feather:
           return feathersCount >= bird.price ? "Можете купить!" : "Не хватает \( abs(feathersCount - bird.price) ) перышек"
-        case .Diamond:
+        case .diamond:
           return diamondsCount >= bird.price ? "Можете купить!" : "Не хватает \( abs(diamondsCount - bird.price) ) бриллиантиков"
         }
       }
 
     let buy = input.alertBuyButtonClick
-      .withLatestFrom(bird){ _, bird -> Bird in
+      .withLatestFrom(bird) { _, bird -> Bird in
         var bird = bird
         bird.isBought = true
         return bird
       }.asObservable()
       .flatMapLatest { bird -> Observable<Result<Void, Error>> in
-        self.managedContext.rx.update(bird)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+        if let managedContext = self.managedContext {
+          return managedContext.rx.update(bird)
+        } else {
+          return Observable.of(.failure(ErrorType.managedContextNotFound))
+        }
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let buySuccess = buy
       .compactMap { result -> Void? in
-        guard case .success(_) = result else { return nil }
+        guard case .success = result else { return nil }
         return ()
       }
-    
+
     let alertViewHide = Driver
       .of(input.alertCancelButtonClick, buySuccess)
       .merge()
-    
+
     let alertViewShow = input.buyButtonClickTrigger
-    
+
     return Output(
       alertBuyButtonIsEnabled: alertBuyButtonIsEnabled,
       alertLabelText: alertLabelText,

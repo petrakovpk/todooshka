@@ -10,16 +10,15 @@ import RxSwift
 import RxCocoa
 
 class RemoveConfirmationViewModel: Stepper {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   private let services: AppServices
-  
+
   let disposeBag = DisposeBag()
   let steps = PublishRelay<Step>()
-  
-  //MARK: Init
+
+  // MARK: Init
   init(services: AppServices) {
     self.services = services
   }
 }
-

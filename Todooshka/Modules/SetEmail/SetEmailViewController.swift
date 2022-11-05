@@ -11,13 +11,13 @@ import RxCocoa
 import RxDataSources
 
 class SetEmailViewController: TDViewController {
-  
+
   // MARK: - Rx
   private let disposeBag = DisposeBag()
-  
+
   // MARK: - MVVM
   public var viewModel: SetEmailViewModel!
-  
+
   // MARK: - UI Elemenets
   private let currentEmailLabel: UILabel = {
     let label = UILabel()
@@ -25,14 +25,14 @@ class SetEmailViewController: TDViewController {
     label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
     return label
   }()
-  
+
   private let sendVerificationEmailButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 13
     button.setTitle("Отправить письмо с подтверждением", for: .normal)
     return button
   }()
-  
+
   private let newEmailLabel: UILabel = {
     let label = UILabel()
     label.textAlignment = .left
@@ -40,30 +40,30 @@ class SetEmailViewController: TDViewController {
     label.text = "Введите новый основной email:"
     return label
   }()
-  
+
   private let setNewEmailButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 13
     button.setTitle("Установить новый email", for: .normal)
     return button
   }()
-  
+
   private let currentEmailTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .Email)
+    let textField = TDAuthTextField(type: .email)
     textField.borderColor = Style.TextFields.SettingsTextField.Border
     textField.backgroundColor = Style.TextFields.SettingsTextField.Background
     textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
     return textField
   }()
-  
+
   private let newEmailTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .Email)
+    let textField = TDAuthTextField(type: .email)
     textField.borderColor = Style.TextFields.SettingsTextField.Border
     textField.backgroundColor = Style.TextFields.SettingsTextField.Background
     textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
     return textField
   }()
-  
+
   private let errorTextView: UITextView = {
     let textView = UITextView()
     textView.textAlignment = .center
@@ -74,20 +74,20 @@ class SetEmailViewController: TDViewController {
     textView.backgroundColor = .clear
     return textView
   }()
-  
+
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
     bindViewModel()
   }
-  
+
   // MARK: - Configure UI
   func configureUI() {
-    
+
     // settings
     refreshButton.isHidden = false
-    
+
     // adding
     view.addSubviews([
       currentEmailLabel,
@@ -98,37 +98,90 @@ class SetEmailViewController: TDViewController {
       setNewEmailButton,
       errorTextView
     ])
-    
+
     //  header
     titleLabel.text = "Email"
-    
+
     // emailLabel
-    currentEmailLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16)
-    
+    currentEmailLabel.anchor(
+      top: headerView.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16
+    )
+
     // emailTextField
     currentEmailTextField.isEnabled = false
-    currentEmailTextField.anchor(top: currentEmailLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-    
+    currentEmailTextField.anchor(
+      top: currentEmailLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+
     // nextButton
-    sendVerificationEmailButton.anchor(top: currentEmailTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-    
+    sendVerificationEmailButton.anchor(
+      top: currentEmailTextField.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+
     // newEmailLabel
-    newEmailLabel.anchor(top: sendVerificationEmailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16)
-  
+    newEmailLabel.anchor(
+      top: sendVerificationEmailButton.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16
+    )
+
     // newEmailTextField
-    newEmailTextField.anchor(top: newEmailLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    newEmailTextField.anchor(
+      top: newEmailLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
 
     // changeEmailButton
-    setNewEmailButton.anchor(top: newEmailTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16,  heightConstant: 50)
-    
+    setNewEmailButton.anchor(
+      top: newEmailTextField.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+
     // errorTextView
-    errorTextView.anchor(top: setNewEmailButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
+    errorTextView.anchor(
+      top: setNewEmailButton.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
   }
-  
-  
+
   // MARK: - Bind ViewModel
   func bindViewModel() {
-    
+
     let input = SetEmailViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       currentEmailTextFieldText: currentEmailTextField.rx.text.orEmpty.asDriver(),
@@ -137,9 +190,9 @@ class SetEmailViewController: TDViewController {
       sendVerificationEmailButtonClick: sendVerificationEmailButton.rx.tap.asDriver(),
       setNewEmailButtonClickTrigger: setNewEmailButton.rx.tap.asDriver()
     )
-    
+
     let outputs = viewModel.transform(input: input)
-    
+
     [
       outputs.emailLabelText.drive(currentEmailLabel.rx.text),
       outputs.emailTextFieldText.drive(currentEmailTextField.rx.text),
@@ -152,29 +205,28 @@ class SetEmailViewController: TDViewController {
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
-  
+
   var sendVerificationEmailButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
       vc.sendVerificationEmailButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
-      vc.sendVerificationEmailButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.sendVerificationEmailButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.sendVerificationEmailButton.isEnabled = isEnabled
     })
   }
-  
+
   var setNewEmailButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { (vc, isEnabled) in
       vc.setNewEmailButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
-      vc.setNewEmailButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12) , for: .normal)
+      vc.setNewEmailButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.setNewEmailButton.isEnabled = isEnabled
     })
   }
-  
+
   var setNewEmailBinder: Binder<Void> {
     return Binder(self, binding: { (vc, _) in
       vc.newEmailTextField.clear()
       vc.newEmailTextField.insertText("")
     })
   }
-  
-}
 
+}

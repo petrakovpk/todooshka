@@ -5,13 +5,13 @@
 //  Created by Петраков Павел Константинович on 20.05.2021.
 //
 
-//import RxFlow
-//import RxSwift
-//import RxCocoa
-//import Foundation
-//import SwipeCellKit
+// import RxFlow
+// import RxSwift
+// import RxCocoa
+// import Foundation
+// import SwipeCellKit
 //
-//class TaskCellModel: Stepper {
+// class TaskCellModel: Stepper {
 //  
 //  // MARK: - Properties
 //  let services: AppServices
@@ -52,7 +52,7 @@
 //    let mode: Driver<TaskCellMode>
 //  }
 //  
-//  //MARK: - Init
+// MARK: - Init
 //  init(services: AppServices, mode: TaskCellMode, task: Task) {
 //    self.services = services
 //    self.mode = mode
@@ -150,9 +150,9 @@
 //      return task.is24hoursPassed == false
 //    }
 //  }
-//}
+// }
 //
-//extension TaskCellModel: SwipeCollectionViewCellDelegate {
+// extension TaskCellModel: SwipeCollectionViewCellDelegate {
 //  
 //  func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
 //    isEnabled = false
@@ -235,5 +235,4 @@
 //    }
 //  }
 //  
-//}
-
+// }

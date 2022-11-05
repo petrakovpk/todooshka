@@ -11,45 +11,45 @@ import RxCocoa
 import UIKit
 
 class TaskFlow: Flow {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   var root: Presentable {
     return self.rootViewController
   }
-  
+
   private let rootViewController = UINavigationController()
   private let services: AppServices
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(withServices services: AppServices) {
     self.services = services
   }
-  
+
   deinit {
     print("\(type(of: self)): \(#function)")
   }
-  
-  //MARK: - Flow Contributors
+
+  // MARK: - Flow Contributors
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-    case .CreateTaskIsRequired:
+    case .createTaskIsRequired:
       return navigateToTask(taskUID: UUID().uuidString)
-    case .TaskTypesListIsRequired:
+    case .kindsOfTaskListIsRequired:
       return navigateToTaskTypesList()
-    case .TaskProcessingIsCompleted:
+    case .taskProcessingIsCompleted:
       return dismissTask()
-    case .CreateKindOfTaskIsRequired:
+    case .createKindOfTaskIsRequired:
       return navigateToCreateKindOfTask()
-    case .ShowKindOfTaskIsRequired(let kindOfTask):
+    case .showKindOfTaskIsRequired(let kindOfTask):
       return navigateToShowTaskType(kindOfTask: kindOfTask)
-    case .NavigateBack:
+    case .navigateBack:
       return navigateBack()
     default:
       return .none
     }
   }
-  
+
   private func navigateToTask(taskUID: String) -> FlowContributors {
     let viewController = TaskViewController()
     let viewModel = TaskViewModel(services: services, taskUID: taskUID)
@@ -58,7 +58,7 @@ class TaskFlow: Flow {
     rootViewController.pushViewController(viewController, animated: false)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToTaskTypesList() -> FlowContributors {
     let viewController = KindOfTaskListViewController()
     let viewModel = KindOfTaskListViewModel(services: services)
@@ -66,7 +66,7 @@ class TaskFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToCreateKindOfTask() -> FlowContributors {
     let viewController = KindOfTaskViewController()
     let viewModel = KindOfTaskViewModel(services: services, kindOfTaskUID: UUID().uuidString)
@@ -75,7 +75,7 @@ class TaskFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToShowTaskType(kindOfTask: KindOfTask) -> FlowContributors {
     let viewController = KindOfTaskViewController()
     let viewModel = KindOfTaskViewModel(services: services, kindOfTaskUID: kindOfTask.UID)
@@ -84,12 +84,12 @@ class TaskFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateBack() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .none
   }
-  
+
   private func dismissTask() -> FlowContributors {
     rootViewController.dismiss(animated: true)
     return .none

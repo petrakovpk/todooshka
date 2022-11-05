@@ -9,17 +9,13 @@ import UIKit
 import Foundation
 
 class ThemeCell: UICollectionViewCell {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   static var reuseID: String = "ThemeCell"
 
-  //MARK: - UI Elements
+  // MARK: - UI Elements
   func configure(with theme: Theme) {
-    
+
   }
-  
+
 }
-
-
-
-

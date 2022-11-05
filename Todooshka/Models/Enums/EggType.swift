@@ -6,17 +6,17 @@
 //
 
 enum EggType: String {
-  case Chiken = "Chiken"
+  case chiken = "Chiken"
   // Пингвин
-  case Penguin = "Penguin"
+  case penguin = "Penguin"
   // Страус
-  case Ostrich = "Ostrich"
+  case ostrich = "Ostrich"
   // Попугай
-  case Parrot = "Parrot"
+  case parrot = "Parrot"
   // Орел
-  case Eagle = "Eagle"
+  case eagle = "Eagle"
   // Сова
-  case Owl = "Owl"
+  case owl = "Owl"
   // Дракон
-  case Dragon = "Dragon"
+  case dragon = "Dragon"
 }

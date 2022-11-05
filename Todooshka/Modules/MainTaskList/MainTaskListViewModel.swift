@@ -11,19 +11,19 @@ import RxCocoa
 import UIKit
 
 class MainTaskListViewModel: Stepper {
-  
-  //MARK: - Properties
+
+  // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
   let disposeBag = DisposeBag()
-  
+
   struct Input {
     // idea
     let ideaButtonClickTrigger: Driver<Void>
     // overdued
     let overduedButtonClickTrigger: Driver<Void>
   }
-  
+
   struct Output {
     // idea
     let ideaButtonClick: Driver<Void>
@@ -31,22 +31,22 @@ class MainTaskListViewModel: Stepper {
     let overduedButtonClick: Driver<Void>
     // egg
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-  
+
   func transform(input: Input) -> Output {
-    
+
     // idea
     let ideaButtonClick = input.ideaButtonClickTrigger
-      .map { self.steps.accept(AppStep.IdeaTaskListIsRequired) }
-    
+      .map { self.steps.accept(AppStep.ideaTaskListIsRequired) }
+
     // overdued
     let overduedButtonClick = input.overduedButtonClickTrigger
-      .map { self.steps.accept(AppStep.OverduedTaskListIsRequired) }
-    
+      .map { self.steps.accept(AppStep.overduedTaskListIsRequired) }
+
     return Output(
       // idea
       ideaButtonClick: ideaButtonClick,
@@ -55,4 +55,3 @@ class MainTaskListViewModel: Stepper {
     )
   }
 }
-

@@ -11,127 +11,128 @@ import RxCocoa
 import UIKit
 
 class CalendarFlow: Flow {
-  
+
   var root: Presentable {
     return self.rootViewController
   }
-  
+
   private let rootViewController = UINavigationController()
   private let services: AppServices
-  
+
   init(withServices services: AppServices) {
     self.services = services
   }
-  
+
   deinit {
     print("\(type(of: self)): \(#function)")
   }
-  
+
+  // swiftlint:disable cyclomatic_complexity
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-      
+
       // Auth
-    case .AuthIsRequired:
+    case .authIsRequired:
       return navigateToAuthFlow()
-      
+
       // User ProfileIe
-    case .CalendarIsRequired:
+    case .calendarIsRequired:
       return navigateToCalendar()
-      
+
       // Changing
-    case .ChangingNameIsRequired:
+    case .changingNameIsRequired:
       return navigateToChangingName()
-    case .ChangingGenderIsRequired:
+    case .changingGenderIsRequired:
       return navigateToChangingGender()
-    case .ChangingBirthdayIsRequired:
+    case .changingBirthdayIsRequired:
       return navigateToChangingBirthday()
-    case .ChangingEmailIsRequired:
+    case .changingEmailIsRequired:
       return navigateToChangingEmail()
-    case .ChangingPhoneIsRequired:
+    case .changingPhoneIsRequired:
       return navigateToChangingPhone()
-    case .ChangingPasswordIsRequired:
+    case .changingPasswordIsRequired:
       return navigateToChangingPassword()
-      
-    case .SupportIsRequired:
+
+    case .supportIsRequired:
       return navigateToSupport()
-      
-    case .DeleteAccountIsRequired:
+
+    case .deleteAccountIsRequired:
       return navigateToDeleteAccount()
-      
+
       // Task
-    case .CreatePlannedTaskIsRequired(let planned):
+    case .createPlannedTaskIsRequired(let planned):
       return navigateToTask(planned: planned)
-    case .ShowTaskIsRequired(let task):
+    case .showTaskIsRequired(let task):
       return navigateToTask(taskUID: task.UID)
-    case .TaskProcessingIsCompleted:
+    case .taskProcessingIsCompleted:
       return navigateBack()
-      
+
       // Task List
-    case .CompletedTaskListIsRequired(let date):
+    case .completedTaskListIsRequired(let date):
       return navigateToCompletedTaskList(date: date)
-    case .DeletedTaskListIsRequired:
+    case .deletedTaskListIsRequired:
       return navigateToDeletedTaskList()
-    case .TaskListIsCompleted:
+    case .taskListIsCompleted:
       return navigateBack()
-      
+
       // Deleted Task Type List
-    case .DeletedTaskTypeListIsRequired:
+    case .deletedTaskTypeListIsRequired:
       return navigateToDeletedTaskTypeList()
-      
+
       // Planned
-    case .PlannedTaskListIsRequired(let date):
+    case .plannedTaskListIsRequired(let date):
       return navigateToPlannedTaskList(date: date)
-      
+
       // Diamond
-    case .DiamondIsRequired:
+    case .diamondIsRequired:
       return navigateToDiamond()
-      
+
       // Feather
-    case .FeatherIsRequired:
+    case .featherIsRequired:
       return navigateToFeather()
-      
-    case .KindOfTaskWithBird(let birdUID):
+
+    case .kindOfTaskWithBird(let birdUID):
       return navigateToKindOfTaskForBird(birdUID: birdUID)
-      
+
       // Logout
-    case .LogoutIsRequired:
+    case .logoutIsRequired:
       return endUserProfileFlow()
-      
+
       // Navigate Back
-    case .NavigateBack:
+    case .navigateBack:
       return navigateBack()
 
       // User Settings
-    case .SettingsIsRequired:
+    case .settingsIsRequired:
       return navigateToSettings()
-      
+
       // Bird
-    case .ShowBirdIsRequired(let bird):
+    case .showBirdIsRequired(let bird):
       return navigateToBird(bird: bird)
-     
+
       // Shop
-    case .ShopIsRequired:
+    case .shopIsRequired:
       return navigateToShop()
-    case .ShopIsCompleted:
+    case .shopIsCompleted:
       return navigateBackFromShop()
-      
+
       // SyncIsRequired
-    case .SyncDataIsRequired:
+    case .syncDataIsRequired:
       return navigateToSyncData()
-      
+
       // Task Type List
-    case .TaskTypesListIsRequired:
+    case .kindsOfTaskListIsRequired:
       return navigateToTaskTypesList()
-      
-    case .UserProfileIsRequired:
+
+    case .userProfileIsRequired:
       return navigateToUserProfile()
- 
+
     default:
       return .none
     }
   }
-  
+
   private func navigateToCalendar() -> FlowContributors {
     let viewController = CalendarViewController()
     let userProfileViewModel = CalendarViewModel(services: services)
@@ -141,7 +142,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: false)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: userProfileViewModel))
   }
-  
+
   private func navigateToSettings() -> FlowContributors {
     let viewController = SettingsViewController()
     let viewModel = SettingsViewModel(services: services)
@@ -150,33 +151,33 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToCompletedTaskList(date: Date) -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, mode: .Completed(date: date))
+    let viewModel = TaskListViewModel(services: services, mode: .completed(date: date))
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToPlannedTaskList(date: Date) -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, mode: .Planned(date: date))
+    let viewModel = TaskListViewModel(services: services, mode: .planned(date: date))
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToDeletedTaskList() -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, mode: .Deleted)
+    let viewModel = TaskListViewModel(services: services, mode: .deleted)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToDeletedTaskTypeList() -> FlowContributors {
     let viewController = KindOfTaskListDeletedViewController()
     let viewModel = KindOfTaskListDeletedViewModel(services: services)
@@ -184,7 +185,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToKindOfTaskForBird(birdUID: String) -> FlowContributors {
     let viewController = KindOfTaskListForBirdViewController()
     let viewModel = KindOfTaskListForBirdViewModel(services: services, birdUID: birdUID)
@@ -192,7 +193,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToTaskTypesList() -> FlowContributors {
     let viewController = KindOfTaskListViewController()
     let viewModel = KindOfTaskListViewModel(services: services)
@@ -200,7 +201,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToSyncData() -> FlowContributors {
     let viewController = SyncDataViewController()
     let viewModel = SyncDataViewModel(services: services)
@@ -211,13 +212,13 @@ class CalendarFlow: Flow {
 
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, mode: .Idea)
+    let viewModel = TaskListViewModel(services: services, mode: .idea)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToShop() -> FlowContributors {
     let viewController = ShopViewController()
     let viewModel = ShopViewModel(services: services)
@@ -226,15 +227,15 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToBird(bird: Bird) -> FlowContributors {
     let viewController = BirdViewController()
-    let viewModel = BirdViewModel(birdUID: bird.UID , services: services)
+    let viewModel = BirdViewModel(birdUID: bird.UID, services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToSupport() -> FlowContributors {
     let viewController = SupportViewController()
     let viewModel = SupportViewModel(services: services)
@@ -242,7 +243,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToDeleteAccount() -> FlowContributors {
     let viewController = DeleteAccountViewController()
     let viewModel = DeleteAccountViewModel(services: services)
@@ -250,7 +251,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToTask(taskUID: String) -> FlowContributors {
     let viewController = TaskViewController()
     let viewModel = TaskViewModel(services: services, taskUID: taskUID)
@@ -258,15 +259,15 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToTask(planned: Date) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString, status: .Planned, planned: planned)
+    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString, status: .planned, planned: planned)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToFeather() -> FlowContributors {
     let viewController = FeatherViewController()
     let viewModel = FeatherViewModel(services: services)
@@ -274,7 +275,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToDiamond() -> FlowContributors {
     let viewController = DiamondViewController()
     let viewModel = DiamondViewModel(services: services)
@@ -282,7 +283,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToUserProfile() -> FlowContributors {
     let viewController = UserProfileViewController()
     let viewModel = UserProfileViewModel(services: services)
@@ -290,24 +291,23 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
-  
+
   private func navigateBackFromShop() -> FlowContributors {
     rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.popViewController(animated: true)
     return .none
   }
-  
+
   private func navigateBack() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .none
   }
-  
+
   func endUserProfileFlow() -> FlowContributors {
     rootViewController.popViewController(animated: true)
-    return .end(forwardToParentFlowWithStep: AppStep.LogoutIsRequired)
+    return .end(forwardToParentFlowWithStep: AppStep.logoutIsRequired)
   }
-  
+
   private func navigateToChangingName() -> FlowContributors {
     let viewController = ChangeNameViewContoller()
     let viewModel = ChangeNameViewModel(services: services)
@@ -315,7 +315,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToChangingGender() -> FlowContributors {
     let viewController = ChangeGenderViewController()
     let viewModel = ChangeGenderViewModel(services: services)
@@ -323,7 +323,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToChangingBirthday() -> FlowContributors {
     let viewController = ChangeBirthdayViewController()
     let viewModel = ChangeBirthdayViewModel(services: services)
@@ -331,7 +331,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToChangingPhone() -> FlowContributors {
     let viewController = SetPhoneViewController()
     let viewModel = SetPhoneViewModel(services: services)
@@ -339,7 +339,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToChangingEmail() -> FlowContributors {
     let viewController = SetEmailViewController()
     let viewModel = SetEmailViewModel(services: services)
@@ -347,7 +347,7 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToChangingPassword() -> FlowContributors {
     let viewController = ChangePasswordViewController()
     let viewModel = ChangePasswordViewModel(services: services)
@@ -355,28 +355,26 @@ class CalendarFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
-  
+
   private func navigateToAuthFlow() -> FlowContributors {
-    
+
     let authFlow = AuthFlow(withServices: services)
-    
+
     Flows.use(authFlow, when: .created) { [unowned self] root in
       DispatchQueue.main.async {
         root.modalPresentationStyle = .automatic
         rootViewController.present(root, animated: true)
       }
     }
-    
+
     return .one(
       flowContributor: .contribute(
         withNextPresentable: authFlow,
         withNextStepper: OneStepper(
-          withSingleStep: AppStep.AuthIsRequired
+          withSingleStep: AppStep.authIsRequired
         )
       )
     )
   }
-  
+  // swiftlint:enable cyclomatic_complexity
 }
-

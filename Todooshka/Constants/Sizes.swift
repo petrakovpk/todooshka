@@ -8,65 +8,65 @@
 import UIKit
 
 struct Sizes {
-  
+
   struct App {
     static let developerWidth: CGFloat = 428
     static let developerHeight: CGFloat = 896
-    
+
     static var widthRatio: CGFloat {
       UIScreen.main.bounds.width / Sizes.App.developerWidth
     }
-    
+
     static var heightRatio: CGFloat {
       UIScreen.main.bounds.height / Sizes.App.developerHeight
     }
   }
-  
+
   struct Buttons {
 
-    struct alertBuyBirdButton {
-      static let width = (Sizes.Views.alertBuyBirdView.width / 2 - 16 - 8).adjustByWidth
+    struct AlertBuyBirdButton {
+      static let width = (Sizes.Views.AlertBuyBirdView.width / 2 - 16 - 8).adjustByWidth
       static let height = 48.adjustByHeight
     }
-    
-    struct alertDeleteButton {
+
+//    struct AlertDeleteButton {
+//      static let width = 94.adjustByWidth
+//      static let height = 30.adjustByHeight
+//    }
+
+    struct AlertOkButton {
       static let width = 94.adjustByWidth
       static let height = 30.adjustByHeight
     }
-    
-    struct alertOkButton {
-      static let width = 94.adjustByWidth
-      static let height = 30.adjustByHeight
-    }
-    
-    struct alertWillWaitButton {
+
+    struct AlertWillWaitButton {
       static let width = 120.adjustByWidth
       static let height = 30.adjustByHeight
     }
-    
-    struct appButton {
+
+    struct AppButton {
       static let height = 48.adjustByHeight
     }
-    
-    struct calendarShopButton {
+
+    struct CalendarShopButton {
       static let height = 40.adjustByHeight
     }
-    
-    struct calendarSettingsButton {
+
+    struct CalendarSettingsButton {
       static let width = 40.adjustByHeight
       static let height = 40.adjustByHeight
     }
-    
-    struct planedButton {
+
+    struct PlanedButton {
       static let width = 100.adjustByWidth
       static let height = 40.adjustByHeight
     }
-    
-    struct skipButton {
+
+    struct SkipButton {
       static let width = 76.adjustByWidth
     }
   }
-  
+
   struct Cells {
     struct BirdCell {
       static let width = 76.adjustByHeight
@@ -93,101 +93,96 @@ struct Sizes {
       static let height = 120.adjustByHeight
     }
   }
-  
+
   struct ImageViews {
-    struct alertEggImageView {
-      static let width = (Sizes.Views.alertBuyBirdView.width / 4).adjustByWidth
-      static let height = (Sizes.ImageViews.alertEggImageView.width * 1.3).adjustByHeight
+    struct AlertEggImageView {
+      static let width = (Sizes.Views.AlertBuyBirdView.width / 4).adjustByWidth
+      static let height = (Sizes.ImageViews.AlertEggImageView.width * 1.3).adjustByHeight
       static let TopConstant = 20.adjustByHeight
-      static let LeftConstant = ((Sizes.Views.alertBuyBirdView.width / 2 - Sizes.ImageViews.alertEggImageView.width) / 2 + 16).adjustByWidth
+      static let LeftConstant = ((Sizes.Views.AlertBuyBirdView.width / 2 - Sizes.ImageViews.AlertEggImageView.width) / 2 + 16).adjustByWidth
     }
-    
-    struct alertBirdImageView {
-      static let width = (Sizes.Views.alertBuyBirdView.width / 4).adjustByWidth
-      static let height = (Sizes.ImageViews.alertBirdImageView.width * 1.3).adjustByHeight
+
+    struct AlertBirdImageView {
+      static let width = (Sizes.Views.AlertBuyBirdView.width / 4).adjustByWidth
+      static let height = (Sizes.ImageViews.AlertBirdImageView.width * 1.3).adjustByHeight
       static let TopConstant = 20.adjustByHeight
-      static let RightConstant = ((Sizes.Views.alertBuyBirdView.width / 2 - Sizes.ImageViews.alertBirdImageView.width) / 2 + 16).adjustByWidth
+      static let RightConstant = ((Sizes.Views.AlertBuyBirdView.width / 2 - Sizes.ImageViews.AlertBirdImageView.width) / 2 + 16).adjustByWidth
     }
-    
-    struct birdImageView {
+
+    struct BirdImageView {
       static let width = 200.adjustByWidth
       static let height = 200.adjustByHeight
     }
-    
-    struct dragonImageView {
+
+    struct DragonImageView {
       static let height = 300.adjustByHeight
     }
   }
-  
+
   struct Labels {
-    struct onboardingHeaderLabel {
+    struct OnboardingHeaderLabel {
       static let bottomConstant = 80.adjustByWidth
     }
   }
-  
+
   struct Views {
 
-    struct alertBuyBirdView {
+    struct AlertBuyBirdView {
       static let width = (UIScreen.main.bounds.width * 2 / 3).adjustByWidth
       static let height = (UIScreen.main.bounds.height / 3).adjustByHeight
     }
-    
-    struct alertDeleteView {
+
+    struct AlertDeleteView {
       static let width = 287.adjustByWidth
       static let height = 171.adjustByWidth
     }
-    
-    struct alertLogOutView {
+
+    struct AlertLogOutView {
       static let width = 287.adjustByWidth
       static let height = 171.adjustByWidth
     }
-    
-//    struct animationView {
-//      static let height = 222.0.adjustByHeight
-//    }
-    
+
     struct Calendar {
       static let headerSizeHeight = min(25.adjustByHeight, 25.adjustByWidth)
       static let minimumLineSpacing = min(8.0.adjustByHeight, 8.0.adjustByWidth)
       static let sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: min(12.adjustByHeight, 12.adjustByWidth), right: 0)
     }
-    
+
     struct Dot {
       static let bottomConstant = 74.adjustByWidth
     }
-    
+
     struct KindsOfTaskCollectionView {
       static let height = 100.adjustByHeight
     }
-    
+
     struct KindsOfTaskContainerView {
       static let height = 68.adjustByWidth
       static let width = 68.adjustByWidth
     }
-    
+
     struct Header {
       static let height = 55.adjustByHeight
     }
   }
-  
+
   struct TextFields {
     struct TDTaskTextField {
       static let heightConstant = 40.adjustByHeight
     }
   }
-  
+
   struct TextViews {
-    struct taskDescriptionTextView {
+    struct TaskDescriptionTextView {
       static let height = 200.adjustByHeight
     }
-    
-    struct onboardingDescriptionTextView {
+
+    struct OnboardingDescriptionTextView {
       static let bottomConstant = 100.adjustByHeight
       static let heightConstant = 90.adjustByHeight
     }
   }
 }
-
 
 extension CGFloat {
   var adjustByWidth: CGFloat {

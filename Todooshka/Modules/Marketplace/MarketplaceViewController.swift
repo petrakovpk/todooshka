@@ -11,13 +11,13 @@ import RxCocoa
 import RxDataSources
 
 class MarketplaceViewController: TDViewController {
-  
+
   // MARK: - Rx
   private let disposeBag = DisposeBag()
-  
+
   // MARK: - MVVM
   public var viewModel: MarketplaceViewModel!
-  
+
   // MARK: - Properties
   private var collectionView: UICollectionView!
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeSection>!
@@ -29,68 +29,74 @@ class MarketplaceViewController: TDViewController {
     configureDataSource()
     bindViewModel()
   }
-  
-  
+
   // MARK: - Configure UI
   func configureUI() {
-    
+
     // settings
     refreshButton.isHidden = false
     backButton.isHidden = false
-    
+
     // collectionView
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
-    
+
     // adding
     view.addSubviews([
       collectionView
     ])
-    
+
     //  header
     titleLabel.text = "Что будем делать?"
-    
+
     // collectionView
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
     collectionView.layer.masksToBounds = false
     collectionView.register(ThemeCell.self, forCellWithReuseIdentifier: ThemeCell.reuseID)
-    collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor)
+    collectionView.anchor(
+      top: view.safeAreaLayoutGuide.topAnchor,
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor
+    )
   }
-  
-  
+
   // MARK: - Bind ViewModel
   func bindViewModel() {
-    
+
     let input = MarketplaceViewModel.Input(
       selection: collectionView.rx.itemSelected.asDriver()
     )
-    
+
     let outputs = viewModel.transform(input: input)
-    
+
     [
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource))
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
-  
+
   // MARK: - Configure Data Source
   private func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<ThemeSection>(
       configureCell: { dataSource, collectionView, indexPath, item in
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ThemeCell.reuseID, for: indexPath) as! ThemeCell
+        guard let cell = collectionView.dequeueReusableCell(
+          withReuseIdentifier: ThemeCell.reuseID,
+          for: indexPath
+        ) as? ThemeCell else { return UICollectionViewCell() }
         cell.configure(with: dataSource[indexPath.section].items[indexPath.item].theme)
         return cell
       })
   }
-  
+
   // MARK: - Setup CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
-  
+
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(Sizes.Cells.ThemeCell.width), heightDimension: .estimated(Sizes.Cells.ThemeCell.height))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -101,9 +107,5 @@ class MarketplaceViewController: TDViewController {
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
     return section
   }
-  
-  
-  
+
 }
-
-

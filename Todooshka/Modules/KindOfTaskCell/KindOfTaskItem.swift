@@ -10,15 +10,14 @@ import RxDataSources
 struct KindOfTaskItem: IdentifiableType, Equatable {
   let kindOfTask: KindOfTask
   let isSelected: Bool
-  
-  //MARK: - Identity
+
+  // MARK: - Identity
   var identity: String {
     kindOfTask.UID
   }
-  
+
   // MARK: - Equatable
   static func == (lhs: KindOfTaskItem, rhs: KindOfTaskItem) -> Bool {
      lhs.isSelected == rhs.isSelected
   }
 }
-

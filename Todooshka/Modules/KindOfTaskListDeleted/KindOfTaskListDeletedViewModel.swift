@@ -10,45 +10,49 @@ import RxCocoa
 import RxFlow
 import RxSwift
 
-
 class KindOfTaskListDeletedViewModel: Stepper {
-  
-  let appDelegate = UIApplication.shared.delegate as! AppDelegate
-  let disposeBag = DisposeBag()
-  var managedContext: NSManagedObjectContext {
-    return self.appDelegate.persistentContainer.viewContext
+
+  // core data
+  let appDelegate = UIApplication.shared.delegate as? AppDelegate
+  var managedContext: NSManagedObjectContext? {
+    return self.appDelegate?.persistentContainer.viewContext
   }
-  let repeatKindOfTask = BehaviorRelay<IndexPath?>(value: nil)
+
+  // rx
+  let disposeBag = DisposeBag()
   let services: AppServices
   let steps = PublishRelay<Step>()
-  
+
+  // custom
+  let repeatKindOfTask = BehaviorRelay<IndexPath?>(value: nil)
+
   struct Input {
     let alertCancelButtonClickTrigger: Driver<Void>
     let alertDeleteButtonClickTrigger: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
     let removeAllButtonClickTrigger: Driver<Void>
   }
-  
+
   struct Output {
     let dataSource: Driver<[KindOfTaskListSection]>
     let hideAlert: Driver<Void>
     let navigateBack: Driver<Void>
-    let removeAll: Driver<Result<Void,Error>>
-    let repeatKindOfTask: Driver<Result<Void,Error>>
+    let removeAll: Driver<Result<Void, Error>>
+    let repeatKindOfTask: Driver<Result<Void, Error>>
     let showAlert: Driver<Void>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-  
+
   func transform(input: Input) -> Output {
-    
+
     let kindsOfTask = services.dataService
       .kindsOfTask
-      .map{ $0.filter{ $0.status == .Deleted } }
-    
+      .map { $0.filter { $0.status == .deleted } }
+
     let dataSource = kindsOfTask
       .map {[
         KindOfTaskListSection(
@@ -56,39 +60,39 @@ class KindOfTaskListDeletedViewModel: Stepper {
           items: $0
         )
       ]}
-    
+
     let hideAlert = Driver
       .of(input.alertCancelButtonClickTrigger, input.alertDeleteButtonClickTrigger)
       .merge()
-    
+
     let repeatKindOfTask = repeatKindOfTask
-      .compactMap{ $0 }
+      .compactMap { $0 }
       .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
       .map { kindOfTask -> KindOfTask in
         var kindOfTask = kindOfTask
-        kindOfTask.status = .Active
+        kindOfTask.status = .active
         return kindOfTask
       }
-      .flatMapLatest(({ self.managedContext.rx.update($0) }))
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+      .flatMapLatest(({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) }))
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let showAlert = input.removeAllButtonClickTrigger
-    
+
     let navigateBack = input.backButtonClickTrigger
-      .map{ self.steps.accept(AppStep.NavigateBack) }
-    
+      .map { self.steps.accept(AppStep.navigateBack) }
+
     let removeAll = input.alertDeleteButtonClickTrigger
       .withLatestFrom(kindsOfTask) { $1 }
       .asObservable()
       .flatMapLatest({ Observable.from($0) })
       .map { kindOfTask -> KindOfTask in
         var kindOfTask = kindOfTask
-        kindOfTask.status = .Archive
+        kindOfTask.status = .archive
         return kindOfTask
       }
-      .flatMapLatest({ self.appDelegate.persistentContainer.viewContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     return Output(
       dataSource: dataSource,
       hideAlert: hideAlert,
@@ -98,10 +102,9 @@ class KindOfTaskListDeletedViewModel: Stepper {
       showAlert: showAlert
     )
   }
-  
+
   func repeatKindOfTask(indexPath: IndexPath) {
     repeatKindOfTask.accept(indexPath)
   }
-  
-}
 
+}

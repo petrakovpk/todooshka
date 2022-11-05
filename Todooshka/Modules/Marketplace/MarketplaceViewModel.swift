@@ -11,24 +11,24 @@ import RxSwift
 import RxCocoa
 
 class MarketplaceViewModel: Stepper {
-  
+
   let services: AppServices
   let steps = PublishRelay<Step>()
 
   struct Input {
     let selection: Driver<IndexPath>
   }
-  
+
   struct Output {
     let dataSource: Driver<[ThemeSection]>
  //   let openTheme: Driver<Void>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-  
+
   func transform(input: Input) -> Output {
     let dataSource = Driver<[ThemeSection]>.of(
       [
@@ -42,10 +42,9 @@ class MarketplaceViewModel: Stepper {
         )
       ]
     )
-    
+
     return Output(
       dataSource: dataSource
     )
   }
 }
-

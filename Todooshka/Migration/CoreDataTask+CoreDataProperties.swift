@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-
 extension CoreDataTask {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<CoreDataTask> {

@@ -14,8 +14,7 @@ protocol HasAuthServiceProtocol {
   var authService: AuthService { get }
 }
 
-
-//extension Observable where Element == SignUpWithEmailAttr {
+// extension Observable where Element == SignUpWithEmailAttr {
 //  func createUser(attr: SignUpWithEmailAttr) -> Observable<[String: Any]> {
 //    return Observable<[String: Any]>.create { observer in
 //      Auth.auth().createUser(withEmail: attr.email, password: attr.password) { result, error in
@@ -35,17 +34,17 @@ protocol HasAuthServiceProtocol {
 //      return Disposables.create()
 //    }
 //  }
-//}
+// }
 
-//extension SharedSequence where Element == SignUpWithEmailAttr {
+// extension SharedSequence where Element == SignUpWithEmailAttr {
 //  func auth() -> SharedSequence<SharingStrategy, Void> {
 //    return self.map { attr -> Void in
 //      self.source.createUser(attr: attr)
 //    }
 //  }
-//}
+// }
 
-//Auth.auth().createUser(withEmail: email, password: password){ (result, error) in
+// Auth.auth().createUser(withEmail: email, password: password){ (result, error) in
 //  if let error = error {
 //    completion?(error)
 //    print("\(error.localizedDescription)")
@@ -63,16 +62,16 @@ protocol HasAuthServiceProtocol {
 //                "fullname": fullname ] as [String: Any]
 //
 //  self.update(with: values, completion: completion)
-//}
+// }
 
 class AuthService {
-  
+
   // MARK: - Public
-  
+
   // MARK: - Private
 //  private var authStateDidChangeListenerHandle: AuthStateDidChangeListenerHandle!
 //  private let currentUser = BehaviorRelay<User?>(value: nil)
-  
+
   // MARK: - Init
   init() {
 //    authStateDidChangeListenerHandle = Auth.auth().addStateDidChangeListener {[weak self] (auth, user) in
@@ -84,7 +83,7 @@ class AuthService {
 //      }
 //    }
   }
-  
+
   // MARK: - Log in with Credentials
 //  func signInWithCredentials(credential: AuthCredential, completion: TodooshkaCompletion?) {
 //    Auth.auth().signIn(with: credential) {(result, error) in
@@ -101,8 +100,8 @@ class AuthService {
 //      self.update(with: values, completion: completion)
 //    }
 //  }
-  
-  //MARK: - Sign in / Sign up with Email
+
+  // MARK: - Sign in / Sign up with Email
 //  func isNewUser(withEmail email: String, completion: @escaping( (_ isNewUser: Bool) -> Void )) {
 //    USER_REF.queryOrdered(byChild: "email").queryEqual(toValue: email.trimmed.uppercased()).observeSingleEvent(of: .value) { dataSnapshot in
 //      dataSnapshot.childrenCount == 0 ? completion(true) : completion(false)
@@ -136,7 +135,7 @@ class AuthService {
 //    }
 //  }
 //
-//  //MARK: - Sign in / Sign up with Phone
+// MARK: - Sign in / Sign up with Phone
 //  func sendVerificationCodeWithPhone(withPhone phone: String, completion: @escaping(VerificationResultCallback)) {
 //    // Auth.auth().settings?.isAppVerificationDisabledForTesting = true
 //    PhoneAuthProvider.provider().verifyPhoneNumber(phone, uiDelegate: nil, completion: completion)
@@ -161,7 +160,7 @@ class AuthService {
 //    }
 //  }
 //
-//  //MARK: - Save user data to Database
+// MARK: - Save user data to Database
 //  func update(with values: [String: Any], completion: TodooshkaCompletion?) {
 //
 //    guard let user = Auth.auth().currentUser else {

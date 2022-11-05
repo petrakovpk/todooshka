@@ -6,7 +6,7 @@
 //
 
 enum DiamondPackageType: String {
-  case Small
-  case Medium
-  case Large
+  case small
+  case medium
+  case large
 }

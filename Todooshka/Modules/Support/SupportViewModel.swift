@@ -16,7 +16,7 @@ struct QuestionAttr {
 }
 
 class SupportViewModel: Stepper {
-  
+
   let services: AppServices
   let steps = PublishRelay<Step>()
 
@@ -26,18 +26,18 @@ class SupportViewModel: Stepper {
     let questionTextViewText: Driver<String>
     let sendButtonClickTrigger: Driver<Void>
   }
-  
+
   struct Output {
     let navigateBack: Driver<Void>
     let sendButtonIsEnabled: Driver<Bool>
     let sendQuestion: Driver<Void>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-  
+
   func transform(input: Input) -> Output {
 
     let isEmailValid = input.emailTextFieldText
@@ -46,35 +46,35 @@ class SupportViewModel: Stepper {
         let emailPred = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
         return emailPred.evaluate(with: email)
       }
-    
+
     let isQuestionValid = input.questionTextViewText
-      .map{ $0.isEmpty == false }
-    
+      .map { $0.isEmpty == false }
+
     let sendButtonIsEnabled = Driver
       .combineLatest(isEmailValid, isQuestionValid) { isEmailValid, isQuestionValid -> Bool in
         isEmailValid && isQuestionValid
       }
-    
+
     let questionAttr = Driver
       .combineLatest(input.emailTextFieldText, input.questionTextViewText) { email, question -> QuestionAttr in
         QuestionAttr(email: email, question: question)
       }
-    
+
     let sendQuestion = input.sendButtonClickTrigger
       .withLatestFrom(questionAttr) { $1 }
       .asObservable()
       .flatMapLatest { question in
-        DB_REF.child("SUPPORT").child(UUID().uuidString).rx.updateChildValues(["email": question.email, "question": question.question])
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+        dbRef.child("SUPPORT").child(UUID().uuidString).rx.updateChildValues(["email": question.email, "question": question.question])
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let sendQuestionSuccess = sendQuestion
-      .compactMap{ result -> Void? in
+      .compactMap { result -> Void? in
         guard case .success(let result) = result else { return nil }
         return ()
       }
-   
+
     let navigateBack = input.backButtonClickTrigger
-      .map { _ in self.steps.accept(AppStep.NavigateBack) }
+      .map { _ in self.steps.accept(AppStep.navigateBack) }
 
     return Output(
       navigateBack: navigateBack,

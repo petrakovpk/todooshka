@@ -18,14 +18,14 @@ struct AuthWithGoogleData {
 }
 
 class AuthViewModel: Stepper {
-  
+
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let credential = BehaviorRelay<AuthCredential?>(value: nil)
-  
+
   private let services: AppServices
   private let disposeBag = DisposeBag()
-  
+
   struct Input {
     let appleButtonClickTrigger: Driver<Void>
     let emailOrPhoneAccountButtonClickTrigger: Driver<Void>
@@ -33,7 +33,7 @@ class AuthViewModel: Stepper {
   //  let logInButtonClickTrigger: Driver<Void>
     let skipButtonClickTrigger: Driver<Void>
   }
-  
+
   struct Output {
     let appleGetNonceString: Driver<String>
     let auth: Driver<Void>
@@ -41,21 +41,21 @@ class AuthViewModel: Stepper {
    // let logIn: Driver<Void>
     let skip: Driver<Void>
   }
-  
+
   // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-  
+
   func transform(input: Input) -> Output {
-    
+
     let appleGetNonceString = input.appleButtonClickTrigger
       .map { self.randomNonceString() }
-    
+
     // AUTH WITH APPLE
     let appleGetCredential = self.credential
       .asDriver()
-      .compactMap{ $0 }
+      .compactMap { $0 }
 
     // AUTH WITH GOOGLE
     let authWithGoogle = input.googleButtonClickTrigger
@@ -65,8 +65,8 @@ class AuthViewModel: Stepper {
       }.asObservable()
       .flatMapLatest { authWithGoogleData -> Observable<Result<GIDGoogleUser, Error>>  in
         GIDSignIn.sharedInstance.rx.signIn(with: authWithGoogleData.config, presenting: authWithGoogleData.viewController)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let googleGetCredential = authWithGoogle
       .compactMap { result -> GIDGoogleUser? in
         guard case .success(let user) = result else { return nil }
@@ -75,23 +75,23 @@ class AuthViewModel: Stepper {
         guard let idToken = user.authentication.idToken else { return nil }
         return GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.authentication.accessToken)
       }
-    
+
     let authWithCredentials = Driver
       .of(googleGetCredential, appleGetCredential)
       .merge()
       .asObservable()
       .flatMapLatest { credential ->  Observable<Result<AuthDataResult, Error>> in
         Auth.auth().rx.signInAndRetrieveData(with: credential)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.DriverError))
-    
+      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let auth = authWithCredentials
       .compactMap { result -> AuthDataResult? in
         guard case .success(let authDataResult) = result else { return nil }
         return authDataResult
       }.do { _ in
-        self.steps.accept(AppStep.AuthIsCompleted)
+        self.steps.accept(AppStep.authIsCompleted)
       }
-    
+
     // UPDATE DATA
     let updateUserData = auth
       .asObservable()
@@ -103,13 +103,12 @@ class AuthViewModel: Stepper {
       }.map { _ in () }
       .asDriver(onErrorJustReturn: ())
 
-    
     let authWithEmailOrPhone = input.emailOrPhoneAccountButtonClickTrigger
-      .map { self.steps.accept(AppStep.AuthWithEmailOrPhoneInIsRequired) }
+      .map { self.steps.accept(AppStep.authWithEmailOrPhoneInIsRequired) }
 
     let skip = input.skipButtonClickTrigger
-      .map { self.steps.accept(AppStep.AuthIsCompleted) }
-    
+      .map { self.steps.accept(AppStep.authIsCompleted) }
+
     return Output(
       appleGetNonceString: appleGetNonceString,
       auth: updateUserData,
@@ -117,14 +116,14 @@ class AuthViewModel: Stepper {
       skip: skip
     )
   }
-  
+
   // MARK: - Helpers
   private func randomNonceString(length: Int = 32) -> String {
     precondition(length > 0)
-    let charset: Array<Character> = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+    let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
     var result = ""
     var remainingLength = length
-    
+
     while remainingLength > 0 {
       let randoms: [UInt8] = (0 ..< 16).map { _ in
         var random: UInt8 = 0
@@ -134,21 +133,19 @@ class AuthViewModel: Stepper {
         }
         return random
       }
-      
+
       randoms.forEach { random in
         if remainingLength == 0 {
           return
         }
-        
+
         if random < charset.count {
           result.append(charset[Int(random)])
           remainingLength -= 1
         }
       }
     }
-    
+
     return result
   }
 }
-
-

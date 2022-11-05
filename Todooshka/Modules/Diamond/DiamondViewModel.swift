@@ -15,7 +15,7 @@ class DiamondViewModel: Stepper {
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
-  
+
   // MARK: - Transform
   struct Input {
     let alertOkButtonClickTrigger: Driver<Void>
@@ -25,7 +25,7 @@ class DiamondViewModel: Stepper {
     let largeOfferBackgroundClickTrigger: Driver<Void>
     let mediumOfferBackgroundClickTrigger: Driver<Void>
   }
-  
+
   struct Output {
     let hideAlertTrigger: Driver<Void>
     let navigateBack: Driver<Void>
@@ -33,43 +33,43 @@ class DiamondViewModel: Stepper {
     let sendOffer: Driver<Void>
     let showAlertTrigger: Driver<Void>
   }
-  
-  //MARK: - Init
+
+  // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-  
+
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    
+
     let compactUser = services.dataService.compactUser
-    
+
     // backButtonClickHandler
     let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.NavigateBack) }
-    
+      .map { self.steps.accept(AppStep.navigateBack) }
+
     // offerSelected
-    let smallOfferSelected = input.smallOfferBackgroundClickTrigger.map{ DiamondPackageType.Small }.asDriver()
-    let mediumOfferSelected = input.mediumOfferBackgroundClickTrigger.map{ DiamondPackageType.Medium }.asDriver()
-    let largeOfferSelected = input.largeOfferBackgroundClickTrigger.map{ DiamondPackageType.Large }.asDriver()
-    
+    let smallOfferSelected = input.smallOfferBackgroundClickTrigger.map { DiamondPackageType.small }.asDriver()
+    let mediumOfferSelected = input.mediumOfferBackgroundClickTrigger.map { DiamondPackageType.medium }.asDriver()
+    let largeOfferSelected = input.largeOfferBackgroundClickTrigger.map { DiamondPackageType.large }.asDriver()
+
     let offerSelected = Driver
       .of(smallOfferSelected, mediumOfferSelected, largeOfferSelected)
       .merge()
-      .startWith(.Medium)
-    
+      .startWith(.medium)
+
     let hideAlertTrigger = input.alertOkButtonClickTrigger
-    
+
     let sendOffer = input.alertOkButtonClickTrigger
       .withLatestFrom(offerSelected) { $1 }
       .withLatestFrom(compactUser) { offer, user in
-        let params: [AnyHashable : Any] = ["offer": offer.rawValue]
+        let params: [AnyHashable: Any] = ["offer": offer.rawValue]
         YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: nil)
-        return DB_USERS_REF.child(user.uid).child("BUY").child(Date().startOfDay.description).updateChildValues([Date().description : offer.rawValue])
+        return dbUserRef.child(user.uid).child("BUY").child(Date().startOfDay.description).updateChildValues([Date().description: offer.rawValue])
       }
-    
+
     let showAlertTrigger = input.buyButtonClickTrigger
-    
+
     return Output(
       hideAlertTrigger: hideAlertTrigger,
       navigateBack: navigateBack,
@@ -80,5 +80,3 @@ class DiamondViewModel: Stepper {
   }
 
 }
-
-

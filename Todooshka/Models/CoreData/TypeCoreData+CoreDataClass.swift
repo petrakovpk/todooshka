@@ -6,10 +6,10 @@
 //
 //
 
-//import Foundation
-//import CoreData
+// import Foundation
+// import CoreData
 //
-//@objc(TypeCoreData)
-//public class TypeCoreData: NSManagedObject {
+// @objc(TypeCoreData)
+// public class TypeCoreData: NSManagedObject {
 //
-//}
+// }

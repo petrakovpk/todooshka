@@ -8,39 +8,36 @@
 import UIKit
 import RxDataSources
 
-enum Icon: String, IdentifiableType, Equatable  {
-  
+enum Icon: String, IdentifiableType, Equatable {
+
   // MARK: - Icons
-  case Bank = "Bank"
-  case BookSaved = "BookSaved"
-  case Briefcase = "Briefcase"
-  case Dumbbell = "Dumbbell"
-  case EmojiHappy = "EmojiHappy"
-  case GasStation = "GasStation"
-  case House = "House"
-  case Lovely = "Lovely"
-  case Moon = "Moon"
-  case NotificationBing = "NotificationBing"
-  case Pet = "Pet"
-  case Profile2user = "Profile2user"
-  case Ship = "Ship"
-  case Shop = "Shop"
-  case Sun = "Sun"
-  case Teacher = "Teacher"
-  case Tree = "Tree"
-  case Unlimited = "Unlimited"
-  case VideoVertical = "VideoVertical"
-  case Wallet = "Wallet"
-  case Weight = "Weight"
-  
+  case bank = "Bank"
+  case bookSaved = "BookSaved"
+  case briefcase = "Briefcase"
+  case dumbbell = "Dumbbell"
+  case emojiHappy = "EmojiHappy"
+  case gasStation = "GasStation"
+  case house = "House"
+  case lovely = "Lovely"
+  case moon = "Moon"
+  case notificationBing = "NotificationBing"
+  case pet = "Pet"
+  case profile2user = "Profile2user"
+  case ship = "Ship"
+  case shop = "Shop"
+  case sun = "Sun"
+  case teacher = "Teacher"
+  case tree = "Tree"
+  case unlimited = "Unlimited"
+  case videoVertical = "VideoVertical"
+  case wallet = "Wallet"
+  case weight = "Weight"
+
   // MARK: - Image
   var image: UIImage {
     return UIImage(named: self.rawValue)!.template
   }
-  
-  //MARK: - Identity
+
+  // MARK: - Identity
   var identity: String { return self.rawValue }
 }
-
-
-

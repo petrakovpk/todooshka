@@ -11,38 +11,38 @@ import RxCocoa
 import UIKit
 
 class AuthFlow: Flow {
-  
+
   var root: Presentable {
     return self.rootViewController
   }
-  
+
   private let rootViewController = UINavigationController()
   private let services: AppServices
-  
+
   init(withServices services: AppServices) {
     self.services = services
   }
-  
+
   deinit {
     print("\(type(of: self)): \(#function)")
   }
-  
+
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-    case .AuthIsRequired:
+    case .authIsRequired:
       return navigateToAuthScreen()
-    case .AuthIsCompleted:
+    case .authIsCompleted:
       return dismissAuthScreen()
-    case .AuthWithEmailOrPhoneInIsRequired:
+    case .authWithEmailOrPhoneInIsRequired:
       return navigateToAuthWithEmailOrPhoneAccountScreen()
-    case .NavigateBack:
+    case .navigateBack:
       return navigateBack()
     default:
       return .none
     }
   }
-  
+
   private func navigateToAuthScreen() -> FlowContributors {
     let viewController = AuthViewController()
     let viewModel = AuthViewModel(services: services)
@@ -51,7 +51,7 @@ class AuthFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToAuthWithEmailOrPhoneAccountScreen() -> FlowContributors {
     let viewController = LoginViewController()
     let viewModel = LoginViewModel(services: services)
@@ -60,14 +60,14 @@ class AuthFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateBack() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .none
   }
-  
+
   private func dismissAuthScreen() -> FlowContributors {
     rootViewController.dismiss(animated: true)
-    return .end(forwardToParentFlowWithStep: AppStep.AuthIsCompleted)
+    return .end(forwardToParentFlowWithStep: AppStep.authIsCompleted)
   }
 }

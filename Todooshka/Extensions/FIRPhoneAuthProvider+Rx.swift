@@ -6,7 +6,7 @@ import FirebaseAuth
 
 #if os(iOS)
 extension Reactive where Base: PhoneAuthProvider {
-  
+
   /**
    @brief Starts the phone number authentication flow by sending a verification code to the
    specified phone number.
@@ -24,7 +24,7 @@ extension Reactive where Base: PhoneAuthProvider {
    invalid.
    + `FIRAuthErrorCodeMissingPhoneNumber` - Indicates that a phone number was not provided.
    */
-  public func verifyPhoneNumber(_ phoneNumber: String, uiDelegate: AuthUIDelegate? = nil) -> Observable<Result<String,Error>> {
+  public func verifyPhoneNumber(_ phoneNumber: String, uiDelegate: AuthUIDelegate? = nil) -> Observable<Result<String, Error>> {
     return Observable.create { observer in
       self.base.verifyPhoneNumber(phoneNumber, uiDelegate: uiDelegate) { result, error in
         if let result = result {

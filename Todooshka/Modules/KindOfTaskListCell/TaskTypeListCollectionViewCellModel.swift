@@ -5,14 +5,14 @@
 //  Created by Петраков Павел Константинович on 08.09.2021.
 //
 //
-//import RxFlow
-//import RxSwift
-//import RxCocoa
-//import Foundation
-//import SwipeCellKit
-//import UIKit
+// import RxFlow
+// import RxSwift
+// import RxCocoa
+// import Foundation
+// import SwipeCellKit
+// import UIKit
 //
-//class TaskTypeListCollectionViewCellModel: Stepper {
+// class TaskTypeListCollectionViewCellModel: Stepper {
 //
 //  let steps = PublishRelay<Step>()
 //
@@ -40,7 +40,7 @@
 //  }
 //
 //
-//  //MARK: - Init
+// MARK: - Init
 //  init(services: AppServices, kindOfTask: KindOfTask) {
 //    self.services = services
 //    self.kindOfTask = kindOfTask
@@ -78,7 +78,7 @@
 //    )
 //  }
 //
-//}
+// }
 //
 
 //

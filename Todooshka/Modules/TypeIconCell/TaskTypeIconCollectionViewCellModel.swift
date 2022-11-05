@@ -12,9 +12,9 @@ import Foundation
 import SwipeCellKit
 
 class TaskTypeIconCollectionViewCellModel: Stepper {
-  
+
   let steps = PublishRelay<Step>()
-  
+
   private let services: AppServices
   private let icon: Icon
 
@@ -23,17 +23,17 @@ class TaskTypeIconCollectionViewCellModel: Stepper {
     let isSelected: Driver<Bool>
   }
 
-  //MARK: - Init
+  // MARK: - Init
   init(services: AppServices, icon: Icon) {
     self.services = services
     self.icon = icon
   }
-  
+
   func transform() -> Output {
-    
-    //image
+
+    // image
     let image = Driver.just(self.icon.image)
-    
+
     // isSelected
     let isSelected = Driver.of(true)
 //    let isSelected = services.typesService.selectedTypeIcon

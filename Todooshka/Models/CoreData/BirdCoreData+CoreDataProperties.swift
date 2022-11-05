@@ -6,11 +6,11 @@
 //
 //
 //
-//import Foundation
-//import CoreData
+// import Foundation
+// import CoreData
 //
 //
-//extension BirdCoreData {
+// extension BirdCoreData {
 //
 //  @nonobjc public class func fetchRequest() -> NSFetchRequest<BirdCoreData> {
 //      return NSFetchRequest<BirdCoreData>(entityName: "BirdCoreData")
@@ -51,4 +51,4 @@
 //    self.currency = bird.currency.rawValue
 //    self.typesUID = bird.typesUID
 //  }
-//}
+// }

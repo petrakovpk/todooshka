@@ -6,9 +6,9 @@
 //
 
 enum AuthTextFieldType {
-  case Email
-  case OTPCode
-  case Password
-  case Phone
-  case RepeatPassword
+  case email
+  case otp
+  case password
+  case phone
+  case repeatPassword
 }
