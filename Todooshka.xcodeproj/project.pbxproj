@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2236EC988812DD36A248882E /* Pods_DragoDo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D197197F6881845BD7C043 /* Pods_DragoDo.framework */; };
+		105664A61CC6ACC48FA478AF /* Pods_DragoDo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DFC42E852EB88090E2C5F3F /* Pods_DragoDo.framework */; };
 		6006F82927AA6BF100E5AE9E /* ShopCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F82827AA6BF100E5AE9E /* ShopCell.swift */; };
 		6006F82B27AA6C0200E5AE9E /* ShopCellHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F82A27AA6C0200E5AE9E /* ShopCellHeader.swift */; };
 		6006F82D27AA6E7100E5AE9E /* Bird.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F82C27AA6E7100E5AE9E /* Bird.swift */; };
@@ -258,6 +258,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0411C4201FD9500368577B43 /* Pods-DragoDo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DragoDo.debug.xcconfig"; path = "Target Support Files/Pods-DragoDo/Pods-DragoDo.debug.xcconfig"; sourceTree = "<group>"; };
+		3B89CC5A32F81DBA5650CE34 /* Pods-DragoDo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DragoDo.release.xcconfig"; path = "Target Support Files/Pods-DragoDo/Pods-DragoDo.release.xcconfig"; sourceTree = "<group>"; };
 		6006F82827AA6BF100E5AE9E /* ShopCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopCell.swift; sourceTree = "<group>"; };
 		6006F82A27AA6C0200E5AE9E /* ShopCellHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopCellHeader.swift; sourceTree = "<group>"; };
 		6006F82C27AA6E7100E5AE9E /* Bird.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bird.swift; sourceTree = "<group>"; };
@@ -390,8 +392,7 @@
 		60FB0F3F27F61A9500430A23 /* TaskListMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListMode.swift; sourceTree = "<group>"; };
 		60FFF65627A9A5D700290331 /* ShopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewController.swift; sourceTree = "<group>"; };
 		60FFF65827A9A5E300290331 /* ShopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewModel.swift; sourceTree = "<group>"; };
-		67D27915166401692D493B39 /* Pods-DragoDo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DragoDo.release.xcconfig"; path = "Target Support Files/Pods-DragoDo/Pods-DragoDo.release.xcconfig"; sourceTree = "<group>"; };
-		85C6E6A46AB69B25160168D8 /* Pods-DragoDo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DragoDo.debug.xcconfig"; path = "Target Support Files/Pods-DragoDo/Pods-DragoDo.debug.xcconfig"; sourceTree = "<group>"; };
+		6DFC42E852EB88090E2C5F3F /* Pods_DragoDo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DragoDo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D08CDD828FB3EE100689427 /* Sizes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sizes.swift; sourceTree = "<group>"; };
 		9D08CDDA28FC0C9800689427 /* CalendarViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewLayout.swift; sourceTree = "<group>"; };
 		9D08CDE228FD7CB200689427 /* TodooshkaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodooshkaTests.swift; sourceTree = "<group>"; };
@@ -500,7 +501,6 @@
 		9DF7CA7828EAF8EA000AE2B6 /* SupportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportViewModel.swift; sourceTree = "<group>"; };
 		9DF7CA7B28EB0C2E000AE2B6 /* DeleteAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountViewController.swift; sourceTree = "<group>"; };
 		9DF7CA7D28EB0C37000AE2B6 /* DeleteAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountViewModel.swift; sourceTree = "<group>"; };
-		F3D197197F6881845BD7C043 /* Pods_DragoDo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DragoDo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -512,7 +512,7 @@
 				9DE7C48628E33FBD001F5C55 /* YandexMobileMetricaCrashes in Frameworks */,
 				9D42C02B28CB6173008F624F /* PhoneNumberKit in Frameworks */,
 				9DC65D4928D378B000221ED2 /* Lottie in Frameworks */,
-				2236EC988812DD36A248882E /* Pods_DragoDo.framework in Frameworks */,
+				105664A61CC6ACC48FA478AF /* Pods_DragoDo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -775,10 +775,10 @@
 			children = (
 				9D0A82232913AE1F006D777C /* .swiftlint.yml */,
 				9DE7C49128E35103001F5C55 /* DragoDo.app */,
-				FB745A0C7E3C8B65996DC6CB /* Frameworks */,
 				8C9A133C03866BF91C5572D0 /* Pods */,
 				60AE9D612652E5AA00E51531 /* Todooshka */,
 				9D08CDE128FD7CB200689427 /* TodooshkaTests */,
+				6B9ABED560B72ED39AA1DB4C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1038,11 +1038,19 @@
 			path = Shop;
 			sourceTree = "<group>";
 		};
+		6B9ABED560B72ED39AA1DB4C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6DFC42E852EB88090E2C5F3F /* Pods_DragoDo.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8C9A133C03866BF91C5572D0 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				85C6E6A46AB69B25160168D8 /* Pods-DragoDo.debug.xcconfig */,
-				67D27915166401692D493B39 /* Pods-DragoDo.release.xcconfig */,
+				0411C4201FD9500368577B43 /* Pods-DragoDo.debug.xcconfig */,
+				3B89CC5A32F81DBA5650CE34 /* Pods-DragoDo.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1293,14 +1301,6 @@
 			path = Calendar;
 			sourceTree = "<group>";
 		};
-		FB745A0C7E3C8B65996DC6CB /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				F3D197197F6881845BD7C043 /* Pods_DragoDo.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1308,12 +1308,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 60AE9D8C2652E5AD00E51531 /* Build configuration list for PBXNativeTarget "DragoDo" */;
 			buildPhases = (
-				66989AA978AC30CA129B6840 /* [CP] Check Pods Manifest.lock */,
+				A97763B406FF24161FA4C8E3 /* [CP] Check Pods Manifest.lock */,
 				9D0A82222913AB86006D777C /* ShellScript */,
 				60AE9D5B2652E5AA00E51531 /* Sources */,
 				60AE9D5C2652E5AA00E51531 /* Frameworks */,
 				60AE9D5D2652E5AA00E51531 /* Resources */,
-				BCB27B77B219E5F8FDED478D /* [CP] Embed Pods Frameworks */,
+				C3F4B805CACB85753BD47818 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1377,7 +1377,7 @@
 			mainGroup = 60AE9D562652E5AA00E51531;
 			packageReferences = (
 				9D42C02928CB6173008F624F /* XCRemoteSwiftPackageReference "PhoneNumberKit" */,
-				9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios.git" */,
 				9DE7C48228E33FBD001F5C55 /* XCRemoteSwiftPackageReference "metrica-sdk-ios" */,
 			);
 			productRefGroup = 60AE9D562652E5AA00E51531;
@@ -1417,7 +1417,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		66989AA978AC30CA129B6840 /* [CP] Check Pods Manifest.lock */ = {
+		9D0A82222913AB86006D777C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+		A97763B406FF24161FA4C8E3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1439,24 +1456,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9D0A82222913AB86006D777C /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
-		BCB27B77B219E5F8FDED478D /* [CP] Embed Pods Frameworks */ = {
+		C3F4B805CACB85753BD47818 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1854,7 +1854,7 @@
 		};
 		60AE9D8D2652E5AD00E51531 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 85C6E6A46AB69B25160168D8 /* Pods-DragoDo.debug.xcconfig */;
+			baseConfigurationReference = 0411C4201FD9500368577B43 /* Pods-DragoDo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1884,7 +1884,7 @@
 		};
 		60AE9D8E2652E5AD00E51531 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 67D27915166401692D493B39 /* Pods-DragoDo.release.xcconfig */;
+			baseConfigurationReference = 3B89CC5A32F81DBA5650CE34 /* Pods-DragoDo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1999,7 +1999,7 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+		9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
@@ -2025,7 +2025,7 @@
 		};
 		9DC65D4828D378B000221ED2 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			package = 9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios.git" */;
 			productName = Lottie;
 		};
 		9DE7C48328E33FBD001F5C55 /* YandexMobileMetrica */ = {

@@ -155,7 +155,7 @@ class MainTaskListViewController: UIViewController {
   func configureScene() {
     view.addSubview(sceneView)
     sceneView.presentScene(scene)
-    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,    heightConstant: sceneView.frame.height)
+    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,     heightConstant: sceneView.frame.height)
   }
 
   // MARK: - ConfigureUI

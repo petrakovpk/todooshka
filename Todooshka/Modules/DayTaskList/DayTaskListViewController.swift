@@ -94,7 +94,7 @@ class DayTaskListViewController: UIViewController {
     dividerView.backgroundColor = UIColor(named: "navigationBarDividerBackground")
 
     headerView.addSubview(dividerView)
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,    heightConstant: 1.0)
+    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,     heightConstant: 1.0)
 
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     collectionView.register(TaskListCollectionViewCell.self, forCellWithReuseIdentifier: TaskListCollectionViewCell.reuseID)
