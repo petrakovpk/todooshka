@@ -12,7 +12,6 @@ import RxSwift
 import UIKit
 
 class SettingsViewController: TDViewController {
-
   // MARK: - Properties
   let disposeBag = DisposeBag()
 
@@ -65,7 +64,6 @@ class SettingsViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // tableView
     tableView = UITableView(frame: .zero, style: .grouped)
 
@@ -94,7 +92,6 @@ class SettingsViewController: TDViewController {
   }
 
   private func configureAlert() {
-
     // adding
     view.addSubview(alertBackgroundView)
     alertBackgroundView.addSubview(alertWindowView)
@@ -131,7 +128,6 @@ class SettingsViewController: TDViewController {
   }
   // MARK: - Bind To
   func bindViewModel() {
-
     let input = SettingsViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       selection: tableView.rx.itemSelected.asDriver()
@@ -144,7 +140,7 @@ class SettingsViewController: TDViewController {
       outputs.itemSelected.drive(),
       outputs.dataSource.drive(tableView.rx.items(dataSource: dataSource))
     ]
-      .forEach({$0.disposed(by: disposeBag)})
+      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   func configureDataSource() {
@@ -160,5 +156,4 @@ class SettingsViewController: TDViewController {
       return dataSource.sectionModels[index].header
     })
   }
-
 }

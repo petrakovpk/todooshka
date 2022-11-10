@@ -11,5 +11,4 @@ import CoreData
 
 @objc(CoreDataTaskType)
 public class CoreDataTaskType: NSManagedObject {
-
 }

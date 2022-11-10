@@ -8,7 +8,6 @@ import UIKit
 import Foundation
 
 class KindOfTaskCell: UICollectionViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "KindOfTaskCell"
 
@@ -35,10 +34,11 @@ class KindOfTaskCell: UICollectionViewCell {
 
   // draw
   override func draw(_ rect: CGRect) {
-
     // adding
-    contentView.addSubview(imageView)
-    contentView.addSubview(textView)
+    contentView.addSubviews([
+      imageView,
+      textView
+    ])
 
     // contentView
     contentView.cornerRadius = 11
@@ -69,7 +69,6 @@ class KindOfTaskCell: UICollectionViewCell {
 
   // MARK: - Configure
   func configure(kindOfTask: KindOfTask, isSelected: Bool) {
-
     // textView
     textView.text = kindOfTask.text
     textView.textColor = isSelected ? .white : Style.App.text

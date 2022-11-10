@@ -8,7 +8,6 @@
 import UIKit
 
 class CalendarReusableView: UICollectionReusableView {
-
   // MARK: - Properties
   static var reuseID: String = "CalendarReusableView"
 
@@ -17,7 +16,6 @@ class CalendarReusableView: UICollectionReusableView {
 
   // MARK: - draw
   override func draw(_ rect: CGRect) {
-
     if label.isDescendant(of: self) {
       label.removeFromSuperview()
     }

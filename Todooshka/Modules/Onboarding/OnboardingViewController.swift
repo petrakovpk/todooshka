@@ -15,7 +15,6 @@ enum SelectedOnboardingScreen {
 }
 
 final class OnboardingViewController: UIViewController {
-
   // MARK: - Properties
   private let disposeBag = DisposeBag()
   var viewModel: OnboardingViewModel!
@@ -77,7 +76,6 @@ final class OnboardingViewController: UIViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // def
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: collectionViewLayout)
 
@@ -138,11 +136,9 @@ final class OnboardingViewController: UIViewController {
     rightDot.backgroundColor = Style.Onboarding.Dot
     rightDot.removeAllConstraints()
     rightDot.anchor(top: centralDot.topAnchor, left: centralDot.rightAnchor, leftConstant: 10.0, widthConstant: 6, heightConstant: 6)
-
   }
 
   func setDotWidth(leftDotPercent: Int, centralDotPercent: Int, rightDotPercent: Int) {
-
     // centralDot
     centralDot.removeAllConstraints()
     centralDot.anchorCenterXToSuperview()
@@ -184,7 +180,7 @@ final class OnboardingViewController: UIViewController {
   func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<OnboardingSectionModel>(
-      configureCell: { (_, collectionView, indexPath, onboardingSectionItem) in
+      configureCell: { _, collectionView, indexPath, onboardingSectionItem in
         guard let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: OnboardingCollectionViewCell.reuseID,
           for: indexPath
@@ -197,7 +193,6 @@ final class OnboardingViewController: UIViewController {
 
   // MARK: - Bind To
   func bindViewModel() {
-
     let input = OnboardingViewModel.Input(
       didScroll: collectionView.rx.didScroll.asDriver(),
       skipButtonClickTrigger: skipButton.rx.tap.asDriver(),
@@ -215,11 +210,10 @@ final class OnboardingViewController: UIViewController {
       output.skipButtonTitle.drive(skipButtonTitleBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
-
   }
 
   var backgroundImageBinder: Binder<UIImage?> {
-    return Binder(self, binding: { (vc, image) in
+    return Binder(self, binding: { vc, image in
       UIView.transition(
         with: vc.backgroundImageView,
         duration: 0.4,
@@ -231,7 +225,7 @@ final class OnboardingViewController: UIViewController {
   }
 
   var reloadPointsBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, section) in
+    return Binder(self, binding: { vc, section in
       var leftDotPercent = 0
       var centralDotPercent = 0
       var rightDotPercent = 0
@@ -255,7 +249,7 @@ final class OnboardingViewController: UIViewController {
   }
 
   var scrollToSectionBinder: Binder<Int> {
-    return Binder(self, binding: { (vc, section) in
+    return Binder(self, binding: { vc, section in
       vc.collectionView.isPagingEnabled = false
       vc.collectionView.scrollToItem(at: IndexPath(item: 0, section: section), at: .right, animated: true)
       vc.collectionView.isPagingEnabled = true
@@ -263,7 +257,7 @@ final class OnboardingViewController: UIViewController {
   }
 
   var skipButtonTitleBinder: Binder<String> {
-    return Binder(self, binding: { (vc, title) in
+    return Binder(self, binding: { vc, title in
       UIView.performWithoutAnimation {
         let attrString = NSAttributedString(string: title, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .medium)])
         vc.skipButton.setAttributedTitle(attrString, for: .normal)
@@ -271,5 +265,4 @@ final class OnboardingViewController: UIViewController {
       }
     })
   }
-
 }

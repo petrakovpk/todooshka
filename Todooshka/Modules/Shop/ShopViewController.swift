@@ -5,13 +5,12 @@
 //  Created by Петраков Павел Константинович on 01.02.2022.
 //
 
-import UIKit
-import RxSwift
 import RxCocoa
 import RxDataSources
+import RxSwift
+import UIKit
 
 class ShopViewController: TDViewController {
-
   // MARK: - UI elements
   private var collectionView: UICollectionView!
 
@@ -85,7 +84,7 @@ class ShopViewController: TDViewController {
 
   // MARK: - CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -93,7 +92,7 @@ class ShopViewController: TDViewController {
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(130), heightDimension: .absolute(160))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 12, leading: 0, bottom: 0, trailing: 10)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 12, leading: 0, bottom: 0, trailing: 10)
 
     let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(130), heightDimension: .estimated(160))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
@@ -125,7 +124,6 @@ class ShopViewController: TDViewController {
       output.navigateBack.drive(),
       output.show.drive()
     ]
-      .forEach({$0.disposed(by: disposeBag)})
+      .forEach({ $0.disposed(by: disposeBag) })
   }
-
 }

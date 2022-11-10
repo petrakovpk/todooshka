@@ -12,7 +12,6 @@ import Foundation
 import SwipeCellKit
 
 class UserProfileTaskCollectionViewCellModel: Stepper {
-
     let disposeBag = DisposeBag()
     let steps = PublishRelay<Step>()
     let taskRelay = BehaviorRelay<Task?>(value: nil)
@@ -25,13 +24,10 @@ class UserProfileTaskCollectionViewCellModel: Stepper {
         self.task = task
         taskRelay.accept(task)
     }
-
 }
 
 extension UserProfileTaskCollectionViewCellModel: SwipeCollectionViewCellDelegate {
-
     func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-
         guard orientation == .right else { return nil }
 
         let deleteAction = SwipeAction(style: .destructive, title: nil) { [unowned self] _, _ in
@@ -57,5 +53,4 @@ extension UserProfileTaskCollectionViewCellModel: SwipeCollectionViewCellDelegat
         options.transitionStyle = .border
         return options
     }
-
 }

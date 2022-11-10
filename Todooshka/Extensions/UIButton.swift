@@ -7,8 +7,6 @@
 import UIKit
 
 extension UIButton {
-
     func configureBlurBackground() {
-
     }
 }

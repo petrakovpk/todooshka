@@ -12,7 +12,6 @@ import RxSwift
 import RxCocoa
 
 class KindOfTaskListViewModel: Stepper {
-
   // MARK: - Properties
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
   var managedContext: NSManagedObjectContext? { self.appDelegate?.persistentContainer.viewContext }
@@ -47,7 +46,6 @@ class KindOfTaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let addTask = input.addButtonClickTrigger
       .map { self.steps.accept(AppStep.createKindOfTaskIsRequired) }
 
@@ -62,7 +60,8 @@ class KindOfTaskListViewModel: Stepper {
           header: "",
           items: $0
         )
-      ]}.asDriver()
+      ]
+      }.asDriver()
 
     let openKindOfTask = input.selection
       .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }

@@ -13,7 +13,6 @@ import RxCocoa
 import UIKit
 
 class SettingsViewModel: Stepper {
-
   let services: AppServices
   let steps = PublishRelay<Step>()
 
@@ -47,7 +46,6 @@ class SettingsViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let currentUser = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
 

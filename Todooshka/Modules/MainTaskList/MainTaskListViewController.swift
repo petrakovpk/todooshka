@@ -15,7 +15,6 @@ import RxGesture
 import Lottie
 
 class MainTaskListViewController: UIViewController {
-
   // MARK: - Properties
   let disposeBag = DisposeBag()
 
@@ -148,19 +147,17 @@ class MainTaskListViewController: UIViewController {
 
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-
   }
 
   // MARK: - Configure Scene
   func configureScene() {
     view.addSubview(sceneView)
     sceneView.presentScene(scene)
-    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,     heightConstant: sceneView.frame.height)
+    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,        heightConstant: sceneView.frame.height)
   }
 
   // MARK: - ConfigureUI
   private func configureUI() {
-
     // collectionView
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
 
@@ -228,7 +225,6 @@ class MainTaskListViewController: UIViewController {
   }
 
   private func configureAlert() {
-
     // adding
     view.addSubview(alertView)
     alertView.addSubview(alertSubView)
@@ -278,7 +274,7 @@ class MainTaskListViewController: UIViewController {
 
   // MARK: - Setup CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -286,7 +282,7 @@ class MainTaskListViewController: UIViewController {
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
@@ -296,7 +292,6 @@ class MainTaskListViewController: UIViewController {
 
   // MARK: - Bind Scene Model
   func bindSceneModel() {
-
     let input = NestSceneModel.Input()
     let outputs = sceneModel.transform(input: input)
 
@@ -307,7 +302,6 @@ class MainTaskListViewController: UIViewController {
       outputs.dataSource.drive(sceneDataSourceBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
-
   }
 
   // MARK: - Bind View Model
@@ -327,7 +321,6 @@ class MainTaskListViewController: UIViewController {
 
   // MARK: - Bind Task List Model
   func bindListViewModel() {
-
     let input = TaskListViewModel.Input(
       // selection
       selection: collectionView.rx.itemSelected.asDriver(),
@@ -361,18 +354,18 @@ class MainTaskListViewController: UIViewController {
 
   // MARK: - Binders
   var changeBinder: Binder<Result<Void, Error>> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.collectionView.reloadData()
     })
   }
   var hideAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertView.isHidden = true
     })
   }
 
   var hideCellBinder: Binder<IndexPath> {
-    return Binder(self, binding: { (vc, indexPath) in
+    return Binder(self, binding: { vc, indexPath in
       if let cell = vc.collectionView.cellForItem(at: indexPath) as? TaskCell {
         cell.hideSwipe(animated: true)
       }
@@ -380,25 +373,25 @@ class MainTaskListViewController: UIViewController {
   }
 
   var reloadItemsBinder: Binder<[IndexPath]> {
-    return Binder(self, binding: { (vc, indexPaths) in
+    return Binder(self, binding: { vc, indexPaths in
       if self.listViewModel.editingIndexPath == nil {
         vc.collectionView.reloadData()
       } else {
         UIView.performWithoutAnimation {
          vc.collectionView.reloadItems(at: indexPaths)
-       }
+        }
       }
     })
   }
 
   var showAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertView.isHidden = false
     })
   }
 
   var sceneDataSourceBinder: Binder<[EggActionType]> {
-    return Binder(self, binding: { (vc, actions) in
+    return Binder(self, binding: { vc, actions in
       if let scene = vc.scene {
         scene.setup(with: actions)
         if vc.isVisible {
@@ -409,7 +402,7 @@ class MainTaskListViewController: UIViewController {
   }
 
   var backgroundImageBinder: Binder<UIImage?> {
-    return Binder(self, binding: { (vc, image) in
+    return Binder(self, binding: { vc, image in
       if let image = image, let scene = vc.scene {
         scene.setup(withBackground: image)
       }
@@ -417,7 +410,7 @@ class MainTaskListViewController: UIViewController {
   }
 
   var dataSourceBinder: Binder<[TaskListSection]> {
-    return Binder(self, binding: { (vc, dataSource) in
+    return Binder(self, binding: { vc, dataSource in
       if let firstSection = dataSource.first, firstSection.items.isEmpty {
         vc.dragonImageView.isHidden = false
       } else {
@@ -428,7 +421,6 @@ class MainTaskListViewController: UIViewController {
 }
 
 extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
-
   func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
     listViewModel.editingIndexPath = indexPath
   }
@@ -494,5 +486,4 @@ extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
       action.transitionDelegate = ScaleTransition.default
     }
   }
-
 }

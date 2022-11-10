@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class FeatherViewController: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
@@ -67,7 +66,6 @@ class FeatherViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     //  header
     titleLabel.text = "Перышко"
 
@@ -98,7 +96,11 @@ class FeatherViewController: TDViewController {
 
     // collectionView
     collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
-    collectionView.register(TaskReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskReusableView.reuseID)
+    collectionView.register(
+      TaskReusableView.self,
+      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+      withReuseIdentifier: TaskReusableView.reuseID
+    )
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
     collectionView.clipsToBounds = false
@@ -116,7 +118,7 @@ class FeatherViewController: TDViewController {
 
   // MARK: - Setup Collection View
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -124,12 +126,12 @@ class FeatherViewController: TDViewController {
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
-    section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50.0))
+    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(10.0))
     let header = NSCollectionLayoutBoundarySupplementaryItem(
       layoutSize: headerSize,
       elementKind: UICollectionView.elementKindSectionHeader, alignment: .top
@@ -140,7 +142,6 @@ class FeatherViewController: TDViewController {
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = FeatherViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver()
     )
@@ -176,5 +177,4 @@ class FeatherViewController: TDViewController {
       return section
     })
   }
-
 }

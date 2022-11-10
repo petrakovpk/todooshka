@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class AppStepper: Stepper {
-
   let steps = PublishRelay<Step>()
   private let appServices: AppServices
   private let disposalBag = DisposeBag()

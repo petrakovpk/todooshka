@@ -19,7 +19,6 @@ struct TypeAttr {
 }
 
 class KindOfTaskViewModel: Stepper {
-
   // MARK: - Properties
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
   var managedContext: NSManagedObjectContext? { self.appDelegate?.persistentContainer.viewContext }
@@ -60,7 +59,6 @@ class KindOfTaskViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-
     let colors = services.dataService.colors
     let icons = services.dataService.icons
 
@@ -189,5 +187,4 @@ class KindOfTaskViewModel: Stepper {
       textLen: textLen
     )
   }
-
 }

@@ -15,7 +15,6 @@ import CoreData
 // }
 
 class CalendarViewModel: Stepper {
-
   // MARK: - Typealias
   public typealias DisplayCollectionViewCellEvent = (cell: UICollectionViewCell, at: IndexPath)
 
@@ -73,7 +72,6 @@ class CalendarViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-
     // caledar
     let selectedDate = services.dataService.selectedDate.asDriver()
     let dataSourceMonths = dataSourceMonths.asDriver()
@@ -81,14 +79,14 @@ class CalendarViewModel: Stepper {
     // completed tasks
     let completedTasks = services.dataService
       .tasks
-      .map { $0.filter { $0.status == .completed }}
-      .map { $0.filter { $0.closed != nil }}
+      .map { $0.filter { $0.status == .completed } }
+      .map { $0.filter { $0.closed != nil } }
       .asDriver(onErrorJustReturn: [])
 
     let plannedTasks = services.dataService
       .tasks
-      .map { $0.filter { $0.status == .planned }}
-      .map { $0.filter { $0.planned != nil }}
+      .map { $0.filter { $0.status == .planned } }
+      .map { $0.filter { $0.planned != nil } }
       .asDriver(onErrorJustReturn: [])
 
     let dataSource = Driver<[CalendarSection]>

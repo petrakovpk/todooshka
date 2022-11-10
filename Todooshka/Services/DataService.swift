@@ -22,7 +22,6 @@ protocol HasDataService {
 }
 
 class DataService {
-
   // MARK: - Properties
   // core data
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -45,12 +44,12 @@ class DataService {
   let nestDataSource: Driver<[EggActionType]>
   let selectedDate = BehaviorRelay<Date>(value: Date())
   let tasks: Driver<[Task]>
+  let themes: Driver<[Theme]>
   let user: Driver<User?>
   let compactUser: Driver<User>
 
   // MARK: - Init
   init() {
-
     let managedContext = appDelegate!.persistentContainer.viewContext
 
     // MARK: - Const
@@ -90,6 +89,15 @@ class DataService {
       .videoVertical,
       .wallet,
       .weight
+    ])
+
+    themes = Driver<[Theme]>.of([
+      Theme(UID: UUID().uuidString, name: "Отказываемся от сахара"),
+      Theme(UID: UUID().uuidString, name: "Рано ложимся спать"),
+      Theme(UID: UUID().uuidString, name: "Начинаем программировать"),
+      Theme(UID: UUID().uuidString, name: "Бросаем курить"),
+      Theme(UID: UUID().uuidString, name: "Начинаем отжиматься"),
+      Theme(UID: UUID().uuidString, name: "Читаем по одной книге в неделю")
     ])
 
     let allBirds = managedContext
@@ -356,7 +364,6 @@ class DataService {
     Auth.auth().addStateDidChangeListener { [weak self] _, user in
       guard let self = self else { return }
       if let user = user {
-
         // FIREBASEBIRDS
         dbUserRef.child(user.uid).child("BIRDS").observe(.value) { snapshot in
           self.firebaseBirds.accept(
@@ -389,7 +396,6 @@ class DataService {
               }
           )
         }
-
       } else {
         self.firebaseBirds.accept(nil)
         self.firebaseKindsOfTask.accept(nil)
@@ -412,7 +418,7 @@ class DataService {
         }.filter { $0.status != .archive }
       }
       .asObservable()
-      .flatMapLatest({ managedContext.rx.batchUpdate($0)  })
+      .flatMapLatest({ managedContext.rx.batchUpdate($0)    })
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .drive()
       .disposed(by: disposeBag)
@@ -432,7 +438,6 @@ class DataService {
       .filter { !$0.isEmpty }
       .withLatestFrom(compactUser) { tasks, user in
         dbUserRef.child(user.uid).child("TASKS").runTransactionBlock({ currentData in
-
           var dict: [String: AnyObject] = currentData.value as? [String: AnyObject] ?? [:]
 
           tasks.forEach { task in
@@ -552,7 +557,6 @@ class DataService {
       .filter { !$0.isEmpty }
       .withLatestFrom(compactUser) { kindsOfTask, user in
         dbUserRef.child(user.uid).child("KINDSOFTASK").runTransactionBlock({ currentData in
-
           var dict: [String: AnyObject] = currentData.value as? [String: AnyObject] ?? [:]
 
           kindsOfTask.forEach { kindOfTask in
@@ -574,7 +578,7 @@ class DataService {
       }
       .filter { !$0.isEmpty }
       .asObservable()
-      .flatMapLatest({ managedContext.rx.batchUpdate($0)  })
+      .flatMapLatest({ managedContext.rx.batchUpdate($0)    })
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .drive()
       .disposed(by: disposeBag)
@@ -662,7 +666,6 @@ class DataService {
       .filter { !$0.isEmpty }
       .withLatestFrom(compactUser) { birds, user in
         dbUserRef.child(user.uid).child("BIRDS").runTransactionBlock({ currentData in
-
           var dict: [String: AnyObject] = currentData.value as? [String: AnyObject] ?? [:]
 
           birds.forEach { bird in
@@ -684,7 +687,7 @@ class DataService {
       }
       .filter { !$0.isEmpty }
       .asObservable()
-      .flatMapLatest({ managedContext.rx.batchUpdate($0)  })
+      .flatMapLatest({ managedContext.rx.batchUpdate($0)    })
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .drive()
       .disposed(by: disposeBag)

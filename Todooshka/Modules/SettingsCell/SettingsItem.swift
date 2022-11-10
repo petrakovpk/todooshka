@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct SettingsItem: IdentifiableType, Equatable {
-
   var identity: String { return UUID().uuidString }
 
   var imageName: String

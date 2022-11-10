@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct AuthSectionItem: IdentifiableType, Equatable {
-
     // MARK: - Properties
     var placeholder: String
     var imageName: String
@@ -18,7 +17,6 @@ struct AuthSectionItem: IdentifiableType, Equatable {
 }
 
 struct AuthSectionModel: AnimatableSectionModelType {
-
     // MARK: - Identity
     var identity: String { return UUID().uuidString }
 

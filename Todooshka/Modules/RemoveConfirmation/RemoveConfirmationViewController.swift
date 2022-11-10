@@ -8,7 +8,6 @@
 import UIKit
 
 class RemoveConfirmationViewController: UIViewController {
-
   // MARK: - Properties
   var viewModel: RemoveConfirmationViewModel!
 

@@ -12,7 +12,6 @@ import Foundation
 import SwipeCellKit
 
 class OnboardingCollectionViewCell: UICollectionViewCell {
-
   // MARK: - Properties
   var disposeBag = DisposeBag()
   var viewModel: OnboardingCollectionViewCellModel!
@@ -35,7 +34,7 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
 
   private let descriptionTextView: UITextView = {
     let textView = UITextView()
-    textView.font =  UIFont.systemFont(ofSize: 15, weight: .medium)
+    textView.font = UIFont.systemFont(ofSize: 15, weight: .medium)
     textView.textAlignment = .center
     textView.isEditable = false
     textView.isSelectable = false
@@ -58,7 +57,6 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // adding
     contentView.addSubview(descriptionTextView)
     contentView.addSubview(headerLabel)
@@ -103,7 +101,5 @@ class OnboardingCollectionViewCell: UICollectionViewCell {
       bottomConstant: 20,
       rightConstant: 16
     )
-
   }
-
 }

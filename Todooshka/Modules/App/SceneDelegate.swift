@@ -14,7 +14,6 @@ import RxCocoa
 import CoreData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
   let disposeBag = DisposeBag()
   var window: UIWindow?
   var coordinator = FlowCoordinator()
@@ -44,11 +43,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let scene = (scene as? UIWindowScene) else { return }
     window = UIWindow.init(windowScene: scene)
 
-    coordinator.rx.willNavigate.subscribe { (flow, step) in
+    coordinator.rx.willNavigate.subscribe { flow, step in
       print("will navigate to flow=\(flow) and step=\(step)")
     }.disposed(by: disposeBag)
 
-    coordinator.rx.didNavigate.subscribe { (flow, step) in
+    coordinator.rx.didNavigate.subscribe { flow, step in
       print("did navigate to flow=\(flow) and step=\(step)")
     }.disposed(by: disposeBag)
 
@@ -56,13 +55,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     coordinator.coordinate(flow: appFlow, with: AppStepper(withServices: appServices))
 
-    Flows.use(appFlow, when: .created) { [weak self] (root) in
+    Flows.use(appFlow, when: .created) { [weak self] root in
       self?.window?.rootViewController = root
       self?.window?.makeKeyAndVisible()
     }
 
     UNUserNotificationCenter.current().delegate = self
-
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {
@@ -95,7 +93,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // Save changes in the application's managed object context when the application transitions to the background.
     (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
   }
-
 }
 
 // MARK: - UNUserNotificationCenterDelegate

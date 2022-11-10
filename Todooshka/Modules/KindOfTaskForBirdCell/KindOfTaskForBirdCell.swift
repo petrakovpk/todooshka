@@ -9,13 +9,12 @@ import UIKit
 import Foundation
 
 class KindOfTaskForBirdCell: UICollectionViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "KindOfTaskForBirdCell"
 
   let shapeLayer = CAShapeLayer()
   var oldShapeLayer: CAShapeLayer?
-  var isPlusButton: Bool = false
+  var isPlusButton = false
 
   // MARK: - UI Elements
   private let imageView: UIImageView = {
@@ -37,7 +36,6 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
 
   // draw
   override func draw(_ rect: CGRect) {
-
     // contentView
     contentView.cornerRadius = 11
     contentView.clipsToBounds = false
@@ -108,6 +106,5 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     textView.anchor(top: imageView.bottomAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
     textView.text = kindOfTask.text
     textView.textColor = Style.App.text
-
   }
 }

@@ -8,7 +8,6 @@
 import UIKit
 
 class TaskReusableView: UICollectionReusableView {
-
     static var reuseID: String = "TaskListReusableView"
 
     private let sectionHeaderLabel = UILabel()

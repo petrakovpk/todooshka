@@ -6,7 +6,6 @@
 //
 
 enum CrackType: String {
-
   case noCrack = "noCrack"
   case oneCrack = "oneCrack"
   case threeCracks = "threeCracks"

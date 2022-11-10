@@ -11,14 +11,12 @@ import RxCocoa
 import UIKit
 
 class BranchSceneModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
   let willShow = BehaviorRelay<Void?>(value: nil)
 
   struct Input {
-
   }
 
   struct Output {
@@ -39,7 +37,6 @@ class BranchSceneModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     // force
     let forceNestUpdate = willShow
       .compactMap { $0 }

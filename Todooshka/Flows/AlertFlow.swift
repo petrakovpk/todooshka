@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class AlertFlow: Flow {
-
   // MARK: - Properties
   var root: Presentable {
     return self.rootViewController
@@ -33,7 +32,6 @@ class AlertFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-
     case .dismiss:
       return dismiss()
 
@@ -46,5 +44,4 @@ class AlertFlow: Flow {
     rootViewController.dismiss(animated: true)
     return .none
   }
-
 }

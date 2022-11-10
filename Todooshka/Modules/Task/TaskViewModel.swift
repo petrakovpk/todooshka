@@ -21,7 +21,6 @@ struct TaskAttr: Equatable {
 }
 
 class TaskViewModel: Stepper {
-
   private let disposeBag = DisposeBag()
 
   // MARK: - Properties
@@ -39,10 +38,9 @@ class TaskViewModel: Stepper {
   var status: TaskStatus = .inProgress
 
   // helpers
-  var isDescriptionPlaceholderEnabled: Bool = false
+  var isDescriptionPlaceholderEnabled = false
 
   struct Input {
-
     let textTextFieldText: Driver<String>
     let textFieldEditingDidEndOnExit: Driver<Void>
     // descriptionTextField
@@ -63,7 +61,6 @@ class TaskViewModel: Stepper {
     let alertDatePickerCancelButtonClick: Driver<Void>
     let alertDatePickerDate: Driver<Date>
     let alertDatePickerOKButtonClick: Driver<Void>
-
   }
 
   struct Output {
@@ -101,7 +98,6 @@ class TaskViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-
     // start
     let tasks = services.dataService.tasks
     let task = tasks
@@ -161,7 +157,7 @@ class TaskViewModel: Stepper {
     // kindsOfTask
     let kindsOfTask = services.dataService
       .kindsOfTask
-      .map { $0.filter { $0.status == .active }}
+      .map { $0.filter { $0.status == .active } }
 
     let hideCompleteButton = Driver
       .of(
@@ -242,7 +238,7 @@ class TaskViewModel: Stepper {
       .do { _ in self.isDescriptionPlaceholderEnabled = true }
 
     let clearDescriptionPlaceholder = input.descriptionTextViewDidBeginEditing
-      .compactMap { self.isDescriptionPlaceholderEnabled ? () : nil   }
+      .compactMap { self.isDescriptionPlaceholderEnabled ? () : nil     }
       .do { _ in self.isDescriptionPlaceholderEnabled = false }
 
     // save

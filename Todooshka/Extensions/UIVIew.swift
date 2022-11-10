@@ -7,13 +7,11 @@
 import UIKit
 
 extension UIView {
-
     public func removeAllConstraints() {
         var oldSuperview = self.superview
 
         while let superview = oldSuperview {
             for constraint in superview.constraints {
-
                 if let first = constraint.firstItem as? UIView, first == self {
                     superview.removeConstraint(constraint)
                 }

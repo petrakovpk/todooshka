@@ -65,7 +65,6 @@ protocol HasAuthServiceProtocol {
 // }
 
 class AuthService {
-
   // MARK: - Public
 
   // MARK: - Private

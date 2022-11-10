@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class KindOfTaskListDeletedViewController: TDViewController {
-
   // MARK: - Properties
   var collectionView: UICollectionView!
   var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>!
@@ -63,7 +62,6 @@ class KindOfTaskListDeletedViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // settings
     titleLabel.text = "Удаленные типы"
     removeAllButton.isHidden = false
@@ -95,7 +93,6 @@ class KindOfTaskListDeletedViewController: TDViewController {
   }
 
   private func configureAlert() {
-
     // adding
     view.addSubview(alertBackgroundView)
     alertBackgroundView.addSubview(alertWindowView)
@@ -133,7 +130,7 @@ class KindOfTaskListDeletedViewController: TDViewController {
 
   // MARK: - Setup Collection View
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -141,7 +138,7 @@ class KindOfTaskListDeletedViewController: TDViewController {
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
@@ -151,7 +148,6 @@ class KindOfTaskListDeletedViewController: TDViewController {
 
   // MARK: - Bind To
   func bindViewModel() {
-
     let input = KindOfTaskListDeletedViewModel.Input(
       alertCancelButtonClickTrigger: alertCancelButton.rx.tap.asDriver(),
       alertDeleteButtonClickTrigger: alertDeleteButton.rx.tap.asDriver(),
@@ -174,20 +170,20 @@ class KindOfTaskListDeletedViewController: TDViewController {
 
   // MARK: - Binders
   var hideAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = true
     })
   }
 
   var showAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = false
     })
   }
 
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(configureCell: { (_, collectionView, indexPath, kindOfTask) in
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(configureCell: { _, collectionView, indexPath, kindOfTask in
       guard let cell = collectionView.dequeueReusableCell(
         withReuseIdentifier: KindOfTaskListCell.reuseID,
         for: indexPath
@@ -205,7 +201,7 @@ class KindOfTaskListDeletedViewController: TDViewController {
   }
 
   var repeatButtonBinder: Binder<IndexPath?> {
-    return Binder(self, binding: { (_, indexPath) in
+    return Binder(self, binding: { _, indexPath in
       guard let indexPath = indexPath else { return }
       self.viewModel.repeatKindOfTask(indexPath: indexPath)
     })

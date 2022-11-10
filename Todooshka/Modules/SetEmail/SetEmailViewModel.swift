@@ -11,7 +11,6 @@ import RxSwift
 import RxCocoa
 
 class SetEmailViewModel: Stepper {
-
   let services: AppServices
   let steps = PublishRelay<Step>()
   let reload = BehaviorRelay<Void>(value: ())
@@ -42,7 +41,6 @@ class SetEmailViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let reload = reload.asDriver()
 
     let refresh = Driver.of(reload, input.refreshButtonClickTrigger).merge()
@@ -82,19 +80,19 @@ class SetEmailViewModel: Stepper {
         return emailPred.evaluate(with: email)
       }
 
-    let isNewEmailValid =  input.newEmailTextFieldText
+    let isNewEmailValid = input.newEmailTextFieldText
       .map { email -> Bool in
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         let emailPred = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
         return emailPred.evaluate(with: email)
-    }
+      }
 
     let sendEmailVerification = input.sendVerificationEmailButtonClick
       .withLatestFrom(isCurrentEmailValid) { $1 }
       .filter { $0 }
       .withLatestFrom(input.currentEmailTextFieldText) { $1 }
       .withLatestFrom(user) { ($0, $1) }.asObservable()
-      .flatMapLatest { (_, user) -> Observable<Result<Void, Error>>  in
+      .flatMapLatest { _, user -> Observable<Result<Void, Error>>  in
         user.rx.sendEmailVerification()
       }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
@@ -114,7 +112,7 @@ class SetEmailViewModel: Stepper {
     let sendVerificationEmailButtonIsEnabled = Driver
       .combineLatest(isEmailVerified, isCurrentEmailValid) { isEmailVerified, isCurrentEmailValid -> Bool in
         isEmailVerified == false && isCurrentEmailValid
-    }
+      }
 
     let setNewEmailButtonIsEnabled = isNewEmailValid
 
@@ -122,7 +120,7 @@ class SetEmailViewModel: Stepper {
       .withLatestFrom(user) { $1 }
       .withLatestFrom(input.newEmailTextFieldText) { ($0, $1) }
       .asObservable()
-      .flatMapLatest { (user, email) -> Observable<Result<Void, Error>>  in
+      .flatMapLatest { user, email -> Observable<Result<Void, Error>>  in
         user.rx.updateEmail(to: email)
       }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 

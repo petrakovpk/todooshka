@@ -8,7 +8,6 @@
 import UIKit
 
 class TDViewController: UIViewController {
-
   // MARK: - UI Elements
   public let titleLabel = UILabel()
   public let headerView = UIView()
@@ -60,7 +59,6 @@ class TDViewController: UIViewController {
 
   // MARK: - Configure
   private func configureHeader() {
-
     // adding
     view.addSubviews([
       safeAreaHeaderView,
@@ -112,6 +110,6 @@ class TDViewController: UIViewController {
 
     // dividerView
     dividerView.backgroundColor = Style.Views.Header.Divider
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,     heightConstant: 1.0)
+    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,        heightConstant: 1.0)
   }
 }

@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct ShopSection: AnimatableSectionModelType {
-
   // MARK: - Properties
   var header: String
   var items: [Bird]

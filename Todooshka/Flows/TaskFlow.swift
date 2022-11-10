@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class TaskFlow: Flow {
-
   // MARK: - Properties
   var root: Presentable {
     return self.rootViewController

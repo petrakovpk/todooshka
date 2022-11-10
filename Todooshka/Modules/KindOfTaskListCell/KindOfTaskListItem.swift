@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct KindOfTaskListItem: IdentifiableType, Equatable {
-
   // IdentifiableType
   var identity: String { kindOfTask.UID }
 

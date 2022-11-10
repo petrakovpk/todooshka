@@ -8,7 +8,6 @@
 import UIKit
 
 class TDRoundButton: UIButton {
-
   // MARK: - Draw
   override func draw(_ rect: CGRect) {
     cornerRadius = bounds.width / 2
@@ -16,7 +15,6 @@ class TDRoundButton: UIButton {
 
   // MARK: - Configure
   func configure(image: UIImage?, blurEffect: Bool) {
-
     // def
     let imageView = UIImageView(image: image)
 
@@ -38,5 +36,4 @@ class TDRoundButton: UIButton {
     imageView.anchorCenterXToSuperview()
     imageView.anchorCenterYToSuperview()
   }
-
 }

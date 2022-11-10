@@ -10,7 +10,6 @@ import UIKit
 import RxFlow
 
 class AppFlow: Flow {
-
     var root: Presentable {
         return self.rootViewController
     }
@@ -53,11 +52,9 @@ class AppFlow: Flow {
         rootViewController.navigationBar.isHidden = true
         rootViewController.setViewControllers([viewController], animated: false)
         return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-
     }
 
     private func navigateToTabBarScreen() -> FlowContributors {
-
         let tabBarFlow = TabBarFlow(withServices: services)
 
         Flows.use(tabBarFlow, when: .created) { [unowned self] root in

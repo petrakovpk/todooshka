@@ -11,7 +11,6 @@ import RxCocoa
 import YandexMobileMetrica
 
 class DiamondViewModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
@@ -41,7 +40,6 @@ class DiamondViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-
     let compactUser = services.dataService.compactUser
 
     // backButtonClickHandler
@@ -78,5 +76,4 @@ class DiamondViewModel: Stepper {
       showAlertTrigger: showAlertTrigger
     )
   }
-
 }

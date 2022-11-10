@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class ChangePasswordViewController: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
@@ -145,7 +144,6 @@ class ChangePasswordViewController: TDViewController {
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = ChangePasswordViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       passwordTextFieldText: newPasswordTextField.rx.text.orEmpty.asDriver(),
@@ -165,7 +163,7 @@ class ChangePasswordViewController: TDViewController {
   }
 
   var setPasswordButtonIsEnabledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.setPasswordButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
       vc.setPasswordButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.setPasswordButton.isEnabled = isEnabled
@@ -173,7 +171,7 @@ class ChangePasswordViewController: TDViewController {
   }
 
   var setPasswordBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.newPasswordTextField.clear()
       vc.repeatNewPasswordTextField.clear()
       vc.newPasswordTextField.insertText("")

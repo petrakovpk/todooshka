@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class TabBarController: UITabBarController, UITabBarControllerDelegate {
-
   // MARK: - Properties
   let customTabBar = TabBar()
   let disposeBag = DisposeBag()
@@ -28,7 +27,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
 
   // MARK: - Bind
   func bindViewModel() {
-
     let input = TabBarViewModel.Input(
       createTaskButtonClickTrigger: customTabBar.addTaskButton.rx.tap.asDriver()
     )
@@ -42,6 +40,8 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
   }
 
   override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-    viewModel.selectedItem(item: item)
+    if item.tag != 4 {
+      viewModel.selectedItem(item: item)
+    }
   }
 }

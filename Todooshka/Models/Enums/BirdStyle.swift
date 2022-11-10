@@ -8,7 +8,6 @@
 import UIKit
 
 enum BirdStyle: String {
-
   case simple = "Simple"
   case business = "Business"
   case student = "Student"

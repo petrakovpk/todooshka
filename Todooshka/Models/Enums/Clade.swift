@@ -8,7 +8,6 @@
 import UIKit
 
 enum Clade: String {
-
   // Курица
   case chiken = "курица"
   // Пингвин
@@ -72,5 +71,4 @@ enum Clade: String {
     default: self = .chiken
     }
   }
-
 }

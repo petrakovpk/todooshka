@@ -12,7 +12,6 @@ import Foundation
 import SwipeCellKit
 
 class TaskTypeColorCollectionViewCellModel: Stepper {
-
   let steps = PublishRelay<Step>()
 
   private let services: AppServices
@@ -30,7 +29,6 @@ class TaskTypeColorCollectionViewCellModel: Stepper {
   }
 
   func transform() -> Output {
-
     // color
     let color = Driver<UIColor>.just(self.color)
 
@@ -45,5 +43,4 @@ class TaskTypeColorCollectionViewCellModel: Stepper {
       isSelected: isSelected
     )
   }
-
 }

@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class MarketplaceViewController: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
@@ -32,10 +31,9 @@ class MarketplaceViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // settings
-    refreshButton.isHidden = false
-    backButton.isHidden = false
+    refreshButton.isHidden = true
+    backButton.isHidden = true
 
     // collectionView
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
@@ -46,24 +44,35 @@ class MarketplaceViewController: TDViewController {
     ])
 
     //  header
-    titleLabel.text = "Что будем делать?"
+    titleLabel.text = "Чем научимся сегодня?"
 
     // collectionView
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
     collectionView.layer.masksToBounds = false
-    collectionView.register(ThemeCell.self, forCellWithReuseIdentifier: ThemeCell.reuseID)
+    collectionView.register(
+      ThemeCell.self,
+      forCellWithReuseIdentifier: ThemeCell.reuseID
+    )
+    collectionView.register(
+      ThemeHeader.self,
+      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+      withReuseIdentifier: ThemeHeader.reuseID
+    )
     collectionView.anchor(
-      top: view.safeAreaLayoutGuide.topAnchor,
+      top: headerView.bottomAnchor,
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
-      right: view.rightAnchor
+      right: view.rightAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16
     )
   }
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = MarketplaceViewModel.Input(
       selection: collectionView.rx.itemSelected.asDriver()
     )
@@ -71,7 +80,8 @@ class MarketplaceViewController: TDViewController {
     let outputs = viewModel.transform(input: input)
 
     [
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource))
+      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.openTheme.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
@@ -80,32 +90,53 @@ class MarketplaceViewController: TDViewController {
   private func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<ThemeSection>(
-      configureCell: { dataSource, collectionView, indexPath, item in
+      configureCell: { _, collectionView, indexPath, item in
         guard let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: ThemeCell.reuseID,
           for: indexPath
         ) as? ThemeCell else { return UICollectionViewCell() }
-        cell.configure(with: dataSource[indexPath.section].items[indexPath.item].theme)
+        cell.configure(with: item.theme)
         return cell
+      }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        guard let header = collectionView.dequeueReusableSupplementaryView(
+          ofKind: kind,
+          withReuseIdentifier: ThemeHeader.reuseID,
+          for: indexPath
+        ) as? ThemeHeader else { return UICollectionReusableView() }
+        header.configure(with: dataSource[indexPath.section])
+        return header
       })
   }
 
   // MARK: - Setup CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
 
   private func section() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(Sizes.Cells.ThemeCell.width), heightDimension: .estimated(Sizes.Cells.ThemeCell.height))
+    let itemSize = NSCollectionLayoutSize(
+      widthDimension: .estimated(Sizes.Cells.ThemeCell.width),
+      heightDimension: .estimated(Sizes.Cells.ThemeCell.height)
+    )
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
-    let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(Sizes.Cells.ThemeCell.width), heightDimension: .estimated(Sizes.Cells.ThemeCell.height))
-    let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
+    let groupSize = NSCollectionLayoutSize(
+      widthDimension: .fractionalWidth(1.0),
+      heightDimension: .estimated(Sizes.Cells.ThemeCell.height)
+    )
+    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+    group.interItemSpacing = .fixed(5.0)
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(30.0))
+    let header = NSCollectionLayoutBoundarySupplementaryItem(
+      layoutSize: headerSize,
+      elementKind: UICollectionView.elementKindSectionHeader, alignment: .top
+    )
     let section = NSCollectionLayoutSection(group: group)
-    section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
+    section.boundarySupplementaryItems = [header]
+    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 5, trailing: 0)
+    section.orthogonalScrollingBehavior = .continuous
     return section
   }
-
 }

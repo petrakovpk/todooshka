@@ -13,7 +13,6 @@ protocol CalendarViewDelegate {
 }
 
 class CalendarView: UICollectionView {
-
   // MARK: - Delegate
   public var calendarViewDelegate: CalendarViewDelegate?
 
@@ -43,5 +42,4 @@ class CalendarView: UICollectionView {
       calendarViewDelegate?.appendPastData()
     }
   }
-
 }

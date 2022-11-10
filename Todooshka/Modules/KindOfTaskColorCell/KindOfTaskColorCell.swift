@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class KindOfTaskColorCell: UICollectionViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "KindOfTaskColorCell"
 

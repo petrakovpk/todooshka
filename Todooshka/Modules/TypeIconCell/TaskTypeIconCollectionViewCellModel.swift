@@ -12,7 +12,6 @@ import Foundation
 import SwipeCellKit
 
 class TaskTypeIconCollectionViewCellModel: Stepper {
-
   let steps = PublishRelay<Step>()
 
   private let services: AppServices
@@ -30,7 +29,6 @@ class TaskTypeIconCollectionViewCellModel: Stepper {
   }
 
   func transform() -> Output {
-
     // image
     let image = Driver.just(self.icon.image)
 

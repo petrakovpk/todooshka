@@ -11,7 +11,6 @@ import RxCocoa
 import Foundation
 
 class CalendarYearCell: UICollectionViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "CalendarYearCell"
 

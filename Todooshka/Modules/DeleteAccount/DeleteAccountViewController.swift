@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class DeleteAccountViewController: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
@@ -71,7 +70,6 @@ class DeleteAccountViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // adding
     view.addSubviews([
       descriptionTextView,
@@ -129,12 +127,10 @@ class DeleteAccountViewController: TDViewController {
       rightConstant: 16,
       heightConstant: 50
     )
-
   }
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = DeleteAccountViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       deleteAccountClickTrigger: removeAccountButton.rx.tap.asDriver()
@@ -152,15 +148,13 @@ class DeleteAccountViewController: TDViewController {
   }
 
   var deleteBbuttonIsEnaledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.removeAccountButton.isEnabled = isEnabled
     })
   }
 
   var sendQuestionBinder: Binder<Void> {
-    return Binder(self, binding: { (_, _) in
-
+    return Binder(self, binding: { _, _ in
     })
   }
-
 }

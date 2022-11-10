@@ -15,7 +15,6 @@ import YandexMobileMetrica
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
   @available(iOS 9.0, *)
   func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {
     return GIDSignIn.sharedInstance.handle(url)
@@ -26,7 +25,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
     // Initializing the AppMetrica SDK.
     let configuration = YMMYandexMetricaConfiguration.init(apiKey: "36538b4c-0eb1-408f-b8e5-c8786424d033")
     configuration?.sessionTimeout = 15
@@ -75,7 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //    container.persistentStoreDescriptions =  [description]
     /*add necessary support for migration*/
 
-    container.loadPersistentStores(completionHandler: { (_, error) in
+    container.loadPersistentStores(completionHandler: { _, error in
       if let error = error as NSError? {
         // Replace this implementation with code to handle the error appropriately.
         // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -90,7 +88,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         fatalError("Unresolved error \(error), \(error.userInfo)")
       } else {
-
       }
     })
     return container

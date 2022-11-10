@@ -12,7 +12,6 @@ import Foundation
 import SwipeCellKit
 
 class OverdueTaskCollectionViewCellModel: Stepper {
-
     let disposeBag = DisposeBag()
     let steps = PublishRelay<Step>()
     let task = BehaviorRelay<Task?>(value: nil)
@@ -39,9 +38,7 @@ class OverdueTaskCollectionViewCellModel: Stepper {
 }
 
 extension OverdueTaskCollectionViewCellModel: SwipeCollectionViewCellDelegate {
-
     func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-
         guard orientation == .right else { return nil }
 
         let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, _ in
@@ -92,5 +89,4 @@ extension OverdueTaskCollectionViewCellModel: SwipeCollectionViewCellDelegate {
         options.transitionStyle = .border
         return options
     }
-
 }

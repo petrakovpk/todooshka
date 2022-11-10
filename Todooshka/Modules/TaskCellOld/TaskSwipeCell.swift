@@ -12,7 +12,6 @@ import Foundation
 import SwipeCellKit
 
 class TaskSwipeCell: SwipeCollectionViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "TaskListCell"
   var viewModel: TaskCellModel!
@@ -94,7 +93,6 @@ class TaskSwipeCell: SwipeCollectionViewCell {
   }
 
   func drawLightMode() {
-
     let backgroundLayer = CALayer()
     backgroundLayer.frame = bounds
     backgroundLayer.cornerRadius = 11
@@ -103,7 +101,7 @@ class TaskSwipeCell: SwipeCollectionViewCell {
     backgroundLayer.shadowRadius = 5
     backgroundLayer.shadowOffset = CGSize(width: 5, height: 5)
     backgroundLayer.shadowColor = UIColor(red: 0.693, green: 0.702, blue: 0.875, alpha: 0.6).cgColor
-    backgroundLayer.backgroundColor = UIColor(red: 244/255, green: 245/255, blue: 1, alpha: 1).cgColor
+    backgroundLayer.backgroundColor = UIColor(red: 244 / 255, green: 245 / 255, blue: 1, alpha: 1).cgColor
 
     if let oldLayer = oldLayer {
       contentView.layer.replaceSublayer(oldLayer, with: backgroundLayer)
@@ -115,7 +113,6 @@ class TaskSwipeCell: SwipeCollectionViewCell {
   }
 
   func drawDarkMode() {
-
     let gradientLayer = CAGradientLayer()
     let shapeLayer = CAShapeLayer()
 
@@ -195,7 +192,6 @@ class TaskSwipeCell: SwipeCollectionViewCell {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // contentView
     contentView.addSubview(repeatButton)
     contentView.addSubview(taskTextLabel)
@@ -255,7 +251,6 @@ class TaskSwipeCell: SwipeCollectionViewCell {
 
   // MARK: - Configure UI
   private func configurelineLayout(widthConstant: Double) {
-
     let roundGradintLayer = CAGradientLayer()
     let lineGradientLayer = CAGradientLayer()
 
@@ -296,7 +291,6 @@ class TaskSwipeCell: SwipeCollectionViewCell {
 
   // MARK: - Bind
   func bindViewModel() {
-
     let input = TaskCellModel.Input(
       repeatButtonClickTrigger: repeatButton.rx.tap.asDriver()
     )
@@ -330,33 +324,32 @@ class TaskSwipeCell: SwipeCollectionViewCell {
       outputs.mode.drive(modeBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
-
   }
 
   // MARK: - Binders
   var typeBinder: Binder<TaskType> {
-    return Binder(self, binding: { (cell, type) in
+    return Binder(self, binding: { cell, type in
       cell.taskTypeImageView.image = type.icon.image
       cell.taskTypeImageView.tintColor = type.color.uiColor
     })
   }
 
   var isHiddenBinder: Binder<Bool> {
-    return Binder(self, binding: { (cell, isHide) in
+    return Binder(self, binding: { cell, isHide in
       if isHide == false { return }
       cell.hideSwipe(animated: true)
     })
   }
 
   var timeLeftPercentBinder: Binder<Double> {
-    return Binder(self, binding: { (cell, percent) in
+    return Binder(self, binding: { cell, percent in
       let widthConstant = percent * (cell.contentView.frame.width.double - 22)
       cell.configurelineLayout(widthConstant: widthConstant)
     })
   }
 
   var modeBinder: Binder<TaskCellMode> {
-    return Binder(self, binding: { (cell, mode) in
+    return Binder(self, binding: { cell, mode in
       switch mode {
       case .WithTimer:
         cell.taskTimeLeftView.isHidden = false
@@ -371,5 +364,4 @@ class TaskSwipeCell: SwipeCollectionViewCell {
       }
     })
   }
-
 }

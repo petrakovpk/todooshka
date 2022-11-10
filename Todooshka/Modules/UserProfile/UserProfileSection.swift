@@ -10,7 +10,6 @@ import RxDataSources
 import UIKit
 
 struct UserProfileSection: AnimatableSectionModelType {
-
   var identity: String {
     header
   }

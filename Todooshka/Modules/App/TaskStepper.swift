@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class TaskSteppers: Stepper {
-
     let steps = PublishRelay<Step>()
     private let appServices: AppServices
     private let disposalBag = DisposeBag()
@@ -22,5 +21,4 @@ class TaskSteppers: Stepper {
     var initialStep: Step {
       return AppStep.mainTaskListIsRequired
     }
-
 }

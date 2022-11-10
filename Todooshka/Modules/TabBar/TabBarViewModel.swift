@@ -10,10 +10,8 @@ import RxSwift
 import RxCocoa
 
 class TabBarViewModel: Stepper {
-
   let steps = PublishRelay<Step>()
   let services: AppServices
-  var selectedItem: Int = 1
 
   struct Input {
     let createTaskButtonClickTrigger: Driver<Void>
@@ -21,7 +19,6 @@ class TabBarViewModel: Stepper {
 
   struct Output {
     let createTask: Driver<Void>
-   // let firebaseKindsOfTask: Driver<[KindOfTask]>
   }
 
   init(services: AppServices) {
@@ -29,16 +26,22 @@ class TabBarViewModel: Stepper {
   }
 
   func selectedItem(item: UITabBarItem) {
-    if item.tag == 2 {
-      services.preferencesService.scrollToCurrentMonthTrigger.accept((true, selectedItem == 2 ? true : false ))
-      selectedItem = item.tag
+    switch item.tag {
+    case 1:
+      services.tabBarService.selectedItem.accept(.first)
+    case 2:
+      services.tabBarService.selectedItem.accept(.second)
+    case 3:
+      if services.tabBarService.selectedItem.value == .third {
+        services.preferencesService.scrollToCurrentMonthTrigger.accept((true, true))
+      }
+      services.tabBarService.selectedItem.accept(.third)
+    default:
+      return
     }
   }
 
   func transform(input: Input) -> Output {
-
-    services.tabBarService.selectedItem.accept(selectedItem == 1 ? .left : .right)
-
     let createTask = input.createTaskButtonClickTrigger
       .map { self.steps.accept(AppStep.createTaskIsRequired) }
 
@@ -46,5 +49,4 @@ class TabBarViewModel: Stepper {
       createTask: createTask
     )
   }
-
 }

@@ -12,7 +12,6 @@ import RxDataSources
 import SwipeCellKit
 
 class KindOfTaskListForBirdViewController: TDViewController {
-
   // MARK: - Properties
   // Rx
   let disposeBag = DisposeBag()
@@ -78,7 +77,6 @@ class KindOfTaskListForBirdViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // titleLabel
     titleLabel.text = "Типы задач"
 
@@ -149,7 +147,7 @@ class KindOfTaskListForBirdViewController: TDViewController {
 
   // MARK: - Setup Collection View
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -157,7 +155,7 @@ class KindOfTaskListForBirdViewController: TDViewController {
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
@@ -167,7 +165,6 @@ class KindOfTaskListForBirdViewController: TDViewController {
 
   // MARK: - Bind To
   func bindViewModel() {
-
     let input = KindOfTaskListForBirdViewModel.Input(
       // selection
       selection: collectionView.rx.itemSelected.asDriver(),
@@ -189,25 +186,24 @@ class KindOfTaskListForBirdViewController: TDViewController {
       outputs.showAlert.drive(showAlertBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
-
   }
 
   // MARK: - Binders
   var textViewTextBinder: Binder<String> {
-    return Binder(self, binding: { (vc, text) in
+    return Binder(self, binding: { vc, text in
       vc.alertTextView.text = text
       vc.alertTextView.centerVerticalText()
     })
   }
 
   var hideAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = true
     })
   }
 
   var showAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = false
     })
   }
@@ -223,11 +219,9 @@ class KindOfTaskListForBirdViewController: TDViewController {
       return cell
     })
   }
-
 }
 
 extension UITextView {
-
   /// Modifies the top content inset to center the text vertically.
   ///
   /// Use KVO on the UITextView contentSize and call this method inside observeValue(forKeyPath:of:change:context:)

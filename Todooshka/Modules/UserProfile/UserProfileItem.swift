@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct UserProfileItem: IdentifiableType, Equatable {
-
   var identity: String { type.rawValue }
   var type: UserProfileCellType
   var leftText: String

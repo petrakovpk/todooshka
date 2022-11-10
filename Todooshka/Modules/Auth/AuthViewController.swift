@@ -13,7 +13,6 @@ import RxSwift
 import UIKit
 
 class AuthViewController: UIViewController {
-
   // MARK: - Public
   var viewModel: AuthViewModel!
 
@@ -120,7 +119,6 @@ class AuthViewController: UIViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // adding
     view.addSubview(headerLabel)
     view.addSubview(secondHeaderLabel)
@@ -188,12 +186,10 @@ class AuthViewController: UIViewController {
     // skipButton
     skipButton.anchor(top: googleButton.bottomAnchor, topConstant: 25)
     skipButton.anchorCenterXToSuperview()
-
   }
 
   // MARK: - Bind
   func bindViewModel() {
-
     let input = AuthViewModel.Input(
       appleButtonClickTrigger: appleButton.rx.tap.asDriver(),
       emailOrPhoneAccountButtonClickTrigger: emailOrPhoneAccountButton.rx.tap.asDriver(),
@@ -213,7 +209,7 @@ class AuthViewController: UIViewController {
   }
 
   var signInWithAppleBinder: Binder<String> {
-    return Binder(self, binding: { (vc, currentNonce) in
+    return Binder(self, binding: { vc, currentNonce in
       vc.currentNonce = currentNonce
 
       let appleIDProvider = ASAuthorizationAppleIDProvider()
@@ -227,7 +223,6 @@ class AuthViewController: UIViewController {
 
       // self
       authorizationController.performRequests()
-
     })
   }
 
@@ -241,15 +236,12 @@ class AuthViewController: UIViewController {
 
     return hashString
   }
-
 }
 
 // MARK: - Apple Sign In delegate
 @available(iOS 13.0, *)
 extension AuthViewController: ASAuthorizationControllerDelegate {
-
   func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-
     if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
       guard let nonce = currentNonce else {
         fatalError("Invalid state: A login callback was received, but no login request was sent.")

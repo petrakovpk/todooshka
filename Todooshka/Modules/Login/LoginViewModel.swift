@@ -22,7 +22,6 @@ struct SignUpWithPhoneAttr {
 }
 
 class LoginViewModel: Stepper {
-
   // MARK: - Properties
 //  let isNewUser: Bool
   let services: AppServices
@@ -73,7 +72,6 @@ class LoginViewModel: Stepper {
 
   // swiftlint:disable cyclomatic_complexity
   func transform(input: Input) -> Output {
-
     let loginViewControllerStyle = loginViewControllerStyle.asDriver()
 
     // STYLE
@@ -94,7 +92,7 @@ class LoginViewModel: Stepper {
       .map { LoginViewControllerStyle.email }
 
     let setPhoneStyle = input.phoneButtonClickTrigger
-      .map {  LoginViewControllerStyle.phone }
+      .map { LoginViewControllerStyle.phone }
 
     let setEmailOrPhoneStyleWithBack = input.backButtonClickTrigger
       .withLatestFrom(loginViewControllerStyle) { _, style -> LoginViewControllerStyle? in
@@ -122,7 +120,6 @@ class LoginViewModel: Stepper {
 
             // move numbers iterator to the next index
             index = numbers.index(after: index)
-
           } else {
             result.append(ch) // just append a mask character
           }
@@ -228,7 +225,7 @@ class LoginViewModel: Stepper {
 
     let signInWithEmailCheckUser = next
       .withLatestFrom(loginViewControllerStyle)
-      .filter { $0 == .password}
+      .filter { $0 == .password }
       .withLatestFrom(signUpWithEmailAttr)
       .asObservable()
       .flatMapLatest { attr -> Observable<Result<AuthDataResult, Error>> in

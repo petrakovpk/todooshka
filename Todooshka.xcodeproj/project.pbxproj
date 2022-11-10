@@ -222,6 +222,9 @@
 		9D6B6B12284FEC46000ABAE7 /* BranchSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */; };
 		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
 		9D9733C629165A0900733C45 /* KindOfTaskListItemType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733C529165A0900733C45 /* KindOfTaskListItemType.swift */; };
+		9D9733D02919165A00733C45 /* ThemeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733CF2919165A00733C45 /* ThemeHeader.swift */; };
+		9D9733D329192F8E00733C45 /* ThemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733D229192F8E00733C45 /* ThemeViewController.swift */; };
+		9D9733D529192F9800733C45 /* ThemeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733D429192F9700733C45 /* ThemeViewModel.swift */; };
 		9DC65D3C28D320B600221ED2 /* SyncDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */; };
 		9DC65D3E28D320CA00221ED2 /* SyncDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */; };
 		9DC65D4028D3510000221ED2 /* NSManagedObjectContext+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */; };
@@ -398,7 +401,6 @@
 		9D08CDE228FD7CB200689427 /* TodooshkaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodooshkaTests.swift; sourceTree = "<group>"; };
 		9D08CDE928FD7CFC00689427 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		9D08CDEA2901763C00689427 /* Array+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Rx.swift"; sourceTree = "<group>"; };
-		9D08CDEC290AB79600689427 /* TodooshkaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = TodooshkaTests.xctest; path = "/Users/pavelpetakov/Проекты/Todooshka/build/Debug/TodooshkaTests.xctest"; sourceTree = "<absolute>"; };
 		9D0A820B290FEAFC006D777C /* MarketplaceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketplaceViewController.swift; sourceTree = "<group>"; };
 		9D0A820D290FEB07006D777C /* MarketplaceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketplaceViewModel.swift; sourceTree = "<group>"; };
 		9D0A820F290FEB19006D777C /* ThemeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeCell.swift; sourceTree = "<group>"; };
@@ -480,6 +482,10 @@
 		9D6B6B11284FEC46000ABAE7 /* BranchSceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchSceneModel.swift; sourceTree = "<group>"; };
 		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
 		9D9733C529165A0900733C45 /* KindOfTaskListItemType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListItemType.swift; sourceTree = "<group>"; };
+		9D9733CE2916DE2700733C45 /* TodooshkaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodooshkaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D9733CF2919165A00733C45 /* ThemeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeHeader.swift; sourceTree = "<group>"; };
+		9D9733D229192F8E00733C45 /* ThemeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeViewController.swift; sourceTree = "<group>"; };
+		9D9733D429192F9700733C45 /* ThemeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeViewModel.swift; sourceTree = "<group>"; };
 		9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewController.swift; sourceTree = "<group>"; };
 		9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewModel.swift; sourceTree = "<group>"; };
 		9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Rx.swift"; sourceTree = "<group>"; };
@@ -779,6 +785,7 @@
 				60AE9D612652E5AA00E51531 /* Todooshka */,
 				9D08CDE128FD7CB200689427 /* TodooshkaTests */,
 				6B9ABED560B72ED39AA1DB4C /* Frameworks */,
+				9D9733CE2916DE2700733C45 /* TodooshkaTests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -860,6 +867,7 @@
 				60855BD8265905F700079D75 /* Task */,
 				605823A926C2F33800F79155 /* TaskCell */,
 				602591C82679CF0800E2BBF8 /* TaskList */,
+				9D9733D129192F7E00733C45 /* Theme */,
 				9D0A8211290FEB20006D777C /* ThemeCell */,
 				60AE9DC52652FC5E00E51531 /* UserProfile */,
 				9D42C02E28CF0E70008F624F /* UserProfileCell */,
@@ -1077,6 +1085,7 @@
 			isa = PBXGroup;
 			children = (
 				9D0A820F290FEB19006D777C /* ThemeCell.swift */,
+				9D9733CF2919165A00733C45 /* ThemeHeader.swift */,
 				9D0A8212290FEB43006D777C /* ThemeItem.swift */,
 				9D0A8214290FEB4C006D777C /* ThemeSection.swift */,
 			);
@@ -1234,6 +1243,15 @@
 			path = Typealias;
 			sourceTree = "<group>";
 		};
+		9D9733D129192F7E00733C45 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				9D9733D229192F8E00733C45 /* ThemeViewController.swift */,
+				9D9733D429192F9700733C45 /* ThemeViewModel.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
 		9DC65D3A28D3209A00221ED2 /* SyncData */ = {
 			isa = PBXGroup;
 			children = (
@@ -1345,7 +1363,7 @@
 			);
 			name = TodooshkaTests;
 			productName = TodooshkaTests;
-			productReference = 9D08CDEC290AB79600689427 /* TodooshkaTests.xctest */;
+			productReference = 9D9733CE2916DE2700733C45 /* TodooshkaTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -1377,7 +1395,7 @@
 			mainGroup = 60AE9D562652E5AA00E51531;
 			packageReferences = (
 				9D42C02928CB6173008F624F /* XCRemoteSwiftPackageReference "PhoneNumberKit" */,
-				9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios.git" */,
+				9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				9DE7C48228E33FBD001F5C55 /* XCRemoteSwiftPackageReference "metrica-sdk-ios" */,
 			);
 			productRefGroup = 60AE9D562652E5AA00E51531;
@@ -1495,6 +1513,7 @@
 				60227A0827AD299200DA7572 /* DataService.swift in Sources */,
 				9D0A8213290FEB43006D777C /* ThemeItem.swift in Sources */,
 				9D0A821B29100871006D777C /* MarketplaceFlow.swift in Sources */,
+				9D9733D329192F8E00733C45 /* ThemeViewController.swift in Sources */,
 				9D44C0D228E0708E0022148C /* KindOfTaskSection.swift in Sources */,
 				60FA513F26D806BA007B3B36 /* ConfirmRemoveTaskViewController.swift in Sources */,
 				60FFF65727A9A5D800290331 /* ShopViewController.swift in Sources */,
@@ -1543,6 +1562,7 @@
 				60D5662B26CC2CA600D865DD /* OnboardingCollectionViewCell.swift in Sources */,
 				60F0719C26DA77B70048AB71 /* TDAddTaskButton.swift in Sources */,
 				9D42C02128CB4272008F624F /* UserProfileViewModel.swift in Sources */,
+				9D9733D529192F9800733C45 /* ThemeViewModel.swift in Sources */,
 				9D42BF6928C76A38008F624F /* AuthSectionModel.swift in Sources */,
 				60E970472827025B00577484 /* SceneActionType.swift in Sources */,
 				9D44C0D328E0708E0022148C /* KindOfTaskCell.swift in Sources */,
@@ -1680,6 +1700,7 @@
 				9D42C05B28CF4FD9008F624F /* ChangePasswordViewController.swift in Sources */,
 				9DC65D4B28D3AF8100221ED2 /* Task+Rx.swift in Sources */,
 				60ED956E27B520C1005ACC33 /* TaskStatus.swift in Sources */,
+				9D9733D02919165A00733C45 /* ThemeHeader.swift in Sources */,
 				9D42BF4F28BF8466008F624F /* TabBarService.swift in Sources */,
 				9D0A82252913AEE4006D777C /* TabBarItemSelected.swift in Sources */,
 				9D42C01D28CA3A9B008F624F /* FIRPhoneAuthProvider+Rx.swift in Sources */,
@@ -1999,7 +2020,7 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios.git" */ = {
+		9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
 			requirement = {
@@ -2025,7 +2046,7 @@
 		};
 		9DC65D4828D378B000221ED2 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios.git" */;
+			package = 9DC65D4728D378B000221ED2 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
 		};
 		9DE7C48328E33FBD001F5C55 /* YandexMobileMetrica */ = {

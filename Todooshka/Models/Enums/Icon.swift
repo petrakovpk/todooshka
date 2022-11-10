@@ -9,7 +9,6 @@ import UIKit
 import RxDataSources
 
 enum Icon: String, IdentifiableType, Equatable {
-
   // MARK: - Icons
   case bank = "Bank"
   case bookSaved = "BookSaved"

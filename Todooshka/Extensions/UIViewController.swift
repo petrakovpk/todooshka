@@ -8,7 +8,7 @@ import UIKit
 
 extension UIViewController {
     func hideKeyboardWhenTappedAround() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
@@ -18,12 +18,10 @@ extension UIViewController {
     }
 
     var isModal: Bool {
-
         let presentingIsModal = presentingViewController != nil
         let presentingIsNavigation = navigationController?.presentingViewController?.presentedViewController == navigationController
         let presentingIsTabBar = tabBarController?.presentingViewController is UITabBarController
 
         return presentingIsModal || presentingIsNavigation || presentingIsTabBar
     }
-
 }

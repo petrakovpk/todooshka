@@ -8,7 +8,6 @@
 import UIKit
 
 struct Sizes {
-
   struct App {
     static let developerWidth: CGFloat = 428
     static let developerHeight: CGFloat = 896
@@ -23,7 +22,6 @@ struct Sizes {
   }
 
   struct Buttons {
-
     struct AlertBuyBirdButton {
       static let width = (Sizes.Views.AlertBuyBirdView.width / 2 - 16 - 8).adjustByWidth
       static let height = 48.adjustByHeight
@@ -126,7 +124,6 @@ struct Sizes {
   }
 
   struct Views {
-
     struct AlertBuyBirdView {
       static let width = (UIScreen.main.bounds.width * 2 / 3).adjustByWidth
       static let height = (UIScreen.main.bounds.height / 3).adjustByHeight

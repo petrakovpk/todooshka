@@ -14,7 +14,6 @@ protocol HasActionService {
 }
 
 class ActionService {
-
   // MARK: - Properties
   var runBranchSceneActionsTrigger = BehaviorRelay<Void>(value: ())
   var forceNestSceneTrigger = BehaviorRelay<Void?>(value: nil)
@@ -22,7 +21,5 @@ class ActionService {
 
   // MARK: - Init
   init() {
-
   }
-
 }

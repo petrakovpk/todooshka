@@ -11,7 +11,6 @@ import RxSwift
 import RxCocoa
 
 class ChangeBirthdayViewModel: Stepper {
-
   let services: AppServices
   let steps = PublishRelay<Step>()
 
@@ -34,7 +33,6 @@ class ChangeBirthdayViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let user = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
       .compactMap { $0 }
@@ -44,7 +42,7 @@ class ChangeBirthdayViewModel: Stepper {
       .flatMapLatest { user in
         dbUserRef.child(user.uid).child("PERSONAL").rx.observeSingleEvent(.value)
       }.compactMap { snapshot -> NSDictionary? in
-        snapshot.value as? NSDictionary ?? nil
+        snapshot.value as? NSDictionary
       }
 
     let birthdayFromFirebase = data
@@ -68,7 +66,7 @@ class ChangeBirthdayViewModel: Stepper {
     let save = Driver
       .combineLatest(input.saveButtonClickTrigger, birthday, user) { ($1, $2) }
       .asObservable()
-      .flatMapLatest { (birthday, user) in
+      .flatMapLatest { birthday, user in
         dbUserRef.child(user.uid).child("PERSONAL").rx.updateChildValues(["birthday": birthday.timeIntervalSince1970])
       }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .map { _ in () }
@@ -85,5 +83,4 @@ class ChangeBirthdayViewModel: Stepper {
       save: save
     )
   }
-
 }

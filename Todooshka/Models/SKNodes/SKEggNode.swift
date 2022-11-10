@@ -8,7 +8,6 @@
 import SpriteKit
 
 class SKEggNode: SKSpriteNode {
-
   // MARK: - Public
   var action: EggActionType = .create
 
@@ -67,7 +66,6 @@ class SKEggNode: SKSpriteNode {
 
   // MARK: - Actions
   func show(state: EggActionType, withAnimation: Bool, completion: (() -> Void)?) {
-
     switch (state, withAnimation) {
     case (.noCracks, true):
       run(SKAction.sequence([setNoCracksTexture, fadeInWithDuration]))

@@ -11,7 +11,6 @@ import RxFlow
 import RxSwift
 
 class KindOfTaskListDeletedViewModel: Stepper {
-
   // core data
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
   var managedContext: NSManagedObjectContext? {
@@ -48,7 +47,6 @@ class KindOfTaskListDeletedViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let kindsOfTask = services.dataService
       .kindsOfTask
       .map { $0.filter { $0.status == .deleted } }
@@ -59,7 +57,8 @@ class KindOfTaskListDeletedViewModel: Stepper {
           header: "",
           items: $0
         )
-      ]}
+      ]
+      }
 
     let hideAlert = Driver
       .of(input.alertCancelButtonClickTrigger, input.alertDeleteButtonClickTrigger)
@@ -106,5 +105,4 @@ class KindOfTaskListDeletedViewModel: Stepper {
   func repeatKindOfTask(indexPath: IndexPath) {
     repeatKindOfTask.accept(indexPath)
   }
-
 }

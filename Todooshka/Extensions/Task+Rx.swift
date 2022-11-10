@@ -9,7 +9,6 @@ import RxCocoa
 import RxSwift
 
 extension SharedSequence where Element == Task {
-
   func change(closed date: Date) -> RxCocoa.SharedSequence<SharingStrategy, Task> {
     return self.map { task in
       var task = task
@@ -41,5 +40,4 @@ extension SharedSequence where Element == Task {
       return task
     }
   }
-
 }

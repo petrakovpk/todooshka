@@ -10,7 +10,6 @@ import Firebase
 import Differentiator
 
 struct Theme: IdentifiableType, Equatable {
-
   // MARK: - IdentifiableType
   var identity: String { UID }
 

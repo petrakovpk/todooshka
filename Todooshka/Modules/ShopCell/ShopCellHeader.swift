@@ -8,7 +8,6 @@
 import UIKit
 
 class ShopCollectionViewHeader: UICollectionReusableView {
-
   // MARK: - Properties
   static var reuseID: String = "TaskListCollectionReusableView"
 

@@ -12,7 +12,6 @@ import Foundation
 import SwipeCellKit
 
 class TaskTypeCollectionViewCellModel: Stepper {
-
   let steps = PublishRelay<Step>()
 
   private let services: AppServices
@@ -65,5 +64,4 @@ class TaskTypeCollectionViewCellModel: Stepper {
       isSelected: isSelected
     )
   }
-
 }

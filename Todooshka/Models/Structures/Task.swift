@@ -10,9 +10,8 @@ import Firebase
 import RxDataSources
 
 struct Task: IdentifiableType, Equatable {
-
   // MARK: - Static
-  static let emptyTask: Task = Task(UID: "Empty", text: "", description: "", status: .inProgress, created: Date())
+  static let emptyTask = Task(UID: "Empty", text: "", description: "", status: .inProgress, created: Date())
 
   // MARK: - Properites
   var identity: String { UID }
@@ -31,7 +30,7 @@ struct Task: IdentifiableType, Equatable {
   var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { willSet { lastModified = Date()}}
   var userUID: String? = Auth.auth().currentUser?.uid { willSet { lastModified = Date()}}
 
-  var lastModified: Date = Date()
+  var lastModified = Date()
 
   // MARK: - Calculated Propertie
   var is24hoursPassed: Bool {
@@ -91,7 +90,6 @@ struct Task: IdentifiableType, Equatable {
     && lhs.userUID == rhs.userUID
     && lhs.lastModified == rhs.lastModified
   }
-
 }
 
 // MARK: - Firebase
@@ -110,11 +108,9 @@ extension Task {
         "index": index,
         "lastModified": lastModified.timeIntervalSince1970
     ]
-
   }
 
   init?(snapshot: D) {
-
     // check
     guard let dict = snapshot.value as? NSDictionary,
           let text = dict.value(forKey: "text") as? String,
@@ -162,7 +158,7 @@ extension Task: Persistable {
       let kindOfTaskUID = entity.value(forKey: "kindOfTaskUID") as? String,
       let statusRawValue = entity.value(forKey: "statusRawValue") as? String,
       let status = TaskStatus(rawValue: statusRawValue),
-      let text  = entity.value(forKey: "text") as? String,
+      let text = entity.value(forKey: "text") as? String,
       let lastModified = entity.value(forKey: "lastModified") as? Date
     else { return nil }
 

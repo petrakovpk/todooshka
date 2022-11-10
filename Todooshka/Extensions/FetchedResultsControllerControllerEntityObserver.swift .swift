@@ -3,7 +3,6 @@ import CoreData
 import RxSwift
 
 public final class FetchedResultsControllerEntityObserver<T: NSManagedObject>: NSObject, NSFetchedResultsControllerDelegate {
-
   typealias Observer = AnyObserver<[T]>
 
   private let observer: Observer

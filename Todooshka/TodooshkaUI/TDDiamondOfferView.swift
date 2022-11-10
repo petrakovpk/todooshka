@@ -8,12 +8,11 @@
 import UIKit
 
 class TDDiamondPackageOfferView: UIView {
-
   // MARK: - Const
   private let viewWidth = (UIScreen.main.bounds.width - 16 * 4) / 3
 
   // MARK: - Public properties
-  public var isSelected: Bool = false {
+  public var isSelected = false {
     didSet {
       configureIsSelected(isSelected: isSelected)
     }

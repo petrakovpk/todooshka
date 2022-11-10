@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class DayTaskListViewController: UIViewController {
-
   // MARK: - Properties
   let disposeBag = DisposeBag()
 
@@ -94,7 +93,7 @@ class DayTaskListViewController: UIViewController {
     dividerView.backgroundColor = UIColor(named: "navigationBarDividerBackground")
 
     headerView.addSubview(dividerView)
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,     heightConstant: 1.0)
+    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,        heightConstant: 1.0)
 
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
     collectionView.register(TaskListCollectionViewCell.self, forCellWithReuseIdentifier: TaskListCollectionViewCell.reuseID)
@@ -151,7 +150,7 @@ class DayTaskListViewController: UIViewController {
 
   // MARK: - Collection View
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -159,7 +158,7 @@ class DayTaskListViewController: UIViewController {
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
@@ -175,7 +174,6 @@ class DayTaskListViewController: UIViewController {
 
   // MARK: - Bind To
   func bindViewModel() {
-
     let input = DayTaskListViewModel.Input(
       addTaskButtonClickTrigger: addTaskButton.rx.tap.asDriver(),
       backTaskButtonClickTrigger: backButton.rx.tap.asDriver(),
@@ -198,12 +196,11 @@ class DayTaskListViewController: UIViewController {
       outputs.cancelAlertButtonClick.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
-
   }
 
   // MARK: - Binders  
   func configureDataSource() {
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { (_, collectionView, indexPath, task) in
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSectionModel>(configureCell: { _, collectionView, indexPath, task in
       guard
         let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: TaskListCollectionViewCell.reuseID,
@@ -225,7 +222,5 @@ class DayTaskListViewController: UIViewController {
       section.configure(text: dataSource[indexPath.section].header)
       return section
     })
-
   }
-
 }

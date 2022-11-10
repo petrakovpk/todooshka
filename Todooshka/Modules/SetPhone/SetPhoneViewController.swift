@@ -12,7 +12,6 @@ import RxDataSources
 import UIKit
 
 class SetPhoneViewController: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
@@ -85,7 +84,6 @@ class SetPhoneViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // adding
     view.addSubviews([
       phoneLabel,
@@ -165,7 +163,6 @@ class SetPhoneViewController: TDViewController {
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = SetPhoneViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       checkOTPCodeButtonClickTrigger: checkOTPCodeButton.rx.tap.asDriver(),
@@ -186,13 +183,12 @@ class SetPhoneViewController: TDViewController {
       outputs.sendCodeButtonIsEnabled.drive(sendCodeButtonIsEnabledBinder),
       outputs.successLink.drive(successLinkBinder),
       outputs.navigateBack.drive()
-
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
 
   var isPhoneNotSetBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isPhoneNotSet) in
+    return Binder(self, binding: { vc, isPhoneNotSet in
       if isPhoneNotSet {
         vc.phoneLabel.text = "Введите номер:"
         vc.phoneNumberTextField.isEnabled = true
@@ -208,14 +204,14 @@ class SetPhoneViewController: TDViewController {
   }
 
   var successLinkBinder: Binder<AuthDataResult> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.phoneNumberTextField.clear()
       vc.OTPCodeTextField.clear()
     })
   }
 
   var checkOTPCodeButtonIsEnabledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.checkOTPCodeButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
       vc.checkOTPCodeButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.checkOTPCodeButton.isEnabled = isEnabled
@@ -223,7 +219,7 @@ class SetPhoneViewController: TDViewController {
   }
 
   var sendCodeButtonIsEnabledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.sendOTPCodeButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
       vc.sendOTPCodeButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.sendOTPCodeButton.isEnabled = isEnabled

@@ -8,7 +8,6 @@
 import UIKit
 
 class TDTaskTextField: UITextField {
-
   override func draw(_ rect: CGRect) {
     let bottomBorderLine = CALayer()
     bottomBorderLine.frame = CGRect(x: 0, y: bounds.height.int, width: bounds.width.int, height: 1)

@@ -13,7 +13,6 @@ enum KindOfTaskForBirdItemType: Equatable {
 }
 
 struct KindOfTaskForBirdItem: IdentifiableType, Equatable {
-
   let kindOfTaskType: KindOfTaskForBirdItemType
 
   // MARK: - Identity

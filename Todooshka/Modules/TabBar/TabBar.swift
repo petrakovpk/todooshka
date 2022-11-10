@@ -11,10 +11,16 @@ import RxCocoa
 import RxGesture
 
 class TabBar: UITabBar {
-
   // MARK: - Properties
-  public let tabBarItem1 = UIImageView(image: UIImage(named: "clipboard-tick")?.template)
-  public let tabBarItem2 = UIImageView(image: UIImage(named: "user-square")?.template)
+  public let tabBarItem1: UIImageView = {
+    let image = UIImage(named: "BookSaved")?.template
+    let imageView = UIImageView(image: image)
+    return imageView
+  }()
+
+  public let tabBarItem2 = UIImageView(image: UIImage(named: "clipboard-tick")?.template)
+  public let tabBarItem3 = UIImageView(image: UIImage(named: "user-square")?.template)
+
   public let addTaskButton = TDAddTaskButton(type: .system)
 
   private var oldLayer: CALayer?
@@ -24,10 +30,17 @@ class TabBar: UITabBar {
       if selectedItem?.tag == 1 {
         tabBarItem1.tintColor = Style.TabBar.Selected
         tabBarItem2.tintColor = Style.TabBar.Unselected
+        tabBarItem3.tintColor = Style.TabBar.Unselected
       }
       if selectedItem?.tag == 2 {
         tabBarItem1.tintColor = Style.TabBar.Unselected
         tabBarItem2.tintColor = Style.TabBar.Selected
+        tabBarItem3.tintColor = Style.TabBar.Unselected
+      }
+      if selectedItem?.tag == 3 {
+        tabBarItem1.tintColor = Style.TabBar.Unselected
+        tabBarItem2.tintColor = Style.TabBar.Unselected
+        tabBarItem3.tintColor = Style.TabBar.Selected
       }
     }
   }
@@ -37,27 +50,42 @@ class TabBar: UITabBar {
     super.layoutSubviews()
 
     // adding
-    addSubview(tabBarItem1)
-    addSubview(tabBarItem2)
-    addSubview(addTaskButton)
+    addSubviews([
+      tabBarItem1,
+      tabBarItem2,
+      tabBarItem3,
+      addTaskButton
+    ])
 
     // tabBar
-    itemPositioning = .fill
+    itemPositioning = .automatic
     layer.masksToBounds = false
 
     // tabBarItem1
     tabBarItem1.anchor(widthConstant: 24, heightConstant: 24)
-    tabBarItem1.anchorCenterXToSuperview(constant: -1 * bounds.width / 4 - 15 )
+    tabBarItem1.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + bounds.width / 8 )
     tabBarItem1.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
 
     // tabBarItem2
     tabBarItem2.anchor(widthConstant: 24, heightConstant: 24)
-    tabBarItem2.anchorCenterXToSuperview(constant: bounds.width / 4 + 15 )
+    tabBarItem2.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 3 * bounds.width / 8 )
     tabBarItem2.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
 
+    // tabBarItem3
+    tabBarItem3.anchor(widthConstant: 24, heightConstant: 24)
+    tabBarItem3.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 5 * bounds.width / 8 )
+    tabBarItem3.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
+
     // addTaskButton
-    addTaskButton.anchor(bottom: topAnchor, bottomConstant: -45, widthConstant: 60.0, heightConstant: 60.0)
-    addTaskButton.anchorCenterXToSuperview()
+    addTaskButton.anchor(
+      top: topAnchor,
+     // right: rightAnchor,
+      topConstant: -20,
+     // rightConstant: 16,
+      widthConstant: 60.0,
+      heightConstant: 60.0
+    )
+    addTaskButton.anchorCenterXToSuperview(constant: bounds.width * 3 / 8)
   }
 
   override func draw(_ rect: CGRect) {
@@ -70,7 +98,6 @@ class TabBar: UITabBar {
 
   // MARK: - Configure UI
   private func drawDarkMode() {
-
     let shapeLayer = CAShapeLayer()
     let gradientLayer = CAGradientLayer()
     let backgroundLayer = CALayer()
@@ -105,7 +132,6 @@ class TabBar: UITabBar {
   }
 
   func drawLightMode() {
-
     // adding
     let shapeLayer = CAShapeLayer()
     let backgroundLayer = CALayer()
@@ -129,24 +155,51 @@ class TabBar: UITabBar {
 
   // MARK: - Core Graph
   func createPath() -> CGPath {
-
     let plusButtonRadius: CGFloat = 30.0
     let path = UIBezierPath()
     let centerWidth = self.frame.width / 2
+    let width = self.frame.width
 
-    path.move(to: CGPoint(x: 0, y: -17)) // start top left
-    path.addArc(withCenter: CGPoint(x: 17, y: 17), radius: 17, startAngle: -.pi, endAngle: -.pi / 2, clockwise: true)
-    path.addLine(to: CGPoint(x: (centerWidth - plusButtonRadius - 17), y: 0) ) // the beginning of the trough
-    path.addArc(withCenter: CGPoint(x: (centerWidth - plusButtonRadius - 17), y: 17), radius: 17, startAngle: -.pi / 2, endAngle: 0, clockwise: true)
-    path.addLine(to: CGPoint(x: (centerWidth + plusButtonRadius), y: 17) ) // the beginning of the trough
-    path.addArc(withCenter: CGPoint(x: (centerWidth + plusButtonRadius + 17), y: 17), radius: 17, startAngle: -.pi, endAngle: -.pi / 2, clockwise: true)
-    path.addLine(to: CGPoint(x: self.frame.width - 17, y: 0))
-    path.addArc(withCenter: CGPoint(x: self.frame.width - 17, y: 17), radius: 17, startAngle: -.pi / 2, endAngle: 0, clockwise: true)
+    path.move(to: CGPoint(x: 0, y: 0)) // start top left
+//    path.addArc(
+//      withCenter: CGPoint(x: 17, y: 17),
+//      radius: 17,
+//      startAngle: -.pi,
+//      endAngle: -.pi / 2,
+//      clockwise: true
+//    )
+    path.addArc(
+      withCenter: CGPoint(
+        x: (width * 7 / 8 - plusButtonRadius - 17),
+        y: 17
+      ),
+      radius: 17,
+      startAngle: -.pi / 2,
+      endAngle: 0,
+      clockwise: true
+    )
+    path.addArc(
+      withCenter: CGPoint(
+        x: width * 7 / 8 + plusButtonRadius + 17,
+        y: 17
+      ),
+      radius: 17,
+      startAngle: -.pi,
+      endAngle: -.pi / 2,
+      clockwise: true
+    )
+//    path.addArc(
+//      withCenter: CGPoint(x: self.frame.width - 17, y: 17),
+//      radius: 17,
+//      startAngle: -.pi / 2,
+//      endAngle: 0,
+//      clockwise: true
+//    )
+    path.addLine(to: CGPoint(x: self.frame.width, y: 0))
     path.addLine(to: CGPoint(x: self.frame.width, y: self.frame.height))
     path.addLine(to: CGPoint(x: 0, y: self.frame.height))
     path.close()
 
     return path.cgPath
   }
-
 }

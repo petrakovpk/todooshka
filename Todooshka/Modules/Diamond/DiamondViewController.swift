@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class DiamondViewController: TDViewController {
-
   // MARK: - Const
   private let offerWidth = (UIScreen.main.bounds.width - 16 * 4 ) / 3
 
@@ -171,19 +170,17 @@ class DiamondViewController: TDViewController {
     alertOkButton.cornerRadius = Sizes.Buttons.AlertWillWaitButton.height / 2
     alertOkButton.anchorCenterXToSuperview()
     alertOkButton.anchorCenterYToSuperview(constant: 25)
-
   }
 
   // MARK: - Bind To
   func bindViewModel() {
-
     let input = DiamondViewModel.Input(
       alertOkButtonClickTrigger: alertOkButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       buyButtonClickTrigger: buyButton.rx.tap.asDriver(),
-      smallOfferBackgroundClickTrigger: smallOfferBackground.rx.tapGesture().when(.recognized).map { _ in return ()}.asDriver(onErrorJustReturn: ()),
+      smallOfferBackgroundClickTrigger: smallOfferBackground.rx.tapGesture().when(.recognized).map { _ in return () }.asDriver(onErrorJustReturn: ()),
       largeOfferBackgroundClickTrigger: largeOfferBackground.rx.tapGesture().when(.recognized).map { _ in return () }.asDriver(onErrorJustReturn: ()),
-      mediumOfferBackgroundClickTrigger: mediumOfferBackground.rx.tapGesture().when(.recognized).map { _ in return ()}.asDriver(onErrorJustReturn: ())
+      mediumOfferBackgroundClickTrigger: mediumOfferBackground.rx.tapGesture().when(.recognized).map { _ in return () }.asDriver(onErrorJustReturn: ())
     )
 
     let outputs = viewModel.transform(input: input)
@@ -199,19 +196,19 @@ class DiamondViewController: TDViewController {
   }
 
   var hideAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = true
     })
   }
 
   var showAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = false
     })
   }
 
   var offerSelectedBinder: Binder<DiamondPackageType> {
-    return Binder(self, binding: { (vc, diamondPackageType) in
+    return Binder(self, binding: { vc, diamondPackageType in
       switch diamondPackageType {
       case .small:
         vc.smallOfferBackground.isSelected = true
@@ -231,5 +228,4 @@ class DiamondViewController: TDViewController {
       }
     })
   }
-
 }

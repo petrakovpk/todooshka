@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class FeatherViewModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
@@ -32,7 +31,6 @@ class FeatherViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-
     // tasks
     let tasks = services.dataService.goldTasks
 
@@ -68,5 +66,4 @@ class FeatherViewModel: Stepper {
       navigateBack: navigateBack
     )
   }
-
 }

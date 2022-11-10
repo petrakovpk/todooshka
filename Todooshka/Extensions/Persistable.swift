@@ -18,13 +18,10 @@ public protocol Persistable {
 
   /* predicate to uniquely identify the record, such as: NSPredicate(format: "code == '\(code)'") */
   func predicate() -> NSPredicate
-
 }
 
 public extension Persistable {
-
     func predicate() -> NSPredicate {
         return NSPredicate(format: "%K = %@", Self.primaryAttributeName, self.identity)
     }
-
 }

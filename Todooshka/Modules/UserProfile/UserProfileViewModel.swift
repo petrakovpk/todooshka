@@ -11,7 +11,6 @@ import RxSwift
 import RxCocoa
 
 class UserProfileViewModel: Stepper {
-
   let reloadData = BehaviorRelay<Void>(value: ())
   let services: AppServices
   let steps = PublishRelay<Step>()
@@ -40,7 +39,6 @@ class UserProfileViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let reload = reloadData.asDriver()
 
     let user = Driver
@@ -86,7 +84,7 @@ class UserProfileViewModel: Stepper {
 
     let userProfileData = Driver.combineLatest(name, birthday, gender, phoneNumber, email) { name, birthday, gender, phoneNumber, email -> UserProfileData in
         UserProfileData(birthday: birthday, email: email, gender: gender, name: name, phone: phoneNumber)
-      }
+    }
 
     let dataSource = userProfileData
       .map { data -> [UserProfileSection] in
@@ -114,7 +112,8 @@ class UserProfileViewModel: Stepper {
 
     let itemSelected = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> UserProfileItem in
-        dataSource[indexPath.section].items[indexPath.item] }
+        dataSource[indexPath.section].items[indexPath.item]
+      }
       .map { item in
         switch item.type {
         case .name:

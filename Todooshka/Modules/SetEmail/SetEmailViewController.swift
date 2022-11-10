@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class SetEmailViewController: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
@@ -84,7 +83,6 @@ class SetEmailViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // settings
     refreshButton.isHidden = false
 
@@ -181,7 +179,6 @@ class SetEmailViewController: TDViewController {
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = SetEmailViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       currentEmailTextFieldText: currentEmailTextField.rx.text.orEmpty.asDriver(),
@@ -207,7 +204,7 @@ class SetEmailViewController: TDViewController {
   }
 
   var sendVerificationEmailButtonIsEnabledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.sendVerificationEmailButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
       vc.sendVerificationEmailButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.sendVerificationEmailButton.isEnabled = isEnabled
@@ -215,7 +212,7 @@ class SetEmailViewController: TDViewController {
   }
 
   var setNewEmailButtonIsEnabledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.setNewEmailButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
       vc.setNewEmailButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.setNewEmailButton.isEnabled = isEnabled
@@ -223,10 +220,9 @@ class SetEmailViewController: TDViewController {
   }
 
   var setNewEmailBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.newEmailTextField.clear()
       vc.newEmailTextField.insertText("")
     })
   }
-
 }

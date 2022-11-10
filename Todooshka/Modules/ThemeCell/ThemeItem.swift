@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct ThemeItem: IdentifiableType, Equatable {
-
   // MARK: - Identity
   var identity: String {
     theme.UID

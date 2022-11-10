@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class ScoreViewModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
@@ -35,7 +34,6 @@ class ScoreViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-
     let backButtonClickHandler = input.backButtonClickHandler
       .map { self.steps.accept(AppStep.navigateBack) }
 
@@ -46,5 +44,4 @@ class ScoreViewModel: Stepper {
       buyButtonClickHandler: buyButtonClickHandler
     )
   }
-
 }

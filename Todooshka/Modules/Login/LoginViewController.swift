@@ -12,7 +12,6 @@ import RxCocoa
 import RxDataSources
 
 class LoginViewController: UIViewController {
-
   // MARK: - Properties
   var viewModel: LoginViewModel!
   private let disposeBag = DisposeBag()
@@ -173,7 +172,7 @@ class LoginViewController: UIViewController {
     headerDescriptionTextView.anchorCenterXToSuperview()
 
     // emailButton
-    emailButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor,     topConstant: 20, widthConstant: UIScreen.main.bounds.width / 2, heightConstant: 50)
+    emailButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor,        topConstant: 20, widthConstant: UIScreen.main.bounds.width / 2, heightConstant: 50)
 
     // phoneButton
     phoneButton.anchor(top: headerDescriptionTextView.bottomAnchor, right: view.rightAnchor, topConstant: 20, widthConstant: UIScreen.main.bounds.width / 2, heightConstant: 50)
@@ -214,12 +213,11 @@ class LoginViewController: UIViewController {
     nextButton.anchor(top: repeatPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 48)
 
     // errorTextView
-    errorTextView.anchor(top: nextButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16,     heightConstant: 50)
+    errorTextView.anchor(top: nextButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16,        heightConstant: 50)
   }
 
   // MARK: - Bind
   func bindViewModel() {
-
     let input = LoginViewModel.Input(
       emailTextFieldText: emailTextField.rx.text.orEmpty.asDriver(),
       OTPCodeTextFieldText: OTPCodeTextField.rx.text.orEmpty.asDriver(),
@@ -258,7 +256,7 @@ class LoginViewController: UIViewController {
   }
 
   var setNextButtonIsEnabledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.nextButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
       vc.nextButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.nextButton.isEnabled = isEnabled
@@ -266,25 +264,25 @@ class LoginViewController: UIViewController {
   }
 
   var setSendOTPCodeButtonClickSuccessBinder: Binder<String> {
-    return Binder(self, binding: { (vc, text) in
+    return Binder(self, binding: { vc, text in
       vc.sendOTPCodeButton.setTitle(text, for: .normal)
     })
   }
 
   var setResetPasswordButtonClickSuccessBinder: Binder<String> {
-    return Binder(self, binding: { (vc, text) in
+    return Binder(self, binding: { vc, text in
       vc.resetPasswordButton.setTitle(text, for: .normal)
     })
   }
 
   var setFocusOnRepeatPasswordTextFieldBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.repeatPasswordTextField.becomeFirstResponder()
     })
   }
 
   var loginViewControllerStyleBinder: Binder<LoginViewControllerStyle> {
-    return Binder(self, binding: { (vc, loginViewControllerStyle) in
+    return Binder(self, binding: { vc, loginViewControllerStyle in
       switch loginViewControllerStyle {
       case .email:
         vc.leftDividerView.backgroundColor = Style.Views.AuthDivider.selected

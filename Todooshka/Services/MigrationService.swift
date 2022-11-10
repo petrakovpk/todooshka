@@ -15,7 +15,6 @@ protocol HasMigrationService {
 }
 
 class MigrationService {
-
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
   var managedContext: NSManagedObjectContext? {
     self.appDelegate?.persistentContainer.viewContext
@@ -40,9 +39,7 @@ class MigrationService {
 
   // MARK: - Init
   init() {
-
     do {
-
       guard
         let managedContext = self.managedContext,
         let entity = NSEntityDescription.entity(forEntityName: Task.entityName, in: managedContext)
@@ -63,7 +60,6 @@ class MigrationService {
       // CoreDataTasks
       let coreDataTasks = try managedContext.fetch(CoreDataTask.fetchRequest())
       for coreDataTask in coreDataTasks {
-
         guard
           let uid = coreDataTask.value(forKey: "uid") as? String,
           let createdTimeIntervalSince1970 = coreDataTask.value(forKey: "createdTimeIntervalSince1970") as? TimeInterval
@@ -120,10 +116,8 @@ class MigrationService {
 
         try managedContext.save()
       }
-
     } catch {
       print(error.localizedDescription)
     }
   }
-
 }

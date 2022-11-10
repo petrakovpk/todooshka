@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct ThemeSection: AnimatableSectionModelType {
-
     var identity: String { header }
     var header: String
     var items: [ThemeItem]

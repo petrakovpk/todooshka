@@ -13,7 +13,6 @@ import FirebaseDatabase
 public typealias PreviousSiblingKeyDataSnapshot = (snapshot: DataSnapshot, prevKey: String?)
 
 extension Reactive where Base: DatabaseQuery {
-
   /**
    * observeEventType:withBlock: is used to listen for data changes at a particular location.
    * This is the primary way to read data from the Firebase Database. Your block will be triggered
@@ -93,10 +92,10 @@ extension Reactive where Base: DatabaseQuery {
    * @param cancelBlock The block that will be called if you don't have permission to access this data
    */
   public func observeSingleEvent(_ eventType: DataEventType) -> Single<DataSnapshot> {
-    return Single.create(subscribe: { (singleEventListener) -> Disposable in
-      self.base.observeSingleEvent(of: eventType, with: { (snapshot) in
+    return Single.create(subscribe: { singleEventListener -> Disposable in
+      self.base.observeSingleEvent(of: eventType, with: { snapshot in
         singleEventListener(.success(snapshot))
-      }, withCancel: { (error) in
+      }, withCancel: { error in
         singleEventListener(.failure(error))
       })
       return Disposables.create()
@@ -116,10 +115,10 @@ extension Reactive where Base: DatabaseQuery {
    */
 
   public func observeSingleEventAndPreviousSiblingKey(_ eventType: DataEventType) -> Single<PreviousSiblingKeyDataSnapshot> {
-    return Single.create(subscribe: { (singleEventListener) -> Disposable in
-      self.base.observeSingleEvent(of: eventType, andPreviousSiblingKeyWith: { (snapshot, prevKey) in
+    return Single.create(subscribe: { singleEventListener -> Disposable in
+      self.base.observeSingleEvent(of: eventType, andPreviousSiblingKeyWith: { snapshot, prevKey in
         singleEventListener(.success(PreviousSiblingKeyDataSnapshot(snapshot, prevKey)))
-      }, withCancel: { (error) in
+      }, withCancel: { error in
         singleEventListener(.failure(error))
       })
       return Disposables.create()

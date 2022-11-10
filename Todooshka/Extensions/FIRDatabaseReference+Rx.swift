@@ -12,7 +12,6 @@ import FirebaseDatabase
 public typealias DatabaseReferenceTransactionResult = (committed: Bool, snapshot: DataSnapshot?)
 
 extension Reactive where Base: DatabaseReference {
-
   /**
    * The same as setValue: with an additional priority to be attached to the data being written.
    * Priorities are used to order items.
@@ -21,8 +20,8 @@ extension Reactive where Base: DatabaseReference {
    * @param priority The priority to be attached to that data.
    */
   public func setValue(_ value: Any?, andPriority priority: Any? = nil) -> Single<DatabaseReference> {
-    return Single.create(subscribe: { (singleEventListener) -> Disposable in
-      self.base.setValue(value, andPriority: priority, withCompletionBlock: { (error, ref) in
+    return Single.create(subscribe: { singleEventListener -> Disposable in
+      self.base.setValue(value, andPriority: priority, withCompletionBlock: { error, ref in
         if let error = error {
           singleEventListener(.failure(error))
         } else {
@@ -44,7 +43,7 @@ extension Reactive where Base: DatabaseReference {
    */
   public func removeValue() -> Observable<Result<DatabaseReference, Error>> {
     return Observable.create { observer in
-      self.base.removeValue(completionBlock: { (error, ref) in
+      self.base.removeValue(completionBlock: { error, ref in
         if let error = error {
           observer.onNext(.failure(error))
         } else {
@@ -80,8 +79,8 @@ extension Reactive where Base: DatabaseReference {
    * @param priority The priority to set at the specified location.
    */
   public func setPriority(_ priority: Any?) -> Single<DatabaseReference> {
-    return Single.create(subscribe: { (singleEventListener) -> Disposable in
-      self.base.setPriority(priority, withCompletionBlock: { (error, ref) in
+    return Single.create(subscribe: { singleEventListener -> Disposable in
+      self.base.setPriority(priority, withCompletionBlock: { error, ref in
         if let error = error {
           singleEventListener(.failure(error))
         } else {
@@ -100,7 +99,7 @@ extension Reactive where Base: DatabaseReference {
    */
   public func updateChildValues(_ values: [AnyHashable: Any]) -> Observable<Result<DatabaseReference, Error>> {
     return Observable.create { observer in
-      self.base.updateChildValues(values, withCompletionBlock: { (error, ref) in
+      self.base.updateChildValues(values, withCompletionBlock: { error, ref in
         if let error = error {
           observer.onNext(.failure(error))
         } else {
@@ -121,8 +120,8 @@ extension Reactive where Base: DatabaseReference {
    * @param priority The priority to be set after the connection is lost.
    */
   public func onDisconnectSetValue(_ value: Any?, andPriority priority: Any? = nil) -> Single<DatabaseReference> {
-    return Single.create(subscribe: { (singleEventListener) -> Disposable in
-      self.base.onDisconnectSetValue(value, andPriority: priority, withCompletionBlock: { (error, ref) in
+    return Single.create(subscribe: { singleEventListener -> Disposable in
+      self.base.onDisconnectSetValue(value, andPriority: priority, withCompletionBlock: { error, ref in
         if let error = error {
           singleEventListener(.failure(error))
         } else {
@@ -141,8 +140,8 @@ extension Reactive where Base: DatabaseReference {
    * onDisconnectRemoveValue is especially useful for implementing "presence" systems.
    */
   public func onDisconnectRemoveValue() -> Single<DatabaseReference> {
-    return Single.create(subscribe: { (singleEventListener) -> Disposable in
-      self.base.onDisconnectRemoveValue(completionBlock: { (error, ref) in
+    return Single.create(subscribe: { singleEventListener -> Disposable in
+      self.base.onDisconnectRemoveValue(completionBlock: { error, ref in
         if let error = error {
           singleEventListener(.failure(error))
         } else {
@@ -162,8 +161,8 @@ extension Reactive where Base: DatabaseReference {
    * @param values A dictionary of child node keys and the values to set them to after the connection is lost.
    */
   public func onDisconnectUpdateChildValues(_ values: [AnyHashable: Any]) -> Single<DatabaseReference> {
-    return Single.create(subscribe: { (singleEventListener) -> Disposable in
-      self.base.onDisconnectUpdateChildValues(values, withCompletionBlock: { (error, ref) in
+    return Single.create(subscribe: { singleEventListener -> Disposable in
+      self.base.onDisconnectUpdateChildValues(values, withCompletionBlock: { error, ref in
         if let error = error {
           singleEventListener(.failure(error))
         } else {
@@ -180,8 +179,8 @@ extension Reactive where Base: DatabaseReference {
    * connection is lost, call cancelDisconnectOperations:
    */
   public func cancelDisconnectOperations() -> Single<DatabaseReference> {
-    return Single.create(subscribe: { (singleEventListener) -> Disposable in
-      self.base.cancelDisconnectOperations(completionBlock: { (error, ref) in
+    return Single.create(subscribe: { singleEventListener -> Disposable in
+      self.base.cancelDisconnectOperations(completionBlock: { error, ref in
         if let error = error {
           singleEventListener(.failure(error))
         } else {
@@ -226,7 +225,7 @@ extension Reactive where Base: DatabaseReference {
 
   public func runTransactionBlock(_ block: @escaping (MutableData) -> TransactionResult) -> Observable<Result<DatabaseReferenceTransactionResult, Error>> {
     return Observable.create { observer in
-      self.base.runTransactionBlock(block, andCompletionBlock: { (error, committed, snapshot) in
+      self.base.runTransactionBlock(block, andCompletionBlock: { error, committed, snapshot in
         if let error = error {
           observer.onNext(.failure(error))
         } else {

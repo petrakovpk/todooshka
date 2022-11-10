@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class AuthFlow: Flow {
-
   var root: Presentable {
     return self.rootViewController
   }

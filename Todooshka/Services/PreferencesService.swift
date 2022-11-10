@@ -15,7 +15,6 @@ protocol HasPreferencesService {
 }
 
 class PreferencesService {
-
   let midFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ru_RU")
@@ -38,7 +37,6 @@ class PreferencesService {
   }
 
   init() {
-
   }
 
   func migrateFromV1toV2() {
@@ -63,11 +61,7 @@ class PreferencesService {
           toDestinationURL: newUrl,
           destinationType: NSSQLiteStoreType,
           destinationOptions: nil)
-
     } catch {
-
     }
-
   }
-
 }

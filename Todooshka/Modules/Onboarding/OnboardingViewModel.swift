@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class OnboardingViewModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let disposeBag = DisposeBag()
@@ -38,7 +37,6 @@ class OnboardingViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let onboardingSectionItem1 = OnboardingSectionItem(
       header: "Добро пожаловать в ДрагоДу!",
       description: "Хочешь разложить все дела по полочкам, не откладывая на завтра? \n Мы поможем это сделать сегодня, тебе понравится!",

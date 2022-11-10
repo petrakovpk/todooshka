@@ -12,7 +12,6 @@ import RxCocoa
 import UIKit
 
 class BirdViewModel: Stepper {
-
   // MARK: - Properties
   // context
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -59,19 +58,19 @@ class BirdViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-
     let birds = services.dataService
       .birds
 
     let bird = birds
-      .compactMap { $0.first(where: { $0.UID == self.birdUID }) }
+      .compactMap { $0.first { $0.UID == self.birdUID } }
 
     let kindsOfTask = services.dataService.kindsOfTask.asDriver()
 
     let kindOfTaskImageView = kindsOfTask
       .withLatestFrom(bird) { kindsOfTask, bird -> KindOfTask? in
-        kindsOfTask.first(where: { $0.UID == bird.style.rawValue })
-      }.map { $0?.icon.image }
+        kindsOfTask.first { $0.UID == bird.style.rawValue }
+      }
+      .map { $0?.icon.image }
       .asDriver(onErrorJustReturn: nil)
 
     let buyButtonIsHidden = bird
@@ -116,7 +115,7 @@ class BirdViewModel: Stepper {
       .withLatestFrom(kindsOfTask) { styles, kindsOfTask -> [KindOfTask] in
         kindsOfTask
           .filter { kindOfTask -> Bool in
-            styles.contains(where: { $0.rawValue == kindOfTask.style.rawValue })
+            styles.contains { $0.rawValue == kindOfTask.style.rawValue }
           }
       }
 
@@ -158,9 +157,6 @@ class BirdViewModel: Stepper {
     let diamondsCount = services.dataService.diamonds.map { $0.count }
     let feathersCount = services.dataService.feathersCount
 
-    let diamonds = services.dataService.diamonds
-      .asDriver(onErrorJustReturn: [])
-
     let alertBuyButtonIsEnabled = Driver
       .combineLatest(bird, feathersCount, diamondsCount) { bird, feathersCount, diamondsCount -> Bool in
         bird.currency == .feather ? feathersCount >= bird.price : diamondsCount >= bird.price
@@ -181,14 +177,16 @@ class BirdViewModel: Stepper {
         var bird = bird
         bird.isBought = true
         return bird
-      }.asObservable()
+      }
+      .asObservable()
       .flatMapLatest { bird -> Observable<Result<Void, Error>> in
         if let managedContext = self.managedContext {
           return managedContext.rx.update(bird)
         } else {
           return Observable.of(.failure(ErrorType.managedContextNotFound))
         }
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+      }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     let buySuccess = buy
       .compactMap { result -> Void? in

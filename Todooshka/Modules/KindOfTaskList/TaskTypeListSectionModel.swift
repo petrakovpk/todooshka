@@ -9,7 +9,6 @@ import RxDataSources
 import UIKit
 
 struct TaskTypesListSectionModel: AnimatableSectionModelType {
-
     var identity: String {
         return header
     }

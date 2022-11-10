@@ -13,7 +13,6 @@ import Foundation
 import SwipeCellKit
 
 class OnboardingCollectionViewCellModel: Stepper {
-
   // MARK: - Properties
   let disposeBag = DisposeBag()
   let steps = PublishRelay<Step>()
@@ -34,7 +33,6 @@ class OnboardingCollectionViewCellModel: Stepper {
   }
 
   func transform() -> Output {
-
     let headerText = Driver<String>.just(onboardingSectionItem.header)
     let descriptionText = Driver<String>.just(onboardingSectionItem.description)
     let image = Driver<UIImage>.just(onboardingSectionItem.image)

@@ -11,7 +11,6 @@ import RxSwift
 import RxCocoa
 
 class SetPhoneViewModel: Stepper {
-
   let services: AppServices
   let steps = PublishRelay<Step>()
   let reload = BehaviorRelay<Void>(value: ())
@@ -42,7 +41,6 @@ class SetPhoneViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let reload = reload.asDriver()
 
     let user = reload
@@ -76,7 +74,6 @@ class SetPhoneViewModel: Stepper {
 
             // move numbers iterator to the next index
             index = numbers.index(after: index)
-
           } else {
             result.append(ch) // just append a mask character
           }
@@ -99,7 +96,6 @@ class SetPhoneViewModel: Stepper {
 
             // move numbers iterator to the next index
             index = numbers.index(after: index)
-
           } else {
             result.append(ch) // just append a mask character
           }
@@ -152,7 +148,7 @@ class SetPhoneViewModel: Stepper {
     let link = credential
       .withLatestFrom(user) { ($0, $1) }
       .asObservable()
-      .flatMapLatest { (credential, user) in
+      .flatMapLatest { credential, user in
         user.rx.linkAndRetrieveData(with: credential)
       }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
@@ -170,8 +166,8 @@ class SetPhoneViewModel: Stepper {
 
     let clearError = Driver
       .of(
-        credential.map { _ in ""},
-        successLink.map { _ in ""}
+        credential.map { _ in "" },
+        successLink.map { _ in "" }
       ).merge()
       .asDriver()
 

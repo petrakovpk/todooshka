@@ -21,9 +21,8 @@ enum ScrollToIndexPath {
 }
 
 class CalendarViewController: UIViewController {
-
   // MARK: - Const
-  private var needScrollToToday: Bool = true
+  private var needScrollToToday = true
   private let monthFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ru_RU")
@@ -141,11 +140,10 @@ class CalendarViewController: UIViewController {
 
     // sceneView
     sceneView.presentScene(scene)
-    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,     heightConstant: sceneView.frame.height)
+    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,        heightConstant: sceneView.frame.height)
   }
 
   func configureUI() {
-
     // adding
     view.addSubview(settingsButton)
     view.addSubview(pointsBackgroundView)
@@ -331,7 +329,6 @@ class CalendarViewController: UIViewController {
 
   // MARK: - Bind View Model
   func bindViewModel() {
-
     let input = CalendarViewModel.Input(
       settingsButtonClickTrigger: settingsButton.rx.tap.asDriver(),
       shopButtonClickTrigger: shopButton.rx.tap.asDriver(),
@@ -367,7 +364,6 @@ class CalendarViewController: UIViewController {
       outputs.scrollToCurrentMonth.drive(scrollToCurrentMonthBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
-
   }
 
   func bindSceneModel() {
@@ -383,7 +379,7 @@ class CalendarViewController: UIViewController {
 
   // MARK: - Binder
   var sceneBackgroundBinder: Binder<UIImage?> {
-    return Binder(self, binding: { (vc, image) in
+    return Binder(self, binding: { vc, image in
       if let image = image, let scene = vc.scene {
         scene.setup(with: image)
       }
@@ -391,7 +387,7 @@ class CalendarViewController: UIViewController {
   }
 
   var sceneDataSourceBinder: Binder<[BirdActionType]> {
-    return Binder(self, binding: { (vc, actions) in
+    return Binder(self, binding: { vc, actions in
       if let scene = vc.scene {
         scene.setup(with: actions)
         if vc.isVisible {
@@ -403,7 +399,6 @@ class CalendarViewController: UIViewController {
 
   var scrollToCurrentMonthBinder: Binder<(trigger: Bool, withAnimation: Bool)> {
     return Binder(self, binding: { vc, scrollEvent in
-
       if scrollEvent.trigger {
         // иначе не получим лейаут
         vc.calendarView.layoutIfNeeded()
@@ -422,7 +417,6 @@ class CalendarViewController: UIViewController {
         vc.calendarView.collectionViewLayout.prepare()
         vc.calendarView.setContentOffset(CGPoint(x: 0, y: layoutAttributesForSupplementaryElement.frame.origin.y), animated: scrollEvent.withAnimation)
       }
-
     })
   }
 
@@ -437,7 +431,6 @@ class CalendarViewController: UIViewController {
          case .month(let oldFirstMonth) = oldFirstSection.type,
          case .month(let newFirstMonth) = newFirstSection.type,
          oldFirstMonth > newFirstMonth {
-
         // получаем лейауты
         guard
           let firstSectionHeaderLayout = vc.calendarView.layoutAttributesForSupplementaryElement(
@@ -526,7 +519,6 @@ extension CalendarViewController: UICollectionViewDataSource {
   }
 
   func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-
     guard let header = collectionView.dequeueReusableSupplementaryView(
       ofKind: kind,
       withReuseIdentifier: CalendarReusableView.reuseID,
@@ -548,7 +540,6 @@ extension CalendarViewController: UICollectionViewDataSource {
 }
 
 extension CalendarViewController: CalendarViewDelegate {
-
   func appendPastData() {
     viewModel.appendPastData()
   }
@@ -560,7 +551,6 @@ extension CalendarViewController: CalendarViewDelegate {
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension CalendarViewController: UICollectionViewDelegateFlowLayout {
-
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     CGSize(width: Sizes.Cells.CalendarCell.width, height: Sizes.Cells.CalendarCell.height)
   }
@@ -572,5 +562,4 @@ extension CalendarViewController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
     CGSize(width: collectionView.bounds.width, height: Sizes.Views.Calendar.headerSizeHeight)
   }
-
 }

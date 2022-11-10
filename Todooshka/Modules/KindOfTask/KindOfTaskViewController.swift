@@ -12,7 +12,6 @@ import RxCocoa
 import RxDataSources
 
 class KindOfTaskViewController: TDViewController {
-
   // MARK: - Properties
   var viewModel: KindOfTaskViewModel!
   let disposeBag = DisposeBag()
@@ -183,7 +182,7 @@ class KindOfTaskViewController: TDViewController {
   func configureDataSource() {
     collectionViewColor.dataSource = nil
     dataSourceColor = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskColorSection>(
-      configureCell: {(_, collectionView, indexPath, item) in
+      configureCell: {_, collectionView, indexPath, item in
         guard let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: KindOfTaskColorCell.reuseID,
           for: indexPath
@@ -194,7 +193,7 @@ class KindOfTaskViewController: TDViewController {
 
     collectionViewIcon.dataSource = nil
     dataSourceIcon = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskIconSection>(
-      configureCell: {(_, collectionView, indexPath, item) in
+      configureCell: {_, collectionView, indexPath, item in
         guard let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: KindOfTaskIconCell.reuseID,
           for: indexPath
@@ -202,12 +201,10 @@ class KindOfTaskViewController: TDViewController {
         cell.configure(with: item)
         return cell
       })
-
   }
 
   // MARK: - Bind TO
   func bindViewModel() {
-
     let input = KindOfTaskViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       saveButtonClickTrigger: saveButton.rx.tap.asDriver(),
@@ -228,6 +225,6 @@ class KindOfTaskViewController: TDViewController {
       output.selectColor.drive(taskTypeImageView.rx.tintColor),
       output.textLen.drive(textLenLabel.rx.text)
     ]
-      .forEach({$0.disposed(by: disposeBag)})
+      .forEach({ $0.disposed(by: disposeBag) })
   }
 }

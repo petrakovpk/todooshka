@@ -13,7 +13,6 @@ enum CalendarItemType {
 }
 
 struct CalendarItem: IdentifiableType, Equatable {
-
   // IdentifiableType
   var identity: String {
     switch type {

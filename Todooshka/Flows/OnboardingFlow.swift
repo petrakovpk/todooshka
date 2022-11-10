@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class OnboardingFlow: Flow {
-
     var root: Presentable {
         return self.rootViewController
     }
@@ -51,7 +50,6 @@ class OnboardingFlow: Flow {
     }
 
     private func navigateToAuthScreen() -> FlowContributors {
-
         let authFlow = AuthFlow(withServices: services)
 
         Flows.use(authFlow, when: .created) { [unowned self] root in
@@ -63,7 +61,6 @@ class OnboardingFlow: Flow {
 
         return .one(flowContributor: .contribute(withNextPresentable: authFlow,
                                                  withNextStepper: OneStepper(withSingleStep: AppStep.authIsRequired)))
-
     }
 
     private func dismissOnboardingScreen() -> FlowContributors {

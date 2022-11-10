@@ -11,7 +11,6 @@ import RxSwift
 import RxCocoa
 
 class ChangeNameViewModel: Stepper {
-
   let services: AppServices
   let steps = PublishRelay<Step>()
 
@@ -34,7 +33,6 @@ class ChangeNameViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let user = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
       .compactMap { $0 }
@@ -44,7 +42,7 @@ class ChangeNameViewModel: Stepper {
       .flatMapLatest { user in
         dbUserRef.child(user.uid).child("PERSONAL").rx.observeSingleEvent(.value)
       }.compactMap { snapshot -> NSDictionary? in
-        snapshot.value as? NSDictionary ?? nil
+        snapshot.value as? NSDictionary
       }
 
     let name = data
@@ -62,10 +60,10 @@ class ChangeNameViewModel: Stepper {
     let save = Driver
       .combineLatest(didEndEdiditing, input.nameTextFieldText, user) { ($1, $2) }
       .asObservable()
-      .flatMapLatest { (name, user) in
+      .flatMapLatest { name, user in
         dbUserRef.child(user.uid).child("PERSONAL").rx.updateChildValues(["name": name])
       }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-      .map { _ in ()}
+      .map { _ in () }
 
     return Output(
       name: name,

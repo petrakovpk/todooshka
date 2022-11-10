@@ -12,7 +12,6 @@ import RxSwift
 import RxCocoa
 
 class SyncDataViewModel: Stepper {
-
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
   var managedContext: NSManagedObjectContext? { self.appDelegate?.persistentContainer.viewContext }
 
@@ -43,7 +42,6 @@ class SyncDataViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let taskDeviceCount = services.dataService
       .tasks
       .map { $0.filter { $0.status != .archive } }
@@ -129,5 +127,4 @@ class SyncDataViewModel: Stepper {
       taskSyncButtonIsEnabled: taskSyncButtonIsEnabled
     )
   }
-
 }

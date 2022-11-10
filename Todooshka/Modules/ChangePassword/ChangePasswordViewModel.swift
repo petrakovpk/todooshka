@@ -11,7 +11,6 @@ import RxSwift
 import RxCocoa
 
 class ChangePasswordViewModel: Stepper {
-
   let services: AppServices
   let steps = PublishRelay<Step>()
 
@@ -35,7 +34,6 @@ class ChangePasswordViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let user = Driver<User?>.of(Auth.auth().currentUser)
       .compactMap { $0 }
 
@@ -59,7 +57,7 @@ class ChangePasswordViewModel: Stepper {
       .withLatestFrom(input.repeatPasswordTextFieldText) { $1 }
       .withLatestFrom(user) { ($0, $1) }
       .asObservable()
-      .flatMapLatest { (password, user) -> Observable<Result<Void, Error>> in
+      .flatMapLatest { password, user -> Observable<Result<Void, Error>> in
         user.rx.updatePassword(to: password)
       }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 

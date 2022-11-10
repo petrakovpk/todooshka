@@ -8,7 +8,6 @@
 import UIKit
 
 class TDTaskCommentTextView: UITextView {
-
   // MARK: - Properties
   var isEmpty = true
 
@@ -26,5 +25,4 @@ class TDTaskCommentTextView: UITextView {
   required init?(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)
   }
-
 }

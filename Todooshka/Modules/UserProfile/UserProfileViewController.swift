@@ -12,7 +12,6 @@ import RxSwift
 import UIKit
 
 class UserProfileViewController: TDViewController {
-
   // MARK: - Properties
   let disposeBag = DisposeBag()
   var dataSource: RxTableViewSectionedReloadDataSource<UserProfileSection>!
@@ -78,7 +77,6 @@ class UserProfileViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // tableView
     tableView = UITableView(frame: .zero, style: .plain)
     tableView.backgroundColor = Style.App.background
@@ -104,11 +102,9 @@ class UserProfileViewController: TDViewController {
       bottomConstant: 16,
       rightConstant: 16
     )
-
   }
 
   func configureAlert() {
-
     // adding
     view.addSubview(alertBackgroundView)
     alertBackgroundView.addSubview(alertWindowView)
@@ -162,13 +158,13 @@ class UserProfileViewController: TDViewController {
   }
 
   var hideLogOffAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = true
     })
   }
 
   var showAlerLogOffBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = false
     })
   }

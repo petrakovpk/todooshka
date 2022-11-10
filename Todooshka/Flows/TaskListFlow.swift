@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class TaskListFlow: Flow {
-
   // MARK: - Properties
   var root: Presentable {
     return self.rootViewController
@@ -33,7 +32,6 @@ class TaskListFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-
       // Main Task List Is Required
     case .mainTaskListIsRequired:
       return navigateToTaskList()
@@ -183,5 +181,4 @@ class TaskListFlow: Flow {
     rootViewController.popViewController(animated: true)
     return .none
   }
-
 }

@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class CalendarFlow: Flow {
-
   var root: Presentable {
     return self.rootViewController
   }
@@ -31,7 +30,6 @@ class CalendarFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-
       // Auth
     case .authIsRequired:
       return navigateToAuthFlow()
@@ -357,7 +355,6 @@ class CalendarFlow: Flow {
   }
 
   private func navigateToAuthFlow() -> FlowContributors {
-
     let authFlow = AuthFlow(withServices: services)
 
     Flows.use(authFlow, when: .created) { [unowned self] root in

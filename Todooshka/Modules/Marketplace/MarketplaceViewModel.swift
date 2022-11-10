@@ -11,7 +11,6 @@ import RxSwift
 import RxCocoa
 
 class MarketplaceViewModel: Stepper {
-
   let services: AppServices
   let steps = PublishRelay<Step>()
 
@@ -21,7 +20,7 @@ class MarketplaceViewModel: Stepper {
 
   struct Output {
     let dataSource: Driver<[ThemeSection]>
- //   let openTheme: Driver<Void>
+    let openTheme: Driver<Void>
   }
 
   // MARK: - Init
@@ -30,21 +29,39 @@ class MarketplaceViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let dataSource = Driver<[ThemeSection]>.of(
-      [
-        ThemeSection(
-          header: "Привычки",
-          items: [
-            ThemeItem(theme: Theme(UID: UUID().uuidString, name: "Бросаем курить")),
-            ThemeItem(theme: Theme(UID: UUID().uuidString, name: "Начинаем отжиматься")),
-            ThemeItem(theme: Theme(UID: UUID().uuidString, name: "Читаем по одной книге в неделю"))
-          ]
-        )
-      ]
-    )
+    let themes = services.dataService.themes
+
+    let dataSource = themes
+      .map { themes -> [ThemeSection] in
+        [
+          ThemeSection(
+            header: "Рекомендуемое",
+            items: [
+              ThemeItem(theme: themes[0]),
+              ThemeItem(theme: themes[1]),
+              ThemeItem(theme: themes[2])
+            ]
+          ),
+          ThemeSection(
+            header: "Привычки",
+            items: [
+              ThemeItem(theme: themes[3]),
+              ThemeItem(theme: themes[4]),
+              ThemeItem(theme: themes[5])
+            ]
+          )
+        ]
+      }
+
+    let openTheme = input.selection
+      .withLatestFrom(dataSource) { indexPath, dataSource -> Theme in
+        dataSource[indexPath.section].items[indexPath.item].theme
+      }
+      .map { self.steps.accept(AppStep.showThemeIsRequired(themeUID: $0.UID)) }
 
     return Output(
-      dataSource: dataSource
+      dataSource: dataSource,
+      openTheme: openTheme
     )
   }
 }

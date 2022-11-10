@@ -7,7 +7,6 @@
 import UIKit
 
 struct Style {
-
   struct App {
     static let background = Palette.DualColors.TitanWhite_235_236_255_Haiti_10_12_35
     static let text = Palette.DualColors.BlackPearl_White
@@ -125,7 +124,6 @@ struct Style {
 
   // Alert
   struct BuyAlertView {
-
   }
 
   struct Scene {

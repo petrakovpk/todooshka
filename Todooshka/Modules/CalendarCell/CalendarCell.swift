@@ -11,7 +11,6 @@ import RxCocoa
 import Foundation
 
 class CalendarCell: UICollectionViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "CalendarCell"
 
@@ -99,7 +98,6 @@ class CalendarCell: UICollectionViewCell {
   }
 
   func configure(date: Date, isSelected: Bool, completedTasksCount: Int, plannedTasksCount: Int) {
-
     // contentView
     contentView.borderWidth = date.isInToday ? 1 : 0
     contentView.backgroundColor = isSelected ? Style.Cells.Calendar.Selected : UIColor.clear
@@ -134,7 +132,6 @@ class CalendarCell: UICollectionViewCell {
       centralDot.isHidden = true
       rightDot.isHidden = true
     }
-
   }
 
   func getImage(count: Int) -> UIImage? {

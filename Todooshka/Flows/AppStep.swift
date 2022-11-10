@@ -8,7 +8,6 @@
 import RxFlow
 
 enum AppStep: Step {
-
   // Auth
   case authIsRequired
   case authIsCompleted
@@ -99,7 +98,9 @@ enum AppStep: Step {
   // Show Bird
   case showBirdIsRequired(bird: Bird)
 
+  // Theme
+  case showThemeIsRequired(themeUID: String)
+
   // UserProfile
   case userProfileIsRequired
-
 }

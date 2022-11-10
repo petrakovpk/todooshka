@@ -12,7 +12,6 @@ import Foundation
 import SwipeCellKit
 
 class CompletedTasksCollectionViewCell: SwipeCollectionViewCell {
-
     // MARK: - Properties
     var disposeBag = DisposeBag()
     var viewModel: CompletedTasksCollectionViewCellModel!

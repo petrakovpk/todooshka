@@ -8,7 +8,6 @@
 import UIKit
 
 class OverdueTaskCollectionReusableView: UICollectionReusableView {
-
     static var reuseID: String = "OverdueTaskCollectionReusableView"
 
     private let sectionHeaderLabel = UILabel()

@@ -10,7 +10,6 @@ import RxDataSources
 import UIKit
 
 struct ChangeGenderSectionModel: AnimatableSectionModelType {
-
   var identity: String {
     return header
   }

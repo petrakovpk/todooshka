@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct KindOfTaskSection: AnimatableSectionModelType {
-
     var identity: String {
       header
     }

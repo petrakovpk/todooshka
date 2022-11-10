@@ -9,7 +9,6 @@ import RxDataSources
 import UIKit
 
 struct KindOfTaskIconSection: AnimatableSectionModelType {
-
   var identity: String { header }
   var header: String
   var items: [KindOfTaskIconItem]

@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class SupportViewController: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
@@ -74,7 +73,6 @@ class SupportViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // adding
     view.addSubviews([
       emailLabel,
@@ -113,7 +111,6 @@ class SupportViewController: TDViewController {
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = SupportViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       emailTextFieldText: emailTextField.rx.text.orEmpty.asDriver(),
@@ -132,7 +129,7 @@ class SupportViewController: TDViewController {
   }
 
   var sendButtonIsEnabledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.sendButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
       vc.sendButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.sendButton.isEnabled = isEnabled
@@ -140,12 +137,11 @@ class SupportViewController: TDViewController {
   }
 
   var sendQuestionBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.sendButton.isHidden = true
       vc.resultLabel.isHidden = false
       vc.emailTextField.isEnabled = false
       vc.questionTextView.isPagingEnabled = false
     })
   }
-
 }

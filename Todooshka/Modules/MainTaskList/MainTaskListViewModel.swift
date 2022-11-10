@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class MainTaskListViewModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
@@ -38,7 +37,6 @@ class MainTaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     // idea
     let ideaButtonClick = input.ideaButtonClickTrigger
       .map { self.steps.accept(AppStep.ideaTaskListIsRequired) }

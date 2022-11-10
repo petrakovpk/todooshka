@@ -7,9 +7,7 @@
 import UIKit
 
 class CalendarViewLayout: UICollectionViewFlowLayout {
-
   override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
-
     // Определеяем collectionView
     guard let collectionView = self.collectionView else {
       return super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)

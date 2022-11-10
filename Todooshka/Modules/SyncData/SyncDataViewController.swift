@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class SyncDataViewController: TDViewController {
-
   // MARK: - MVVM
   var viewModel: SyncDataViewModel!
 
@@ -106,7 +105,6 @@ class SyncDataViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // Init
     let stackView1 = UIStackView(arrangedSubviews: [taskDeviceLabel, taskFirebaseLabel], axis: .horizontal)
     stackView1.distribution = .fillEqually
@@ -150,12 +148,10 @@ class SyncDataViewController: TDViewController {
 
     // syncButton
     kindsOfTaskSyncButton.anchor(top: stackView4.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 50)
-
   }
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = SyncDataViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       kindsOfTaskSyncButtonClickTrigger: kindsOfTaskSyncButton.rx.tap.asDriver(),
@@ -174,13 +170,12 @@ class SyncDataViewController: TDViewController {
       outputs.taskFirebaseCountLabel.drive(taskFirebaseCountLabel.rx.text),
       outputs.taskSync.drive(),
       outputs.taskSyncButtonIsEnabled.drive(taskSyncButtonIsEnabledBinder)
-
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
 
   var kindsOfTaskSyncButtonIsEnabledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.kindsOfTaskSyncButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
       vc.kindsOfTaskSyncButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.kindsOfTaskSyncButton.isEnabled = isEnabled
@@ -188,7 +183,7 @@ class SyncDataViewController: TDViewController {
   }
 
   var taskSyncButtonIsEnabledBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isEnabled) in
+    return Binder(self, binding: { vc, isEnabled in
       vc.taskSyncButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
       vc.taskSyncButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
       vc.taskSyncButton.isEnabled = isEnabled

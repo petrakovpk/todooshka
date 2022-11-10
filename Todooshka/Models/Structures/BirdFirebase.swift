@@ -10,7 +10,6 @@ import Firebase
 import Differentiator
 
 struct BirdFirebase: IdentifiableType, Equatable {
-
   // MARK: - IdentifiableType
   var identity: String { UID }
 
@@ -18,9 +17,9 @@ struct BirdFirebase: IdentifiableType, Equatable {
   let UID: String
 
   var userUID: String? = Auth.auth().currentUser?.uid { didSet { lastModified = Date()} }
-  var isBought: Bool = false { didSet { lastModified = Date()} }
+  var isBought = false { didSet { lastModified = Date()} }
 
-  var lastModified: Date = Date()
+  var lastModified = Date()
 
   // MARK: - Equatable
   static func == (lhs: BirdFirebase, rhs: BirdFirebase) -> Bool {
@@ -29,7 +28,6 @@ struct BirdFirebase: IdentifiableType, Equatable {
     && lhs.userUID == rhs.userUID
     && lhs.lastModified == rhs.lastModified
   }
-
 }
 
 // MARK: - Firebase
@@ -44,7 +42,6 @@ extension BirdFirebase {
   }
 
   init?(snapshot: D) {
-
     // check
     guard let dict = snapshot.value as? NSDictionary,
           let isBought = dict.value(forKey: "isBought") as? Bool,

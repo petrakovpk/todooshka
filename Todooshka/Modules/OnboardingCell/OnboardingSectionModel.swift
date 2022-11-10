@@ -9,7 +9,6 @@ import UIKit
 import RxDataSources
 
 struct OnboardingSectionItem: IdentifiableType, Equatable {
-
     // MARK: - Properties
     var header: String
     var description: String
@@ -20,7 +19,6 @@ struct OnboardingSectionItem: IdentifiableType, Equatable {
 }
 
 struct OnboardingSectionModel: AnimatableSectionModelType {
-
     // MARK: - Identity
     var identity: String { return UUID().uuidString }
 

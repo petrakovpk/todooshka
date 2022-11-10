@@ -8,7 +8,6 @@
 import UIKit
 
 class ChangeGenderCell: UITableViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "ChangeGenderCell"
 
@@ -41,7 +40,6 @@ class ChangeGenderCell: UITableViewCell {
     // isSelectedImageView
     isSelectedImageView.anchorCenterYToSuperview()
     isSelectedImageView.anchor(right: contentView.rightAnchor, rightConstant: 16, widthConstant: 25, heightConstant: 25)
-
   }
 
   // MARK: - Configure

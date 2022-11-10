@@ -8,7 +8,6 @@
 import UIKit
 
 class UserProfileDayButtonView: UIView {
-
     // MARK: - UI Elements
     private let userImageView: UIImageView = {
         let imageView = UIImageView()
@@ -37,7 +36,6 @@ class UserProfileDayButtonView: UIView {
     // MARK: - Init
     init() {
         super.init(frame: .zero)
-
     }
 
     required init?(coder: NSCoder) {
@@ -46,7 +44,6 @@ class UserProfileDayButtonView: UIView {
 
     // MARK: - ConfigureUI
     func configureUI(userDay: UserDay) {
-
         layer.cornerRadius = 15
         borderColor = .black
         borderWidth = 0.5
@@ -72,5 +69,4 @@ class UserProfileDayButtonView: UIView {
         /// Border color is not automatically catched by trait collection changes. Therefore, update it here.
         layer.borderColor = TDStyle.Colors.invertedBackgroundColor.cgColor
     }
-
 }

@@ -10,7 +10,6 @@ import RxCocoa
 import RxSwift
 
 extension Reactive where Base: Auth {
-
   /**
    @brief Sets the currentUser on the calling Auth instance to the provided user object.
    @param  user The user object to be set as the current user of the calling Auth instance.
@@ -561,5 +560,4 @@ extension Reactive where Base: Auth {
       }
     }
   }
-
 }

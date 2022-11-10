@@ -13,7 +13,6 @@ import RxSwift
 import RxCocoa
 
 class TabBarFlow: Flow {
-
   var root: Presentable {
     return self.rootViewController
   }
@@ -46,7 +45,6 @@ class TabBarFlow: Flow {
   }
 
   private func navigateToTaskFlow() -> FlowContributors {
-
     let taskFlow = TaskFlow(withServices: services)
 
     Flows.use(taskFlow, when: .created) { [unowned self] root in
@@ -67,32 +65,46 @@ class TabBarFlow: Flow {
   }
 
   private func navigateToTabBar() -> FlowContributors {
-
-    let calendarFlow = CalendarFlow(withServices: self.services)
+    let marketplaceFlow = MarketplaceFlow(withServices: self.services)
     let taskListFlow = TaskListFlow(withServices: self.services)
+    let calendarFlow1 = CalendarFlow(withServices: self.services)
+    let calendarFlow2 = CalendarFlow(withServices: self.services)
 
     let viewModel = TabBarViewModel(services: services)
     rootViewController.viewModel = viewModel
     rootViewController.bindViewModel()
 
-    Flows.use(taskListFlow, calendarFlow, when: .created) { [unowned self] (root1: UINavigationController, root2: UINavigationController) in
-
+    Flows.use(
+      marketplaceFlow,
+      taskListFlow,
+      calendarFlow1,
+      calendarFlow2,
+      when: .created
+    ) { [unowned self] (root1: UINavigationController, root2: UINavigationController, root3: UINavigationController, root4: UINavigationController) in
       let tabBarItem1 = UITabBarItem(title: nil, image: nil, tag: 1)
       let tabBarItem2 = UITabBarItem(title: nil, image: nil, tag: 2)
+      let tabBarItem3 = UITabBarItem(title: nil, image: nil, tag: 3)
+      let tabBarItem4 = UITabBarItem(title: nil, image: nil, tag: 4)
 
       root1.tabBarItem = tabBarItem1
       root2.tabBarItem = tabBarItem2
+      root3.tabBarItem = tabBarItem3
+      root4.tabBarItem = tabBarItem4
 
       root1.navigationBar.isHidden = true
       root2.navigationBar.isHidden = true
+      root3.navigationBar.isHidden = true
+      root4.navigationBar.isHidden = true
 
-      self.rootViewController.setViewControllers([root1, root2], animated: false)
+      self.rootViewController.setViewControllers([root1, root2, root3, root4], animated: false)
     }
 
     return .multiple(flowContributors: [
       .contribute(withNextPresentable: self, withNextStepper: viewModel),
+      .contribute(withNextPresentable: marketplaceFlow, withNextStepper: OneStepper(withSingleStep: AppStep.marketplaceIsRequired)),
       .contribute(withNextPresentable: taskListFlow, withNextStepper: OneStepper(withSingleStep: AppStep.mainTaskListIsRequired)),
-      .contribute(withNextPresentable: calendarFlow, withNextStepper: OneStepper(withSingleStep: AppStep.calendarIsRequired))
+      .contribute(withNextPresentable: calendarFlow1, withNextStepper: OneStepper(withSingleStep: AppStep.calendarIsRequired)),
+      .contribute(withNextPresentable: calendarFlow2, withNextStepper: OneStepper(withSingleStep: AppStep.calendarIsRequired))
     ])
   }
 }

@@ -9,13 +9,12 @@ import SpriteKit
 import SwiftUI
 
 class SKBirdNode: SKSpriteNode {
-
   // MARK: - Public
   var action: BirdActionType = .create
   let level: Int
 
-  var wingsIsUp: Bool = false
-  var randomStaffIsDoing: Bool = false
+  var wingsIsUp = false
+  var randomStaffIsDoing = false
 
   // MARK: - Private
   // Actions
@@ -98,7 +97,6 @@ class SKBirdNode: SKSpriteNode {
   // MARK: - Actions
   func changeStyle(style: BirdStyle, withDelay: Bool) {
     switch (action, withDelay) {
-
     case (.create, _):
       self.style = style
       run(SKAction.sequence([setFrontTextureAction(), fadeInWithoutAnimationAction]))
@@ -148,7 +146,6 @@ class SKBirdNode: SKSpriteNode {
   }
 
   func doRandomStaff() {
-
     let waitBefore = SKAction.wait(forDuration: 10, withRange: 10)
 
     let randomAction = SKAction.run({

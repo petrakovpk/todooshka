@@ -6,7 +6,6 @@ import FirebaseAuth
 
 #if os(iOS)
 extension Reactive where Base: PhoneAuthProvider {
-
   /**
    @brief Starts the phone number authentication flow by sending a verification code to the
    specified phone number.

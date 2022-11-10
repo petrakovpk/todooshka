@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class PasswordViewModel: Stepper {
-
     let disposeBag = DisposeBag()
     let steps = PublishRelay<Step>()
     let email: String

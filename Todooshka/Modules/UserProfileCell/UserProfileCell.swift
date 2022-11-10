@@ -8,7 +8,6 @@
 import UIKit
 
 class UserProfileCell: UITableViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "UserProfileCell"
 

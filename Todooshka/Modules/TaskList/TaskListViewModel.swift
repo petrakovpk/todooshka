@@ -24,7 +24,6 @@ struct ChangeStatus {
 }
 
 class TaskListViewModel: Stepper {
-
   // MARK: - Properties
   // context
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
@@ -78,7 +77,6 @@ class TaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let kindsOfTask = services.dataService
       .kindsOfTask
 
@@ -105,11 +103,11 @@ class TaskListViewModel: Stepper {
     let taskListSectionItems = Driver
       .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
         tasks
-          .sorted { (prevTask, nextTask) -> Bool in
+          .sorted { prevTask, nextTask -> Bool in
             switch self.mode {
             case .idea:
               let prevIndex = kindsOfTask.first { $0.UID == prevTask.kindOfTaskUID }?.index ?? 0
-              let nextIndex = kindsOfTask.first { $0.UID == nextTask.kindOfTaskUID}?.index ?? 0
+              let nextIndex = kindsOfTask.first { $0.UID == nextTask.kindOfTaskUID }?.index ?? 0
               return prevIndex == nextIndex ? prevTask.text < nextTask.text : prevIndex < nextIndex
             case .completed:
               return prevTask.closed ?? Date() < nextTask.closed ?? Date()
@@ -133,7 +131,8 @@ class TaskListViewModel: Stepper {
           mode: self.mode == .main ? .withTimer : .withRepeatButton,
           items: $0
         )
-      ]}
+      ]
+      }
       .asDriver()
 
     let changeStatus = changeStatusTrigger
@@ -185,7 +184,8 @@ class TaskListViewModel: Stepper {
     // selection
     let openTask = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> TaskListSectionItem in
-        dataSource[indexPath.section].items[indexPath.item] }
+        dataSource[indexPath.section].items[indexPath.item]
+      }
       .map { self.steps.accept(AppStep.showTaskIsRequired(task: $0.task )) }
 
     let removeModeOne = changeToRemove
@@ -276,7 +276,7 @@ class TaskListViewModel: Stepper {
             (IndexPath(item: itemIndex, section: sectionIndex) == self.editingIndexPath) ? nil : IndexPath(item: itemIndex, section: sectionIndex)
           }
         }
-    }
+      }
 
     // navigateBack
     let navigateBack = input.backButtonClickTrigger

@@ -9,7 +9,6 @@ import UIKit
 import SpriteKit
 
 class NestScene: SKScene {
-
   // MARK: - Private
   private var actions: [EggActionType] = [.create, .create, .create, .create, .create, .create, .create]
   private var SKEggNodes: [SKEggNode] = []
@@ -38,7 +37,6 @@ class NestScene: SKScene {
   // MARK: - Lifecycle
   override func didMove(to view: SKView) {
     if let scene = scene {
-
       // scene
       scene.size = view.size
       scene.backgroundColor = .clear
@@ -82,9 +80,7 @@ class NestScene: SKScene {
 
   // MARK: - DataSource
   func reloadData() {
-
     for (index, node) in SKEggNodes.enumerated() {
-
       guard
         let action = actions[safe: index],
         action != node.action
@@ -133,7 +129,6 @@ class NestScene: SKScene {
   }
 
   func hatch(level: Int, style: BirdStyle) {
-
     let node = SKBirdNode(level: level, style: style)
 
     // adding
@@ -146,5 +141,4 @@ class NestScene: SKScene {
      node.removeFromParent()
     }
   }
-
 }

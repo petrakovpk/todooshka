@@ -12,7 +12,6 @@ import RxCocoa
 import UIKit
 
 class KindOfTaskListForBirdViewModel: Stepper {
-
   // MARK: - Properties
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
   var managedContext: NSManagedObjectContext? { self.appDelegate?.persistentContainer.viewContext }
@@ -46,7 +45,6 @@ class KindOfTaskListForBirdViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let bird = services.dataService.birds
       .compactMap { $0.first(where: { $0.UID == self.birdUID }) }
 
@@ -70,7 +68,8 @@ class KindOfTaskListForBirdViewModel: Stepper {
         kindsOfTask.filter { $0.isStyleLocked }
       }.withLatestFrom(birdsNotOpened) { kindsOfTask, birdsNotOpened -> [KindOfTask] in
         kindsOfTask.filter { kindOfTask in
-          birdsNotOpened.contains(where: { kindOfTask.style == $0.style })  }
+          birdsNotOpened.contains(where: { kindOfTask.style == $0.style })
+        }
       }
 
     let kindsOfTaskForDataSource = Driver
@@ -87,7 +86,8 @@ class KindOfTaskListForBirdViewModel: Stepper {
           header: "",
           items: $0
         )
-      ]}
+      ]
+      }
 
     let selection = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTask in
@@ -136,5 +136,4 @@ class KindOfTaskListForBirdViewModel: Stepper {
       showAlert: showAlert
     )
   }
-
 }

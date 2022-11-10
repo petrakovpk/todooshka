@@ -8,7 +8,6 @@
 import UIKit
 
 class AlertBuyView: UIView {
-
   // MARK: - Public UI Properties
   public let eggImageView: UIImageView = {
     let imageView = UIImageView()
@@ -134,5 +133,4 @@ class AlertBuyView: UIView {
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-
 }

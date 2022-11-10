@@ -8,7 +8,6 @@
 import UIKit
 
 extension UITextView {
-
     func centerVerticalText() {
         self.textAlignment = .center
         let fitSize = CGSize(width: bounds.width, height: CGFloat.greatestFiniteMagnitude)

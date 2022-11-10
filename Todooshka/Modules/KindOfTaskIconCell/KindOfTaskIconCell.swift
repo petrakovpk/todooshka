@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class KindOfTaskIconCell: UICollectionViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "KindOfTaskIconCell"
 
@@ -49,10 +48,9 @@ class KindOfTaskIconCell: UICollectionViewCell {
       imageView.image = item.icon.image
     }
 
-    shapeLayer.fillColor =   item.isSelected ? Style.Cells.KindOfTask.SelectedBackground.cgColor : Style.Cells.KindOfTask.UnselectedBackground?.cgColor
+    shapeLayer.fillColor = item.isSelected ? Style.Cells.KindOfTask.SelectedBackground.cgColor : Style.Cells.KindOfTask.UnselectedBackground?.cgColor
     shapeLayer.strokeColor = item.isSelected ? nil : Style.Cells.KindOfTask.Border?.cgColor
     shapeLayer.shadowColor = item.isSelected ? Palette.SingleColors.BlueRibbon.cgColor : UIColor.clear.cgColor
-    imageView.tintColor =    item.isSelected ? UIColor.white : Style.App.text
-
+    imageView.tintColor = item.isSelected ? UIColor.white : Style.App.text
   }
 }

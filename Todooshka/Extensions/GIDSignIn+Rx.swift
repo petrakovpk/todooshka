@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 extension Reactive where Base: GIDSignIn {
-
   public func signIn(with config: GIDConfiguration, presenting: UIViewController) -> Observable<Result<GIDGoogleUser, Error>> {
     return Observable.create { observer in
       self.base.signIn(with: config, presenting: presenting) { user, error in
@@ -24,5 +23,4 @@ extension Reactive where Base: GIDSignIn {
       return Disposables.create()
     }
   }
-
 }

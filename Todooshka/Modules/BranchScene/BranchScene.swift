@@ -9,7 +9,6 @@ import UIKit
 import SpriteKit
 
 class BranchScene: SKScene {
-
   // MARK: - Private
   private var actions: [BirdActionType] = [.create, .create, .create, .create, .create, .create, .create]
   private var SKBirdNodes: [SKBirdNode] = []
@@ -26,7 +25,6 @@ class BranchScene: SKScene {
   // MARK: - Lifecycle
   override func didMove(to view: SKView) {
     if let scene = scene {
-
       // scene
       scene.size = view.size
       scene.backgroundColor = .clear
@@ -68,21 +66,19 @@ class BranchScene: SKScene {
 
   // MARK: - DataSource
     func reloadData() {
-
       let hiddenBirds = SKBirdNodes.filter { $0.action == .hide }
 
       for (index, node) in SKBirdNodes.enumerated() {
-
         guard let action = actions[safe: index] else { return }
 
         switch (node.action, action) {
-        case (.create, .sitting(let newStyle, _)):
+        case let (.create, .sitting(newStyle, _)):
           node.changeStyle(style: newStyle, withDelay: false)
 
-        case (.hide, .sitting(let newStyle, _)):
+        case let (.hide, .sitting(newStyle, _)):
           node.changeStyle(style: newStyle, withDelay: hiddenBirds.count != 7 )
 
-        case (.sitting(let oldStyle, let oldClosed), .sitting(let newStyle, let newClosed)):
+        case let (.sitting(oldStyle, oldClosed), .sitting(newStyle, newClosed)):
           if Calendar.current.isDate(oldClosed, inSameDayAs: newClosed) == false || oldStyle != newStyle {
             node.changeStyle(style: newStyle, withDelay: true)
           }
@@ -102,15 +98,13 @@ class BranchScene: SKScene {
       let location = touch.location(in: self)
       let touchedNode = self.nodes(at: location)
       for node in touchedNode {
-        for bird in SKBirdNodes {
-          if node == bird {
-            if bird.wingsIsUp {
-              bird.wingsIsUp = false
-              bird.dowsWings()
-            } else {
-              bird.wingsIsUp = true
-              bird.upWings()
-            }
+        for bird in SKBirdNodes where node == bird {
+          if bird.wingsIsUp {
+            bird.wingsIsUp = false
+            bird.dowsWings()
+          } else {
+            bird.wingsIsUp = true
+            bird.upWings()
           }
         }
       }

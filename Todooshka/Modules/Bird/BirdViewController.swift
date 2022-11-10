@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class BirdViewController: TDViewController {
-
   // MARK: - Body UI Elemenets
   private let birdImageView: UIImageView = {
     let imageView = UIImageView()
@@ -125,7 +124,6 @@ class BirdViewController: TDViewController {
   // MARK: - Configure
 
   func configureBody() {
-
     // collectionView
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
 
@@ -262,12 +260,11 @@ class BirdViewController: TDViewController {
       bottomConstant: 12,
       rightConstant: 12
     )
-
   }
 
   // MARK: - CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -278,7 +275,7 @@ class BirdViewController: TDViewController {
       heightDimension: .absolute(Sizes.Cells.BirdCell.height)
     )
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 10)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 10)
     let groupSize = NSCollectionLayoutSize(
       widthDimension: .estimated(Sizes.Cells.BirdCell.width),
       heightDimension: .estimated(Sizes.Cells.BirdCell.height)
@@ -292,7 +289,6 @@ class BirdViewController: TDViewController {
 
   // MARK: - Bind View Model
   func bindViewModel() {
-
     let input = BirdViewModel.Input(
       alertBuyButtonClick: alertBuyView.buyButton.rx.tap.asDriver(),
       alertCancelButtonClick: alertBuyView.cancelButton.rx.tap.asDriver(),
@@ -322,23 +318,23 @@ class BirdViewController: TDViewController {
       outputs.price.drive(priceLabel.rx.text),
       outputs.title.drive(titleLabel.rx.text)
     ]
-      .forEach({$0.disposed(by: disposeBag)})
+      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   var alertViewHideBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBuyView.isHidden = true
     })
   }
 
   var alertViewShowBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBuyView.isHidden = false
     })
   }
 
   var currencyBinder: Binder<Currency> {
-    return Binder(self, binding: { (vc, currency) in
+    return Binder(self, binding: { vc, currency in
       switch currency {
       case .diamond:
         vc.priceImageView.image = UIImage(named: "diamond")
@@ -354,7 +350,7 @@ class BirdViewController: TDViewController {
   func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskForBirdSection>(
-      configureCell: {(_, collectionView, indexPath, item) in
+      configureCell: {_, collectionView, indexPath, item in
         guard let cell = collectionView.dequeueReusableCell( withReuseIdentifier: KindOfTaskForBirdCell.reuseID, for: indexPath) as? KindOfTaskForBirdCell else { return UICollectionViewCell() }
         switch item.kindOfTaskType {
         case .isPlusButton:
@@ -365,5 +361,4 @@ class BirdViewController: TDViewController {
         return cell
       })
   }
-
 }

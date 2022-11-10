@@ -13,7 +13,6 @@ import Lottie
 import RxGesture
 
 class TaskViewController: TDViewController {
-
   // MARK: - Propertie
   var viewModel: TaskViewModel!
 
@@ -159,7 +158,6 @@ class TaskViewController: TDViewController {
 
   // MARK: - Configure UI
   private func configureUI() {
-
     // title
     titleLabel.text = "Задача"
 
@@ -264,11 +262,9 @@ class TaskViewController: TDViewController {
       rightConstant: 16,
       heightConstant: Sizes.Buttons.AppButton.height
     )
-
   }
 
   private func configureAlert() {
-
     // adding
     view.addSubviews([
       alertBackgroundView,
@@ -320,7 +316,7 @@ class TaskViewController: TDViewController {
 
   // MARK: - CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -331,7 +327,7 @@ class TaskViewController: TDViewController {
       heightDimension: .absolute(Sizes.Cells.KindOfTaskCell.height)
     )
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 10)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 10)
     let groupSize = NSCollectionLayoutSize(
       widthDimension: .estimated(Sizes.Cells.KindOfTaskCell.width),
       heightDimension: .estimated(Sizes.Cells.KindOfTaskCell.height)
@@ -345,7 +341,6 @@ class TaskViewController: TDViewController {
 
   // MARK: - Bind
   func bindViewModel() {
-
     let input = TaskViewModel.Input(
       // textTextField
       textTextFieldText: textTextField.rx.text.orEmpty.asDriver(),
@@ -392,32 +387,31 @@ class TaskViewController: TDViewController {
       outputs.yandexMetrika.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })
-
   }
 
   // MARK: - Binders
   var hideCompleteButtonBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.completeButton.isHidden = true
     })
   }
 
   var clearDescriptionPlaceholderBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.descriptionTextView.textColor = Style.App.text
       vc.descriptionTextView.clear()
     })
   }
 
   var setDescriptionPlaceholderBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.descriptionTextView.textColor = Style.App.placeholder
       vc.descriptionTextView.text = "Напишите комментарий"
     })
   }
 
   var showComleteAlertTriggerBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       let texts = ["Да, я молодец!", "Просто герой :)", "Красавчик же", "Светлое будущее приближается :)"]
 
       // alertView
@@ -437,8 +431,7 @@ class TaskViewController: TDViewController {
   }
 
   var showDatePickerAlertTriggerBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
-
+    return Binder(self, binding: { vc, _ in
       // alertView
       vc.alertBackgroundView.isHidden = false
       vc.alertDatePicker.isHidden = false
@@ -449,13 +442,13 @@ class TaskViewController: TDViewController {
   }
 
   var plannedButtonTextBinder: Binder<String> {
-    return Binder(self, binding: { (vc, text) in
+    return Binder(self, binding: { vc, text in
       vc.plannedDateButton.setTitle(text, for: .normal)
     })
   }
 
   var hideAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertAnimationView.isHidden = true
       vc.alertBackgroundView.isHidden = true
       vc.alertDatePicker.isHidden = true
@@ -465,13 +458,13 @@ class TaskViewController: TDViewController {
   }
 
   var taskIsNewBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
         vc.textTextField.becomeFirstResponder()
     })
   }
 
   var taskIsNotNewBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
         vc.hideKeyboardWhenTappedAround()
     })
   }
@@ -479,7 +472,7 @@ class TaskViewController: TDViewController {
   func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskSection>(
-      configureCell: {(_, collectionView, indexPath, item) in
+      configureCell: {_, collectionView, indexPath, item in
         guard  let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: KindOfTaskCell.reuseID,
           for: indexPath

@@ -8,9 +8,7 @@
 import UIKit
 
 class ConfirmRemoveTaskViewController: UIViewController {
-
     override func viewDidLoad() {
-        view.backgroundColor =  .systemPurple
-
+        view.backgroundColor = .systemPurple
     }
 }

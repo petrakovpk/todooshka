@@ -13,7 +13,6 @@ import Foundation
 import SwipeCellKit
 
 class KindOfTaskListCell: SwipeCollectionViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "KindOfTaskListCell"
 
@@ -70,7 +69,6 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
 
   // MARK: - Configure
   func configureUI() {
-
     // adding
     contentView.addSubviews([
       leftImageView,
@@ -122,7 +120,6 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
       rightImageView.isHidden = false
       rightImageView.image = kindOfTask.isStyleLocked ? UIImage(named: "lockWithRound")?.template : kindOfTask.style.image
       rightImageView.tintColor = Style.App.text
-
     }
   }
 }

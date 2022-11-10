@@ -8,7 +8,6 @@
 import UIKit
 
 class KindOfTaskListReusableCell: UICollectionReusableView {
-
   // MARK: - Properties
   static let reuseID: String = "KindOfTaskListReusableCell"
 

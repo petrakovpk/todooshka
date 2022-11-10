@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class ShopViewModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
@@ -33,7 +32,6 @@ class ShopViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-
     // buttons
     let navigateBack = input.backButtonClickTrigger
       .map { self.steps.accept(AppStep.shopIsCompleted) }
@@ -70,5 +68,4 @@ class ShopViewModel: Stepper {
       show: show
     )
   }
-
 }

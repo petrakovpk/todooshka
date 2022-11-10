@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct TaskListSectionItem: IdentifiableType, Equatable {
-
   let task: Task
   let kindOfTask: KindOfTask
 
@@ -20,5 +19,4 @@ struct TaskListSectionItem: IdentifiableType, Equatable {
     return lhs.task == rhs.task
     && lhs.kindOfTask == rhs.kindOfTask
   }
-
 }

@@ -8,14 +8,12 @@
 import UIKit
 
 class SettingsCell: UITableViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "UserProfileSettingsCell"
 
   // MARK: - Init
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
-
   }
 
   required init?(coder: NSCoder) {
@@ -31,6 +29,6 @@ class SettingsCell: UITableViewCell {
     imageView?.image = UIImage(named: imageName)?.template
     imageView?.tintColor = Style.App.text
     textLabel?.text = text
-    textLabel?.textColor =  Style.App.text
+    textLabel?.textColor = Style.App.text
   }
 }

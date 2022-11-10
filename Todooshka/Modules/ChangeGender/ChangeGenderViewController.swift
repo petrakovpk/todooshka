@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class ChangeGenderViewController: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
   var dataSource: RxTableViewSectionedReloadDataSource<ChangeGenderSectionModel>!
@@ -39,7 +38,6 @@ class ChangeGenderViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // settings
     saveButton.isHidden = false
 
@@ -65,12 +63,10 @@ class ChangeGenderViewController: TDViewController {
       bottomConstant: 16,
       rightConstant: 16
     )
-
   }
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = ChangeGenderViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       saveButtonClickTrigger: saveButton.rx.tap.asDriver(),
@@ -101,5 +97,4 @@ class ChangeGenderViewController: TDViewController {
       dataSource.sectionModels[index].header
     })
   }
-
 }

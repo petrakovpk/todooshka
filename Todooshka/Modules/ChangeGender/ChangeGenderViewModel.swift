@@ -11,7 +11,6 @@ import RxSwift
 import RxCocoa
 
 class ChangeGenderViewModel: Stepper {
-
   let services: AppServices
   let steps = PublishRelay<Step>()
   let selectedGender = BehaviorRelay<Gender>(value: .other)
@@ -35,7 +34,6 @@ class ChangeGenderViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let user = Auth.auth().rx.stateDidChange
       .asDriver(onErrorJustReturn: nil)
       .compactMap { $0 }
@@ -45,7 +43,7 @@ class ChangeGenderViewModel: Stepper {
       .flatMapLatest { user in
         dbUserRef.child(user.uid).child("PERSONAL").rx.observeSingleEvent(.value)
       }.compactMap { snapshot -> NSDictionary? in
-        snapshot.value as? NSDictionary ?? nil
+        snapshot.value as? NSDictionary
       }
 
     let selectedGender = selectedGender.asDriver()
@@ -81,7 +79,7 @@ class ChangeGenderViewModel: Stepper {
     let save = Driver
       .combineLatest(input.saveButtonClickTrigger, gender, user) { ($1, $2) }
       .asObservable()
-      .flatMapLatest { (gender, user) in
+      .flatMapLatest { gender, user in
         dbUserRef.child(user.uid).child("PERSONAL").rx.updateChildValues(["gender": gender.rawValue])
       }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .map { _ in () }
@@ -98,5 +96,4 @@ class ChangeGenderViewModel: Stepper {
       save: save
     )
   }
-
 }

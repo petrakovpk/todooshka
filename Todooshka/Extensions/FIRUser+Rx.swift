@@ -9,7 +9,6 @@ import FirebaseAuth
 import RxSwift
 
 extension Reactive where Base: User {
-
     /**
      @brief Updates the email address for the user. On success, the cached user profile data is
      updated.

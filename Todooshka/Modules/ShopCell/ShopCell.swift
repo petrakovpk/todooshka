@@ -8,7 +8,6 @@
 import UIKit
 
 class ShopCollectionViewCell: UICollectionViewCell {
-
   // MARK: - Properties
   static var reuseID: String = "ShopCollectionViewCell"
 
@@ -31,7 +30,6 @@ class ShopCollectionViewCell: UICollectionViewCell {
 
   // MARK: - draw
   override func draw(_ rect: CGRect) {
-
     // contentView
     contentView.cornerRadius = 11
 

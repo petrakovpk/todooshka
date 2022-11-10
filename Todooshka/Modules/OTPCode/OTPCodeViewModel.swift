@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class OTPCodeViewModel: Stepper {
-
     let disposeBag = DisposeBag()
     let steps = PublishRelay<Step>()
     let verificationID: String

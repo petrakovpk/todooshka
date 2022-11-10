@@ -18,7 +18,6 @@ struct AuthWithGoogleData {
 }
 
 class AuthViewModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let credential = BehaviorRelay<AuthCredential?>(value: nil)
@@ -48,7 +47,6 @@ class AuthViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let appleGetNonceString = input.appleButtonClickTrigger
       .map { self.randomNonceString() }
 

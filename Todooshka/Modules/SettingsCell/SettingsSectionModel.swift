@@ -9,7 +9,6 @@ import UIKit
 import RxDataSources
 
 struct SettingsCellSectionModel: AnimatableSectionModelType {
-
   var identity: String {
     return header
   }

@@ -13,7 +13,6 @@ import RxDataSources
 import SwipeCellKit
 
 class KindOfTaskListViewController: TDViewController {
-
   // MARK: - Properties
   let disposeBag = DisposeBag()
 
@@ -65,7 +64,6 @@ class KindOfTaskListViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // settings
     addButton.isHidden = false
 
@@ -112,7 +110,6 @@ class KindOfTaskListViewController: TDViewController {
   }
 
   private func configureAlert() {
-
     // adding
     view.addSubview(alertBackgroundView)
     alertBackgroundView.addSubview(alertWindowView)
@@ -151,7 +148,6 @@ class KindOfTaskListViewController: TDViewController {
 
   // MARK: - Bind To
   func bindViewModel() {
-
     let input = KindOfTaskListViewModel.Input(
       addButtonClickTrigger: addButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
@@ -173,25 +169,25 @@ class KindOfTaskListViewController: TDViewController {
       outputs.removeKindOfTask.drive(),
       outputs.showAlert.drive(showAlertBinder)
     ]
-      .forEach({$0.disposed(by: disposeBag)})
+      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   // MARK: - Binders
   var hideAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = true
     })
   }
 
   var showAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertBackgroundView.isHidden = false
     })
   }
 
   // MARK: - Setup CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -199,7 +195,7 @@ class KindOfTaskListViewController: TDViewController {
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
@@ -217,7 +213,7 @@ class KindOfTaskListViewController: TDViewController {
   func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(
-      configureCell: {(_, collectionView, indexPath, kindOfTask) in
+      configureCell: {_, collectionView, indexPath, kindOfTask in
         guard let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: KindOfTaskListCell.reuseID,
           for: indexPath
@@ -250,7 +246,6 @@ extension KindOfTaskListViewController: UICollectionViewDragDelegate {
 
 // MARK: - UICollectionViewDropDelegate
 extension KindOfTaskListViewController: UICollectionViewDropDelegate {
-
   func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
     if collectionView.hasActiveDrag {
       return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath )
@@ -259,7 +254,6 @@ extension KindOfTaskListViewController: UICollectionViewDropDelegate {
   }
 
   func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-
     if let destinationIndexPath = coordinator.destinationIndexPath,
        let sourceIndexPath = coordinator.items[0].sourceIndexPath {
       self.itemMoved.accept((sourceIndex: sourceIndexPath, destinationIndex: destinationIndexPath))
@@ -269,9 +263,7 @@ extension KindOfTaskListViewController: UICollectionViewDropDelegate {
 
 // MARK: - SwipeCollectionViewCellDelegate
 extension KindOfTaskListViewController: SwipeCollectionViewCellDelegate {
-
   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-
     guard orientation == .right else { return nil }
 
     let deleteAction = SwipeAction(style: .destructive, title: nil) { action, indexPath in

@@ -11,7 +11,6 @@ import RxDataSources
 import UIKit
 
 struct KindOfTask: IdentifiableType, Equatable {
-
   // MARK: - Staic
   struct Standart {
     static let Simple = KindOfTask(
@@ -124,13 +123,13 @@ struct KindOfTask: IdentifiableType, Equatable {
   var color: UIColor { willSet { lastModified = Date()}}
   var icon: Icon { willSet { lastModified = Date()}}
   var index: Int { willSet { lastModified = Date()}}
-  var isStyleLocked: Bool = false { willSet { lastModified = Date()}}
+  var isStyleLocked = false { willSet { lastModified = Date()}}
   var status: KindOfTaskStatus = .active { willSet { lastModified = Date()}}
   var style: BirdStyle = .simple { willSet { lastModified = Date()}}
   var text: String { willSet { lastModified = Date()}}
   var userUID: String?
 
-  var lastModified: Date = Date()
+  var lastModified = Date()
 
   // MARK: - Init
   init(UID: String, icon: Icon, isStyleLocked: Bool, color: UIColor?, text: String, index: Int) {
@@ -206,7 +205,6 @@ extension KindOfTask {
   }
 
   init?(snapshot: D) {
-
     // check
     guard let dict = snapshot.value as? NSDictionary,
           let colorHexString = dict.value(forKey: "colorHexString") as? String,

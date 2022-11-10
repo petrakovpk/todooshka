@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class RemoveConfirmationViewModel: Stepper {
-
   // MARK: - Properties
   private let services: AppServices
 

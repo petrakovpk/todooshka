@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class ChangeBirthdayViewController: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
@@ -43,7 +42,6 @@ class ChangeBirthdayViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // settings
     saveButton.isHidden = false
 
@@ -79,7 +77,6 @@ class ChangeBirthdayViewController: TDViewController {
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = ChangeBirthdayViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       datePicker: picker.rx.value.asDriver(),

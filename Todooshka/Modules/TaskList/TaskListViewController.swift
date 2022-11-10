@@ -12,7 +12,6 @@ import RxDataSources
 import SwipeCellKit
 
 class TaskListViewController: TDViewController {
-
   // MARK: - Properties
   let disposeBag = DisposeBag()
 
@@ -73,7 +72,6 @@ class TaskListViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // collection view
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
 
@@ -133,7 +131,7 @@ class TaskListViewController: TDViewController {
 
   // MARK: - Setup Collection View
   private func createCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
@@ -141,7 +139,7 @@ class TaskListViewController: TDViewController {
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets =  NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
@@ -157,7 +155,6 @@ class TaskListViewController: TDViewController {
 
   // MARK: - Bind To
   func bindViewModel() {
-
     let input = TaskListViewModel.Input(
       // selection
       selection: collectionView.rx.itemSelected.asDriver(),
@@ -189,28 +186,26 @@ class TaskListViewController: TDViewController {
       outputs.showAlert.drive(showAlertBinder),
       outputs.showRemovaAllButton.drive(showRemovaAllButtonBinder),
       outputs.title.drive(titleLabel.rx.text)
-
     ]
       .forEach({ $0?.disposed(by: disposeBag) })
-
   }
 
   // MARK: - Binders
   var dataSourceBinder: Binder<[TaskListSection]> {
-    return Binder(self, binding: { (_, dataSource) in
+    return Binder(self, binding: { _, dataSource in
       self.dataSource = dataSource
       self.collectionView.reloadData()
     })
   }
 
   var hideAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertView.isHidden = true
     })
   }
 
   var hideCellBinder: Binder<IndexPath> {
-    return Binder(self, binding: { (vc, indexPath) in
+    return Binder(self, binding: { vc, indexPath in
       if let cell = vc.collectionView.cellForItem(at: indexPath) as? TaskCell {
         cell.hideSwipe(animated: true)
       }
@@ -218,41 +213,39 @@ class TaskListViewController: TDViewController {
   }
 
   var showAlertBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.alertView.isHidden = false
     })
   }
 
   var showRemovaAllButtonBinder: Binder<Void> {
-    return Binder(self, binding: { (vc, _) in
+    return Binder(self, binding: { vc, _ in
       vc.removeAllButton.isHidden = false
     })
   }
 
   var addTaskButtonIsHiddenBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isHidden) in
+    return Binder(self, binding: { vc, isHidden in
       vc.addButton.isHidden = isHidden
     })
   }
 
   var removeAllDeletedTasksButtonIsHiddenBinder: Binder<Bool> {
-    return Binder(self, binding: { (vc, isHidden) in
+    return Binder(self, binding: { vc, isHidden in
       vc.removeAllButton.isHidden = isHidden
     })
   }
 
   var repeatButtonBinder: Binder<IndexPath?> {
-    return Binder(self, binding: { (_, indexPath) in
+    return Binder(self, binding: { _, indexPath in
       guard let indexPath = indexPath else { return }
       self.viewModel.changeStatus(indexPath: indexPath, status: .inProgress, completed: nil)
     })
   }
-
 }
 
 // MARK: - UICollectionViewDelegate
 extension TaskListViewController: UICollectionViewDelegate {
-
 }
 
 // MARK: - UICollectionViewDelegate
@@ -261,7 +254,6 @@ extension TaskListViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - UICollectionViewDataSource
 extension TaskListViewController: UICollectionViewDataSource {
-
   func numberOfSections(in collectionView: UICollectionView) -> Int {
     dataSource.count
   }
@@ -297,11 +289,9 @@ extension TaskListViewController: UICollectionViewDataSource {
     section.configure(text: dataSource[indexPath.section].header)
     return section
   }
-
 }
 
 extension TaskListViewController: SwipeCollectionViewCellDelegate {
-
   func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
     viewModel.editingIndexPath = indexPath
   }
@@ -367,5 +357,4 @@ extension TaskListViewController: SwipeCollectionViewCellDelegate {
       action.transitionDelegate = ScaleTransition.default
     }
   }
-
 }

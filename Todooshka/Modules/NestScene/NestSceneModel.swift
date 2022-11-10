@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class NestSceneModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
@@ -19,7 +18,6 @@ class NestSceneModel: Stepper {
   let willShow = BehaviorRelay<Void?>(value: nil)
 
   struct Input {
-
   }
 
   struct Output {
@@ -40,7 +38,6 @@ class NestSceneModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     // timer
     let timer = Driver<Int>
       .interval(RxTimeInterval.seconds(5))

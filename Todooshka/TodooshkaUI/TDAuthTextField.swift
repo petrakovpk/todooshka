@@ -8,7 +8,6 @@
 import UIKit
 
 class TDAuthTextField: UITextField {
-
   let imageView = UIImageView()
 
   init(type: AuthTextFieldType) {

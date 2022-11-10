@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class ScoreViewController: UIViewController {
-
   // MARK: - Header UI Elemenets
   private let headerView = UIView()
   private let titleLabel = UILabel()
@@ -148,11 +147,10 @@ class ScoreViewController: UIViewController {
 
     // dividerView
     dividerView.backgroundColor = UIColor(named: "navigationDividerViewBackgroundColor")
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,     heightConstant: 1.0)
+    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,        heightConstant: 1.0)
   }
 
   func configureBody() {
-
     // adding
     view.addSubview(featherImageView)
     view.addSubview(diamondImageView)
@@ -208,7 +206,7 @@ class ScoreViewController: UIViewController {
     )
 
     // buy buttons
-    let widthConstant = (UIScreen.main.bounds.width - 16 * 4)/3
+    let widthConstant = (UIScreen.main.bounds.width - 16 * 4) / 3
 
     // smallPackageButton
     smallPackageButton.anchor(
@@ -265,7 +263,6 @@ class ScoreViewController: UIViewController {
 
   // MARK: - Bind View Model
   func bindViewModel() {
-
     let input = ScoreViewModel.Input(
       backButtonClickHandler: backButton.rx.tap.asDriver(),
       buyButtonClickTrigger: buyButton.rx.tap.asDriver()
@@ -279,5 +276,4 @@ class ScoreViewController: UIViewController {
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
-
 }

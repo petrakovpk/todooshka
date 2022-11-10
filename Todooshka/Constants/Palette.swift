@@ -8,7 +8,6 @@
 import UIKit
 
 struct Palette {
-
   struct SingleColors {
     static let Amethyst = UIColor(named: "Amethyst")!
     static let BlackPearl = UIColor(named: "BlackPearl")!

@@ -11,7 +11,6 @@ import RxCocoa
 import RxDataSources
 
 class ChangeNameViewContoller: TDViewController {
-
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
@@ -55,12 +54,10 @@ class ChangeNameViewContoller: TDViewController {
     // textField
     textField.becomeFirstResponder()
     textField.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16, rightConstant: 16, heightConstant: 54)
-
   }
 
   // MARK: - Bind ViewModel
   func bindViewModel() {
-
     let input = ChangeNameViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       nameTextFieldEditingDidEndOnExit: textField.rx.controlEvent(.editingDidEndOnExit).asDriver(),

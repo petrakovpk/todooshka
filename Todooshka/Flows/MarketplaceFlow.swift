@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class MarketplaceFlow: Flow {
-
   var root: Presentable {
     return self.rootViewController
   }
@@ -30,12 +29,14 @@ class MarketplaceFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-
     case .marketplaceIsRequired:
       return navigateToMarketplace()
 
     case .navigateBack:
       return navigateBack()
+
+    case .showThemeIsRequired(let themeUID):
+      return navigateToTheme(themeUID: themeUID)
 
     default:
       return .none
@@ -50,9 +51,16 @@ class MarketplaceFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
+  private func navigateToTheme(themeUID: String) -> FlowContributors {
+    let viewController = ThemeViewController()
+    let viewModel = ThemeViewModel(services: services, themeUID: themeUID)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+
   private func navigateBack() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .none
   }
-
 }

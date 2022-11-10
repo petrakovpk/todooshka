@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 extension UIAlertController {
-
     struct AlertAction {
         var title: String?
         var style: UIAlertAction.Style
@@ -41,7 +40,5 @@ extension UIAlertController {
             viewController.present(alertController, animated: true, completion: nil)
             return Disposables.create { alertController.dismiss(animated: true, completion: nil) }
         }
-
     }
-
 }

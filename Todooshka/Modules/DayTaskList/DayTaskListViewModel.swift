@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class DayTaskListViewModel: Stepper {
-
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let disposeBag = DisposeBag()
@@ -20,7 +19,7 @@ class DayTaskListViewModel: Stepper {
   let formatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "d MMMM yyyy"
-    formatter.timeZone =  TimeZone(abbreviation: "UTC")
+    formatter.timeZone = TimeZone(abbreviation: "UTC")
     formatter.locale = Locale(identifier: "ru")
     return formatter
   }()
@@ -54,10 +53,8 @@ class DayTaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let dataSource = services.tasksService.tasks
       .map { tasks -> [TaskListSectionModel] in
-
         let tasks = tasks
           .filter { self.date.beginning(of: .day) ==
             ( self.date <= Date() ? $0.closedDate : $0.plannedDate)?.beginning(of: .day)
@@ -98,7 +95,8 @@ class DayTaskListViewModel: Stepper {
                 }
                 self.services.tasksService.taskRemovingIsRequired.accept(nil)
               }
-            }}
+            }
+          }
 
     let cancelAlertButtonClick = input.cancelAlertButtonClickTrigger
       .do( onNext: { self.services.tasksService.taskRemovingIsRequired.accept(nil) })
@@ -112,5 +110,4 @@ class DayTaskListViewModel: Stepper {
       deleteAlertButtonClick: deleteAlertButtonClick,
       cancelAlertButtonClick: cancelAlertButtonClick
     )}
-
 }

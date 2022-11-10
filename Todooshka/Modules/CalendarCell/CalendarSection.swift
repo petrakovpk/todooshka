@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct CalendarSection: AnimatableSectionModelType {
-
   var identity: Double {
     switch type {
     case .year(let year):

@@ -16,7 +16,6 @@ struct QuestionAttr {
 }
 
 class SupportViewModel: Stepper {
-
   let services: AppServices
   let steps = PublishRelay<Step>()
 
@@ -39,7 +38,6 @@ class SupportViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-
     let isEmailValid = input.emailTextFieldText
       .map { email -> Bool in
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"

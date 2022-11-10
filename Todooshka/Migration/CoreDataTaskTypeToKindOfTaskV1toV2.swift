@@ -9,9 +9,7 @@ import CoreData
 import Firebase
 
 class CoreDataTaskTypeToKindOfTaskV1toV2: NSEntityMigrationPolicy {
-
   override func createDestinationInstances(forSource sInstance: NSManagedObject, in mapping: NSEntityMapping, manager: NSMigrationManager) throws {
-
     try super.createDestinationInstances(forSource: sInstance, in: mapping, manager: manager)
 
     guard let destinationKindOfTask = manager.destinationInstances(forEntityMappingName: mapping.name, sourceInstances: [sInstance]).last else { return }

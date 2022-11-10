@@ -8,7 +8,6 @@
 import RxDataSources
 
 struct ChangeGenderItem: IdentifiableType, Equatable {
-
   var identity: String { return UUID().uuidString }
   var gender: Gender
   var isSelected: Bool

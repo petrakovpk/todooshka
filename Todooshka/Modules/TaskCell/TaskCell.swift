@@ -12,12 +12,11 @@ import Foundation
 import SwipeCellKit
 
 class TaskCell: SwipeCollectionViewCell {
-
   // MARK: - Public
   static let reuseID: String = "TaskCell"
 
   var disposeBag = DisposeBag()
-  var drawCompleted: Bool = false
+  var drawCompleted = false
 
   // MARK: - Public
   // UI
@@ -38,7 +37,7 @@ class TaskCell: SwipeCollectionViewCell {
 
   // MARK: - Private
   // Properties
-  private var isEnabled: Bool = true
+  private var isEnabled = true
   private var oldLayer: CALayer?
   private var oldLineGradientLayer: CAGradientLayer?
   private var oldTimeLayer: CAGradientLayer?
@@ -103,7 +102,6 @@ class TaskCell: SwipeCollectionViewCell {
   }
 
   func drawLightMode() {
-
     let backgroundLayer = CALayer()
     backgroundLayer.frame = bounds
     backgroundLayer.cornerRadius = 11
@@ -112,7 +110,7 @@ class TaskCell: SwipeCollectionViewCell {
     backgroundLayer.shadowRadius = 5
     backgroundLayer.shadowOffset = CGSize(width: 5, height: 5)
     backgroundLayer.shadowColor = UIColor(red: 0.693, green: 0.702, blue: 0.875, alpha: 0.6).cgColor
-    backgroundLayer.backgroundColor = UIColor(red: 244/255, green: 245/255, blue: 1, alpha: 1).cgColor
+    backgroundLayer.backgroundColor = UIColor(red: 244 / 255, green: 245 / 255, blue: 1, alpha: 1).cgColor
 
     if let oldLayer = oldLayer {
       contentView.layer.replaceSublayer(oldLayer, with: backgroundLayer)
@@ -124,7 +122,6 @@ class TaskCell: SwipeCollectionViewCell {
   }
 
   func drawDarkMode() {
-
     let gradientLayer = CAGradientLayer()
     let shapeLayer = CAShapeLayer()
 
@@ -204,7 +201,6 @@ class TaskCell: SwipeCollectionViewCell {
 
   // MARK: - Configure UI
   func configureUI() {
-
     // contentView
     contentView.addSubview(repeatButton)
     contentView.addSubview(taskTextLabel)
@@ -250,7 +246,6 @@ class TaskCell: SwipeCollectionViewCell {
       taskTextLabel.anchor(top: contentView.topAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 12, leftConstant: 8, rightConstant: 8)
       descriptionTextLabel.anchor(top: taskTextLabel.bottomAnchor, left: taskTypeImageView.rightAnchor, right: taskTimeLeftView.leftAnchor, topConstant: 3, leftConstant: 8, rightConstant: 8)
     }
-
   }
 
   func configure(with mode: TaskCellMode) {
@@ -295,7 +290,6 @@ class TaskCell: SwipeCollectionViewCell {
 
   // MARK: - Configure UI
   private func configureLineLayout(with percent: Double) {
-
     let widthConstant = percent * (contentView.frame.width.double - 22)
     let roundGradintLayer = CAGradientLayer()
     let lineGradientLayer = CAGradientLayer()
