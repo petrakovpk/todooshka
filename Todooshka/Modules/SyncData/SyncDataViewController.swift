@@ -119,6 +119,7 @@ class SyncDataViewController: TDViewController {
     stackView4.distribution = .fillEqually
 
     //  header
+    backButton.isHidden = false
     titleLabel.text = "Синхронизируем данные"
 
     // adding

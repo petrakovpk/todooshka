@@ -72,13 +72,13 @@ class TaskListViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
+    // header
+    backButton.isHidden = false
+    
     // collection view
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
 
     view.addSubview(collectionView)
-
-    // view
-    view.backgroundColor = Style.App.background
 
     // collectionView
     collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)

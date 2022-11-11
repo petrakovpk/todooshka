@@ -99,7 +99,11 @@ enum AppStep: Step {
   case showBirdIsRequired(bird: Bird)
 
   // Theme
+  case addThemeIsRequired
   case showThemeIsRequired(themeUID: String)
+  case showThemeIsCompleted
+  case themeDayIsRequired(themeDayUID: String)
+  case themeTaskIsRequired
 
   // UserProfile
   case userProfileIsRequired

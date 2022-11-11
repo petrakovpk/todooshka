@@ -104,6 +104,7 @@ class DiamondViewController: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     // titleLabel
+    backButton.isHidden = false
     titleLabel.text = "Бриллиант"
 
     // adding

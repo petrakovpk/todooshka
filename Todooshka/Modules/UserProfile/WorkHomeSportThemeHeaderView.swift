@@ -57,16 +57,16 @@ class WorkHomeSportThemeHeaderView: UIView {
         staskView4.distribution = .fillEqually
 
         addSubview(staskView1)
-        staskView1.anchor(top: headerLabel.bottomAnchor, left: leftAnchor, right: rightAnchor, topConstant: 16, leftConstant: 5,        rightConstant: 5)
+        staskView1.anchor(top: headerLabel.bottomAnchor, left: leftAnchor, right: rightAnchor, topConstant: 16, leftConstant: 5,              rightConstant: 5)
 
         addSubview(staskView2)
-        staskView2.anchor(top: staskView1.bottomAnchor, left: leftAnchor, right: rightAnchor, topConstant: 5, leftConstant: 5,        rightConstant: 5)
+        staskView2.anchor(top: staskView1.bottomAnchor, left: leftAnchor, right: rightAnchor, topConstant: 5, leftConstant: 5,              rightConstant: 5)
 
         addSubview(staskView3)
-        staskView3.anchor(top: staskView2.bottomAnchor, left: leftAnchor, right: rightAnchor, topConstant: 8, leftConstant: 5,        rightConstant: 5)
+        staskView3.anchor(top: staskView2.bottomAnchor, left: leftAnchor, right: rightAnchor, topConstant: 8, leftConstant: 5,              rightConstant: 5)
 
         addSubview(staskView4)
-        staskView4.anchor(top: staskView3.bottomAnchor, left: leftAnchor, right: rightAnchor, topConstant: 5, leftConstant: 5,        rightConstant: 5)
+        staskView4.anchor(top: staskView3.bottomAnchor, left: leftAnchor, right: rightAnchor, topConstant: 5, leftConstant: 5,              rightConstant: 5)
     }
 
     required init?(coder: NSCoder) {

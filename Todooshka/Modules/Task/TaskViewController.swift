@@ -19,14 +19,7 @@ class TaskViewController: TDViewController {
   private let disposeBag = DisposeBag()
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskSection>!
 
-  // MARK: - Task UI Elements
-//  private let textLabel: UILabel = {
-//    let label = UILabel(text: "Задача")
-//    label.font = UIFont.systemFont(ofSize: 15 , weight: .medium)
-//    label.textAlignment = .left
-//    return label
-//  }()
-
+  // MARK: - UI Elements
   private let textTextField: TDTaskTextField = {
     let field = TDTaskTextField(placeholder: "Введите название задачи")
     field.returnKeyType = .done
@@ -158,7 +151,8 @@ class TaskViewController: TDViewController {
 
   // MARK: - Configure UI
   private func configureUI() {
-    // title
+    // header
+    saveButton.isHidden = false
     titleLabel.text = "Задача"
 
     // collectionView
@@ -166,7 +160,6 @@ class TaskViewController: TDViewController {
 
     // adding
     view.addSubviews([
-//      textLabel,
       textTextField,
       kindOfTaskLabel,
       kindsOfTaskButton,
@@ -177,10 +170,7 @@ class TaskViewController: TDViewController {
       dividerView,
       completeButton
     ])
-
-    // saveButton
-    saveButton.isHidden = false
-
+    
     // nameTextField
     textTextField.anchor(
       top: headerView.bottomAnchor,
@@ -386,7 +376,7 @@ class TaskViewController: TDViewController {
       outputs.textTextField.drive(textTextField.rx.text),
       outputs.yandexMetrika.drive()
     ]
-      .forEach({ $0.disposed(by: disposeBag) })
+      .forEach { $0.disposed(by: disposeBag) }
   }
 
   // MARK: - Binders
@@ -465,7 +455,8 @@ class TaskViewController: TDViewController {
 
   var taskIsNotNewBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
-        vc.hideKeyboardWhenTappedAround()
+      vc.backButton.isHidden = false
+      vc.hideKeyboardWhenTappedAround()
     })
   }
 

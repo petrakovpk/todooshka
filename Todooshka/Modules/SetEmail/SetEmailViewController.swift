@@ -84,6 +84,7 @@ class SetEmailViewController: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     // settings
+    backButton.isHidden = false
     refreshButton.isHidden = false
 
     // adding

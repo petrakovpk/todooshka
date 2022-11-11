@@ -77,19 +77,17 @@ class UserProfileViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
+    // header
+    backButton.isHidden = false
+    titleLabel.text = "Настройки и конфеденциальность"
+    
     // tableView
     tableView = UITableView(frame: .zero, style: .plain)
     tableView.backgroundColor = Style.App.background
 
     // adding
     view.addSubview(tableView)
-
-    // view
-    view.backgroundColor = Style.App.background
-
-    // titleLabel
-    titleLabel.text = "Настройки и конфеденциальность"
-
+    
     // tableView
     tableView.register(UserProfileCell.self, forCellReuseIdentifier: UserProfileCell.reuseID)
     tableView.anchor(
@@ -106,11 +104,9 @@ class UserProfileViewController: TDViewController {
 
   func configureAlert() {
     // adding
-    view.addSubview(alertBackgroundView)
-    alertBackgroundView.addSubview(alertWindowView)
-    alertWindowView.addSubview(alertLabel)
-    alertWindowView.addSubview(alertOkButton)
-    alertWindowView.addSubview(alertCancelButton)
+    view.addSubviews([alertBackgroundView])
+    alertBackgroundView.addSubviews([alertWindowView])
+    alertWindowView.addSubviews([alertLabel, alertOkButton, alertCancelButton])
 
     // alertView
     alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)

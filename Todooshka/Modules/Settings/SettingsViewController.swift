@@ -64,17 +64,15 @@ class SettingsViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
+    // header
+    backButton.isHidden = false
+    titleLabel.text = "Настройки и конфеденциальность"
+    
     // tableView
     tableView = UITableView(frame: .zero, style: .grouped)
 
     // adding
     view.addSubview(tableView)
-
-    // view
-    view.backgroundColor = Style.App.background
-
-    // titleLabel
-    titleLabel.text = "Настройки и конфеденциальность"
 
     // tableView
     tableView.backgroundColor = .clear

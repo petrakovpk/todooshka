@@ -32,8 +32,6 @@ struct BirdFirebase: IdentifiableType, Equatable {
 
 // MARK: - Firebase
 extension BirdFirebase {
-  typealias D = DataSnapshot
-
   var data: [AnyHashable: Any] {
     [
       "isBought": isBought,
@@ -41,13 +39,13 @@ extension BirdFirebase {
     ]
   }
 
-  init?(snapshot: D) {
+  init?(snapshot: DataSnapshot) {
     // check
-    guard let dict = snapshot.value as? NSDictionary,
-          let isBought = dict.value(forKey: "isBought") as? Bool,
-          let lastModifiedTimeInterval = dict.value(forKey: "lastModified") as? TimeInterval
+    guard
+      let dict = snapshot.value as? NSDictionary,
+      let isBought = dict.value(forKey: "isBought") as? Bool,
+      let lastModifiedTimeInterval = dict.value(forKey: "lastModified") as? TimeInterval
     else { return nil }
-
     // init
     self.UID = snapshot.key
     self.isBought = isBought

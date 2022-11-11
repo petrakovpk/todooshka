@@ -67,6 +67,7 @@ class FeatherViewController: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     //  header
+    backButton.isHidden = false
     titleLabel.text = "Перышко"
 
     // collectionView

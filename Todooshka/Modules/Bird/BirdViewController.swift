@@ -11,7 +11,7 @@ import RxCocoa
 import RxDataSources
 
 class BirdViewController: TDViewController {
-  // MARK: - Body UI Elemenets
+  
   private let birdImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.layer.cornerRadius = 15
@@ -124,6 +124,8 @@ class BirdViewController: TDViewController {
   // MARK: - Configure
 
   func configureBody() {
+    backButton.isHidden = false
+    
     // collectionView
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
 

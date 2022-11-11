@@ -68,17 +68,17 @@ class OTPCodeViewController: UIViewController {
         navigationItem.rightBarButtonItem?.setTitleTextAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .bold) ], for: .normal)
 
         view.addSubview(appNameLabel)
-        appNameLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor,        right: view.rightAnchor, topConstant: 75, leftConstant: 16,        rightConstant: 16)
+        appNameLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor,              right: view.rightAnchor, topConstant: 75, leftConstant: 16,              rightConstant: 16)
 
         view.addSubview(otpLabel)
-        otpLabel.anchor(top: appNameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16,        rightConstant: 16)
+        otpLabel.anchor(top: appNameLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 16, leftConstant: 16,              rightConstant: 16)
 
         view.addSubview(otpTextField)
         otpTextField.anchorCenterXToSuperview()
-        otpTextField.anchor(top: appNameLabel.bottomAnchor,        topConstant: 64, leftConstant: 16, rightConstant: 16, widthConstant: 150, heightConstant: 50)
+        otpTextField.anchor(top: appNameLabel.bottomAnchor,              topConstant: 64, leftConstant: 16, rightConstant: 16, widthConstant: 150, heightConstant: 50)
 
         view.addSubview(errorLabel)
-        errorLabel.anchor(top: otpTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16,        rightConstant: 16)
+        errorLabel.anchor(top: otpTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16,              rightConstant: 16)
     }
 
     func setLoadingMode(isLoading: Bool) {

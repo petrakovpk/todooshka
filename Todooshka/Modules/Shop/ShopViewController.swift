@@ -30,7 +30,8 @@ class ShopViewController: TDViewController {
   }
 
   func configureBody() {
-    // titleLabel
+    // header
+    backButton.isHidden = false
     titleLabel.text = "Фабрика птиц"
 
     // collectionView

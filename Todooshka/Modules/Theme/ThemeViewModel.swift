@@ -45,7 +45,7 @@ class ThemeViewModel: Stepper {
     // buttons
     let navigateBack = input
       .backButtonClickTrigger
-      .map { self.steps.accept(AppStep.navigateBack) }
+      .map { self.steps.accept(AppStep.showThemeIsCompleted) }
 
     return Output(
       name: name,

@@ -65,6 +65,7 @@ class KindOfTaskListViewController: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     // settings
+    backButton.isHidden = false
     addButton.isHidden = false
 
     // collectionView

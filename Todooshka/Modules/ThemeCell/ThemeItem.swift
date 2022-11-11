@@ -7,16 +7,35 @@
 
 import RxDataSources
 
-struct ThemeItem: IdentifiableType, Equatable {
-  // MARK: - Identity
+enum ThemeItem {
+  case theme(theme: Theme)
+  case plusButton
+}
+
+// MARK: - Identity
+extension ThemeItem: IdentifiableType {
   var identity: String {
-    theme.UID
+    switch self {
+    case .theme(let theme):
+      return theme.UID
+    case .plusButton:
+      return "plusButton"
+    }
   }
+}
 
-  let theme: Theme
-
-  // MARK: - Equatable
+// MARK: - Equatable
+extension ThemeItem: Equatable {
   static func == (lhs: ThemeItem, rhs: ThemeItem) -> Bool {
-     lhs.theme == rhs.theme
+    switch (lhs, rhs) {
+    case let (.theme(leftTheme), .theme(rightTheme) ):
+      return leftTheme.UID == rightTheme.UID
+    case (.theme, .plusButton):
+      return false
+    case (.plusButton, .theme):
+      return false
+    case (.plusButton, .plusButton):
+      return true
+    }
   }
 }

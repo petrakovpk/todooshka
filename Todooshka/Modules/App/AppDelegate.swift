@@ -36,9 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     Database.database().isPersistenceEnabled = true
 
 #if DEBUG
-    UIApplication.shared.isIdleTimerDisabled = true
+  UIApplication.shared.isIdleTimerDisabled = true
 #endif
-    return true
+  return true
   }
 
   // MARK: UISceneSession Lifecycle

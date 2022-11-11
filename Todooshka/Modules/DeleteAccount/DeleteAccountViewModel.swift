@@ -33,7 +33,7 @@ class DeleteAccountViewModel: Stepper {
 
   func transform(input: Input) -> Output {
     let deleteAccountButtonIsEnaled = services.dataService.user
-      .map { $0 == nil ? false : true    }
+      .map { $0 == nil ? false : true          }
 
     let deleteAccount = input.deleteAccountClickTrigger
       .withLatestFrom(services.dataService.compactUser) { $1 }

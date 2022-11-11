@@ -77,7 +77,8 @@ class KindOfTaskListForBirdViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-    // titleLabel
+    // header
+    backButton.isHidden = false
     titleLabel.text = "Типы задач"
 
     // collection view

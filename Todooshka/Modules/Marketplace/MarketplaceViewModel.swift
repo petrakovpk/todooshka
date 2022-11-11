@@ -19,6 +19,7 @@ class MarketplaceViewModel: Stepper {
   }
 
   struct Output {
+    let addTheme: Driver<Void>
     let dataSource: Driver<[ThemeSection]>
     let openTheme: Driver<Void>
   }
@@ -35,31 +36,52 @@ class MarketplaceViewModel: Stepper {
       .map { themes -> [ThemeSection] in
         [
           ThemeSection(
+            header: "Мои темы",
+            items: [
+              .theme(theme: themes[0]),
+              .plusButton
+            ]
+          ),
+          ThemeSection(
             header: "Рекомендуемое",
             items: [
-              ThemeItem(theme: themes[0]),
-              ThemeItem(theme: themes[1]),
-              ThemeItem(theme: themes[2])
+              .theme(theme: themes[1]),
+              .theme(theme: themes[2]),
+              .theme(theme: themes[3])
             ]
           ),
           ThemeSection(
             header: "Привычки",
             items: [
-              ThemeItem(theme: themes[3]),
-              ThemeItem(theme: themes[4]),
-              ThemeItem(theme: themes[5])
+              .theme(theme: themes[4]),
+              .theme(theme: themes[5]),
+              .theme(theme: themes[6])
             ]
           )
         ]
       }
 
-    let openTheme = input.selection
-      .withLatestFrom(dataSource) { indexPath, dataSource -> Theme in
-        dataSource[indexPath.section].items[indexPath.item].theme
+    let itemSelected = input.selection
+      .withLatestFrom(dataSource) { indexPath, dataSource -> ThemeItem in
+        dataSource[indexPath.section].items[indexPath.item]
+      }
+    
+    let addTheme = itemSelected
+      .compactMap { item -> Void? in
+        guard case .plusButton = item else { return nil }
+        return ()
+      }
+      .map { self.steps.accept(AppStep.addThemeIsRequired) }
+    
+    let openTheme = itemSelected
+      .compactMap { item -> Theme? in
+        guard case .theme(let theme) = item else { return nil }
+        return theme
       }
       .map { self.steps.accept(AppStep.showThemeIsRequired(themeUID: $0.UID)) }
 
     return Output(
+      addTheme: addTheme,
       dataSource: dataSource,
       openTheme: openTheme
     )

@@ -84,6 +84,10 @@ class SetPhoneViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
+    //  header
+    backButton.isHidden = false
+    titleLabel.text = "Телефонные номера"
+    
     // adding
     view.addSubviews([
       phoneLabel,
@@ -93,9 +97,6 @@ class SetPhoneViewController: TDViewController {
       checkOTPCodeButton,
       errorTextView
     ])
-
-    //  header
-    titleLabel.text = "Телефонные номера"
 
     // signedPhoneNumberLabel
     phoneLabel.anchor(

@@ -126,7 +126,6 @@
 		60ED956E27B520C1005ACC33 /* TaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED956D27B520C1005ACC33 /* TaskStatus.swift */; };
 		60ED958727B54927005ACC33 /* Todooshka.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 60ED957627B52C4B005ACC33 /* Todooshka.xcdatamodeld */; };
 		60ED958B27B5844D005ACC33 /* Feather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED958A27B5844D005ACC33 /* Feather.swift */; };
-		60F0719326DA70600048AB71 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F0719226DA70600048AB71 /* Colors.swift */; };
 		60F0719526DA70740048AB71 /* UIViewControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F0719426DA70740048AB71 /* UIViewControllers.swift */; };
 		60F0719726DA70820048AB71 /* UIButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F0719626DA70820048AB71 /* UIButtons.swift */; };
 		60F0719926DA70970048AB71 /* UITextFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F0719826DA70970048AB71 /* UITextFields.swift */; };
@@ -225,6 +224,18 @@
 		9D9733D02919165A00733C45 /* ThemeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733CF2919165A00733C45 /* ThemeHeader.swift */; };
 		9D9733D329192F8E00733C45 /* ThemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733D229192F8E00733C45 /* ThemeViewController.swift */; };
 		9D9733D529192F9800733C45 /* ThemeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733D429192F9700733C45 /* ThemeViewModel.swift */; };
+		9D9733D8291D231D00733C45 /* ThemeWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733D7291D231D00733C45 /* ThemeWeek.swift */; };
+		9D9733DA291D232400733C45 /* ThemeDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733D9291D232400733C45 /* ThemeDay.swift */; };
+		9D9733DC291D4A1500733C45 /* ThemePlusButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733DB291D4A1500733C45 /* ThemePlusButtonCell.swift */; };
+		9D9733DF291D885F00733C45 /* AddThemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733DE291D885F00733C45 /* AddThemeViewController.swift */; };
+		9D9733E1291D886F00733C45 /* AddThemeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733E0291D886F00733C45 /* AddThemeViewModel.swift */; };
+		9D9733E4291E4A3F00733C45 /* ThemeDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733E3291E4A3F00733C45 /* ThemeDayCell.swift */; };
+		9D9733E6291E4A4800733C45 /* ThemeDayHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733E5291E4A4800733C45 /* ThemeDayHeader.swift */; };
+		9D9733E8291E4A5900733C45 /* ThemeDaySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733E7291E4A5900733C45 /* ThemeDaySection.swift */; };
+		9D9733EB291E531A00733C45 /* ThemeDayViewContoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733EA291E531A00733C45 /* ThemeDayViewContoller.swift */; };
+		9D9733ED291E532200733C45 /* ThemeDayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733EC291E532200733C45 /* ThemeDayViewModel.swift */; };
+		9D9733F0291E688E00733C45 /* ThemeTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733EF291E688E00733C45 /* ThemeTaskViewController.swift */; };
+		9D9733F2291E689600733C45 /* ThemeTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733F1291E689600733C45 /* ThemeTaskViewModel.swift */; };
 		9DC65D3C28D320B600221ED2 /* SyncDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */; };
 		9DC65D3E28D320CA00221ED2 /* SyncDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */; };
 		9DC65D4028D3510000221ED2 /* NSManagedObjectContext+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */; };
@@ -384,7 +395,6 @@
 		60ED957727B52C4B005ACC33 /* Todooshka v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Todooshka v2.xcdatamodel"; sourceTree = "<group>"; };
 		60ED957827B52C4B005ACC33 /* Todooshka.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Todooshka.xcdatamodel; sourceTree = "<group>"; };
 		60ED958A27B5844D005ACC33 /* Feather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Feather.swift; path = ../App/Feather.swift; sourceTree = "<group>"; };
-		60F0719226DA70600048AB71 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		60F0719426DA70740048AB71 /* UIViewControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllers.swift; sourceTree = "<group>"; };
 		60F0719626DA70820048AB71 /* UIButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButtons.swift; sourceTree = "<group>"; };
 		60F0719826DA70970048AB71 /* UITextFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextFields.swift; sourceTree = "<group>"; };
@@ -486,6 +496,18 @@
 		9D9733CF2919165A00733C45 /* ThemeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeHeader.swift; sourceTree = "<group>"; };
 		9D9733D229192F8E00733C45 /* ThemeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeViewController.swift; sourceTree = "<group>"; };
 		9D9733D429192F9700733C45 /* ThemeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeViewModel.swift; sourceTree = "<group>"; };
+		9D9733D7291D231D00733C45 /* ThemeWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeWeek.swift; sourceTree = "<group>"; };
+		9D9733D9291D232400733C45 /* ThemeDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeDay.swift; sourceTree = "<group>"; };
+		9D9733DB291D4A1500733C45 /* ThemePlusButtonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePlusButtonCell.swift; sourceTree = "<group>"; };
+		9D9733DE291D885F00733C45 /* AddThemeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddThemeViewController.swift; sourceTree = "<group>"; };
+		9D9733E0291D886F00733C45 /* AddThemeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddThemeViewModel.swift; sourceTree = "<group>"; };
+		9D9733E3291E4A3F00733C45 /* ThemeDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeDayCell.swift; sourceTree = "<group>"; };
+		9D9733E5291E4A4800733C45 /* ThemeDayHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeDayHeader.swift; sourceTree = "<group>"; };
+		9D9733E7291E4A5900733C45 /* ThemeDaySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeDaySection.swift; sourceTree = "<group>"; };
+		9D9733EA291E531A00733C45 /* ThemeDayViewContoller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeDayViewContoller.swift; sourceTree = "<group>"; };
+		9D9733EC291E532200733C45 /* ThemeDayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeDayViewModel.swift; sourceTree = "<group>"; };
+		9D9733EF291E688E00733C45 /* ThemeTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTaskViewController.swift; sourceTree = "<group>"; };
+		9D9733F1291E689600733C45 /* ThemeTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTaskViewModel.swift; sourceTree = "<group>"; };
 		9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewController.swift; sourceTree = "<group>"; };
 		9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewModel.swift; sourceTree = "<group>"; };
 		9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Rx.swift"; sourceTree = "<group>"; };
@@ -825,6 +847,7 @@
 		60AE9DAD2652F53B00E51531 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				9D9733DD291D884D00733C45 /* AddTheme */,
 				60AE9DDF2652FF9200E51531 /* App */,
 				9D42BF6428C76A38008F624F /* Auth */,
 				6006F83427AA8EC100E5AE9E /* Bird */,
@@ -869,6 +892,9 @@
 				602591C82679CF0800E2BBF8 /* TaskList */,
 				9D9733D129192F7E00733C45 /* Theme */,
 				9D0A8211290FEB20006D777C /* ThemeCell */,
+				9D9733E9291E530300733C45 /* ThemeDay */,
+				9D9733E2291E4A2C00733C45 /* ThemeDayCell */,
+				9D9733EE291E687A00733C45 /* ThemeTask */,
 				60AE9DC52652FC5E00E51531 /* UserProfile */,
 				9D42C02E28CF0E70008F624F /* UserProfileCell */,
 			);
@@ -1022,6 +1048,8 @@
 				600935652804227A0028C9AA /* SceneAction.swift */,
 				60EB113E2656A32400992BF8 /* Task.swift */,
 				9D0A8218290FEC41006D777C /* Theme.swift */,
+				9D9733D9291D232400733C45 /* ThemeDay.swift */,
+				9D9733D7291D231D00733C45 /* ThemeWeek.swift */,
 			);
 			path = Structures;
 			sourceTree = "<group>";
@@ -1029,7 +1057,6 @@
 		60F0719126DA70440048AB71 /* Style */ = {
 			isa = PBXGroup;
 			children = (
-				60F0719226DA70600048AB71 /* Colors.swift */,
 				60F0719626DA70820048AB71 /* UIButtons.swift */,
 				60F0719826DA70970048AB71 /* UITextFields.swift */,
 				60F0719426DA70740048AB71 /* UIViewControllers.swift */,
@@ -1087,6 +1114,7 @@
 				9D0A820F290FEB19006D777C /* ThemeCell.swift */,
 				9D9733CF2919165A00733C45 /* ThemeHeader.swift */,
 				9D0A8212290FEB43006D777C /* ThemeItem.swift */,
+				9D9733DB291D4A1500733C45 /* ThemePlusButtonCell.swift */,
 				9D0A8214290FEB4C006D777C /* ThemeSection.swift */,
 			);
 			path = ThemeCell;
@@ -1250,6 +1278,43 @@
 				9D9733D429192F9700733C45 /* ThemeViewModel.swift */,
 			);
 			path = Theme;
+			sourceTree = "<group>";
+		};
+		9D9733DD291D884D00733C45 /* AddTheme */ = {
+			isa = PBXGroup;
+			children = (
+				9D9733DE291D885F00733C45 /* AddThemeViewController.swift */,
+				9D9733E0291D886F00733C45 /* AddThemeViewModel.swift */,
+			);
+			path = AddTheme;
+			sourceTree = "<group>";
+		};
+		9D9733E2291E4A2C00733C45 /* ThemeDayCell */ = {
+			isa = PBXGroup;
+			children = (
+				9D9733E3291E4A3F00733C45 /* ThemeDayCell.swift */,
+				9D9733E5291E4A4800733C45 /* ThemeDayHeader.swift */,
+				9D9733E7291E4A5900733C45 /* ThemeDaySection.swift */,
+			);
+			path = ThemeDayCell;
+			sourceTree = "<group>";
+		};
+		9D9733E9291E530300733C45 /* ThemeDay */ = {
+			isa = PBXGroup;
+			children = (
+				9D9733EA291E531A00733C45 /* ThemeDayViewContoller.swift */,
+				9D9733EC291E532200733C45 /* ThemeDayViewModel.swift */,
+			);
+			path = ThemeDay;
+			sourceTree = "<group>";
+		};
+		9D9733EE291E687A00733C45 /* ThemeTask */ = {
+			isa = PBXGroup;
+			children = (
+				9D9733EF291E688E00733C45 /* ThemeTaskViewController.swift */,
+				9D9733F1291E689600733C45 /* ThemeTaskViewModel.swift */,
+			);
+			path = ThemeTask;
 			sourceTree = "<group>";
 		};
 		9DC65D3A28D3209A00221ED2 /* SyncData */ = {
@@ -1525,6 +1590,7 @@
 				6006F83827AA8EEA00E5AE9E /* BirdViewModel.swift in Sources */,
 				60FA514126D806CC007B3B36 /* ConfirmRemoveTaskViewModel.swift in Sources */,
 				9D42C05D28CF4FFB008F624F /* SetPhoneViewController.swift in Sources */,
+				9D9733DA291D232400733C45 /* ThemeDay.swift in Sources */,
 				60819A172705A49F0067AF05 /* TDViewController.swift in Sources */,
 				60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */,
 				9D42C01B28CA37BC008F624F /* FIRUser+Rx.swift in Sources */,
@@ -1554,6 +1620,7 @@
 				60B3AE0427FD7CCD00B7E5BD /* Observable+withPrevious.swift in Sources */,
 				6067D99F26B1EF3A00F0FB72 /* TabBarViewModel.swift in Sources */,
 				60AE9DD22652FCEA00E51531 /* CalendarViewModel.swift in Sources */,
+				9D9733E6291E4A4800733C45 /* ThemeDayHeader.swift in Sources */,
 				600DA59127FEFC6E004A4634 /* KindOfTaskFlowAction.swift in Sources */,
 				6055D199267200B700316BB4 /* UserDay.swift in Sources */,
 				9D6193F828F42CF600C526A7 /* CoreDataTaskType+CoreDataProperties.swift in Sources */,
@@ -1573,6 +1640,7 @@
 				9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */,
 				9D42C05728CF4F8B008F624F /* ChangePasswordViewModel.swift in Sources */,
 				60AE9D632652E5AA00E51531 /* AppDelegate.swift in Sources */,
+				9D9733F0291E688E00733C45 /* ThemeTaskViewController.swift in Sources */,
 				60B299FE27CE3FF60072EE8E /* RxTask.swift in Sources */,
 				9D9733C629165A0900733C45 /* KindOfTaskListItemType.swift in Sources */,
 				6069AE4126E7E5890098B25E /* KindOfTaskIconCell.swift in Sources */,
@@ -1597,9 +1665,11 @@
 				9DC65D3E28D320CA00221ED2 /* SyncDataViewModel.swift in Sources */,
 				606B03AD26C4619200F332C5 /* Date.swift in Sources */,
 				9D42C05328CF3514008F624F /* ChangeGenderCell.swift in Sources */,
+				9D9733ED291E532200733C45 /* ThemeDayViewModel.swift in Sources */,
 				9DE96089286106B600E5981A /* DiamondViewController.swift in Sources */,
 				602D1B3E26C1BBE600DAA711 /* TDTaskCommentTextView.swift in Sources */,
 				60C1AC552817D52100C63404 /* KindOfTaskListSection.swift in Sources */,
+				9D9733E8291E4A5900733C45 /* ThemeDaySection.swift in Sources */,
 				9D08CDDB28FC0C9800689427 /* CalendarViewLayout.swift in Sources */,
 				9D42BF5528C23CA0008F624F /* TaskListSectionItem.swift in Sources */,
 				60F0719926DA70970048AB71 /* UITextFields.swift in Sources */,
@@ -1627,11 +1697,14 @@
 				9DC65D4E28D5DA5B00221ED2 /* UIColor.swift in Sources */,
 				9D17D43F28881ED400D3E304 /* DiamondPackageType.swift in Sources */,
 				6075496227EDC5B400B96D20 /* CrackType.swift in Sources */,
+				9D9733D8291D231D00733C45 /* ThemeWeek.swift in Sources */,
 				9D42C04428CF2874008F624F /* ChangeGenderViewModel.swift in Sources */,
 				9D3BBC4D28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift in Sources */,
 				60F0719726DA70820048AB71 /* UIButtons.swift in Sources */,
+				9D9733E4291E4A3F00733C45 /* ThemeDayCell.swift in Sources */,
 				60AE9DD62652FD1800E51531 /* TaskListViewModel.swift in Sources */,
 				6053F85E28206C060047C204 /* AlertBuyButton.swift in Sources */,
+				9D9733F2291E689600733C45 /* ThemeTaskViewModel.swift in Sources */,
 				60AE9D652652E5AA00E51531 /* SceneDelegate.swift in Sources */,
 				60C1522926BC3A9E00F10284 /* KindOfTaskListCell.swift in Sources */,
 				9D42BF6A28C76A38008F624F /* AuthViewModel.swift in Sources */,
@@ -1648,6 +1721,7 @@
 				9D42BF4C289AABEF008F624F /* SKBirdNode.swift in Sources */,
 				9D44C0C728E06F4A0022148C /* KindOfTaskIconItem.swift in Sources */,
 				60AE9DBF2652F9CF00E51531 /* AppStepper.swift in Sources */,
+				9D9733DF291D885F00733C45 /* AddThemeViewController.swift in Sources */,
 				60B82FED2654FCE100BF5F94 /* TaskFlow.swift in Sources */,
 				6006F83327AA74CE00E5AE9E /* ShopSection.swift in Sources */,
 				600DA58F27FEFC16004A4634 /* TaskFlowAction.swift in Sources */,
@@ -1669,6 +1743,7 @@
 				6055D19B2672021200316BB4 /* CalendarSection.swift in Sources */,
 				9DC65D5128D883F400221ED2 /* Diamond.swift in Sources */,
 				60559CA626E76F5300CCBD5F /* KindOfTaskColorSection.swift in Sources */,
+				9D9733E1291D886F00733C45 /* AddThemeViewModel.swift in Sources */,
 				9D42BF6828C76A38008F624F /* AuthViewController.swift in Sources */,
 				604D1F7D27ADB80500E05D09 /* KindOfTaskStatus.swift in Sources */,
 				600DA58D27FED7BB004A4634 /* TypeColor.swift in Sources */,
@@ -1706,7 +1781,6 @@
 				9D42C01D28CA3A9B008F624F /* FIRPhoneAuthProvider+Rx.swift in Sources */,
 				9D6193FC28F6060F00C526A7 /* App.swift in Sources */,
 				6042576B2677AB0D005A518C /* SettingsCell.swift in Sources */,
-				60F0719326DA70600048AB71 /* Colors.swift in Sources */,
 				6053F86528213BED0047C204 /* KindOfTaskListDeletedViewModel.swift in Sources */,
 				9DE9607F285E6D4A00E5981A /* SettingsType.swift in Sources */,
 				9D6B6B12284FEC46000ABAE7 /* BranchSceneModel.swift in Sources */,
@@ -1720,8 +1794,10 @@
 				60855BDC2659064200079D75 /* TaskViewModel.swift in Sources */,
 				609ADE3D2750F40F00E81FBF /* BranchScene.swift in Sources */,
 				60ED958727B54927005ACC33 /* Todooshka.xcdatamodeld in Sources */,
+				9D9733EB291E531A00733C45 /* ThemeDayViewContoller.swift in Sources */,
 				60F9921726AD912300A2449A /* UIButton.swift in Sources */,
 				60FFF65927A9A5E300290331 /* ShopViewModel.swift in Sources */,
+				9D9733DC291D4A1500733C45 /* ThemePlusButtonCell.swift in Sources */,
 				9D3BBC4F28F4059000B352E3 /* CoreDataTaskTypeToKindOfTaskV1toV2.swift in Sources */,
 				60BB15FE27AB189700DB081B /* CalendarItem.swift in Sources */,
 			);

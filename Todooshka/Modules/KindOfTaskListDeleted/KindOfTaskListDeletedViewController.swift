@@ -63,8 +63,9 @@ class KindOfTaskListDeletedViewController: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     // settings
-    titleLabel.text = "Удаленные типы"
+    backButton.isHidden = false
     removeAllButton.isHidden = false
+    titleLabel.text = "Удаленные типы"
 
     // collection view
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())

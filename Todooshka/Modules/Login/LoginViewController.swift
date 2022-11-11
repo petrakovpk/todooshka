@@ -172,7 +172,7 @@ class LoginViewController: UIViewController {
     headerDescriptionTextView.anchorCenterXToSuperview()
 
     // emailButton
-    emailButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor,        topConstant: 20, widthConstant: UIScreen.main.bounds.width / 2, heightConstant: 50)
+    emailButton.anchor(top: headerDescriptionTextView.bottomAnchor, left: view.leftAnchor,              topConstant: 20, widthConstant: UIScreen.main.bounds.width / 2, heightConstant: 50)
 
     // phoneButton
     phoneButton.anchor(top: headerDescriptionTextView.bottomAnchor, right: view.rightAnchor, topConstant: 20, widthConstant: UIScreen.main.bounds.width / 2, heightConstant: 50)
@@ -213,7 +213,7 @@ class LoginViewController: UIViewController {
     nextButton.anchor(top: repeatPasswordTextField.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 12, leftConstant: 16, rightConstant: 16, heightConstant: 48)
 
     // errorTextView
-    errorTextView.anchor(top: nextButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16,        heightConstant: 50)
+    errorTextView.anchor(top: nextButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 8, leftConstant: 16, rightConstant: 16,              heightConstant: 50)
   }
 
   // MARK: - Bind

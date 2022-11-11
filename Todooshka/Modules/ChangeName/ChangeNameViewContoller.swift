@@ -19,8 +19,9 @@ class ChangeNameViewContoller: TDViewController {
 
   // MARK: - UI Elemenets
   private let textField: UITextField = {
-    let textField = UITextField()
     let spacer = UIView()
+    spacer.anchor(widthConstant: 16, heightConstant: 54)
+    let textField = UITextField()
     textField.borderWidth = 1.0
     textField.borderColor = Style.TextFields.SettingsTextField.Border
     textField.backgroundColor = Style.TextFields.SettingsTextField.Background
@@ -29,7 +30,6 @@ class ChangeNameViewContoller: TDViewController {
     textField.leftViewMode = .always
     textField.placeholder = "Введите имя"
     textField.returnKeyType = .done
-    spacer.anchor(widthConstant: 16, heightConstant: 54)
     return textField
   }()
 
@@ -43,6 +43,7 @@ class ChangeNameViewContoller: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     // settings
+    backButton.isHidden = false
     saveButton.isHidden = false
 
     // adding

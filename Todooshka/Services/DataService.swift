@@ -92,12 +92,13 @@ class DataService {
     ])
 
     themes = Driver<[Theme]>.of([
-      Theme(UID: UUID().uuidString, name: "Отказываемся от сахара"),
-      Theme(UID: UUID().uuidString, name: "Рано ложимся спать"),
-      Theme(UID: UUID().uuidString, name: "Начинаем программировать"),
-      Theme(UID: UUID().uuidString, name: "Бросаем курить"),
-      Theme(UID: UUID().uuidString, name: "Начинаем отжиматься"),
-      Theme(UID: UUID().uuidString, name: "Читаем по одной книге в неделю")
+      Theme(UID: UUID().uuidString, name: "Как я победил страх", themeWeeks: []),
+      Theme(UID: UUID().uuidString, name: "Отказываемся от сахара", themeWeeks: []),
+      Theme(UID: UUID().uuidString, name: "Рано ложимся спать", themeWeeks: []),
+      Theme(UID: UUID().uuidString, name: "Начинаем программировать", themeWeeks: []),
+      Theme(UID: UUID().uuidString, name: "Бросаем курить", themeWeeks: []),
+      Theme(UID: UUID().uuidString, name: "Начинаем отжиматься", themeWeeks: []),
+      Theme(UID: UUID().uuidString, name: "Читаем по одной книге в неделю", themeWeeks: [])
     ])
 
     let allBirds = managedContext
@@ -108,13 +109,13 @@ class DataService {
     let allTasks = managedContext
       .rx
       .entities(Task.self)
-      .map({ $0.sorted { $0.created < $1.created } })
+      .map { $0.sorted { $0.created < $1.created }}
       .asDriver(onErrorJustReturn: [])
 
     let allKindsOfTask = managedContext
       .rx
       .entities(KindOfTask.self)
-      .map({ $0.sorted { $0.index < $1.index } })
+      .map { $0.sorted { $0.index < $1.index }}
       .asDriver(onErrorJustReturn: [])
 
     let firebaseBirds = firebaseBirds
@@ -147,22 +148,25 @@ class DataService {
 
     birds = Driver.combineLatest(user, allBirds) { user, allBirds -> [Bird] in
       allBirds.filter { $0.userUID == user?.uid }
-    }.asDriver(onErrorJustReturn: [])
+    }
+    .asDriver(onErrorJustReturn: [])
 
     kindsOfTask = Driver.combineLatest(user, allKindsOfTask) { user, kindsOfTask -> [KindOfTask] in
       kindsOfTask.filter { $0.userUID == user?.uid }
-    }.asDriver(onErrorJustReturn: [])
+    }
+    .asDriver(onErrorJustReturn: [])
 
     tasks = Driver.combineLatest(user, allTasks) { user, tasks -> [Task] in
       tasks.filter { $0.userUID == user?.uid }
-    }.asDriver(onErrorJustReturn: [])
+    }
+    .asDriver(onErrorJustReturn: [])
 
     // получаем количество закрытых задач (максимум 7 в день) и вычитаем общую стоимость купленных птиц
     goldTasks = tasks
       .map { $0.filter { $0.status == .completed } }     // отбираем только звкрытые задачи
       .map { $0.filter { $0.closed != nil } }
-      .map { $0.sorted { $0.closed! < $1.closed! } }     // сортируем их по дате закрытия
-      .map { Dictionary(grouping: $0, by: { $0.closed!.startOfDay }) } // превращаем в дикт по дате
+      .map { $0.sorted { $0.closed! < $1.closed! }}     // сортируем их по дате закрытия
+      .map { Dictionary(grouping: $0) { $0.closed!.startOfDay } } // превращаем в дикт по дате
       .map { $0.values.flatMap { $0.prefix(7) } } // берем первые 7 задач
       .asDriver()
 
@@ -202,7 +206,8 @@ class DataService {
         task.status = .inProgress
         task.created = Date().startOfDay
         return task
-      }.flatMapLatest({ managedContext.rx.update($0) })
+      }
+      .flatMapLatest({ managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .drive()
       .disposed(by: disposeBag)
@@ -222,13 +227,14 @@ class DataService {
       }
       .filter { $0 }
       .withLatestFrom(openedBirds) { $1 }
-      .compactMap { $0.max(by: { $0.price < $1.price }) }
+      .compactMap { $0.max { $0.price < $1.price }}
       .compactMap { $0 }
       .map { bird -> Bird in
         var bird = bird
         bird.isBought = false
         return bird
-      }.asObservable()
+      }
+      .asObservable()
       .flatMapLatest({ managedContext.rx.update($0) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .drive()
@@ -259,12 +265,12 @@ class DataService {
       .map { Array($0) }
       .withLatestFrom(kindsOfTask) { tasks, kindsOfTask -> [BirdStyle] in // получаем для них стили
         tasks.compactMap { task -> BirdStyle? in
-          kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID })?.style
+          kindsOfTask.first { $0.UID == task.kindOfTaskUID }?.style
         }
       }
       .withLatestFrom(birds) { style, birds -> [Bird] in // получаем птиц
         style.enumerated().compactMap { index, style -> Bird? in
-          birds.first(where: { $0.style == style && $0.clade == Clade(level: index + 1) })
+          birds.first { $0.style == style && $0.clade == Clade(level: index + 1) }
         }
       }
       .map { birds -> [BirdStyle] in // если куплена, то оставляем, иначе симл
@@ -274,7 +280,8 @@ class DataService {
       }
       .map { styles -> [EggActionType] in // получаем действия
         styles.map { .crack(style: $0) }
-      }.startWith([])
+      }
+      .startWith([])
 
     let noCrackActions = Driver
       .combineLatest(inProgressTasks, openedBirdsNumber) { inProgressTasks, openedBirdsNumber in
@@ -295,7 +302,12 @@ class DataService {
     ])
 
     nestDataSource = Driver
-      .combineLatest(crackActions, noCrackActions, hideEggsActions, openedBirdsNumber) { crackActions, noCrackActions, hideEggsActions, openedBirdsNumber in
+      .combineLatest(
+        crackActions,
+        noCrackActions,
+        hideEggsActions,
+        openedBirdsNumber
+      ) { crackActions, noCrackActions, hideEggsActions, openedBirdsNumber in
         (crackActions + noCrackActions + hideEggsActions).prefix(openedBirdsNumber)
       }
       .map { Array($0) }
@@ -321,11 +333,12 @@ class DataService {
       .map { Array($0) }
       .withLatestFrom(kindsOfTask) { tasks, kindsOfTask -> [BirdStyle] in // получаем для них стили
         tasks.compactMap { task -> BirdStyle? in
-          kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID })?.style
+          kindsOfTask.first { $0.UID == task.kindOfTaskUID }?.style
         }
-      }.withLatestFrom(birds) { style, birds -> [Bird] in // получаем птиц
+      }
+      .withLatestFrom(birds) { style, birds -> [Bird] in // получаем птиц
         style.enumerated().compactMap { index, style -> Bird? in
-          birds.first(where: { $0.style == style && $0.clade == Clade(level: index + 1) })
+          birds.first { $0.style == style && $0.clade == Clade(level: index + 1) }
         }
       }
       .map { birds -> [BirdStyle] in // если куплена, то оставляем, иначе симл
@@ -337,7 +350,8 @@ class DataService {
             return bird.isBought ? bird.style : .simple
           }
         }
-      }.withLatestFrom(selectedDate) { styles, closed -> [BirdActionType] in
+      }
+      .withLatestFrom(selectedDate) { styles, closed -> [BirdActionType] in
         styles.map { .sitting(style: $0, closed: closed)
         }
       }
@@ -355,7 +369,8 @@ class DataService {
     branchDataSource = Driver
       .combineLatest(sittingAction, hiddenBirdsActions) { sittingAction, hiddenBirdsActions -> [BirdActionType] in
         sittingAction + hiddenBirdsActions
-      }.map { $0.prefix(7) }
+      }
+      .map { $0.prefix(7) }
       .map { Array($0) }
       .distinctUntilChanged()
 
@@ -415,10 +430,11 @@ class DataService {
           var task = task
           task.userUID = user.uid
           return task
-        }.filter { $0.status != .archive }
+        }
+        .filter { $0.status != .archive }
       }
       .asObservable()
-      .flatMapLatest({ managedContext.rx.batchUpdate($0)    })
+      .flatMapLatest { managedContext.rx.batchUpdate($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .drive()
       .disposed(by: disposeBag)
@@ -437,7 +453,7 @@ class DataService {
       }
       .filter { !$0.isEmpty }
       .withLatestFrom(compactUser) { tasks, user in
-        dbUserRef.child(user.uid).child("TASKS").runTransactionBlock({ currentData in
+        dbUserRef.child(user.uid).child("TASKS").runTransactionBlock { currentData in
           var dict: [String: AnyObject] = currentData.value as? [String: AnyObject] ?? [:]
 
           tasks.forEach { task in
@@ -446,7 +462,7 @@ class DataService {
 
           currentData.value = dict
           return TransactionResult.success(withValue: currentData)
-        })
+        }
       }
       .drive()
       .disposed(by: disposeBag)
@@ -463,9 +479,9 @@ class DataService {
       }
       .filter { !$0.isEmpty }
       .asObservable()
-      .flatMapLatest({ tasks -> Observable<Result<Void, Error>> in
+      .flatMapLatest { tasks -> Observable<Result<Void, Error>> in
         managedContext.rx.batchUpdate(tasks)
-      })
+      }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .drive()
       .disposed(by: disposeBag)
@@ -556,7 +572,7 @@ class DataService {
       }
       .filter { !$0.isEmpty }
       .withLatestFrom(compactUser) { kindsOfTask, user in
-        dbUserRef.child(user.uid).child("KINDSOFTASK").runTransactionBlock({ currentData in
+        dbUserRef.child(user.uid).child("KINDSOFTASK").runTransactionBlock { currentData in
           var dict: [String: AnyObject] = currentData.value as? [String: AnyObject] ?? [:]
 
           kindsOfTask.forEach { kindOfTask in
@@ -565,7 +581,7 @@ class DataService {
 
           currentData.value = dict
           return TransactionResult.success(withValue: currentData)
-        })
+        }
       }
       .drive()
       .disposed(by: disposeBag)
@@ -578,7 +594,7 @@ class DataService {
       }
       .filter { !$0.isEmpty }
       .asObservable()
-      .flatMapLatest({ managedContext.rx.batchUpdate($0)    })
+      .flatMapLatest { managedContext.rx.batchUpdate($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .drive()
       .disposed(by: disposeBag)
@@ -665,7 +681,7 @@ class DataService {
       }
       .filter { !$0.isEmpty }
       .withLatestFrom(compactUser) { birds, user in
-        dbUserRef.child(user.uid).child("BIRDS").runTransactionBlock({ currentData in
+        dbUserRef.child(user.uid).child("BIRDS").runTransactionBlock { currentData in
           var dict: [String: AnyObject] = currentData.value as? [String: AnyObject] ?? [:]
 
           birds.forEach { bird in
@@ -674,7 +690,7 @@ class DataService {
 
           currentData.value = dict
           return TransactionResult.success(withValue: currentData)
-        })
+        }
       }
       .drive()
       .disposed(by: disposeBag)
@@ -687,7 +703,7 @@ class DataService {
       }
       .filter { !$0.isEmpty }
       .asObservable()
-      .flatMapLatest({ managedContext.rx.batchUpdate($0)    })
+      .flatMapLatest { managedContext.rx.batchUpdate($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .drive()
       .disposed(by: disposeBag)

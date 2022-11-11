@@ -238,7 +238,7 @@ class TaskViewModel: Stepper {
       .do { _ in self.isDescriptionPlaceholderEnabled = true }
 
     let clearDescriptionPlaceholder = input.descriptionTextViewDidBeginEditing
-      .compactMap { self.isDescriptionPlaceholderEnabled ? () : nil     }
+      .compactMap { self.isDescriptionPlaceholderEnabled ? () : nil           }
       .do { _ in self.isDescriptionPlaceholderEnabled = false }
 
     // save

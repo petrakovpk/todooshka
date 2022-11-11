@@ -73,6 +73,9 @@ class SupportViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
+    // header
+    backButton.isHidden = false
+    
     // adding
     view.addSubviews([
       emailLabel,

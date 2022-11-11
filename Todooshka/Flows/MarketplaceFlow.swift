@@ -29,18 +29,30 @@ class MarketplaceFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
+    case .addThemeIsRequired:
+      return navigateToAddTheme()
     case .marketplaceIsRequired:
       return navigateToMarketplace()
-
     case .navigateBack:
-      return navigateBack()
-
+      return navigateBack(tabBarIsHidden: true)
     case .showThemeIsRequired(let themeUID):
       return navigateToTheme(themeUID: themeUID)
-
+    case .showThemeIsCompleted:
+      return navigateBack(tabBarIsHidden: false)
+    case .themeDayIsRequired(let themeDayUID):
+      return navigateToThemeDay(themeDayUID: themeDayUID)
     default:
       return .none
     }
+  }
+  
+  private func navigateToAddTheme() -> FlowContributors {
+    let viewController = AddThemeViewController()
+    let viewModel = AddThemeViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
   private func navigateToMarketplace() -> FlowContributors {
@@ -55,11 +67,21 @@ class MarketplaceFlow: Flow {
     let viewController = ThemeViewController()
     let viewModel = ThemeViewModel(services: services, themeUID: themeUID)
     viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToThemeDay(themeDayUID: String) -> FlowContributors {
+    let viewController = ThemeDayViewContoller()
+    let viewModel = ThemeDayViewModel(services: services, themeDayUID: themeDayUID)
+    viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateBack() -> FlowContributors {
+  private func navigateBack(tabBarIsHidden: Bool) -> FlowContributors {
+    rootViewController.tabBarController?.tabBar.isHidden = tabBarIsHidden
     rootViewController.popViewController(animated: true)
     return .none
   }

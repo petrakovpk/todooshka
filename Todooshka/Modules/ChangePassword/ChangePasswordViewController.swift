@@ -71,6 +71,7 @@ class ChangePasswordViewController: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     // settings
+    backButton.isHidden = false
     saveButton.isHidden = false
 
     // adding

@@ -16,6 +16,7 @@ class TDViewController: UIViewController {
     let button = UIButton(type: .system)
     button.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
     button.tintColor = Style.App.text
+    button.isHidden = true
     return button
   }()
 
@@ -81,35 +82,73 @@ class TDViewController: UIViewController {
 
     // safeAreaHeaderView
     safeAreaHeaderView.backgroundColor = Style.Views.Header.Background
-    safeAreaHeaderView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.topAnchor, right: view.rightAnchor)
+    safeAreaHeaderView.anchor(
+      top: view.topAnchor,
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.topAnchor,
+      right: view.rightAnchor)
 
     // headerView
     headerView.backgroundColor = Style.Views.Header.Background
-    headerView.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor, heightConstant: Sizes.Views.Header.height)
+    headerView.anchor(
+      top: view.safeAreaLayoutGuide.topAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      heightConstant: Sizes.Views.Header.height)
 
     // backButton
-    backButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, widthConstant: UIScreen.main.bounds.width / 6)
+    backButton.anchor(
+      top: view.safeAreaLayoutGuide.topAnchor,
+      left: headerView.leftAnchor,
+      bottom: headerView.bottomAnchor,
+      widthConstant: UIScreen.main.bounds.width / 6)
 
     // addButton
-    addButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
+    addButton.anchor(
+      top: view.safeAreaLayoutGuide.topAnchor,
+      bottom: headerView.bottomAnchor,
+      right: headerView.rightAnchor,
+      widthConstant: UIScreen.main.bounds.width / 6)
 
     // saveButton
-    saveButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
+    saveButton.anchor(
+      top: view.safeAreaLayoutGuide.topAnchor,
+      bottom: headerView.bottomAnchor,
+      right: headerView.rightAnchor,
+      widthConstant: UIScreen.main.bounds.width / 6)
 
     // refreshButton
-    refreshButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
+    refreshButton.anchor(
+      top: view.safeAreaLayoutGuide.topAnchor,
+      bottom: headerView.bottomAnchor,
+      right: headerView.rightAnchor,
+      widthConstant: UIScreen.main.bounds.width / 6)
 
     // removeAllButton
-    removeAllButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor, widthConstant: UIScreen.main.bounds.width / 6)
+    removeAllButton.anchor(
+      top: view.safeAreaLayoutGuide.topAnchor,
+      bottom: headerView.bottomAnchor,
+      right: headerView.rightAnchor,
+      widthConstant: UIScreen.main.bounds.width / 6)
 
     // titleLabel
     titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     titleLabel.textAlignment = .center
     titleLabel.anchorCenterXToSuperview()
-    titleLabel.anchor(left: backButton.rightAnchor, bottom: headerView.bottomAnchor, right: saveButton.leftAnchor, leftConstant: 0, bottomConstant: 20, rightConstant: 0)
+    titleLabel.anchor(
+      left: backButton.rightAnchor,
+      bottom: headerView.bottomAnchor,
+      right: saveButton.leftAnchor,
+      leftConstant: 0,
+      bottomConstant: 20,
+      rightConstant: 0)
 
     // dividerView
     dividerView.backgroundColor = Style.Views.Header.Divider
-    dividerView.anchor(left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: headerView.rightAnchor,        heightConstant: 1.0)
+    dividerView.anchor(
+      left: headerView.leftAnchor,
+      bottom: headerView.bottomAnchor,
+      right: headerView.rightAnchor,
+      heightConstant: 1.0)
   }
 }

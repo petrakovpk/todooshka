@@ -70,6 +70,8 @@ class DeleteAccountViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
+    backButton.isHidden = false
+    
     // adding
     view.addSubviews([
       descriptionTextView,

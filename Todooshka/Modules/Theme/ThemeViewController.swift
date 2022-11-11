@@ -11,6 +11,7 @@ import RxSwift
 import UIKit
 
 class ThemeViewController: TDViewController {
+
   // MARK: - MVVM
   public var viewModel: ThemeViewModel!
 
@@ -63,13 +64,17 @@ class ThemeViewController: TDViewController {
   }
 
   func configureUI() {
+    // header
+    backButton.isHidden = false
+    hideKeyboardWhenTappedAround()
+    
     // adding
     view.addSubviews([
       imageView,
       descriptionTextView,
       startButton
     ])
-
+    
     // imageView
     imageView.anchor(
       top: headerView.bottomAnchor,
@@ -77,9 +82,8 @@ class ThemeViewController: TDViewController {
       topConstant: 16,
       leftConstant: 16,
       widthConstant: 150,
-      heightConstant: 150
-    )
-
+      heightConstant: 150)
+    
     // descriptionTextView
     descriptionTextView.anchor(
       top: headerView.bottomAnchor,
@@ -88,19 +92,17 @@ class ThemeViewController: TDViewController {
       right: view.rightAnchor,
       topConstant: 16,
       leftConstant: 16,
-      rightConstant: 16
-    )
-
+      rightConstant: 16)
+    
     // startButton
     startButton.anchor(
-      top: imageView.bottomAnchor,
       left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
       right: view.rightAnchor,
-      topConstant: 16,
       leftConstant: 16,
+      bottomConstant: 16,
       rightConstant: 16,
-      heightConstant: 50
-    )
+      heightConstant: 50)
   }
 
   // MARK: - Bind View Model
@@ -115,6 +117,6 @@ class ThemeViewController: TDViewController {
       output.name.drive(titleLabel.rx.text),
       output.navigateBack.drive()
     ]
-      .forEach({ $0.disposed(by: disposeBag) })
+      .forEach { $0.disposed(by: disposeBag) }
   }
 }

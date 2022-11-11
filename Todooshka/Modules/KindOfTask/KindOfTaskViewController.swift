@@ -87,6 +87,8 @@ class KindOfTaskViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
+    backButton.isHidden = false
+    
     collectionViewColor = UICollectionView(frame: .zero, collectionViewLayout: collectionViewColorLayout)
     collectionViewIcon = UICollectionView(frame: .zero, collectionViewLayout: collectionViewIconLayout)
 
