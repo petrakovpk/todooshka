@@ -27,6 +27,15 @@ class ThemeDayViewContoller: TDViewController {
     return button
   }()
   
+  private let imageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.cornerRadius = 15
+    imageView.contentMode = .scaleAspectFit
+    imageView.backgroundColor = .systemRed.withAlphaComponent(0.2)
+    imageView.isHidden = true
+    return imageView
+  }()
+  
   private let addTaskButton: UIButton = {
     let button = UIButton(type: .system)
     button.borderWidth = 1.0
@@ -65,6 +74,7 @@ class ThemeDayViewContoller: TDViewController {
     
     view.addSubviews([
       addImageButton,
+      imageView,
       addTaskButton,
       descriptionTextView,
       tasksLabel
@@ -72,6 +82,16 @@ class ThemeDayViewContoller: TDViewController {
     
     // addImageButton
     addImageButton.anchor(
+      top: headerView.bottomAnchor,
+      left: view.leftAnchor,
+      topConstant: 16,
+      leftConstant: 16,
+      widthConstant: 75,
+      heightConstant: 75
+    )
+    
+    // imageView
+    imageView.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
       topConstant: 16,
@@ -110,15 +130,34 @@ class ThemeDayViewContoller: TDViewController {
   
   func bindViewModel() {
     let input = ThemeDayViewModel.Input(
+      addThemeTaskIsRequired: addTaskButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
 
     [
-      outputs.navigateBack.drive()
-      
+      outputs.addThemeTask.drive(),
+      outputs.navigateBack.drive(),
+      outputs.openViewControllerMode.drive(openViewControllerModeBinder)
     ]
       .forEach { $0.disposed(by: disposeBag) }
+  }
+  
+  var openViewControllerModeBinder: Binder<OpenViewControllerMode> {
+    return Binder(self, binding: { vc, mode in
+      switch mode {
+      case .edit:
+        vc.addImageButton.isHidden = false
+        vc.addTaskButton.isHidden = false
+        vc.descriptionTextView.isEditable = true
+        vc.imageView.isHidden = true
+      case .view:
+        vc.addImageButton.isHidden = true
+        vc.addTaskButton.isHidden = true
+        vc.descriptionTextView.isEditable = false
+        vc.imageView.isHidden = false
+      }
+    })
   }
 }

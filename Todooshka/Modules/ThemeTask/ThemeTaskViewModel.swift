@@ -23,9 +23,8 @@ class ThemeTaskViewModel: Stepper {
   }
 
   // MARK: - Init
-  init(services: AppServices, themeDayUID: String) {
+  init(services: AppServices) {
     self.services = services
-    self.themeDayUID = themeDayUID
   }
 
   func transform(input: Input) -> Output {

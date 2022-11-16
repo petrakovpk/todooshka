@@ -7,20 +7,20 @@
 
 import Differentiator
 
-enum Weekday: CaseIterable {
-  case monday
-  case tuesday
-  case wednesday
-  case thursday
-  case friday
-  case saturday
-  case sunday
+enum ThemeDayNumber: CaseIterable {
+  case first
+  case second
+  case third
+  case fourth
+  case fifth
+  case sixth
+  case seventh
 }
 
 struct ThemeDay: Equatable {
   let UID: String
   let goal: String
-  let weekDay: Weekday
+  let weekDay: ThemeDayNumber
 }
 
 // MARK: - IdentifiableType

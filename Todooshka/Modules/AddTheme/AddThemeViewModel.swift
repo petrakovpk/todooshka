@@ -36,7 +36,7 @@ class AddThemeViewModel: Stepper {
     // dataSource
     let dataSource = Driver<[ThemeDaySection]>.just(
       [
-        ThemeDaySection(header: "1-я неделя", items: [
+        ThemeDaySection(header: "1-й круг", items: [
           ThemeDay(UID: UUID().uuidString, goal: "monday", weekDay: .monday),
           ThemeDay(UID: UUID().uuidString, goal: "tuesday", weekDay: .tuesday),
           ThemeDay(UID: UUID().uuidString, goal: "wednesday", weekDay: .wednesday),
@@ -45,7 +45,7 @@ class AddThemeViewModel: Stepper {
           ThemeDay(UID: UUID().uuidString, goal: "saturday", weekDay: .saturday),
           ThemeDay(UID: UUID().uuidString, goal: "sunday", weekDay: .sunday)
         ]),
-        ThemeDaySection(header: "2-я неделя", items: [
+        ThemeDaySection(header: "2-й круг", items: [
           ThemeDay(UID: UUID().uuidString, goal: "monday", weekDay: .monday),
           ThemeDay(UID: UUID().uuidString, goal: "tuesday", weekDay: .tuesday),
           ThemeDay(UID: UUID().uuidString, goal: "wednesday", weekDay: .wednesday),
@@ -54,7 +54,7 @@ class AddThemeViewModel: Stepper {
           ThemeDay(UID: UUID().uuidString, goal: "saturday", weekDay: .saturday),
           ThemeDay(UID: UUID().uuidString, goal: "sunday", weekDay: .sunday)
         ]),
-        ThemeDaySection(header: "3-я неделя", items: [
+        ThemeDaySection(header: "3-й круг", items: [
           ThemeDay(UID: UUID().uuidString, goal: "monday", weekDay: .monday),
           ThemeDay(UID: UUID().uuidString, goal: "tuesday", weekDay: .tuesday),
           ThemeDay(UID: UUID().uuidString, goal: "wednesday", weekDay: .wednesday),
@@ -78,7 +78,7 @@ class AddThemeViewModel: Stepper {
     // back
     let navigateBack = input
       .backButtonClickTrigger
-      .map { self.steps.accept(AppStep.showThemeIsCompleted) }
+      .map { self.steps.accept(AppStep.openThemeIsCompleted) }
 
     return Output(
       dataSource: dataSource,

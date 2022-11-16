@@ -71,14 +71,22 @@ class MarketplaceViewModel: Stepper {
         guard case .plusButton = item else { return nil }
         return ()
       }
-      .map { self.steps.accept(AppStep.addThemeIsRequired) }
+      .map { self.steps.accept(
+        AppStep.openThemeIsRequired(
+          themeUID: UUID().uuidString,
+          openViewControllerMode: .edit))
+      }
     
     let openTheme = itemSelected
       .compactMap { item -> Theme? in
         guard case .theme(let theme) = item else { return nil }
         return theme
       }
-      .map { self.steps.accept(AppStep.showThemeIsRequired(themeUID: $0.UID)) }
+      .map { self.steps.accept(
+        AppStep.openThemeIsRequired(
+          themeUID: $0.UID,
+          openViewControllerMode: .view))
+      }
 
     return Output(
       addTheme: addTheme,

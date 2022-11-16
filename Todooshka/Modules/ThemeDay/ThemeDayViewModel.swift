@@ -15,22 +15,34 @@ class ThemeDayViewModel: Stepper {
   let steps = PublishRelay<Step>()
   
   let themeDayUID: String
+  let openViewControllerMode: OpenViewControllerMode
 
   struct Input {
+    let addThemeTaskIsRequired: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
+    let addThemeTask: Driver<Void>
     let navigateBack: Driver<Void>
+    let openViewControllerMode: Driver<OpenViewControllerMode>
   }
 
   // MARK: - Init
-  init(services: AppServices, themeDayUID: String) {
+  init(services: AppServices, themeDayUID: String, openViewControllerMode: OpenViewControllerMode) {
+    self.openViewControllerMode = openViewControllerMode
     self.services = services
     self.themeDayUID = themeDayUID
   }
 
   func transform(input: Input) -> Output {
+    
+    // addThemeTask
+    let addThemeTask = input.addThemeTaskIsRequired
+      .map{ self.steps.accept(AppStep.themeTaskIsRequired) }
+    
+    let openViewControllerMode = Driver<OpenViewControllerMode>
+      .just(self.openViewControllerMode)
     
     // back
     let navigateBack = input
@@ -38,7 +50,9 @@ class ThemeDayViewModel: Stepper {
       .map { self.steps.accept(AppStep.navigateBack) }
 
     return Output(
-      navigateBack: navigateBack
+      addThemeTask: addThemeTask,
+      navigateBack: navigateBack,
+      openViewControllerMode: openViewControllerMode
     )
   }
 }
