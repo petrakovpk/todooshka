@@ -7,9 +7,9 @@
 
 import CoreData
 import Firebase
+import RxCocoa
 import RxFlow
 import RxSwift
-import RxCocoa
 import UIKit
 
 enum RemoveMode: Equatable {
@@ -254,7 +254,8 @@ class TaskListViewModel: Stepper {
         default:
           return nil
         }
-      }.map { self.steps.accept($0) }
+      }
+      .map { self.steps.accept($0) }
 
     // title
      let title = Driver.just(self.getTitle(with: self.mode))

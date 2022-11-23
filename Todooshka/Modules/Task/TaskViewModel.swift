@@ -68,15 +68,14 @@ class TaskViewModel: Stepper {
     let completeButtonIsHidden: Driver<Bool>
     // collectionView
     let dataSource: Driver<[KindOfTaskSection]>
-    let descriptionTextField: Driver<String>
     // descriptionTextVIew
     let hideDescriptionPlaceholder: Driver<Void>
     let showDescriptionPlaceholder: Driver<Void>
     // header buttons
     let navigateBack: Driver<Void>
     let save: Driver<Result<Void, Error>>
-    // nameTextField
-    let nameTextField: Driver<String>
+    // init
+    let initData: Driver<Task>
     // open kindsOfTask list
     let openKindsOfTaskList: Driver<Void>
     // task
@@ -95,13 +94,38 @@ class TaskViewModel: Stepper {
   func transform(input: Input) -> Output {
     let name = input
       .nameTextField
-      .startWith(self.task.value.text)
+      .debug()
+    
+    let initData = Driver.just(self.task.value)
     
     let description = input
       .descriptionTextView
       .map { self.isDescriptionPlaceholderEnabled ? "" : $0 }
       .startWith(self.task.value.description)
+
+    // description
+    let showDescriptionPlaceholderWhenStart = Driver
+      .just(self.task.value.description)
+      .filter { $0.isEmpty }
+      .debug()
     
+    let showDescriptionPlaceholderWhenEndEditing = input.descriptionTextViewDidEndEditing
+      .withLatestFrom(description) { $1 }
+      .filter{ $0.isEmpty }
+      .do { _ in self.isDescriptionPlaceholderEnabled = true }
+    
+    let showDescriptionPlaceholder = Driver.of(
+      showDescriptionPlaceholderWhenStart,
+      showDescriptionPlaceholderWhenEndEditing
+    )
+      .merge()
+      .map { _ in () }
+      .do { _ in self.isDescriptionPlaceholderEnabled = true }
+    
+    let hideDescriptionPlaceholder = input.descriptionTextViewDidBeginEditing
+      .filter { _ in self.isDescriptionPlaceholderEnabled }
+      .do { _ in self.isDescriptionPlaceholderEnabled = false }
+
     // kindsOfTask
     let kindsOfTask = services.dataService
       .kindsOfTask
@@ -124,10 +148,19 @@ class TaskViewModel: Stepper {
       }
       .asDriver(onErrorJustReturn: [])
 
+    let startedKindOfTask = kindsOfTask
+      .compactMap { kindsOfTask -> KindOfTask? in
+        kindsOfTask.first { $0.UID == self.task.value.kindOfTaskUID }
+      }
+     
     let selectedKindfOfTask = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTask in
         dataSource[indexPath.section].items[indexPath.item].kindOfTask
       }
+    
+    let kindOfTask = Driver
+      .of(startedKindOfTask, selectedKindfOfTask)
+      .merge()
     
     let planned = input.alertDatePickerOKButtonClick
       .withLatestFrom(input.alertDatePickerDate) { $1 }
@@ -157,15 +190,23 @@ class TaskViewModel: Stepper {
       .merge()
       .startWith(self.task.value.status)
     
+    let taskIsNew = services
+      .dataService
+      .tasks
+      .asDriver()
+      .map { tasks -> Bool in
+        !tasks.contains { $0.UID == self.task.value.UID }
+      }
+
     let task = Driver
-      .combineLatest(task.asDriver(), name, description, selectedKindfOfTask, planned, closed, status) { task, name, description, kindOfTask, planned, closed, status -> Task in
+      .combineLatest(name, description, kindOfTask, planned, closed, status) { name, description, kindOfTask, planned, closed, status -> Task in
         Task(
-          UID: task.UID,
+          UID: self.task.value.UID,
           text: name,
           description: description,
           kindOfTaskUID: kindOfTask.UID,
           status: status,
-          created: task.created,
+          created: self.task.value.created,
           closed: closed,
           planned: planned
         )
@@ -173,6 +214,7 @@ class TaskViewModel: Stepper {
       .do {
         self.task.accept($0)
       }
+      .debug()
     
     let plannedText = planned
       .compactMap { $0 }
@@ -180,48 +222,21 @@ class TaskViewModel: Stepper {
         "Сегодня" : self.services.preferencesService.midFormatter.string(for: $0)
       }
       .startWith( "Когда-то" )
-    
-    let taskIsNew = services.dataService.tasks
-      .withLatestFrom(task) { tasks, task -> Bool in
-        !tasks.contains { $0.UID == task.UID }
-      }
-  
+ 
     let completeButtonIsHidden = Driver
       .combineLatest(taskIsNew, task) { taskIsNew, task -> Bool in
         taskIsNew || task.status == .completed
       }
-
-    
-    // description
-    let showDescriptionPlaceholderWhenStart = Driver
-      .just(self.task.value.description)
-      .filter { $0.isEmpty }
-    
-    let showDescriptionPlaceholderWhenEndEditing = input.descriptionTextViewDidEndEditing
-      .withLatestFrom(description) { $1 }
-      .filter{ $0.isEmpty }
-      .do { _ in self.isDescriptionPlaceholderEnabled = true }
-    
-    let showDescriptionPlaceholder = Driver.of(
-      showDescriptionPlaceholderWhenStart,
-      showDescriptionPlaceholderWhenEndEditing
-    )
-      .merge()
-      .map { _ in () }
-      .do { _ in self.isDescriptionPlaceholderEnabled = true }
-    
-    let hideDescriptionPlaceholder = input.descriptionTextViewDidBeginEditing
-      .filter { _ in self.isDescriptionPlaceholderEnabled }
-      .do { _ in self.isDescriptionPlaceholderEnabled = false }
     
     let saveTrigger = Driver
-      .of (
+      .of(
         input.nameTextFieldEditingDidEndOnExit,
         input.saveTaskButtonClickTrigger,
         input.alertOkButtonClickTrigger,
         input.selection.map { _ in () },
         input.alertDatePickerOKButtonClick
-      ).merge()
+      )
+      .merge()
     
     let save = saveTrigger
       .withLatestFrom(task) { $1 }
@@ -280,15 +295,14 @@ class TaskViewModel: Stepper {
       completeButtonIsHidden: completeButtonIsHidden,
       // collectionView
       dataSource: dataSource,
-      descriptionTextField: description,
       // descriptionTextVIew
       hideDescriptionPlaceholder: hideDescriptionPlaceholder,
       showDescriptionPlaceholder: showDescriptionPlaceholder,
       // header buttons
       navigateBack: navigateBack,
       save: save,
-      // nameTextField
-      nameTextField: name,
+      // initData
+      initData: initData,
       // open kindsOfTask list
       openKindsOfTaskList: openKindsOfTaskList,
       // task

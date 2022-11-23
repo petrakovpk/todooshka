@@ -372,15 +372,14 @@ class TaskViewController: TDViewController {
       outputs.completeButtonIsHidden.drive(completeButton.rx.isHidden),
       // collectionView
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.descriptionTextField.drive(descriptionTextView.rx.text),
       // descriptionTextVIew
       outputs.hideDescriptionPlaceholder.drive(hideDescriptionPlaceholderBinder),
       outputs.showDescriptionPlaceholder.drive(showDescriptionPlaceholderBinder),
       // header buttons
       outputs.navigateBack.drive(),
       outputs.save.drive(),
-      // nameTextField
-      outputs.nameTextField.drive(nameTextField.rx.text),
+      // initData
+      outputs.initData.drive(initDataBinder),
       // open kindsOfTask list
       outputs.openKindsOfTaskList.drive(),
       // task
@@ -392,6 +391,13 @@ class TaskViewController: TDViewController {
   }
 
   // MARK: - Binders
+  var initDataBinder: Binder<Task> {
+    return Binder(self, binding: { vc, task in
+      vc.nameTextField.insertText(task.text)
+      vc.descriptionTextView.insertText(task.description)
+    })
+  }
+  
   var hideCompleteButtonBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
       vc.completeButton.isHidden = true
