@@ -171,7 +171,7 @@ class CalendarViewController: UIViewController {
     view.backgroundColor = Style.App.background
 
     // settingsButton
-    settingsButton.configure(image: UIImage(named: "setting")?.template, blurEffect: false)
+    settingsButton.configure(image: Icon.settings.image.template, blurEffect: false)
     settingsButton.anchor(
       top: sceneView.bottomAnchor,
       right: view.rightAnchor,

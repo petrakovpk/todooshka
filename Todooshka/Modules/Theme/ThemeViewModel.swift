@@ -5,6 +5,7 @@
 //  Created by Pavel Petakov on 07.11.2022.
 //
 
+import CoreData
 import RxCocoa
 import RxFlow
 import RxSwift
@@ -18,43 +19,79 @@ class ThemeViewModel: Stepper {
   // MARK: - Properties
   let steps = PublishRelay<Step>()
   let services: AppServices
+  
+  let appDelegate = UIApplication.shared.delegate as? AppDelegate
+  var managedContext: NSManagedObjectContext { appDelegate!.persistentContainer.viewContext }
 
   // theme
-  let themeUID: String
-  let openViewControllerMode: OpenViewControllerMode
+  let theme: Theme
 
   struct Input {
+    let addImageButtonClickTrigger: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
-    let selection: Driver<IndexPath>
+    let daySelection: Driver<IndexPath>
+    let description: Driver<String>
+    let name: Driver<String>
+    let saveButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
-    let dataSource: Driver<[ThemeDaySection]>
-    let name: Driver<String>
+    let dayDataSource: Driver<[ThemeDaySection]>
+    let mode: Driver<OpenViewControllerMode>
     let navigateBack: Driver<Void>
     let openThemeDay: Driver<Void>
-    let openViewControllerMode: Driver<OpenViewControllerMode>
+    let save: Driver<Result<Void, Error>>
+    let theme: Driver<Theme>
+    let title: Driver<String>
+    let typeDataSource: Driver<[ThemeTypeSection]>
   }
 
   // MARK: - Init
-  init(services: AppServices, themeUID: String, openViewControllerMode: OpenViewControllerMode) {
-    self.openViewControllerMode = openViewControllerMode
+  init(services: AppServices, theme: Theme) {
     self.services = services
-    self.themeUID = themeUID
+    self.theme = theme
   }
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    // theme
-    let theme = services
+    let name = input.name
+    let description = input.description
+    
+    let mode = Driver<OpenViewControllerMode>
+      .just(self.theme.status == .draft ? .edit : .view)
+    
+    let theme = Driver
+      .combineLatest(name, description) { name, description -> Theme in
+        Theme(
+          description: description,
+          name: name,
+          status: self.theme.status,
+          type: self.theme.type,
+          uid: self.theme.uid
+        )
+      }
+    
+    let saveTrigger = input.saveButtonClickTrigger
+    
+    let save = saveTrigger
+      .withLatestFrom(theme) { $1 }
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+      .debug()
+    
+    let title = services
       .dataService
       .themes
-      .compactMap { $0.first { $0.UID == self.themeUID } }
-
-    let name = theme.map { $0.name }
+      .asDriver()
+      .compactMap { $0.first { $0.uid == self.theme.uid } }
+      .map { $0.name }
+      .map { $0.isEmpty ? "Новая тема" : $0 }
+      .startWith("Новая тема")
     
-    // dataSource
-    let dataSource = Driver<[ThemeDaySection]>.just(
+    
+    // dayDataSource
+    let dayDataSource = Driver<[ThemeDaySection]>.just(
       [
         ThemeDaySection(header: "1-й круг", items: [
           ThemeDay(UID: UUID().uuidString, goal: "monday", weekDay: .first),
@@ -87,33 +124,47 @@ class ThemeViewModel: Stepper {
     )
     
     let themeDaySelected = input
-      .selection
-      .withLatestFrom(dataSource) { indexPath, dataSource -> ThemeDay in
+      .daySelection
+      .withLatestFrom(dayDataSource) { indexPath, dataSource -> ThemeDay in
         dataSource[indexPath.section].items[indexPath.item]
       }
-    
-    let openViewControllerMode = Driver<OpenViewControllerMode>
-      .just(self.openViewControllerMode)
-    
+
     let openThemeDay = themeDaySelected
-      .withLatestFrom(openViewControllerMode) { themeDay, openViewControllerMode in
+      .withLatestFrom(mode) { themeDay, mode in
         self.steps.accept(
           AppStep.themeDayIsRequired(
             themeDayUID: themeDay.UID,
-            openViewControllerMode: openViewControllerMode))
+            openViewControllerMode: mode))
       }
     
+    // dayDataSource
+    let typeDataSource = Driver<[ThemeTypeSection]>.just(
+      [
+        ThemeTypeSection(
+          header: "",
+          items: [
+            ThemeTypeItem(type: .empty, isSelected: false),
+            ThemeTypeItem(type: .cooking, isSelected: false),
+            ThemeTypeItem(type: .health, isSelected: false),
+            ThemeTypeItem(type: .sport, isSelected: false)
+          ])
+      ]
+    )
+
     // buttons
     let navigateBack = input
       .backButtonClickTrigger
-      .map { self.steps.accept( AppStep.openThemeIsCompleted ) }
+      .map { self.steps.accept( AppStep.themeProcessingIsCompleted ) }
 
     return Output(
-      dataSource: dataSource,
-      name: name,
+      dayDataSource: dayDataSource,
+      mode: mode,
       navigateBack: navigateBack,
       openThemeDay: openThemeDay,
-      openViewControllerMode: openViewControllerMode
+      save: save,
+      theme: theme,
+      title: title,
+      typeDataSource: typeDataSource
     )
   }
 }

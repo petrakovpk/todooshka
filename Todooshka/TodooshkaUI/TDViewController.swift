@@ -14,41 +14,51 @@ class TDViewController: UIViewController {
 
   public let backButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
+    button.isHidden = true
+    button.setImage(Icon.arrowLeft.image.template, for: .normal)
     button.tintColor = Style.App.text
-    button.isHidden = true
-    return button
-  }()
-
-  public let saveButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.setImage(UIImage(named: "tick-round")?.original, for: .normal)
-    button.isHidden = true
     return button
   }()
 
   public let addButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setImage(UIImage(named: "plus-custom")?.original, for: .normal)
     button.isHidden = true
+    button.setImage(Icon.addSquare.image.template, for: .normal)
+    button.tintColor = Style.App.text
     return button
   }()
-
+  
   public let refreshButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setImage(UIImage(named: "rotate-right")?.template, for: .normal)
-    button.tintColor = Style.App.text
     button.isHidden = true
+    button.setImage(Icon.rotateRight.image.template, for: .normal)
+    button.tintColor = Style.App.text
     return button
   }()
 
   public let removeAllButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setImage(UIImage(named: "trash-custom")?.original, for: .normal)
     button.isHidden = true
+    button.setImage(Icon.trashCustom.image, for: .normal)
+    return button
+  }()
+  
+  public let saveButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.isHidden = true
+    button.setImage(Icon.tickSquare.image.template, for: .normal)
+    button.tintColor = Style.App.text
     return button
   }()
 
+  public let settingsButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.isHidden = true
+    button.setImage(Icon.settingsGear.image.template, for: .normal)
+    button.tintColor = Style.App.text
+    return button
+  }()
+  
   private let safeAreaHeaderView = UIView()
   private let dividerView = UIView()
 
@@ -74,6 +84,7 @@ class TDViewController: UIViewController {
       addButton,
       backButton,
       saveButton,
+      settingsButton,
       titleLabel,
       dividerView,
       refreshButton,
@@ -98,50 +109,70 @@ class TDViewController: UIViewController {
 
     // backButton
     backButton.anchor(
-      top: view.safeAreaLayoutGuide.topAnchor,
+      top: headerView.topAnchor,
       left: headerView.leftAnchor,
       bottom: headerView.bottomAnchor,
-      widthConstant: UIScreen.main.bounds.width / 6)
+      leftConstant: 16,
+      widthConstant: UIScreen.main.bounds.width / 12
+    )
 
     // addButton
     addButton.anchor(
-      top: view.safeAreaLayoutGuide.topAnchor,
+      top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
       right: headerView.rightAnchor,
-      widthConstant: UIScreen.main.bounds.width / 6)
-
+      rightConstant: 16,
+      widthConstant: UIScreen.main.bounds.width / 12
+    )
+    
     // saveButton
     saveButton.anchor(
-      top: view.safeAreaLayoutGuide.topAnchor,
+      top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
       right: headerView.rightAnchor,
-      widthConstant: UIScreen.main.bounds.width / 6)
+      rightConstant: 16,
+      widthConstant: UIScreen.main.bounds.width / 12
+    )
+    
+    // settingsButton
+    settingsButton.anchor(
+      top: headerView.topAnchor,
+      bottom: headerView.bottomAnchor,
+      right: saveButton.leftAnchor,
+      rightConstant: 8,
+      widthConstant: UIScreen.main.bounds.width / 12
+    )
 
     // refreshButton
     refreshButton.anchor(
-      top: view.safeAreaLayoutGuide.topAnchor,
+      top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
       right: headerView.rightAnchor,
-      widthConstant: UIScreen.main.bounds.width / 6)
+      rightConstant: 16,
+      widthConstant: UIScreen.main.bounds.width / 12
+    )
 
     // removeAllButton
     removeAllButton.anchor(
-      top: view.safeAreaLayoutGuide.topAnchor,
+      top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
       right: headerView.rightAnchor,
-      widthConstant: UIScreen.main.bounds.width / 6)
+      rightConstant: 16,
+      widthConstant: UIScreen.main.bounds.width / 12
+    )
 
     // titleLabel
     titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
     titleLabel.textAlignment = .center
     titleLabel.anchorCenterXToSuperview()
     titleLabel.anchor(
-      left: backButton.rightAnchor,
+      left: headerView.leftAnchor,
       bottom: headerView.bottomAnchor,
-      right: saveButton.leftAnchor,
-      leftConstant: 0,
+      right: headerView.rightAnchor,
+      leftConstant: UIScreen.main.bounds.width / 6,
       bottomConstant: 20,
-      rightConstant: 0)
+      rightConstant: UIScreen.main.bounds.width / 6
+    )
 
     // dividerView
     dividerView.backgroundColor = Style.Views.Header.Divider

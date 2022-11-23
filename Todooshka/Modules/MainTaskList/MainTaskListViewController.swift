@@ -39,7 +39,7 @@ class MainTaskListViewController: UIViewController {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     imageView.tintColor = .white
-    imageView.image = UIImage(named: "arrow-top")
+    imageView.image = Icon.arrowTop.image.template
     return imageView
   }()
 

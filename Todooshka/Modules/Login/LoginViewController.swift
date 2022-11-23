@@ -106,7 +106,7 @@ class LoginViewController: UIViewController {
 
   fileprivate let backButton: UIButton = {
     let button = UIButton(type: .custom)
-    button.setImage(UIImage(named: "arrow-left")?.template, for: .normal)
+    button.setImage(Icon.arrowLeft.image.template, for: .normal)
     button.tintColor = Style.App.text
     return button
   }()

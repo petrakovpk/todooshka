@@ -31,14 +31,13 @@ class ThemeCell: UICollectionViewCell {
     ])
 
     // nameLabel
+    nameLabel.anchorCenterXToSuperview()
     nameLabel.anchor(
-      left: contentView.leftAnchor,
       bottom: contentView.bottomAnchor,
-      right: contentView.rightAnchor,
-      leftConstant: 4,
       bottomConstant: 8,
-      rightConstant: 4
+      widthConstant: Sizes.Cells.ThemeCell.width - 8
     )
+    
   }
 
   // MARK: - UI Elements

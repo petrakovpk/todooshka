@@ -9,7 +9,5 @@ import RxDataSources
 import UIKit
 
 extension UIColor: IdentifiableType {
-  public var identity: String {
-    self.hexString
-  }
+  public var identity: String { self.hexString }
 }

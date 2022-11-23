@@ -6,19 +6,10 @@
 //
 
 import CoreData
+import RxCocoa
 import RxFlow
 import RxSwift
-import RxCocoa
 import YandexMobileMetrica
-
-struct TaskAttr: Equatable {
-  let closed: Date?
-  let description: String
-  let kindOfTask: KindOfTask
-  let planned: Date?
-  let status: TaskStatus
-  let text: String
-}
 
 class TaskViewModel: Stepper {
   private let disposeBag = DisposeBag()
@@ -33,243 +24,215 @@ class TaskViewModel: Stepper {
   let services: AppServices
 
   // task attr
-  let taskUID: String
-  var planned: Date? = Date()
-  var status: TaskStatus = .inProgress
+  var task: BehaviorRelay<Task>
 
   // helpers
   var isDescriptionPlaceholderEnabled = false
 
   struct Input {
-    let textTextFieldText: Driver<String>
-    let textFieldEditingDidEndOnExit: Driver<Void>
-    // descriptionTextField
-    let descriptionTextViewText: Driver<String>
-    let descriptionTextViewDidBeginEditing: Driver<Void>
-    let descriptionTextViewDidEndEditing: Driver<Void>
-    // collectionView
-    let selection: Driver<IndexPath>
-    // buttons
-    let backButtonClickTrigger: Driver<Void>
-    let completeButtonClickTrigger: Driver<Void>
-    let configureTaskTypesButtonClickTrigger: Driver<Void>
-    let datePickerButtonClickTrigger: Driver<Void>
-    let saveTaskButtonClickTrigger: Driver<Void>
-    // alert
+    // alert complete
     let alertOkButtonClickTrigger: Driver<Void>
-    // datePicker
-    let alertDatePickerCancelButtonClick: Driver<Void>
+    // alertDatePicker
     let alertDatePickerDate: Driver<Date>
     let alertDatePickerOKButtonClick: Driver<Void>
+    let alertDatePickerCancelButtonClick: Driver<Void>
+    // complete button
+    let completeButtonClickTrigger: Driver<Void>
+    // configure kindsOfTask button
+    let configureTaskTypesButtonClickTrigger: Driver<Void>
+    // collectionView
+    let selection: Driver<IndexPath>
+    // datePickerButton
+    let datePickerButtonClickTrigger: Driver<Void>
+    // descriptionTextField
+    let descriptionTextView: Driver<String>
+    let descriptionTextViewDidBeginEditing: Driver<Void>
+    let descriptionTextViewDidEndEditing: Driver<Void>
+    // header buttons
+    let backButtonClickTrigger: Driver<Void>
+    let saveTaskButtonClickTrigger: Driver<Void>
+    // nameTextField
+    let nameTextField: Driver<String>
+    let nameTextFieldEditingDidEndOnExit: Driver<Void>
   }
 
   struct Output {
-    let clearDescriptionPlaceholder: Driver<Void>
-    let configureKindsOfTask: Driver<Void>
-    let dataSource: Driver<[KindOfTaskSection]>
-    let datePickerDate: Driver<Date>
-    let descriptionTextField: Driver<String>
-    let hideAlertTrigger: Driver<Void>
-    let hideCompleteButton: Driver<Void>
-    let navigateBack: Driver<Void>
-    let plannedText: Driver<String>
-    let save: Driver<Result<Void, Error>>
-    let setDescriptionPlaceholder: Driver<Void>
+    // alert complete
     let showComleteAlertTrigger: Driver<Void>
+    // alertDatePicker
+    let datePickerDate: Driver<Date>
+    let hideAlertTrigger: Driver<Void>
+    let plannedText: Driver<String>
     let showDatePickerAlertTrigger: Driver<Void>
-    let taskIsNewTrigger: Driver<Void>
-    let taskIsNotNewTrigger: Driver<Void>
-    let textTextField: Driver<String>
+    // complete button
+    let completeButtonIsHidden: Driver<Bool>
+    // collectionView
+    let dataSource: Driver<[KindOfTaskSection]>
+    let descriptionTextField: Driver<String>
+    // descriptionTextVIew
+    let hideDescriptionPlaceholder: Driver<Void>
+    let showDescriptionPlaceholder: Driver<Void>
+    // header buttons
+    let navigateBack: Driver<Void>
+    let save: Driver<Result<Void, Error>>
+    // nameTextField
+    let nameTextField: Driver<String>
+    // open kindsOfTask list
+    let openKindsOfTaskList: Driver<Void>
+    // task
+    let taskIsNew: Driver<Bool>
+    // yandex
     let yandexMetrika: Driver<Void>
   }
 
   // MARK: - Init
-  init(services: AppServices, taskUID: String) {
+  init(services: AppServices, task: Task) {
     self.services = services
-    self.taskUID = taskUID
-  }
-
-  init(services: AppServices, taskUID: String, status: TaskStatus, planned: Date?) {
-    self.services = services
-    self.taskUID = taskUID
-    self.status = status
-    self.planned = planned
+    self.task = BehaviorRelay<Task>(value: task)
   }
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    // start
-    let tasks = services.dataService.tasks
-    let task = tasks
-      .compactMap { $0.first(where: { $0.UID == self.taskUID }) }
-      .startWith(
-        Task(
-          UID: self.taskUID,
-          text: "",
-          description: "",
-          kindOfTaskUID: KindOfTask.Standart.Simple.UID,
-          status: self.status,
-          created: Date(),
-          closed: nil,
-          planned: self.planned
-        )
-      )
-
-    let taskIsNew = tasks
-      .map { $0.first(where: { $0.UID == self.taskUID }) }
-      .map { $0 == nil }
-
-    let taskIsNewTrigger = taskIsNew
-      .filter { $0 }
-      .map { _ in () }
-
-    let taskIsNotNewTrigger = tasks
-      .asObservable()
-      .take(1)
-      .asDriver(onErrorJustReturn: [])
-      .map { $0.first(where: { $0.UID == self.taskUID }) }
-      .filter { $0 != nil }
-      .map { _ in () }
-
-    let startPlanned = task
-      .compactMap { $0.planned }
-
-    let selectedPlanned = input.alertDatePickerOKButtonClick
-      .withLatestFrom(input.alertDatePickerDate) { $1 }
-
-    let planned = Driver
-      .of(selectedPlanned, startPlanned)
-      .merge()
-      .map { date -> Date? in date }
-      .startWith(nil)
-
-    let plannedText = planned
-      .compactMap { $0 }
-      .compactMap { Calendar.current.isDate($0, inSameDayAs: Date()) ?
-        "Сегодня" : self.services.preferencesService.midFormatter.string(for: $0)
-      }.startWith( "Когда-то" )
-
-    let changeStatusToPlanned = selectedPlanned
-      .withLatestFrom(task) { planned, task -> TaskStatus? in
-        planned.startOfDay > Date().startOfDay && task.status != .idea ? TaskStatus.planned : nil
-      }.compactMap { $0 }
-
+    let name = input
+      .nameTextField
+      .startWith(self.task.value.text)
+    
+    let description = input
+      .descriptionTextView
+      .map { self.isDescriptionPlaceholderEnabled ? "" : $0 }
+      .startWith(self.task.value.description)
+    
     // kindsOfTask
     let kindsOfTask = services.dataService
       .kindsOfTask
       .map { $0.filter { $0.status == .active } }
-
-    let hideCompleteButton = Driver
-      .of(
-        taskIsNewTrigger,
-        task.filter { $0.status == .completed }.map { _ in () }
-      )
-      .merge()
-
+    
     // dataSource
     let dataSource = Driver
-      .combineLatest(task, kindsOfTask) { task, kindsOfTask -> [KindOfTaskSection] in
-        [KindOfTaskSection(
-          header: "",
-          items: kindsOfTask.map {
-            KindOfTaskItem(
-              kindOfTask: $0,
-              isSelected: $0.UID == task.kindOfTaskUID
-            )
-          }
-        )]
+      .combineLatest(task.asDriver(), kindsOfTask) { task, kindsOfTask -> [KindOfTaskSection] in
+        [
+          KindOfTaskSection(
+            header: "",
+            items: kindsOfTask.map {
+              KindOfTaskItem(
+                kindOfTask: $0,
+                isSelected: $0.UID == task.kindOfTaskUID
+              )
+            }
+          )
+        ]
       }
       .asDriver(onErrorJustReturn: [])
-
-    // task attr
-    let savedKindfOfTask = task
-      .withLatestFrom(kindsOfTask) { task, kindsOfTask -> KindOfTask in
-        kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
-      }
 
     let selectedKindfOfTask = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTask in
         dataSource[indexPath.section].items[indexPath.item].kindOfTask
       }
-
-    let kindOfTask = Driver.of(savedKindfOfTask, selectedKindfOfTask).merge()
-
-    let text = Driver
-      .of( task.compactMap { $0.text }, input.textTextFieldText )
-      .merge()
-
-    let description = Driver
-      .of(
-        task.compactMap { $0.description }.distinctUntilChanged(),
-        input.descriptionTextViewText.filter { _ in self.isDescriptionPlaceholderEnabled == false }
-      ).merge()
-
+    
+    let planned = input.alertDatePickerOKButtonClick
+      .withLatestFrom(input.alertDatePickerDate) { $1 }
+      .startWith(self.task.value.planned)
+    
+    let closed = input.alertOkButtonClickTrigger
+      .map { Date() }
+      .startWith(self.task.value.closed)
+    
+    let statusPlanned = planned
+      .compactMap { $0 }
+      .compactMap { planned -> TaskStatus? in
+        planned.startOfDay > Date().startOfDay ? .planned : nil
+      }
+    
+    let statusCompleted = input
+      .alertOkButtonClickTrigger
+      .map { _ -> TaskStatus in
+          .completed
+      }
+    
     let status = Driver
       .of(
-        task.compactMap { $0.status }.distinctUntilChanged(),
-        input.alertOkButtonClickTrigger.map { TaskStatus.completed },
-        changeStatusToPlanned
-      ).merge()
-
-    let startClosed = task.map { $0.closed }
-    let alertClosed = input.alertOkButtonClickTrigger
-      .map { Date() }
-      .map { date -> Date? in date }
-
-    let closed = Driver
-      .of(startClosed, alertClosed)
+        statusPlanned,
+        statusCompleted
+      )
       .merge()
+      .startWith(self.task.value.status)
+    
+    let task = Driver
+      .combineLatest(task.asDriver(), name, description, selectedKindfOfTask, planned, closed, status) { task, name, description, kindOfTask, planned, closed, status -> Task in
+        Task(
+          UID: task.UID,
+          text: name,
+          description: description,
+          kindOfTaskUID: kindOfTask.UID,
+          status: status,
+          created: task.created,
+          closed: closed,
+          planned: planned
+        )
+      }
+      .do {
+        self.task.accept($0)
+      }
+    
+    let plannedText = planned
+      .compactMap { $0 }
+      .compactMap { Calendar.current.isDate($0, inSameDayAs: Date()) ?
+        "Сегодня" : self.services.preferencesService.midFormatter.string(for: $0)
+      }
+      .startWith( "Когда-то" )
+    
+    let taskIsNew = services.dataService.tasks
+      .withLatestFrom(task) { tasks, task -> Bool in
+        !tasks.contains { $0.UID == task.UID }
+      }
+  
+    let completeButtonIsHidden = Driver
+      .combineLatest(taskIsNew, task) { taskIsNew, task -> Bool in
+        taskIsNew || task.status == .completed
+      }
 
-    let taskAttr = Driver
-      .combineLatest(text, description, kindOfTask, planned, status, closed) { text, description, kindOfTask, planned, status, closed in
-        TaskAttr(closed: closed, description: description, kindOfTask: kindOfTask, planned: planned, status: status, text: text)
-      }.distinctUntilChanged()
-
+    
     // description
-    let setDescriptionPlaceholder = Driver
-      .of(
-        // Это как бы старт
-        task.map { $0.description ?? "" }.asObservable().take(1).asDriver(onErrorJustReturn: ""),
-        // Это когда перестаем редактировать
-        input.descriptionTextViewDidEndEditing.withLatestFrom(description) { $1 }
-      ).merge()
+    let showDescriptionPlaceholderWhenStart = Driver
+      .just(self.task.value.description)
       .filter { $0.isEmpty }
+    
+    let showDescriptionPlaceholderWhenEndEditing = input.descriptionTextViewDidEndEditing
+      .withLatestFrom(description) { $1 }
+      .filter{ $0.isEmpty }
+      .do { _ in self.isDescriptionPlaceholderEnabled = true }
+    
+    let showDescriptionPlaceholder = Driver.of(
+      showDescriptionPlaceholderWhenStart,
+      showDescriptionPlaceholderWhenEndEditing
+    )
+      .merge()
       .map { _ in () }
       .do { _ in self.isDescriptionPlaceholderEnabled = true }
-
-    let clearDescriptionPlaceholder = input.descriptionTextViewDidBeginEditing
-      .compactMap { self.isDescriptionPlaceholderEnabled ? () : nil           }
+    
+    let hideDescriptionPlaceholder = input.descriptionTextViewDidBeginEditing
+      .filter { _ in self.isDescriptionPlaceholderEnabled }
       .do { _ in self.isDescriptionPlaceholderEnabled = false }
-
-    // save
-    let save = Driver
-      .of(
-        input.textFieldEditingDidEndOnExit,
+    
+    let saveTrigger = Driver
+      .of (
+        input.nameTextFieldEditingDidEndOnExit,
         input.saveTaskButtonClickTrigger,
         input.alertOkButtonClickTrigger,
         input.selection.map { _ in () },
         input.alertDatePickerOKButtonClick
       ).merge()
+    
+    let save = saveTrigger
       .withLatestFrom(task) { $1 }
-      .withLatestFrom(taskAttr) { task, taskAttr -> Task in
-        Task(
-          UID: task.UID,
-          text: taskAttr.text,
-          description: taskAttr.description,
-          kindOfTaskUID: taskAttr.kindOfTask.UID,
-          status: taskAttr.status,
-          created: task.created,
-          closed: taskAttr.closed,
-          planned: taskAttr.planned
-        )
-      }.asObservable()
+      .asObservable()
       .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     let yandexMetrika = save
       .withLatestFrom(taskIsNew) { $1 }
       .filter { $0 }
-      .withLatestFrom(taskAttr) { $1.text }
+      .withLatestFrom(task) { $1.text }
       .distinctUntilChanged()
       .map { text -> Void in
         let params: [AnyHashable: Any] = ["text": text]
@@ -284,11 +247,12 @@ class TaskViewModel: Stepper {
       input.alertOkButtonClickTrigger,
       input.alertDatePickerCancelButtonClick,
       input.alertDatePickerOKButtonClick
-    ).merge()
+    )
+      .merge()
 
     // configure task button click
-    let configureKindsOfTask = input.configureTaskTypesButtonClickTrigger
-      .map { self.steps.accept(AppStep.kindsOfTaskListIsRequired) }
+    let openKindsOfTaskList = input.configureTaskTypesButtonClickTrigger
+      .do { _ in self.steps.accept(AppStep.kindsOfTaskListIsRequired) }
 
     let datePickerDate = planned
       .compactMap { $0 }
@@ -298,30 +262,38 @@ class TaskViewModel: Stepper {
     let navigateBack = Driver
       .of(
         input.saveTaskButtonClickTrigger,
-        input.textFieldEditingDidEndOnExit,
         input.backButtonClickTrigger,
         input.alertOkButtonClickTrigger
       )
       .merge()
-      .map { self.steps.accept(AppStep.taskProcessingIsCompleted) }
+      .do { _ in self.steps.accept(AppStep.taskProcessingIsCompleted) }
 
     return Output(
-      clearDescriptionPlaceholder: clearDescriptionPlaceholder,
-      configureKindsOfTask: configureKindsOfTask,
-      dataSource: dataSource,
-      datePickerDate: datePickerDate,
-      descriptionTextField: description,
-      hideAlertTrigger: hideAlertTrigger,
-      hideCompleteButton: hideCompleteButton,
-      navigateBack: navigateBack,
-      plannedText: plannedText,
-      save: save,
-      setDescriptionPlaceholder: setDescriptionPlaceholder,
+      // alert complete
       showComleteAlertTrigger: showComleteAlertTrigger,
+      // alertDatePicker
+      datePickerDate: datePickerDate,
+      hideAlertTrigger: hideAlertTrigger,
+      plannedText: plannedText,
       showDatePickerAlertTrigger: showDatePickerAlertTrigger,
-      taskIsNewTrigger: taskIsNewTrigger,
-      taskIsNotNewTrigger: taskIsNotNewTrigger,
-      textTextField: text,
+      // complete button
+      completeButtonIsHidden: completeButtonIsHidden,
+      // collectionView
+      dataSource: dataSource,
+      descriptionTextField: description,
+      // descriptionTextVIew
+      hideDescriptionPlaceholder: hideDescriptionPlaceholder,
+      showDescriptionPlaceholder: showDescriptionPlaceholder,
+      // header buttons
+      navigateBack: navigateBack,
+      save: save,
+      // nameTextField
+      nameTextField: name,
+      // open kindsOfTask list
+      openKindsOfTaskList: openKindsOfTaskList,
+      // task
+      taskIsNew: taskIsNew,
+      // yandex
       yandexMetrika: yandexMetrika
     )
   }

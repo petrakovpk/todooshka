@@ -51,7 +51,7 @@ class TaskFlow: Flow {
 
   private func navigateToTask(taskUID: String) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, taskUID: taskUID)
+    let viewModel = TaskViewModel(services: services, task: Task(UID: UUID().uuidString, status: .inProgress) )
     viewController.viewModel = viewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: false)

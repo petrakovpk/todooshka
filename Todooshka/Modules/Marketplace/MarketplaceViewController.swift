@@ -19,7 +19,7 @@ class MarketplaceViewController: TDViewController {
   
   private var collectionView: UICollectionView!
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeSection>!
-
+  
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -31,6 +31,7 @@ class MarketplaceViewController: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     // header
+    addButton.isHidden = false
     headerView.layer.zPosition = 2
     titleLabel.text = "Чем научимся сегодня?"
     
@@ -39,27 +40,24 @@ class MarketplaceViewController: TDViewController {
     
     // adding
     view.addSubviews([
-      collectionView
+      collectionView,
     ])
+    
 
     // collectionView
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
-    collectionView.layer.masksToBounds = false
 
     collectionView.register(
       ThemePlusButtonCell.self,
       forCellWithReuseIdentifier: ThemePlusButtonCell.reuseID)
-    
     collectionView.register(
       ThemeCell.self,
       forCellWithReuseIdentifier: ThemeCell.reuseID)
-
     collectionView.register(
       ThemeHeader.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
       withReuseIdentifier: ThemeHeader.reuseID)
-
     collectionView.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
@@ -74,6 +72,7 @@ class MarketplaceViewController: TDViewController {
   // MARK: - Bind ViewModel
   func bindViewModel() {
     let input = MarketplaceViewModel.Input(
+      addThemeButtonClickTrigger: addButton.rx.tap.asDriver(),
       selection: collectionView.rx.itemSelected.asDriver()
     )
 
@@ -100,12 +99,6 @@ class MarketplaceViewController: TDViewController {
           ) as? ThemeCell else { return UICollectionViewCell() }
           cell.configure(with: theme)
           return cell
-        case .plusButton:
-          guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ThemePlusButtonCell.reuseID,
-            for: indexPath
-          ) as? ThemePlusButtonCell else { return UICollectionViewCell() }
-          return cell
         }
       }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
         guard let header = collectionView.dequeueReusableSupplementaryView(
@@ -128,13 +121,13 @@ class MarketplaceViewController: TDViewController {
   private func section() -> NSCollectionLayoutSection {
     // item
     let itemSize = NSCollectionLayoutSize(
-      widthDimension: .estimated(Sizes.Cells.ThemeCell.width),
-      heightDimension: .estimated(Sizes.Cells.ThemeCell.height))
+      widthDimension: .absolute(Sizes.Cells.ThemeCell.width),
+      heightDimension: .absolute(Sizes.Cells.ThemeCell.height))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 10)
     // group
     let groupSize = NSCollectionLayoutSize(
-      widthDimension: .fractionalWidth(1.0),
+      widthDimension: .estimated(Sizes.Cells.ThemeCell.width),
       heightDimension: .estimated(Sizes.Cells.ThemeCell.height))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
     group.interItemSpacing = .fixed(5.0)

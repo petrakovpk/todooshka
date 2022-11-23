@@ -8,35 +8,106 @@
 import UIKit
 import RxDataSources
 
-enum Icon: String, IdentifiableType, Equatable {
-  // MARK: - Icons
-  case bank = "Bank"
-  case bookSaved = "BookSaved"
-  case briefcase = "Briefcase"
-  case dumbbell = "Dumbbell"
-  case emojiHappy = "EmojiHappy"
-  case gasStation = "GasStation"
-  case house = "House"
-  case lovely = "Lovely"
-  case moon = "Moon"
-  case notificationBing = "NotificationBing"
-  case pet = "Pet"
-  case profile2user = "Profile2user"
-  case ship = "Ship"
-  case shop = "Shop"
-  case sun = "Sun"
-  case teacher = "Teacher"
-  case tree = "Tree"
-  case unlimited = "Unlimited"
-  case videoVertical = "VideoVertical"
-  case wallet = "Wallet"
-  case weight = "Weight"
+enum Icon: String {
+  case addSquare
+  case arrowBottom
+  case arrowLeft
+  case arrowLeftCustom
+  case arrowRightCustom
+  case arrowTop
+  case bank
+  case bookSaved
+  case box
+  case box3d
+  case boxAdd
+  case boxTick
+  case briefcase
+  case call
+  case clipboardTick
+  case dumbbell
+  case edit
+  case editWithSquare
+  case emojiHappy
+  case gasStation
+  case home
+  case home2
+  case lampCharge
+  case lampChargeCustom
+  case lock
+  case lockWithRound
+  case login
+  case logout
+  case lovely
+  case messageNotif
+  case moon
+  case notificationBing
+  case pet
+  case plus
+  case plusCustom
+  case point
+  case profile2user
+  case refreshCircle
+  case remove
+  case rotateRight
+  case round
+  case selectedRound
+  case settings
+  case settingsGear
+  case ship
+  case shop
+  case sms
+  case sort
+  case sun
+  case teacher
+  case tick
+  case tickRound
+  case tickSquare
+  case timer
+  case timerPause
+  case trash
+  case trashCustom
+  case tree
+  case unlimited
+  case userSquare
+  case videoVertical
+  case wallet
+  case weight
 
   // MARK: - Image
   var image: UIImage {
-    return UIImage(named: self.rawValue)!.template
+    UIImage(named: "\(self.rawValue)") ?? UIImage()
   }
+  
+  var isEnabledForKindOfTask: Bool {
+    switch self {
+    case .bank,
+        .bookSaved,
+        .briefcase,
+        .dumbbell,
+        .emojiHappy,
+        .gasStation,
+        .home,
+        .lovely,
+        .moon,
+        .notificationBing,
+        .pet,
+        .profile2user,
+        .ship,
+        .shop,
+        .sun,
+        .teacher,
+        .tree,
+        .unlimited,
+        .videoVertical,
+        .wallet,
+        .weight:
+      return true
+    default:
+      return false
+    }
+  }
+}
 
-  // MARK: - Identity
-  var identity: String { return self.rawValue }
+extension Icon: IdentifiableType {
+  var identity: String { self.rawValue }
 }

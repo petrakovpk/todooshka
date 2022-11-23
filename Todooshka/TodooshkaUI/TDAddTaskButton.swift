@@ -17,7 +17,7 @@ class TDAddTaskButton: UIButton {
     layer.shadowColor = Palette.SingleColors.BlueRibbon.cgColor
     layer.backgroundColor = Palette.SingleColors.BlueRibbon.cgColor
 
-    let imageView = UIImageView(image: UIImage(named: "plus"))
+    let imageView = UIImageView(image: Icon.plus.image)
     addSubview(imageView)
     imageView.anchorCenterXToSuperview()
     imageView.anchorCenterYToSuperview()

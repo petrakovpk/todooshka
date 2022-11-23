@@ -73,7 +73,7 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     // imageView
     imageView.anchorCenterYToSuperview()
     imageView.anchorCenterXToSuperview()
-    imageView.image = UIImage(named: "plus")?.template
+    imageView.image = Icon.plus.image.template
     imageView.tintColor = Style.App.text
 
     // shapeLayer

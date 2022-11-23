@@ -22,7 +22,7 @@ class TaskCell: SwipeCollectionViewCell {
   // UI
   public let repeatButton: UIButton = {
     let button = UIButton(type: .custom)
-    button.setImage(UIImage(named: "refresh-circle")?.original, for: .normal)
+    button.setImage(Icon.refreshCircle.image, for: .normal)
     button.backgroundColor = Palette.SingleColors.BlueRibbon
     button.cornerRadius = 15
     button.setTitleColor(.white, for: .normal)
@@ -72,7 +72,7 @@ class TaskCell: SwipeCollectionViewCell {
     return view
   }()
 
-  private let taskTimeLeftImageView = UIImageView(image: UIImage(named: "timer"))
+  private let taskTimeLeftImageView = UIImageView(image: Icon.timer.image)
 
   private let taskTimeLeftLabel: UILabel = {
     let label = UILabel()

@@ -28,7 +28,7 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
     let button = UIButton(type: .system)
     button.backgroundColor = Palette.SingleColors.BlueRibbon
     button.cornerRadius = 25 / 2
-    button.setImage(UIImage(named: "refresh-circle")?.original, for: .normal)
+    button.setImage(Icon.refreshCircle.image, for: .normal)
     button.setTitleColor(.white, for: .normal)
     button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
     button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0)
@@ -118,7 +118,7 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
     case .withRightImage:
       repeatButton.isHidden = true
       rightImageView.isHidden = false
-      rightImageView.image = kindOfTask.isStyleLocked ? UIImage(named: "lockWithRound")?.template : kindOfTask.style.image
+      rightImageView.image = kindOfTask.isStyleLocked ? Icon.lockWithRound.image.template : kindOfTask.style.image
       rightImageView.tintColor = Style.App.text
     }
   }

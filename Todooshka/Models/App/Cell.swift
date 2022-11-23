@@ -88,6 +88,7 @@ enum ActionDescriptor {
     return UIGraphicsGetImageFromCurrentImageContext()
   }
 }
+
 enum ButtonDisplayMode {
   case titleAndImage, titleOnly, imageOnly
 }

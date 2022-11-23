@@ -28,14 +28,16 @@ class TabBarViewModel: Stepper {
   func selectedItem(item: UITabBarItem) {
     switch item.tag {
     case 1:
-      services.tabBarService.selectedItem.accept(.first)
+      services.tabBarService.selectedItem.accept(.feed)
     case 2:
-      services.tabBarService.selectedItem.accept(.second)
-    case 3:
-      if services.tabBarService.selectedItem.value == .third {
+      services.tabBarService.selectedItem.accept(.marketplace)
+    case 4:
+      services.tabBarService.selectedItem.accept(.taskList)
+    case 5:
+      if services.tabBarService.selectedItem.value == .userProfile {
         services.preferencesService.scrollToCurrentMonthTrigger.accept((true, true))
       }
-      services.tabBarService.selectedItem.accept(.third)
+      services.tabBarService.selectedItem.accept(.userProfile)
     default:
       return
     }
@@ -43,7 +45,7 @@ class TabBarViewModel: Stepper {
 
   func transform(input: Input) -> Output {
     let createTask = input.createTaskButtonClickTrigger
-      .map { self.steps.accept(AppStep.createTaskIsRequired) }
+      .map { self.steps.accept(AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .inProgress)) ) }
 
     return Output(
       createTask: createTask

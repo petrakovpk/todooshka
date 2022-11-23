@@ -10,20 +10,17 @@ import Firebase
 import RxDataSources
 
 struct Task: IdentifiableType, Equatable {
-  // MARK: - Static
-  static let emptyTask = Task(UID: "Empty", text: "", description: "", status: .inProgress, created: Date())
-
   // MARK: - Properites
   var identity: String { UID }
   var UID: String { willSet { lastModified = Date()}}
 
-  var text: String { willSet { lastModified = Date()}}
-  var description: String? { willSet { lastModified = Date()}}
+  var text: String = "" { willSet { lastModified = Date()}}
+  var description: String = "" { willSet { lastModified = Date()}}
 
   var status: TaskStatus { willSet { lastModified = Date()}}
   var index: Int = 0 { willSet { lastModified = Date()}}
 
-  var created: Date { willSet { lastModified = Date()}}
+  var created: Date = Date() { willSet { lastModified = Date()}}
   var planned: Date? { willSet { lastModified = Date()}}
   var closed: Date? { willSet { lastModified = Date()}}
 
@@ -57,7 +54,18 @@ struct Task: IdentifiableType, Equatable {
   }
 
   // MARK: - init
-  init(UID: String, text: String, description: String?, status: TaskStatus, created: Date) {
+  init(UID: String, status: TaskStatus) {
+    self.UID = UID
+    self.status = status
+  }
+  
+  init(UID: String, status: TaskStatus, planned: Date) {
+    self.UID = UID
+    self.status = status
+    self.planned = planned
+  }
+  
+  init(UID: String, text: String, description: String, status: TaskStatus, created: Date) {
     self.UID = UID
     self.text = text
     self.description = description
@@ -65,7 +73,7 @@ struct Task: IdentifiableType, Equatable {
     self.created = created
   }
 
-  init(UID: String, text: String, description: String?, kindOfTaskUID: String, status: TaskStatus, created: Date, closed: Date?, planned: Date?) {
+  init(UID: String, text: String, description: String, kindOfTaskUID: String, status: TaskStatus, created: Date, closed: Date?, planned: Date?) {
     self.UID = UID
     self.text = text
     self.description = description
@@ -114,6 +122,7 @@ extension Task {
     // check
     guard let dict = snapshot.value as? NSDictionary,
           let text = dict.value(forKey: "text") as? String,
+          let description = dict.value(forKey: "desc") as? String,
           let statusRawValue = dict.value(forKey: "status") as? String,
           let status = TaskStatus(rawValue: statusRawValue),
           let kindOfTaskUID = dict.value(forKey: "kindOfTaskUID") as? String,
@@ -125,7 +134,7 @@ extension Task {
     // init
     self.UID = snapshot.key
     self.text = text
-    self.description = dict.value(forKey: "desc") as? String
+    self.description = description
     self.status = status
     self.kindOfTaskUID = kindOfTaskUID
     self.created = Date(timeIntervalSince1970: createdTimeInterval)
@@ -154,6 +163,7 @@ extension Task: Persistable {
     guard
       let UID = entity.value(forKey: "uid") as? String,
       let created = entity.value(forKey: "created") as? Date,
+      let description = entity.value(forKey: "desc") as? String,
       let index = entity.value(forKey: "index") as? Int,
       let kindOfTaskUID = entity.value(forKey: "kindOfTaskUID") as? String,
       let statusRawValue = entity.value(forKey: "statusRawValue") as? String,
@@ -170,7 +180,7 @@ extension Task: Persistable {
     self.text = text
     self.lastModified = lastModified
     self.closed = entity.value(forKey: "closed") as? Date
-    self.description = entity.value(forKey: "desc") as? String
+    self.description = description
     self.planned = entity.value(forKey: "planned") as? Date
     self.userUID = entity.value(forKey: "userUID") as? String
   }

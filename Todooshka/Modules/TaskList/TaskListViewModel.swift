@@ -248,9 +248,9 @@ class TaskListViewModel: Stepper {
       .compactMap { _ -> AppStep? in
         switch self.mode {
         case .idea:
-          return AppStep.createIdeaTaskIsRequired
+          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .idea))
         case .planned(let date):
-          return AppStep.createPlannedTaskIsRequired(plannedDate: date)
+          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .planned, planned: date))
         default:
           return nil
         }

@@ -20,7 +20,7 @@ class TaskViewController: TDViewController {
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskSection>!
 
   // MARK: - UI Elements
-  private let textTextField: TDTaskTextField = {
+  private let nameTextField: TDTaskTextField = {
     let field = TDTaskTextField(placeholder: "Введите название задачи")
     field.returnKeyType = .done
     return field
@@ -35,7 +35,7 @@ class TaskViewController: TDViewController {
 
   private let kindsOfTaskButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setImage(UIImage(named: "settings")?.template, for: .normal)
+    button.setImage(Icon.settingsGear.image.template, for: .normal)
     button.tintColor = Style.Buttons.RoundButton.tint
     return button
   }()
@@ -160,7 +160,7 @@ class TaskViewController: TDViewController {
 
     // adding
     view.addSubviews([
-      textTextField,
+      nameTextField,
       kindOfTaskLabel,
       kindsOfTaskButton,
       collectionView,
@@ -172,7 +172,7 @@ class TaskViewController: TDViewController {
     ])
     
     // nameTextField
-    textTextField.anchor(
+    nameTextField.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
@@ -184,7 +184,7 @@ class TaskViewController: TDViewController {
 
     // kindOfTaskLabel
     kindOfTaskLabel.anchor(
-      top: textTextField.bottomAnchor,
+      top: nameTextField.bottomAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
       topConstant: 12,
@@ -332,48 +332,60 @@ class TaskViewController: TDViewController {
   // MARK: - Bind
   func bindViewModel() {
     let input = TaskViewModel.Input(
-      // textTextField
-      textTextFieldText: textTextField.rx.text.orEmpty.asDriver(),
-      textFieldEditingDidEndOnExit: textTextField.rx.controlEvent([.editingDidEndOnExit]).asDriver(),
-      // descriptionTextField
-      descriptionTextViewText: descriptionTextView.rx.text.orEmpty.asDriver(),
-      descriptionTextViewDidBeginEditing: descriptionTextView.rx.didBeginEditing.asDriver(),
-      descriptionTextViewDidEndEditing: descriptionTextView.rx.didEndEditing.asDriver(),
+      // alert complete
+      alertOkButtonClickTrigger: alertOkButton.rx.tap.asDriver(),
+      // alertDatePicker
+      alertDatePickerDate: alertDatePicker.rx.date.asDriver(),
+      alertDatePickerOKButtonClick: alertDatePickerOkButton.rx.tap.asDriver(),
+      alertDatePickerCancelButtonClick: alertDatePickerCancelButton.rx.tap.asDriver(),
+      // complete button
+      completeButtonClickTrigger: completeButton.rx.tap.asDriver(),
+      // configure kindsOfTask button
+      configureTaskTypesButtonClickTrigger: kindsOfTaskButton.rx.tap.asDriver(),
       // collectionView
       selection: collectionView.rx.itemSelected.asDriver(),
-      // buttons
-      backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      completeButtonClickTrigger: completeButton.rx.tap.asDriver(),
-      configureTaskTypesButtonClickTrigger: kindsOfTaskButton.rx.tap.asDriver(),
+      // datePickerButton
       datePickerButtonClickTrigger: plannedDateButton.rx.tap.asDriver(),
+      // descriptionTextField
+      descriptionTextView: descriptionTextView.rx.text.orEmpty.asDriver(),
+      descriptionTextViewDidBeginEditing: descriptionTextView.rx.didBeginEditing.asDriver(),
+      descriptionTextViewDidEndEditing: descriptionTextView.rx.didEndEditing.asDriver(),
+      // header buttons
+      backButtonClickTrigger: backButton.rx.tap.asDriver(),
       saveTaskButtonClickTrigger: saveButton.rx.tap.asDriver(),
-      // Complete Task Alert
-      alertOkButtonClickTrigger: alertOkButton.rx.tap.asDriver(),
-      // datePicker
-      alertDatePickerCancelButtonClick: alertDatePickerCancelButton.rx.tap.asDriver(),
-      alertDatePickerDate: alertDatePicker.rx.date.asDriver(),
-      alertDatePickerOKButtonClick: alertDatePickerOkButton.rx.tap.asDriver()
+      // nameTextField
+      nameTextField: nameTextField.rx.text.orEmpty.asDriver(),
+      nameTextFieldEditingDidEndOnExit: nameTextField.rx.controlEvent(.editingDidEndOnExit).asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
 
     [
-      outputs.clearDescriptionPlaceholder.drive(clearDescriptionPlaceholderBinder),
-      outputs.configureKindsOfTask.drive(),
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      // alert complete
+      outputs.showComleteAlertTrigger.drive(showComleteAlertTriggerBinder),
+      // alertDatePicker
       outputs.datePickerDate.drive(alertDatePicker.rx.date),
-      outputs.descriptionTextField.drive(descriptionTextView.rx.text),
       outputs.hideAlertTrigger.drive(hideAlertBinder),
-      outputs.hideCompleteButton.drive(hideCompleteButtonBinder),
+      outputs.plannedText.drive(plannedButtonTextBinder),
+      outputs.showDatePickerAlertTrigger.drive(showDatePickerAlertTriggerBinder),
+      // complete button
+      outputs.completeButtonIsHidden.drive(completeButton.rx.isHidden),
+      // collectionView
+      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.descriptionTextField.drive(descriptionTextView.rx.text),
+      // descriptionTextVIew
+      outputs.hideDescriptionPlaceholder.drive(hideDescriptionPlaceholderBinder),
+      outputs.showDescriptionPlaceholder.drive(showDescriptionPlaceholderBinder),
+      // header buttons
       outputs.navigateBack.drive(),
       outputs.save.drive(),
-      outputs.setDescriptionPlaceholder.drive(setDescriptionPlaceholderBinder),
-      outputs.showComleteAlertTrigger.drive(showComleteAlertTriggerBinder),
-      outputs.showDatePickerAlertTrigger.drive(showDatePickerAlertTriggerBinder),
-      outputs.plannedText.drive(plannedButtonTextBinder),
-      outputs.taskIsNewTrigger.drive(taskIsNewBinder),
-      outputs.taskIsNotNewTrigger.drive(taskIsNotNewBinder),
-      outputs.textTextField.drive(textTextField.rx.text),
+      // nameTextField
+      outputs.nameTextField.drive(nameTextField.rx.text),
+      // open kindsOfTask list
+      outputs.openKindsOfTaskList.drive(),
+      // task
+      outputs.taskIsNew.drive(taskIsNewBinder),
+      // yandex
       outputs.yandexMetrika.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
@@ -386,14 +398,14 @@ class TaskViewController: TDViewController {
     })
   }
 
-  var clearDescriptionPlaceholderBinder: Binder<Void> {
+  var hideDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
       vc.descriptionTextView.textColor = Style.App.text
       vc.descriptionTextView.clear()
     })
   }
 
-  var setDescriptionPlaceholderBinder: Binder<Void> {
+  var showDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
       vc.descriptionTextView.textColor = Style.App.placeholder
       vc.descriptionTextView.text = "Напишите комментарий"
@@ -447,18 +459,17 @@ class TaskViewController: TDViewController {
     })
   }
 
-  var taskIsNewBinder: Binder<Void> {
-    return Binder(self, binding: { vc, _ in
-        vc.textTextField.becomeFirstResponder()
+  var taskIsNewBinder: Binder<Bool> {
+    return Binder(self, binding: { vc, isNew in
+      if isNew {
+        vc.nameTextField.becomeFirstResponder()
+      } else {
+        vc.backButton.isHidden = false
+        vc.hideKeyboardWhenTappedAround()
+      }
     })
   }
 
-  var taskIsNotNewBinder: Binder<Void> {
-    return Binder(self, binding: { vc, _ in
-      vc.backButton.isHidden = false
-      vc.hideKeyboardWhenTappedAround()
-    })
-  }
 
   func configureDataSource() {
     collectionView.dataSource = nil

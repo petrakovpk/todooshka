@@ -19,7 +19,7 @@ class ThemeDayViewContoller: TDViewController {
   // MARK: - UI Elements
   private let addImageButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setImage(UIImage(named: "plus")?.template, for: .normal)
+    button.setImage(Icon.plus.image.template, for: .normal)
     button.tintColor = .black
     button.cornerRadius = 75.0 / 2
     button.borderWidth = 1.0

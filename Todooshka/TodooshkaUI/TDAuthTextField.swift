@@ -41,25 +41,25 @@ class TDAuthTextField: UITextField {
     case .email:
       placeholder = "Email"
       returnKeyType = .done
-      imageView.image = UIImage(named: "sms")?.template
+      imageView.image = Icon.sms.image.template
     case .password:
       isSecureTextEntry = true
       placeholder = "Password"
       returnKeyType = .done
-      imageView.image = UIImage(named: "lock")?.template
+      imageView.image = Icon.lock.image.template
     case .repeatPassword:
       isSecureTextEntry = true
       placeholder = "Repeat password"
       returnKeyType = .done
-      imageView.image = UIImage(named: "lock")?.template
+      imageView.image = Icon.lock.image.template
     case .phone:
       keyboardType = .numberPad
       placeholder = "+X (XXX) XXX XX XX"
-      imageView.image = UIImage(named: "call")?.template
+      imageView.image = Icon.call.image.template
     case .otp:
       keyboardType = .numberPad
       placeholder = "Code"
-      imageView.image = UIImage(named: "lock")?.template
+      imageView.image = Icon.lock.image.template
     }
   }
 

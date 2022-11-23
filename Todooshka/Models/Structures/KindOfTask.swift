@@ -55,7 +55,7 @@ struct KindOfTask: IdentifiableType, Equatable {
     )
     static let Home = KindOfTask(
       UID: "Home",
-      icon: .house,
+      icon: .home,
       isStyleLocked: false,
       color: Palette.SingleColors.Cerise,
       text: "Домашние дела",

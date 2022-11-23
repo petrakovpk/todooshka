@@ -12,10 +12,8 @@ import UIKit
 
 class ThemeViewController: TDViewController {
   
-  // MARK: - MVVM
   public var viewModel: ThemeViewModel!
   
-  // MARK: - RX Elements
   private let disposeBag = DisposeBag()
   
   // MARK: - UI Elements
@@ -27,10 +25,9 @@ class ThemeViewController: TDViewController {
     textField.borderColor = .black
     textField.cornerRadius = 5.0
     textField.font = UIFont.systemFont(ofSize: 12, weight: .thin)
-    textField.isHidden = true
     textField.leftView = spacer
     textField.leftViewMode = .always
-    textField.placeholder = "Название темы"
+    textField.placeholder = "Отказываемся от сахара"
     return textField
   }()
   
@@ -39,9 +36,17 @@ class ThemeViewController: TDViewController {
     button.borderColor = .black
     button.borderWidth = 1.0
     button.cornerRadius = 15
-    button.setImage(UIImage(named: "plus"), for: .normal)
+    button.setImage(Icon.plus.image, for: .normal)
     button.tintColor = .black
     return button
+  }()
+  
+  private let descriptionTextView: UITextView = {
+    let textView = UITextView()
+    textView.cornerRadius = 15
+    textView.font = UIFont.systemFont(ofSize: 12, weight: .thin)
+    textView.textAlignment = .center
+    return textView
   }()
   
   private let imageView: UIImageView = {
@@ -52,17 +57,32 @@ class ThemeViewController: TDViewController {
     imageView.isHidden = true
     return imageView
   }()
-  
-  private let descriptionTextView: UITextView = {
-    let textView = UITextView()
-    textView.cornerRadius = 15
-    textView.font = UIFont.systemFont(ofSize: 12, weight: .thin)
-    textView.text = "bla bla bla"
-    textView.textAlignment = .center
-    return textView
+
+  private let nameLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Название:"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    return label
   }()
   
-  private let startButton: UIButton = {
+  private let imageAndDescriptionLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Изображение и описание:"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    return label
+  }()
+  
+  private let sendThemeForVerificationButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 15
+    button.setTitle("Отправить на проверку", for: .normal)
+    button.setTitleColor(.black, for: .normal)
+    button.borderWidth = 1.0
+    button.borderColor = .systemGray.withAlphaComponent(0.3)
+    return button
+  }()
+  
+  private let startThemeButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 15
     button.setTitle("Начать курс", for: .normal)
@@ -72,8 +92,18 @@ class ThemeViewController: TDViewController {
     return button
   }()
   
-  private var collectionView: UICollectionView!
-  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeDaySection>!
+  private let typeLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Тип:"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    return label
+  }()
+  
+  private var typeCollectionView: UICollectionView!
+  private var typeDataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeTypeSection>!
+  
+  private var dayCollectionView: UICollectionView!
+  private var dayDataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeDaySection>!
   
   // MARK: - Lifecycle
   override func viewDidLoad() {
@@ -94,61 +124,121 @@ class ThemeViewController: TDViewController {
     hideKeyboardWhenTappedAround()
     
     // collectionView
-    collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
+    dayCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createDayCompositionalLayout())
+    typeCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createTypeCompositionalLayout())
     
     // adding
     view.addSubviews([
+      typeLabel,
+      nameLabel,
       nameTextField,
+      imageAndDescriptionLabel,
       addImageButton,
       imageView,
       descriptionTextView,
-      startButton,
-      collectionView
+      sendThemeForVerificationButton,
+      startThemeButton,
+      dayCollectionView,
+      typeCollectionView
     ])
+    // dayCollectionView
+    dayCollectionView.alwaysBounceVertical = false
+    dayCollectionView.backgroundColor = .clear
+    dayCollectionView.register(
+      ThemeDayCell.self,
+      forCellWithReuseIdentifier: ThemeDayCell.reuseID)
+    dayCollectionView.register(
+      ThemeDayHeader.self,
+      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+      withReuseIdentifier: ThemeDayHeader.reuseID)
     
-    // nameTextField
-    nameTextField.anchor(
-      top: headerView.bottomAnchor,
-      left: view.leftAnchor,
-      right: view.rightAnchor,
-      topConstant: 16,
-      leftConstant: 16,
-      rightConstant: 16,
-      heightConstant: 30
-    )
+    // typeCollectionView
+    typeCollectionView.alwaysBounceVertical = false
+    typeCollectionView.backgroundColor = .clear
+    typeCollectionView.register(
+      ThemeTypeCell.self,
+      forCellWithReuseIdentifier: ThemeTypeCell.reuseID)
+  }
+  
+  func configureUI(with mode: OpenViewControllerMode) {
     
-    // addImageButton
-    addImageButton.anchor(
-      top: headerView.bottomAnchor,
-      left: view.leftAnchor,
-      topConstant: 16,
-      leftConstant: 16,
-      widthConstant: 150,
-      heightConstant: 150
-    )
-    
-    // imageView
-    imageView.anchor(
-      top: headerView.bottomAnchor,
-      left: view.leftAnchor,
-      topConstant: 16,
-      leftConstant: 16,
-      widthConstant: 150,
-      heightConstant: 150
-    )
+    switch mode {
+    case .view:
+      // imageView
+      imageView.anchor(
+        top: headerView.bottomAnchor,
+        left: view.leftAnchor,
+        topConstant: 16,
+        leftConstant: 16,
+        widthConstant: 150,
+        heightConstant: 150
+      )
+    case .edit:
+      // typeLabel
+      typeLabel.anchor(
+        top: headerView.bottomAnchor,
+        left: view.leftAnchor,
+        topConstant: 16,
+        leftConstant: 16
+      )
+      // typeCollectionView
+      typeCollectionView.anchor(
+        top: typeLabel.bottomAnchor,
+        left: view.leftAnchor,
+        right: view.rightAnchor,
+        topConstant: 16,
+        leftConstant: 16,
+        rightConstant: 16,
+        heightConstant: 50
+      )
+      // nameLabel
+      nameLabel.anchor(
+        top: typeCollectionView.bottomAnchor,
+        left: view.leftAnchor,
+        topConstant: 16,
+        leftConstant: 16
+      )
+      // nameTextField
+      nameTextField.anchor(
+        top: nameLabel.bottomAnchor,
+        left: view.leftAnchor,
+        right: view.rightAnchor,
+        topConstant: 16,
+        leftConstant: 16,
+        rightConstant: 16,
+        heightConstant: 54
+      )
+      // imageAndDescriptionLabel
+      imageAndDescriptionLabel.anchor(
+        top: nameTextField.bottomAnchor,
+        left: view.leftAnchor,
+        topConstant: 16,
+        leftConstant: 16
+      )
+      
+      // addImageButton
+      addImageButton.anchor(
+        top: imageAndDescriptionLabel.bottomAnchor,
+        left: view.leftAnchor,
+        topConstant: 16,
+        leftConstant: 16,
+        widthConstant: 150,
+        heightConstant: 150
+      )
+    }
     
     // descriptionTextView
     descriptionTextView.anchor(
-      top: headerView.bottomAnchor,
-      left: imageView.rightAnchor,
-      bottom: imageView.bottomAnchor,
+      top: mode == .view ? imageView.topAnchor : addImageButton.topAnchor,
+      left: mode == .view ? imageView.rightAnchor : addImageButton.rightAnchor,
+      bottom: mode == .view ? imageView.bottomAnchor : addImageButton.bottomAnchor,
       right: view.rightAnchor,
-      topConstant: 16,
       leftConstant: 16,
-      rightConstant: 16)
-    
-    // startButton
-    startButton.anchor(
+      rightConstant: 16
+    )
+
+    // startThemeButton
+    startThemeButton.anchor(
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
       right: view.rightAnchor,
@@ -157,68 +247,94 @@ class ThemeViewController: TDViewController {
       rightConstant: 16,
       heightConstant: 50)
     
-    // collectionView
-    collectionView.alwaysBounceVertical = false
-    collectionView.backgroundColor = .clear
-    collectionView.register(
-      ThemeDayCell.self,
-      forCellWithReuseIdentifier: ThemeDayCell.reuseID)
-    collectionView.register(
-      ThemeDayHeader.self,
-      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-      withReuseIdentifier: ThemeDayHeader.reuseID)
-    collectionView.anchor(
-      top: imageView.bottomAnchor,
+    // sendThemeForVerificationButton
+    sendThemeForVerificationButton.anchor(
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 16,
+      heightConstant: 50
+    )
+    
+    // collectionView
+    dayCollectionView.anchor(
+      top: descriptionTextView.bottomAnchor,
+      left: view.leftAnchor,
+      bottom: startThemeButton.topAnchor,
       right: view.rightAnchor,
       topConstant: 16,
       leftConstant: 16,
       bottomConstant: 16,
       rightConstant: 16
     )
+    
+    // mode
+    switch mode {
+    case .edit:
+      addImageButton.isHidden = false
+      nameTextField.isHidden = false
+      descriptionTextView.isEditable = true
+      imageView.isHidden = true
+      saveButton.isHidden = false
+      sendThemeForVerificationButton.isHidden = false
+      settingsButton.isHidden = false
+      startThemeButton.isHidden = true
+    case .view:
+      addImageButton.isHidden = true
+      nameTextField.isHidden = true
+      descriptionTextView.isEditable = false
+      imageView.isHidden = false
+      saveButton.isHidden = true
+      sendThemeForVerificationButton.isHidden = true
+      settingsButton.isHidden = true
+      startThemeButton.isHidden = false
+    }
   }
   
   // MARK: - Bind View Model
   func bindViewModel() {
+    
     let input = ThemeViewModel.Input(
+      addImageButtonClickTrigger: addImageButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      selection: collectionView.rx.itemSelected.asDriver()
+      daySelection: dayCollectionView.rx.itemSelected.asDriver(),
+      description: descriptionTextView.rx.text.orEmpty.asDriver(),
+      name: nameTextField.rx.text.orEmpty.asDriver(),
+      saveButtonClickTrigger: saveButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.name.drive(titleLabel.rx.text),
+      outputs.dayDataSource.drive(dayCollectionView.rx.items(dataSource: dayDataSource)),
+      outputs.mode.drive(modeBinder),
       outputs.navigateBack.drive(),
       outputs.openThemeDay.drive(),
-      outputs.openViewControllerMode.drive(openViewControllerModeBinder)
+      outputs.save.drive(),
+      outputs.title.drive(titleLabel.rx.text),
+      outputs.typeDataSource.drive(typeCollectionView.rx.items(dataSource: typeDataSource)),
     ]
       .forEach { $0.disposed(by: disposeBag) }
+    
+    // init
+    nameTextField.insertText(viewModel.theme.name)
+    descriptionTextView.insertText(viewModel.theme.description)
   }
   
-  var openViewControllerModeBinder: Binder<OpenViewControllerMode> {
+  var modeBinder: Binder<OpenViewControllerMode> {
     return Binder(self, binding: { vc, mode in
-      switch mode {
-      case .edit:
-        vc.addImageButton.isHidden = false
-        vc.descriptionTextView.isEditable = true
-        vc.imageView.isHidden = true
-        vc.saveButton.isHidden = false
-      case .view:
-        vc.addImageButton.isHidden = true
-        vc.descriptionTextView.isEditable = false
-        vc.imageView.isHidden = false
-        vc.saveButton.isHidden = true
-      }
+      vc.configureUI(with: mode)
     })
   }
   
   // MARK: - Configure Data Source
   private func configureDataSource() {
-    collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<ThemeDaySection>(
+    dayCollectionView.dataSource = nil
+    typeCollectionView.dataSource = nil
+    
+    dayDataSource = RxCollectionViewSectionedAnimatedDataSource<ThemeDaySection>(
       configureCell: { _, collectionView, indexPath, day in
         guard let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: ThemeDayCell.reuseID,
@@ -235,17 +351,52 @@ class ThemeViewController: TDViewController {
         header.configure(with: dataSource[indexPath.section])
         return header
       })
+    
+    typeDataSource = RxCollectionViewSectionedAnimatedDataSource<ThemeTypeSection>(
+      configureCell: { _, collectionView, indexPath, item in
+        guard let cell = collectionView.dequeueReusableCell(
+          withReuseIdentifier: ThemeTypeCell.reuseID,
+          for: indexPath
+        ) as? ThemeTypeCell else { return UICollectionViewCell() }
+        cell.configure(with: item)
+        return cell
+      })
   }
   
-  
-  // MARK: - Setup CollectionView
-  private func createCompositionalLayout() -> UICollectionViewLayout {
+  // MARK: - Type CompositionalLayout
+  private func createTypeCompositionalLayout() -> UICollectionViewLayout {
     return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
-      return self.section()
+      return self.typeSection()
     }
   }
   
-  private func section() -> NSCollectionLayoutSection {
+  private func typeSection() -> NSCollectionLayoutSection {
+    // item
+    let itemSize = NSCollectionLayoutSize(
+      widthDimension: .absolute(Sizes.Cells.ThemeTypeCell.width),
+      heightDimension: .absolute(Sizes.Cells.ThemeTypeCell.height))
+    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 5)
+    // group
+    let groupSize = NSCollectionLayoutSize(
+      widthDimension: .estimated(Sizes.Cells.ThemeTypeCell.width),
+      heightDimension: .estimated(Sizes.Cells.ThemeTypeCell.height))
+    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+    // section
+    let section = NSCollectionLayoutSection(group: group)
+    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
+    section.orthogonalScrollingBehavior = .continuous
+    return section
+  }
+  
+  // MARK: - Setup CollectionView
+  private func createDayCompositionalLayout() -> UICollectionViewLayout {
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
+      return self.daySection()
+    }
+  }
+  
+  private func daySection() -> NSCollectionLayoutSection {
     // item
     let itemSize = NSCollectionLayoutSize(
       widthDimension: .estimated(50.0),

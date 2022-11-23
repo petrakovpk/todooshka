@@ -39,7 +39,11 @@ class ThemeDayViewModel: Stepper {
     
     // addThemeTask
     let addThemeTask = input.addThemeTaskIsRequired
-      .map{ self.steps.accept(AppStep.themeTaskIsRequired) }
+      .map{ self.steps.accept(
+        AppStep.themeTaskIsRequired(
+          themeTaskUID: UUID().uuidString,
+          openViewControllerMode: self.openViewControllerMode))
+      }
     
     let openViewControllerMode = Driver<OpenViewControllerMode>
       .just(self.openViewControllerMode)

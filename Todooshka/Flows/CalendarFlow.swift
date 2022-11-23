@@ -59,10 +59,8 @@ class CalendarFlow: Flow {
       return navigateToDeleteAccount()
 
       // Task
-    case .createPlannedTaskIsRequired(let planned):
-      return navigateToTask(planned: planned)
     case .showTaskIsRequired(let task):
-      return navigateToTask(taskUID: task.UID)
+      return navigateToTask(task: task)
     case .taskProcessingIsCompleted:
       return navigateBack()
 
@@ -250,21 +248,21 @@ class CalendarFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateToTask(taskUID: String) -> FlowContributors {
+  private func navigateToTask(task: Task) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, taskUID: taskUID)
+    let viewModel = TaskViewModel(services: services, task: task)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateToTask(planned: Date) -> FlowContributors {
-    let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString, status: .planned, planned: planned)
-    viewController.viewModel = viewModel
-    rootViewController.pushViewController(viewController, animated: true)
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
+//  private func navigateToTask(planned: Date) -> FlowContributors {
+//    let viewController = TaskViewController()
+//    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString, status: .planned, planned: planned)
+//    viewController.viewModel = viewModel
+//    rootViewController.pushViewController(viewController, animated: true)
+//    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+//  }
 
   private func navigateToFeather() -> FlowContributors {
     let viewController = FeatherViewController()

@@ -25,6 +25,9 @@ enum AppStep: Step {
   case changingPhoneIsRequired
   case changingEmailIsRequired
   case changingPasswordIsRequired
+  
+  // Feed
+  case feedIsRequired
 
   // Task List
   case completedTaskListIsRequired(date: Date)
@@ -39,9 +42,7 @@ enum AppStep: Step {
   case showKindOfTaskIsRequired(kindOfTask: KindOfTask)
 
   // Task
-  case createTaskIsRequired
-  case createIdeaTaskIsRequired
-  case createPlannedTaskIsRequired(plannedDate: Date)
+  case createTaskIsRequired(task: Task)
   case showTaskIsRequired(task: Task)
   case taskProcessingIsCompleted
 
@@ -100,10 +101,10 @@ enum AppStep: Step {
 
   // Theme
   //case addThemeIsRequired
-  case openThemeIsRequired(themeUID: String, openViewControllerMode: OpenViewControllerMode)
-  case openThemeIsCompleted
+  case openThemeIsRequired(theme: Theme)
+  case themeProcessingIsCompleted
   case themeDayIsRequired(themeDayUID: String, openViewControllerMode: OpenViewControllerMode)
-  case themeTaskIsRequired
+  case themeTaskIsRequired(themeTaskUID: String, openViewControllerMode: OpenViewControllerMode)
 
   // UserProfile
   case userProfileIsRequired

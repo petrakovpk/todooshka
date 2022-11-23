@@ -15,13 +15,14 @@ class MarketplaceViewModel: Stepper {
   let steps = PublishRelay<Step>()
 
   struct Input {
+    let addThemeButtonClickTrigger: Driver<Void>
     let selection: Driver<IndexPath>
   }
 
   struct Output {
     let addTheme: Driver<Void>
     let dataSource: Driver<[ThemeSection]>
-    let openTheme: Driver<Void>
+    let openTheme: Driver<Theme>
   }
 
   // MARK: - Init
@@ -36,27 +37,10 @@ class MarketplaceViewModel: Stepper {
       .map { themes -> [ThemeSection] in
         [
           ThemeSection(
-            header: "Мои темы",
-            items: [
-              .theme(theme: themes[0]),
-              .plusButton
-            ]
-          ),
-          ThemeSection(
-            header: "Рекомендуемое",
-            items: [
-              .theme(theme: themes[1]),
-              .theme(theme: themes[2]),
-              .theme(theme: themes[3])
-            ]
-          ),
-          ThemeSection(
-            header: "Привычки",
-            items: [
-              .theme(theme: themes[4]),
-              .theme(theme: themes[5]),
-              .theme(theme: themes[6])
-            ]
+            header: "Мое",
+            items: themes.map { theme -> ThemeItem in
+                .theme(theme: theme)
+            }
           )
         ]
       }
@@ -66,26 +50,20 @@ class MarketplaceViewModel: Stepper {
         dataSource[indexPath.section].items[indexPath.item]
       }
     
-    let addTheme = itemSelected
-      .compactMap { item -> Void? in
-        guard case .plusButton = item else { return nil }
-        return ()
-      }
-      .map { self.steps.accept(
-        AppStep.openThemeIsRequired(
-          themeUID: UUID().uuidString,
-          openViewControllerMode: .edit))
-      }
-    
-    let openTheme = itemSelected
+    let themeSelected = itemSelected
       .compactMap { item -> Theme? in
         guard case .theme(let theme) = item else { return nil }
         return theme
       }
-      .map { self.steps.accept(
-        AppStep.openThemeIsRequired(
-          themeUID: $0.UID,
-          openViewControllerMode: .view))
+    
+    let addTheme = input.addThemeButtonClickTrigger
+      .do { _ in
+        self.steps.accept(AppStep.openThemeIsRequired(theme: Theme.empty))
+      }
+    
+    let openTheme = themeSelected
+      .do { 
+        self.steps.accept(AppStep.openThemeIsRequired(theme: $0))
       }
 
     return Output(

@@ -10,9 +10,10 @@ import CoreData
 import RxRelay
 
 enum TabBarItemType {
-  case first
-  case second
-  case third
+  case feed
+  case marketplace
+  case taskList
+  case userProfile
 }
 
 protocol HasTabBarService {
@@ -20,5 +21,5 @@ protocol HasTabBarService {
 }
 
 class TabBarService {
-  let selectedItem = BehaviorRelay<TabBarItemType>(value: .second)
+  let selectedItem = BehaviorRelay<TabBarItemType>(value: .feed)
 }

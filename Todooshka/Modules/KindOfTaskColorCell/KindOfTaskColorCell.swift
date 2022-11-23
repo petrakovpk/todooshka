@@ -16,7 +16,7 @@ class KindOfTaskColorCell: UICollectionViewCell {
   private let radius: CGFloat = 20
 
   private let iconImageView = UIImageView()
-  private let icon = UIImage(named: "tick")?.template
+  private let icon = Icon.tick.image.template
 
   private let shapeLayer = CAShapeLayer()
   private var oldShapeLayer: CAShapeLayer?

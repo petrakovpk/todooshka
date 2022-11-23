@@ -26,12 +26,7 @@ struct Sizes {
       static let width = (Sizes.Views.AlertBuyBirdView.width / 2 - 16 - 8).adjustByWidth
       static let height = 48.adjustByHeight
     }
-
-//    struct AlertDeleteButton {
-//      static let width = 94.adjustByWidth
-//      static let height = 30.adjustByHeight
-//    }
-
+    
     struct AlertOkButton {
       static let width = 94.adjustByWidth
       static let height = 30.adjustByHeight
@@ -89,6 +84,10 @@ struct Sizes {
     struct ThemeCell {
       static let width = 120.adjustByHeight
       static let height = 120.adjustByHeight
+    }
+    struct ThemeTypeCell {
+      static let width = 80.adjustByHeight
+      static let height = 50.adjustByHeight
     }
   }
 

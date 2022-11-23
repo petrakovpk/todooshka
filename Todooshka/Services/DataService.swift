@@ -75,7 +75,7 @@ class DataService {
       .dumbbell,
       .emojiHappy,
       .gasStation,
-      .house,
+      .home,
       .lovely,
       .moon,
       .notificationBing,
@@ -91,15 +91,15 @@ class DataService {
       .weight
     ])
 
-    themes = Driver<[Theme]>.of([
-      Theme(UID: UUID().uuidString, name: "Как я победил страх", themeWeeks: []),
-      Theme(UID: UUID().uuidString, name: "Отказываемся от сахара", themeWeeks: []),
-      Theme(UID: UUID().uuidString, name: "Рано ложимся спать", themeWeeks: []),
-      Theme(UID: UUID().uuidString, name: "Начинаем программировать", themeWeeks: []),
-      Theme(UID: UUID().uuidString, name: "Бросаем курить", themeWeeks: []),
-      Theme(UID: UUID().uuidString, name: "Начинаем отжиматься", themeWeeks: []),
-      Theme(UID: UUID().uuidString, name: "Читаем по одной книге в неделю", themeWeeks: [])
-    ])
+//    themes = Driver<[Theme]>.of([
+//      Theme(uid: UUID().uuidString, description: "", name: "Как я победил страх", status: .notStarted),
+//      Theme(uid: UUID().uuidString, description: "", name: "Отказываемся от сахара", status: .notStarted),
+//      Theme(uid: UUID().uuidString, description: "", name: "Рано ложимся спать", status: .notStarted),
+//      Theme(uid: UUID().uuidString, description: "", name: "Начинаем программировать", status: .notStarted),
+//      Theme(uid: UUID().uuidString, description: "", name: "Бросаем курить", status: .notStarted),
+//      Theme(uid: UUID().uuidString, description: "", name: "Начинаем отжиматься", status: .notStarted),
+//      Theme(uid: UUID().uuidString, description: "", name: "Читаем по одной книге в неделю", status: .notStarted)
+//    ])
 
     let allBirds = managedContext
       .rx
@@ -126,7 +126,7 @@ class DataService {
 
     let firebaseTasks = firebaseTasks
       .asDriver()
-
+    
     user = Auth.auth()
       .rx
       .stateDidChange
@@ -160,6 +160,11 @@ class DataService {
       tasks.filter { $0.userUID == user?.uid }
     }
     .asDriver(onErrorJustReturn: [])
+    
+    themes = managedContext
+      .rx
+      .entities(Theme.self)
+      .asDriver(onErrorJustReturn: [])
 
     // получаем количество закрытых задач (максимум 7 в день) и вычитаем общую стоимость купленных птиц
     goldTasks = tasks

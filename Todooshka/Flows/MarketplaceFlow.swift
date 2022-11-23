@@ -5,9 +5,9 @@
 //  Created by Pavel Petakov on 31.10.2022.
 //
 
+import RxCocoa
 import RxFlow
 import RxSwift
-import RxCocoa
 import UIKit
 
 class MarketplaceFlow: Flow {
@@ -33,14 +33,14 @@ class MarketplaceFlow: Flow {
       return navigateToMarketplace()
     case .navigateBack:
       return navigateBack(tabBarIsHidden: true)
-    case .openThemeIsRequired(let themeUID, let openViewControllerMode):
-      return navigateToTheme(themeUID: themeUID, openViewControllerMode: openViewControllerMode)
-    case .openThemeIsCompleted:
+    case .openThemeIsRequired(let theme):
+      return navigateToTheme(theme: theme)
+    case .themeProcessingIsCompleted:
       return navigateBack(tabBarIsHidden: false)
     case .themeDayIsRequired(let themeDayUID, let openViewControllerMode):
       return navigateToThemeDay(themeDayUID: themeDayUID, openViewControllerMode: openViewControllerMode)
-    case .themeTaskIsRequired:
-      return navigateToThemeTask()
+    case .themeTaskIsRequired(let themeTaskUID, let openViewControllerMode):
+      return navigateToThemeTask(themeTaskUID: themeTaskUID, openViewControllerMode: openViewControllerMode)
     default:
       return .none
     }
@@ -54,9 +54,9 @@ class MarketplaceFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateToTheme(themeUID: String, openViewControllerMode: OpenViewControllerMode) -> FlowContributors {
+  private func navigateToTheme(theme: Theme) -> FlowContributors {
     let viewController = ThemeViewController()
-    let viewModel = ThemeViewModel(services: services, themeUID: themeUID, openViewControllerMode: openViewControllerMode)
+    let viewModel = ThemeViewModel(services: services, theme: theme)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
@@ -71,9 +71,9 @@ class MarketplaceFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToThemeTask() -> FlowContributors {
+  private func navigateToThemeTask(themeTaskUID: String, openViewControllerMode: OpenViewControllerMode) -> FlowContributors {
     let viewController = ThemeTaskViewController()
-    let viewModel = ThemeTaskViewModel(services: services)
+    let viewModel = ThemeTaskViewModel(services: services, themeTaskUID: themeTaskUID, openViewControllerMode: openViewControllerMode)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

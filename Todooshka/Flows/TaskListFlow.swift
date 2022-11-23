@@ -50,12 +50,10 @@ class TaskListFlow: Flow {
     case .showKindOfTaskIsRequired(let kindOfTask):
       return navigateToShowTaskType(kindOfTask: kindOfTask)
 
-    case .createTaskIsRequired:
-      return navigateToTask()
-    case .createIdeaTaskIsRequired:
-      return navigateToIdeaTask()
+    case .createTaskIsRequired(let task):
+      return navigateToTask(task: task)
     case .showTaskIsRequired(let task):
-      return navigateToTask(taskUID: task.UID)
+      return navigateToTask(task: task)
 
     case .kindsOfTaskListIsRequired:
       return navigateToTaskTypesList()
@@ -123,32 +121,32 @@ class TaskListFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateToTask(taskUID: String) -> FlowContributors {
+  private func navigateToTask(task: Task) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, taskUID: taskUID )
+    let viewModel = TaskViewModel(services: services, task: task)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateToTask() -> FlowContributors {
-    let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString)
-    viewController.viewModel = viewModel
-    rootViewController.tabBarController?.tabBar.isHidden = true
-    rootViewController.pushViewController(viewController, animated: true)
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
+//  private func navigateToTask() -> FlowContributors {
+//    let viewController = TaskViewController()
+//    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString)
+//    viewController.viewModel = viewModel
+//    rootViewController.tabBarController?.tabBar.isHidden = true
+//    rootViewController.pushViewController(viewController, animated: true)
+//    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+//  }
 
-  private func navigateToIdeaTask() -> FlowContributors {
-    let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString, status: .idea, planned: nil)
-    viewController.viewModel = viewModel
-    rootViewController.tabBarController?.tabBar.isHidden = true
-    rootViewController.pushViewController(viewController, animated: true)
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
+//  private func navigateToIdeaTask() -> FlowContributors {
+//    let viewController = TaskViewController()
+//    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString, status: .idea, planned: nil)
+//    viewController.viewModel = viewModel
+//    rootViewController.tabBarController?.tabBar.isHidden = true
+//    rootViewController.pushViewController(viewController, animated: true)
+//    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+//  }
 
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
     let viewController = TaskListViewController()
