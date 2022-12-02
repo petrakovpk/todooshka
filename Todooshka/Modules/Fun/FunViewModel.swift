@@ -1,5 +1,5 @@
 //
-//  FeedViewModel.swift
+//  FunViewModel.swift
 //  DragoDo
 //
 //  Created by Pavel Petakov on 18.11.2022.
@@ -10,16 +10,16 @@ import RxFlow
 import RxSwift
 import RxCocoa
 
-class FeedViewModel: Stepper {
+class FunViewModel: Stepper {
   let services: AppServices
   let steps = PublishRelay<Step>()
 
   struct Input {
-  
+    let swipeTrigger: Driver<UISwipeGestureRecognizer>
   }
 
   struct Output {
-   
+    let nextContent: Driver<Void>
   }
 
   // MARK: - Init
@@ -29,9 +29,11 @@ class FeedViewModel: Stepper {
 
   func transform(input: Input) -> Output {
    
+    let nextContent = input.swipeTrigger
+      .map { _ in () }
 
     return Output(
-      
+      nextContent: nextContent
     )
   }
 }

@@ -8,18 +8,15 @@
 import UIKit
 
 class TDTaskCommentTextView: UITextView {
-  // MARK: - Properties
-  var isEmpty = true
-
   // MARK: - Init
   override init(frame: CGRect, textContainer: NSTextContainer?) {
     super.init(frame: frame, textContainer: textContainer)
-    borderWidth = 0
     backgroundColor = UIColor.clear
+    borderWidth = 0
     clipsToBounds = false
     font = UIFont.systemFont(ofSize: 13, weight: .medium)
-    textColor = Style.App.placeholder
     text = "Напишите комментарий"
+    textColor = Style.App.placeholder
   }
 
   required init?(coder aDecoder: NSCoder) {

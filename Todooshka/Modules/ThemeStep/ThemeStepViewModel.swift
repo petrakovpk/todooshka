@@ -1,5 +1,5 @@
 //
-//  ThemeDayViewModel.swift
+//  ThemeStepViewModel.swift
 //  DragoDo
 //
 //  Created by Pavel Petakov on 11.11.2022.
@@ -10,11 +10,11 @@ import RxFlow
 import RxSwift
 import RxCocoa
 
-class ThemeDayViewModel: Stepper {
+class ThemeStepViewModel: Stepper {
   let services: AppServices
   let steps = PublishRelay<Step>()
   
-  let themeDayUID: String
+  var themeStep: ThemeStep
   let openViewControllerMode: OpenViewControllerMode
 
   struct Input {
@@ -29,17 +29,17 @@ class ThemeDayViewModel: Stepper {
   }
 
   // MARK: - Init
-  init(services: AppServices, themeDayUID: String, openViewControllerMode: OpenViewControllerMode) {
+  init(services: AppServices, themeStep: ThemeStep, openViewControllerMode: OpenViewControllerMode) {
     self.openViewControllerMode = openViewControllerMode
     self.services = services
-    self.themeDayUID = themeDayUID
+    self.themeStep = themeStep
   }
 
   func transform(input: Input) -> Output {
     
     // addThemeTask
     let addThemeTask = input.addThemeTaskIsRequired
-      .map{ self.steps.accept(
+      .map { self.steps.accept(
         AppStep.themeTaskIsRequired(
           themeTaskUID: UUID().uuidString,
           openViewControllerMode: self.openViewControllerMode))

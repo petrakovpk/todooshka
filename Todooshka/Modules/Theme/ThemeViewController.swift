@@ -102,8 +102,8 @@ class ThemeViewController: TDViewController {
   private var typeCollectionView: UICollectionView!
   private var typeDataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeTypeSection>!
   
-  private var dayCollectionView: UICollectionView!
-  private var dayDataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeDaySection>!
+  private var stepsCollectionView: UICollectionView!
+  private var stepsDataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeStepSection>!
   
   // MARK: - Lifecycle
   override func viewDidLoad() {
@@ -124,8 +124,8 @@ class ThemeViewController: TDViewController {
     hideKeyboardWhenTappedAround()
     
     // collectionView
-    dayCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createDayCompositionalLayout())
     typeCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createTypeCompositionalLayout())
+    stepsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createDayCompositionalLayout())
     
     // adding
     view.addSubviews([
@@ -138,19 +138,19 @@ class ThemeViewController: TDViewController {
       descriptionTextView,
       sendThemeForVerificationButton,
       startThemeButton,
-      dayCollectionView,
-      typeCollectionView
+      typeCollectionView,
+      stepsCollectionView
     ])
-    // dayCollectionView
-    dayCollectionView.alwaysBounceVertical = false
-    dayCollectionView.backgroundColor = .clear
-    dayCollectionView.register(
-      ThemeDayCell.self,
-      forCellWithReuseIdentifier: ThemeDayCell.reuseID)
-    dayCollectionView.register(
-      ThemeDayHeader.self,
+    // stepsCollectionView
+    stepsCollectionView.alwaysBounceVertical = false
+    stepsCollectionView.backgroundColor = .clear
+    stepsCollectionView.register(
+      ThemeStepCell.self,
+      forCellWithReuseIdentifier: ThemeStepCell.reuseID)
+    stepsCollectionView.register(
+      ThemeStepHeader.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-      withReuseIdentifier: ThemeDayHeader.reuseID)
+      withReuseIdentifier: ThemeStepHeader.reuseID)
     
     // typeCollectionView
     typeCollectionView.alwaysBounceVertical = false
@@ -259,7 +259,7 @@ class ThemeViewController: TDViewController {
     )
     
     // collectionView
-    dayCollectionView.anchor(
+    stepsCollectionView.anchor(
       top: descriptionTextView.bottomAnchor,
       left: view.leftAnchor,
       bottom: startThemeButton.topAnchor,
@@ -299,7 +299,7 @@ class ThemeViewController: TDViewController {
     let input = ThemeViewModel.Input(
       addImageButtonClickTrigger: addImageButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      daySelection: dayCollectionView.rx.itemSelected.asDriver(),
+      daySelection: stepsCollectionView.rx.itemSelected.asDriver(),
       description: descriptionTextView.rx.text.orEmpty.asDriver(),
       name: nameTextField.rx.text.orEmpty.asDriver(),
       saveButtonClickTrigger: saveButton.rx.tap.asDriver()
@@ -308,12 +308,12 @@ class ThemeViewController: TDViewController {
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.dayDataSource.drive(dayCollectionView.rx.items(dataSource: dayDataSource)),
       outputs.mode.drive(modeBinder),
       outputs.navigateBack.drive(),
-      outputs.openThemeDay.drive(),
+      outputs.openThemeStep.drive(),
       outputs.save.drive(),
       outputs.title.drive(titleLabel.rx.text),
+      outputs.themeStepDataSource.drive(stepsCollectionView.rx.items(dataSource: stepsDataSource)),
       outputs.typeDataSource.drive(typeCollectionView.rx.items(dataSource: typeDataSource)),
     ]
       .forEach { $0.disposed(by: disposeBag) }
@@ -331,23 +331,23 @@ class ThemeViewController: TDViewController {
   
   // MARK: - Configure Data Source
   private func configureDataSource() {
-    dayCollectionView.dataSource = nil
+    stepsCollectionView.dataSource = nil
     typeCollectionView.dataSource = nil
     
-    dayDataSource = RxCollectionViewSectionedAnimatedDataSource<ThemeDaySection>(
+    stepsDataSource = RxCollectionViewSectionedAnimatedDataSource<ThemeStepSection>(
       configureCell: { _, collectionView, indexPath, day in
         guard let cell = collectionView.dequeueReusableCell(
-          withReuseIdentifier: ThemeDayCell.reuseID,
+          withReuseIdentifier: ThemeStepCell.reuseID,
           for: indexPath
-        ) as? ThemeDayCell else { return UICollectionViewCell() }
+        ) as? ThemeStepCell else { return UICollectionViewCell() }
         cell.configure(with: day)
         return cell
       }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
         guard let header = collectionView.dequeueReusableSupplementaryView(
           ofKind: kind,
-          withReuseIdentifier: ThemeDayHeader.reuseID,
+          withReuseIdentifier: ThemeStepHeader.reuseID,
           for: indexPath
-        ) as? ThemeDayHeader else { return UICollectionReusableView() }
+        ) as? ThemeStepHeader else { return UICollectionReusableView() }
         header.configure(with: dataSource[indexPath.section])
         return header
       })

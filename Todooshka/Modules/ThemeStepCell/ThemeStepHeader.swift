@@ -1,5 +1,5 @@
 //
-//  ThemeDayHeader.swift
+//  ThemeStepHeader.swift
 //  DragoDo
 //
 //  Created by Pavel Petakov on 11.11.2022.
@@ -7,8 +7,8 @@
 
 import UIKit
 
-class ThemeDayHeader: UICollectionReusableView {
-  static var reuseID: String = "ThemeDayHeader"
+class ThemeStepHeader: UICollectionReusableView {
+  static var reuseID: String = "ThemeStepHeader"
 
   // MARK: - UI elements
   private let label: UILabel = {
@@ -37,7 +37,7 @@ class ThemeDayHeader: UICollectionReusableView {
     )
   }
 
-  func configure(with section: ThemeDaySection) {
+  func configure(with section: ThemeStepSection) {
     label.text = section.header
   }
 }

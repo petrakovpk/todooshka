@@ -1,5 +1,5 @@
 //
-//  ThemeDayCell.swift
+//  ThemeStepCell.swift
 //  DragoDo
 //
 //  Created by Pavel Petakov on 11.11.2022.
@@ -8,8 +8,8 @@
 import UIKit
 import Foundation
 
-class ThemeDayCell: UICollectionViewCell {
-  static var reuseID: String = "ThemeDayCell"
+class ThemeStepCell: UICollectionViewCell {
+  static var reuseID: String = "ThemeStepCell"
 
   override func draw(_ rect: CGRect) {
     super.draw(rect)
@@ -22,7 +22,7 @@ class ThemeDayCell: UICollectionViewCell {
   }
 
   // MARK: - UI Elements
-  func configure(with day: ThemeDay) {
+  func configure(with step: ThemeStep) {
  
   }
 }

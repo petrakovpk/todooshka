@@ -36,13 +36,13 @@ class ThemeViewModel: Stepper {
   }
 
   struct Output {
-    let dayDataSource: Driver<[ThemeDaySection]>
     let mode: Driver<OpenViewControllerMode>
     let navigateBack: Driver<Void>
-    let openThemeDay: Driver<Void>
+    let openThemeStep: Driver<Void>
     let save: Driver<Result<Void, Error>>
     let theme: Driver<Theme>
     let title: Driver<String>
+    let themeStepDataSource: Driver<[ThemeStepSection]>
     let typeDataSource: Driver<[ThemeTypeSection]>
   }
 
@@ -91,49 +91,29 @@ class ThemeViewModel: Stepper {
     
     
     // dayDataSource
-    let dayDataSource = Driver<[ThemeDaySection]>.just(
+    let themeStepDataSource = Driver<[ThemeStepSection]>.just(
       [
-        ThemeDaySection(header: "1-й круг", items: [
-          ThemeDay(UID: UUID().uuidString, goal: "monday", weekDay: .first),
-          ThemeDay(UID: UUID().uuidString, goal: "tuesday", weekDay: .second),
-          ThemeDay(UID: UUID().uuidString, goal: "wednesday", weekDay: .third),
-          ThemeDay(UID: UUID().uuidString, goal: "thursday", weekDay: .fourth),
-          ThemeDay(UID: UUID().uuidString, goal: "friday", weekDay: .fifth),
-          ThemeDay(UID: UUID().uuidString, goal: "saturday", weekDay: .sixth),
-          ThemeDay(UID: UUID().uuidString, goal: "sunday", weekDay: .seventh)
-        ]),
-        ThemeDaySection(header: "2-й круг", items: [
-          ThemeDay(UID: UUID().uuidString, goal: "monday", weekDay: .first),
-          ThemeDay(UID: UUID().uuidString, goal: "tuesday", weekDay: .second),
-          ThemeDay(UID: UUID().uuidString, goal: "wednesday", weekDay: .third),
-          ThemeDay(UID: UUID().uuidString, goal: "thursday", weekDay: .fourth),
-          ThemeDay(UID: UUID().uuidString, goal: "friday", weekDay: .fifth),
-          ThemeDay(UID: UUID().uuidString, goal: "saturday", weekDay: .sixth),
-          ThemeDay(UID: UUID().uuidString, goal: "sunday", weekDay: .seventh)
-        ]),
-        ThemeDaySection(header: "3-й круг", items: [
-          ThemeDay(UID: UUID().uuidString, goal: "monday", weekDay: .first),
-          ThemeDay(UID: UUID().uuidString, goal: "tuesday", weekDay: .second),
-          ThemeDay(UID: UUID().uuidString, goal: "wednesday", weekDay: .third),
-          ThemeDay(UID: UUID().uuidString, goal: "thursday", weekDay: .fourth),
-          ThemeDay(UID: UUID().uuidString, goal: "friday", weekDay: .fifth),
-          ThemeDay(UID: UUID().uuidString, goal: "saturday", weekDay: .sixth),
-          ThemeDay(UID: UUID().uuidString, goal: "sunday", weekDay: .seventh)
+        ThemeStepSection(header: "", items: [
+          ThemeStep(UID: UUID().uuidString, goal: "Шаг 1"),
+          ThemeStep(UID: UUID().uuidString, goal: "Шаг 2"),
+          ThemeStep(UID: UUID().uuidString, goal: "Шаг 3"),
+          ThemeStep(UID: UUID().uuidString, goal: "Шаг 4"),
+          ThemeStep(UID: UUID().uuidString, goal: "Шаг 5")
         ])
       ]
     )
     
-    let themeDaySelected = input
+    let themeStepSelected = input
       .daySelection
-      .withLatestFrom(dayDataSource) { indexPath, dataSource -> ThemeDay in
+      .withLatestFrom(themeStepDataSource) { indexPath, dataSource -> ThemeStep in
         dataSource[indexPath.section].items[indexPath.item]
       }
 
-    let openThemeDay = themeDaySelected
-      .withLatestFrom(mode) { themeDay, mode in
+    let openThemeStep = themeStepSelected
+      .withLatestFrom(mode) { step, mode in
         self.steps.accept(
-          AppStep.themeDayIsRequired(
-            themeDayUID: themeDay.UID,
+          AppStep.themeStepIsRequired(
+            themeStep: step,
             openViewControllerMode: mode))
       }
     
@@ -157,13 +137,13 @@ class ThemeViewModel: Stepper {
       .map { self.steps.accept( AppStep.themeProcessingIsCompleted ) }
 
     return Output(
-      dayDataSource: dayDataSource,
       mode: mode,
       navigateBack: navigateBack,
-      openThemeDay: openThemeDay,
+      openThemeStep: openThemeStep,
       save: save,
       theme: theme,
       title: title,
+      themeStepDataSource: themeStepDataSource,
       typeDataSource: typeDataSource
     )
   }

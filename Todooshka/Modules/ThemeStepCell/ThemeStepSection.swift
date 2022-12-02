@@ -1,5 +1,5 @@
 //
-//  ThemeDaySection.swift
+//  ThemeStepSection.swift
 //  DragoDo
 //
 //  Created by Pavel Petakov on 11.11.2022.
@@ -7,17 +7,17 @@
 
 import RxDataSources
 
-struct ThemeDaySection: AnimatableSectionModelType {
+struct ThemeStepSection: AnimatableSectionModelType {
     var identity: String { header }
     var header: String
-    var items: [ThemeDay]
+    var items: [ThemeStep]
 
-    init(header: String, items: [ThemeDay]) {
+    init(header: String, items: [ThemeStep]) {
         self.header = header
         self.items = items
     }
 
-    init(original: ThemeDaySection, items: [ThemeDay]) {
+    init(original: ThemeStepSection, items: [ThemeStep]) {
         self = original
         self.items = items
     }

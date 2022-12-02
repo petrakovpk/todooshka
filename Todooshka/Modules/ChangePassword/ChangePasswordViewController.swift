@@ -27,21 +27,8 @@ class ChangePasswordViewController: TDViewController {
     return textView
   }()
 
-  private let newPasswordTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .password)
-    textField.borderColor = Style.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
-    return textField
-  }()
-
-  private let repeatNewPasswordTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .repeatPassword)
-    textField.borderColor = Style.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
-    return textField
-  }()
+  private let newPasswordTextField = TDAuthTextField(type: .password)
+  private let repeatNewPasswordTextField = TDAuthTextField(type: .repeatPassword)
 
   private let setPasswordButton: UIButton = {
     let button = UIButton(type: .system)

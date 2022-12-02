@@ -39,8 +39,8 @@ class FeedFlow: Flow {
   }
 
   private func navigateToFeed() -> FlowContributors {
-    let viewController = FeedViewController()
-    let viewModel = FeedViewModel(services: services)
+    let viewController = FunViewController()
+    let viewModel = FunViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: false)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

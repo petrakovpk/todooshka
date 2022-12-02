@@ -37,8 +37,8 @@ class MarketplaceFlow: Flow {
       return navigateToTheme(theme: theme)
     case .themeProcessingIsCompleted:
       return navigateBack(tabBarIsHidden: false)
-    case .themeDayIsRequired(let themeDayUID, let openViewControllerMode):
-      return navigateToThemeDay(themeDayUID: themeDayUID, openViewControllerMode: openViewControllerMode)
+    case .themeStepIsRequired(let themeStep, let openViewControllerMode):
+      return navigateToThemeStep(themeStep: themeStep, openViewControllerMode: openViewControllerMode)
     case .themeTaskIsRequired(let themeTaskUID, let openViewControllerMode):
       return navigateToThemeTask(themeTaskUID: themeTaskUID, openViewControllerMode: openViewControllerMode)
     default:
@@ -63,9 +63,9 @@ class MarketplaceFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToThemeDay(themeDayUID: String, openViewControllerMode: OpenViewControllerMode) -> FlowContributors {
-    let viewController = ThemeDayViewContoller()
-    let viewModel = ThemeDayViewModel(services: services, themeDayUID: themeDayUID, openViewControllerMode: openViewControllerMode)
+  private func navigateToThemeStep(themeStep: ThemeStep, openViewControllerMode: OpenViewControllerMode) -> FlowContributors {
+    let viewController = ThemeStepViewContoller()
+    let viewModel = ThemeStepViewModel(services: services, themeStep: themeStep, openViewControllerMode: openViewControllerMode)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

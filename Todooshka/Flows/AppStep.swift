@@ -99,11 +99,10 @@ enum AppStep: Step {
   // Show Bird
   case showBirdIsRequired(bird: Bird)
 
-  // Theme
   //case addThemeIsRequired
   case openThemeIsRequired(theme: Theme)
   case themeProcessingIsCompleted
-  case themeDayIsRequired(themeDayUID: String, openViewControllerMode: OpenViewControllerMode)
+  case themeStepIsRequired(themeStep: ThemeStep, openViewControllerMode: OpenViewControllerMode)
   case themeTaskIsRequired(themeTaskUID: String, openViewControllerMode: OpenViewControllerMode)
 
   // UserProfile

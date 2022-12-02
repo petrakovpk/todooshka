@@ -92,27 +92,23 @@ class TaskViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
+    let initData = Driver.just(self.task.value)
+    
     let name = input
       .nameTextField
-      .debug()
-    
-    let initData = Driver.just(self.task.value)
     
     let description = input
       .descriptionTextView
       .map { self.isDescriptionPlaceholderEnabled ? "" : $0 }
-      .startWith(self.task.value.description)
 
     // description
     let showDescriptionPlaceholderWhenStart = Driver
       .just(self.task.value.description)
       .filter { $0.isEmpty }
-      .debug()
     
     let showDescriptionPlaceholderWhenEndEditing = input.descriptionTextViewDidEndEditing
       .withLatestFrom(description) { $1 }
-      .filter{ $0.isEmpty }
-      .do { _ in self.isDescriptionPlaceholderEnabled = true }
+      .filter { $0.isEmpty }
     
     let showDescriptionPlaceholder = Driver.of(
       showDescriptionPlaceholderWhenStart,
@@ -214,7 +210,6 @@ class TaskViewModel: Stepper {
       .do {
         self.task.accept($0)
       }
-      .debug()
     
     let plannedText = planned
       .compactMap { $0 }

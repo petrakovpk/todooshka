@@ -8,35 +8,41 @@
 import UIKit
 
 class TDAddTaskButton: UIButton {
+  
+  private let plusImageView = UIImageView(image: Icon.plus.image)
+  
   override func draw(_ rect: CGRect) {
+    // adding
+    addSubview(plusImageView)
+    
+    // self
+    cornerRadius = bounds.width / 2
+    
+    // layer
     layer.shadowOffset = CGSize(width: 0, height: 4.0)
     layer.shadowOpacity = 1.0
     layer.shadowRadius = 18.0
     layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: bounds.height / 2).cgPath
-
     layer.shadowColor = Palette.SingleColors.BlueRibbon.cgColor
     layer.backgroundColor = Palette.SingleColors.BlueRibbon.cgColor
-
-    let imageView = UIImageView(image: Icon.plus.image)
-    addSubview(imageView)
-    imageView.anchorCenterXToSuperview()
-    imageView.anchorCenterYToSuperview()
-
-    cornerRadius = bounds.width / 2
+    
+    // imageView
+    plusImageView.anchorCenterXToSuperview()
+    plusImageView.anchorCenterYToSuperview()
   }
-
+  
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     super.touchesBegan(touches, with: event)
     layer.shadowColor = Palette.SingleColors.Orange.cgColor
     layer.backgroundColor = Palette.SingleColors.Orange.cgColor
   }
-
+  
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
     super.touchesEnded(touches, with: event)
     layer.shadowColor = Palette.SingleColors.BlueRibbon.cgColor
     layer.backgroundColor = Palette.SingleColors.BlueRibbon.cgColor
   }
-
+  
   override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
     super.touchesCancelled(touches, with: event)
     layer.shadowColor = Palette.SingleColors.BlueRibbon.cgColor

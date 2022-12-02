@@ -9,8 +9,14 @@ import UIKit
 
 class TDViewController: UIViewController {
   // MARK: - UI Elements
-  public let titleLabel = UILabel()
   public let headerView = UIView()
+  
+  public let titleLabel: UILabel = {
+    let label = UILabel()
+    label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+    label.textAlignment = .center
+    return label
+  }()
 
   public let backButton: UIButton = {
     let button = UIButton(type: .system)
@@ -162,8 +168,6 @@ class TDViewController: UIViewController {
     )
 
     // titleLabel
-    titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
-    titleLabel.textAlignment = .center
     titleLabel.anchorCenterXToSuperview()
     titleLabel.anchor(
       left: headerView.leftAnchor,

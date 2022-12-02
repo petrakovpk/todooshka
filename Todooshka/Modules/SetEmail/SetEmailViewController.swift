@@ -47,21 +47,8 @@ class SetEmailViewController: TDViewController {
     return button
   }()
 
-  private let currentEmailTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .email)
-    textField.borderColor = Style.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
-    return textField
-  }()
-
-  private let newEmailTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .email)
-    textField.borderColor = Style.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
-    return textField
-  }()
+  private let currentEmailTextField = TDAuthTextField(type: .email)
+  private let newEmailTextField = TDAuthTextField(type: .email)
 
   private let errorTextView: UITextView = {
     let textView = UITextView()

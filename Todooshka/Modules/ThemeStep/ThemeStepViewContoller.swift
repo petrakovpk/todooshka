@@ -1,5 +1,5 @@
 //
-//  ThemeDayViewContoller.swift
+//  ThemeStepViewContoller.swift
 //  DragoDo
 //
 //  Created by Pavel Petakov on 11.11.2022.
@@ -8,13 +8,13 @@
 import RxCocoa
 import RxSwift
 
-class ThemeDayViewContoller: TDViewController {
+class ThemeStepViewContoller: TDViewController {
   
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
   // MARK: - MVVM
-  public var viewModel: ThemeDayViewModel!
+  public var viewModel: ThemeStepViewModel!
   
   // MARK: - UI Elements
   private let addImageButton: UIButton = {
@@ -129,7 +129,7 @@ class ThemeDayViewContoller: TDViewController {
   }
   
   func bindViewModel() {
-    let input = ThemeDayViewModel.Input(
+    let input = ThemeStepViewModel.Input(
       addThemeTaskIsRequired: addTaskButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver()
     )

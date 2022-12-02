@@ -1,5 +1,5 @@
 //
-//  ThemeWeek.swift
+//  ThemeStep.swift
 //  DragoDo
 //
 //  Created by Pavel Petakov on 10.11.2022.
@@ -7,14 +7,13 @@
 
 import Differentiator
 
-struct ThemeWeek: Equatable {
+struct ThemeStep: Equatable {
   let UID: String
-  let index: Int
   let goal: String
-  let themeDays: [ThemeDay]
 }
 
 // MARK: - IdentifiableType
-extension ThemeWeek: IdentifiableType {
+extension ThemeStep: IdentifiableType {
   var identity: String { UID }
 }
+

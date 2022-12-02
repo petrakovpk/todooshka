@@ -47,7 +47,12 @@ class CalendarViewController: UIViewController {
   }()
 
   // MARK: - UI Elements
-  private let settingsButton = TDRoundButton(type: .system)
+  private let settingsButton: TDRoundButton = {
+    let button = TDRoundButton(type: .system)
+    button.configure(with: Icon.settings.image.template)
+    return button
+  }()
+  
   private let pointsBackgroundView = UIView()
 
   private let featherBackgroundView = UIView()
@@ -171,7 +176,6 @@ class CalendarViewController: UIViewController {
     view.backgroundColor = Style.App.background
 
     // settingsButton
-    settingsButton.configure(image: Icon.settings.image.template, blurEffect: false)
     settingsButton.anchor(
       top: sceneView.bottomAnchor,
       right: view.rightAnchor,

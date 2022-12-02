@@ -170,7 +170,7 @@ class DataService {
     goldTasks = tasks
       .map { $0.filter { $0.status == .completed } }     // отбираем только звкрытые задачи
       .map { $0.filter { $0.closed != nil } }
-      .map { $0.sorted { $0.closed! < $1.closed! }}     // сортируем их по дате закрытия
+      .map { $0.sorted { $0.closed! < $1.closed! } }     // сортируем их по дате закрытия
       .map { Dictionary(grouping: $0) { $0.closed!.startOfDay } } // превращаем в дикт по дате
       .map { $0.values.flatMap { $0.prefix(7) } } // берем первые 7 задач
       .asDriver()

@@ -19,22 +19,9 @@ class SetPhoneViewController: TDViewController {
   public var viewModel: SetPhoneViewModel!
 
   // MARK: - UI Elemenets
-  private let phoneNumberTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .phone)
-    textField.borderColor = Style.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
-    return textField
-  }()
-
-  private let OTPCodeTextField: TDAuthTextField = {
-    let textField = TDAuthTextField(type: .otp)
-    textField.borderColor = Style.TextFields.SettingsTextField.Border
-    textField.backgroundColor = Style.TextFields.SettingsTextField.Background
-    textField.imageView.tintColor = Style.TextFields.SettingsTextField.Tint
-    return textField
-  }()
-
+  private let phoneNumberTextField = TDAuthTextField(type: .phone)
+  private let OTPCodeTextField = TDAuthTextField(type: .otp)
+  
   private let phoneLabel: UILabel = {
     let label = UILabel()
     label.text = ""
