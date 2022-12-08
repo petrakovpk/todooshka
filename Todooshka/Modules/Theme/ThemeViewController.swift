@@ -16,7 +16,7 @@ class ThemeViewController: TDViewController {
   
   private let disposeBag = DisposeBag()
   
-  // MARK: - UI Elements
+  // MARK: - UI Element
   private let nameTextField: UITextField = {
     let spacer = UIView()
     spacer.anchor(widthConstant: 16, heightConstant: 54)
@@ -57,7 +57,7 @@ class ThemeViewController: TDViewController {
     imageView.isHidden = true
     return imageView
   }()
-
+  
   private let nameLabel: UILabel = {
     let label = UILabel()
     label.text = "Название:"
@@ -72,16 +72,6 @@ class ThemeViewController: TDViewController {
     return label
   }()
   
-  private let sendThemeForVerificationButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.cornerRadius = 15
-    button.setTitle("Отправить на проверку", for: .normal)
-    button.setTitleColor(.black, for: .normal)
-    button.borderWidth = 1.0
-    button.borderColor = .systemGray.withAlphaComponent(0.3)
-    return button
-  }()
-  
   private let startThemeButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 15
@@ -92,15 +82,22 @@ class ThemeViewController: TDViewController {
     return button
   }()
   
-  private let typeLabel: UILabel = {
+  private let stepsLabel: UILabel = {
     let label = UILabel()
-    label.text = "Тип:"
+    label.text = "Шаги:"
     label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     return label
   }()
   
-  private var typeCollectionView: UICollectionView!
-  private var typeDataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeTypeSection>!
+  private let addStepButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 5
+    button.borderWidth = 1.0
+    button.borderColor = .black
+    button.setTitle("Добавить шаг", for: .normal)
+    button.setTitleColor(.black, for: .normal)
+    return button
+  }()
   
   private var stepsCollectionView: UICollectionView!
   private var stepsDataSource: RxCollectionViewSectionedAnimatedDataSource<ThemeStepSection>!
@@ -124,26 +121,26 @@ class ThemeViewController: TDViewController {
     hideKeyboardWhenTappedAround()
     
     // collectionView
-    typeCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createTypeCompositionalLayout())
-    stepsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createDayCompositionalLayout())
+    stepsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     // adding
     view.addSubviews([
-      typeLabel,
       nameLabel,
       nameTextField,
       imageAndDescriptionLabel,
       addImageButton,
       imageView,
       descriptionTextView,
-      sendThemeForVerificationButton,
-      startThemeButton,
-      typeCollectionView,
-      stepsCollectionView
+      stepsLabel,
+      addStepButton,
+      stepsCollectionView,
+      startThemeButton
     ])
+    
     // stepsCollectionView
-    stepsCollectionView.alwaysBounceVertical = false
+    stepsCollectionView.alwaysBounceVertical = true
     stepsCollectionView.backgroundColor = .clear
+    stepsCollectionView.delegate = self
     stepsCollectionView.register(
       ThemeStepCell.self,
       forCellWithReuseIdentifier: ThemeStepCell.reuseID)
@@ -151,13 +148,6 @@ class ThemeViewController: TDViewController {
       ThemeStepHeader.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
       withReuseIdentifier: ThemeStepHeader.reuseID)
-    
-    // typeCollectionView
-    typeCollectionView.alwaysBounceVertical = false
-    typeCollectionView.backgroundColor = .clear
-    typeCollectionView.register(
-      ThemeTypeCell.self,
-      forCellWithReuseIdentifier: ThemeTypeCell.reuseID)
   }
   
   func configureUI(with mode: OpenViewControllerMode) {
@@ -174,26 +164,9 @@ class ThemeViewController: TDViewController {
         heightConstant: 150
       )
     case .edit:
-      // typeLabel
-      typeLabel.anchor(
-        top: headerView.bottomAnchor,
-        left: view.leftAnchor,
-        topConstant: 16,
-        leftConstant: 16
-      )
-      // typeCollectionView
-      typeCollectionView.anchor(
-        top: typeLabel.bottomAnchor,
-        left: view.leftAnchor,
-        right: view.rightAnchor,
-        topConstant: 16,
-        leftConstant: 16,
-        rightConstant: 16,
-        heightConstant: 50
-      )
       // nameLabel
       nameLabel.anchor(
-        top: typeCollectionView.bottomAnchor,
+        top: headerView.bottomAnchor,
         left: view.leftAnchor,
         topConstant: 16,
         leftConstant: 16
@@ -215,7 +188,6 @@ class ThemeViewController: TDViewController {
         topConstant: 16,
         leftConstant: 16
       )
-      
       // addImageButton
       addImageButton.anchor(
         top: imageAndDescriptionLabel.bottomAnchor,
@@ -236,7 +208,24 @@ class ThemeViewController: TDViewController {
       leftConstant: 16,
       rightConstant: 16
     )
-
+    
+    // stepsLabel
+    stepsLabel.anchor(
+      top: addImageButton.bottomAnchor,
+      left: view.leftAnchor,
+      topConstant: 16,
+      leftConstant: 16
+    )
+    
+    // addStepButton
+    addStepButton.centerYAnchor.constraint(equalTo: stepsLabel.centerYAnchor, constant: 0).isActive = true
+    addStepButton.anchor(
+      right: view.rightAnchor,
+      rightConstant: 16,
+      widthConstant: 120,
+      heightConstant: 30
+    )
+    
     // startThemeButton
     startThemeButton.anchor(
       left: view.leftAnchor,
@@ -246,21 +235,10 @@ class ThemeViewController: TDViewController {
       bottomConstant: 16,
       rightConstant: 16,
       heightConstant: 50)
-    
-    // sendThemeForVerificationButton
-    sendThemeForVerificationButton.anchor(
-      left: view.leftAnchor,
-      bottom: view.safeAreaLayoutGuide.bottomAnchor,
-      right: view.rightAnchor,
-      leftConstant: 16,
-      bottomConstant: 16,
-      rightConstant: 16,
-      heightConstant: 50
-    )
-    
+
     // collectionView
     stepsCollectionView.anchor(
-      top: descriptionTextView.bottomAnchor,
+      top: stepsLabel.bottomAnchor,
       left: view.leftAnchor,
       bottom: startThemeButton.topAnchor,
       right: view.rightAnchor,
@@ -278,7 +256,6 @@ class ThemeViewController: TDViewController {
       descriptionTextView.isEditable = true
       imageView.isHidden = true
       saveButton.isHidden = false
-      sendThemeForVerificationButton.isHidden = false
       settingsButton.isHidden = false
       startThemeButton.isHidden = true
     case .view:
@@ -287,7 +264,6 @@ class ThemeViewController: TDViewController {
       descriptionTextView.isEditable = false
       imageView.isHidden = false
       saveButton.isHidden = true
-      sendThemeForVerificationButton.isHidden = true
       settingsButton.isHidden = true
       startThemeButton.isHidden = false
     }
@@ -297,42 +273,43 @@ class ThemeViewController: TDViewController {
   func bindViewModel() {
     
     let input = ThemeViewModel.Input(
-      addImageButtonClickTrigger: addImageButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      daySelection: stepsCollectionView.rx.itemSelected.asDriver(),
-      description: descriptionTextView.rx.text.orEmpty.asDriver(),
+      settingsButtonClickTrigger: settingsButton.rx.tap.asDriver(),
+      saveButtonClickTrigger: saveButton.rx.tap.asDriver(),
       name: nameTextField.rx.text.orEmpty.asDriver(),
-      saveButtonClickTrigger: saveButton.rx.tap.asDriver()
+      addImageButtonClickTrigger: addImageButton.rx.tap.asDriver(),
+      description: descriptionTextView.rx.text.orEmpty.asDriver(),
+      addStepButtonClickTrigger: addStepButton.rx.tap.asDriver(),
+      stepSelection: stepsCollectionView.rx.itemSelected.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.mode.drive(modeBinder),
+      outputs.initData.drive(initBinder),
       outputs.navigateBack.drive(),
-      outputs.openThemeStep.drive(),
-      outputs.save.drive(),
+      outputs.openSettings.drive(),
+      outputs.saveTheme.drive(),
       outputs.title.drive(titleLabel.rx.text),
-      outputs.themeStepDataSource.drive(stepsCollectionView.rx.items(dataSource: stepsDataSource)),
-      outputs.typeDataSource.drive(typeCollectionView.rx.items(dataSource: typeDataSource)),
+      outputs.stepsDataSource.drive(stepsCollectionView.rx.items(dataSource: stepsDataSource)),
+      outputs.addStep.drive(),
+      outputs.openStep.drive(),
     ]
       .forEach { $0.disposed(by: disposeBag) }
     
-    // init
-    nameTextField.insertText(viewModel.theme.name)
-    descriptionTextView.insertText(viewModel.theme.description)
   }
   
-  var modeBinder: Binder<OpenViewControllerMode> {
-    return Binder(self, binding: { vc, mode in
-      vc.configureUI(with: mode)
+  var initBinder: Binder<Theme> {
+    return Binder(self, binding: { vc, theme in
+      vc.nameTextField.insertText(theme.name)
+      vc.descriptionTextView.insertText(theme.description)
+      vc.configureUI(with: theme.status == .draft ? .edit : .view)
     })
   }
   
   // MARK: - Configure Data Source
   private func configureDataSource() {
     stepsCollectionView.dataSource = nil
-    typeCollectionView.dataSource = nil
     
     stepsDataSource = RxCollectionViewSectionedAnimatedDataSource<ThemeStepSection>(
       configureCell: { _, collectionView, indexPath, day in
@@ -351,75 +328,24 @@ class ThemeViewController: TDViewController {
         header.configure(with: dataSource[indexPath.section])
         return header
       })
-    
-    typeDataSource = RxCollectionViewSectionedAnimatedDataSource<ThemeTypeSection>(
-      configureCell: { _, collectionView, indexPath, item in
-        guard let cell = collectionView.dequeueReusableCell(
-          withReuseIdentifier: ThemeTypeCell.reuseID,
-          for: indexPath
-        ) as? ThemeTypeCell else { return UICollectionViewCell() }
-        cell.configure(with: item)
-        return cell
-      })
+  }
+}
+
+
+extension ThemeViewController: UICollectionViewDelegateFlowLayout {
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    CGSize(width: floor((collectionView.bounds.width - 16.0) / 3.0), height: 75)
   }
   
-  // MARK: - Type CompositionalLayout
-  private func createTypeCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
-      return self.typeSection()
-    }
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    UIEdgeInsets.zero
   }
   
-  private func typeSection() -> NSCollectionLayoutSection {
-    // item
-    let itemSize = NSCollectionLayoutSize(
-      widthDimension: .absolute(Sizes.Cells.ThemeTypeCell.width),
-      heightDimension: .absolute(Sizes.Cells.ThemeTypeCell.height))
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 5)
-    // group
-    let groupSize = NSCollectionLayoutSize(
-      widthDimension: .estimated(Sizes.Cells.ThemeTypeCell.width),
-      heightDimension: .estimated(Sizes.Cells.ThemeTypeCell.height))
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    // section
-    let section = NSCollectionLayoutSection(group: group)
-    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-    section.orthogonalScrollingBehavior = .continuous
-    return section
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    8.0
   }
   
-  // MARK: - Setup CollectionView
-  private func createDayCompositionalLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
-      return self.daySection()
-    }
-  }
-  
-  private func daySection() -> NSCollectionLayoutSection {
-    // item
-    let itemSize = NSCollectionLayoutSize(
-      widthDimension: .estimated(50.0),
-      heightDimension: .estimated(50.0))
-    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 0)
-    // group
-    let groupSize = NSCollectionLayoutSize(
-      widthDimension: .fractionalWidth(1.0),
-      heightDimension: .estimated(50.0))
-    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    group.interItemSpacing = .fixed(5.0)
-    // header
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(30.0))
-    let header = NSCollectionLayoutBoundarySupplementaryItem(
-      layoutSize: headerSize,
-      elementKind: UICollectionView.elementKindSectionHeader,
-      alignment: .top )
-    // section
-    let section = NSCollectionLayoutSection(group: group)
-    section.boundarySupplementaryItems = [header]
-    section.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 5, trailing: 0)
-    section.orthogonalScrollingBehavior = .continuous
-    return section
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    8.0
   }
 }

@@ -65,8 +65,8 @@ class SettingsViewController: TDViewController {
   // MARK: - Configure UI
   func configureUI() {
     // header
-    backButton.isHidden = false
     titleLabel.text = "Настройки и конфеденциальность"
+    backButton.isHidden = false
     
     // tableView
     tableView = UITableView(frame: .zero, style: .grouped)
@@ -148,7 +148,7 @@ class SettingsViewController: TDViewController {
         withIdentifier: SettingsCell.reuseID,
         for: indexPath
       ) as? SettingsCell else { return UITableViewCell() }
-      cell.configure(imageName: item.imageName, text: item.text)
+      cell.configure(image: item.image, text: item.text)
       return cell
     }, titleForHeaderInSection: { dataSource, index in
       return dataSource.sectionModels[index].header

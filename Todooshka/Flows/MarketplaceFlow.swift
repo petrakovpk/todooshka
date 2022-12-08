@@ -31,10 +31,14 @@ class MarketplaceFlow: Flow {
     switch step {
     case .marketplaceIsRequired:
       return navigateToMarketplace()
+    case .dismissAndNavigateBack:
+      return dismissAndNavigateBack(tabBarIsHidden: true)
     case .navigateBack:
       return navigateBack(tabBarIsHidden: true)
-    case .openThemeIsRequired(let theme):
+    case .themeIsRequired(let theme):
       return navigateToTheme(theme: theme)
+    case .themeSettingsIsRequired(let theme):
+      return navigateToThemeSettings(theme: theme)
     case .themeProcessingIsCompleted:
       return navigateBack(tabBarIsHidden: false)
     case .themeStepIsRequired(let themeStep, let openViewControllerMode):
@@ -63,6 +67,17 @@ class MarketplaceFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
+  private func navigateToThemeSettings(theme: Theme) -> FlowContributors {
+    let viewController = ThemeSettingsViewController()
+    let viewModel = ThemeSettingsViewModel(services: services, theme: theme)
+    viewController.viewModel = viewModel
+    if let sheet = viewController.sheetPresentationController {
+      sheet.detents = [.medium()]
+    }
+    rootViewController.present(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
   private func navigateToThemeStep(themeStep: ThemeStep, openViewControllerMode: OpenViewControllerMode) -> FlowContributors {
     let viewController = ThemeStepViewContoller()
     let viewModel = ThemeStepViewModel(services: services, themeStep: themeStep, openViewControllerMode: openViewControllerMode)
@@ -78,7 +93,13 @@ class MarketplaceFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-
+  
+  private func dismissAndNavigateBack(tabBarIsHidden: Bool) -> FlowContributors {
+    rootViewController.tabBarController?.tabBar.isHidden = tabBarIsHidden
+    rootViewController.dismiss(animated: true)
+    return .one(flowContributor: .forwardToCurrentFlow(withStep: AppStep.navigateBack))
+  }
+  
   private func navigateBack(tabBarIsHidden: Bool) -> FlowContributors {
     rootViewController.tabBarController?.tabBar.isHidden = tabBarIsHidden
     rootViewController.popViewController(animated: true)

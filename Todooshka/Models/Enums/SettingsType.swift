@@ -11,9 +11,13 @@ enum SettingsType {
   case userProfileIsRequiared
   // sync
   case syncDataIsRequired
+  // delete
+  case deleteThemeIsRequired
   // deleted
   case deletedTaskListIsRequired
   case deletedTaskTypeListIsRequired
   // help
   case supportIsRequired
+  // verification
+  case sendForVerificationIsRequired
 }

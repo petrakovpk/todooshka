@@ -98,7 +98,7 @@
 		60AE9DD62652FD1800E51531 /* TaskListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AE9DD52652FD1800E51531 /* TaskListViewModel.swift */; };
 		60AE9DDE2652FF4200E51531 /* CalendarFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AE9DDD2652FF4200E51531 /* CalendarFlow.swift */; };
 		60B299FE27CE3FF60072EE8E /* RxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B299FD27CE3FF60072EE8E /* RxTask.swift */; };
-		60B3AE0427FD7CCD00B7E5BD /* Observable+withPrevious.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B3AE0327FD7CCD00B7E5BD /* Observable+withPrevious.swift */; };
+		60B3AE0427FD7CCD00B7E5BD /* Observable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B3AE0327FD7CCD00B7E5BD /* Observable+Ext.swift */; };
 		60B82FED2654FCE100BF5F94 /* TaskFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B82FEC2654FCE100BF5F94 /* TaskFlow.swift */; };
 		60B82FEF2655031100BF5F94 /* TaskStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B82FEE2655031100BF5F94 /* TaskStepper.swift */; };
 		60B82FF12655078B00BF5F94 /* TabBarFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B82FF02655078B00BF5F94 /* TabBarFlow.swift */; };
@@ -147,6 +147,7 @@
 		9D17D43F28881ED400D3E304 /* DiamondPackageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */; };
 		9D17D44128899D4200D3E304 /* CalendarYearCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D44028899D4200D3E304 /* CalendarYearCell.swift */; };
 		9D17D46D288FE65200D3E304 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D46C288FE65200D3E304 /* CalendarView.swift */; };
+		9D210C7D293E1B77005FD7A8 /* ErrorTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D210C7C293E1B77005FD7A8 /* ErrorTracker.swift */; };
 		9D3BBC4928F046E300B352E3 /* CoreDataTaskToTaskV1toV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BBC4828F046E300B352E3 /* CoreDataTaskToTaskV1toV2.swift */; };
 		9D3BBC4C28F05C2C00B352E3 /* CoreDataTask+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BBC4A28F05C2C00B352E3 /* CoreDataTask+CoreDataClass.swift */; };
 		9D3BBC4D28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BBC4B28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift */; };
@@ -223,8 +224,8 @@
 		9D9733E4291E4A3F00733C45 /* ThemeStepCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733E3291E4A3F00733C45 /* ThemeStepCell.swift */; };
 		9D9733E6291E4A4800733C45 /* ThemeStepHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733E5291E4A4800733C45 /* ThemeStepHeader.swift */; };
 		9D9733E8291E4A5900733C45 /* ThemeStepSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733E7291E4A5900733C45 /* ThemeStepSection.swift */; };
-		9D9733EB291E531A00733C45 /* ThemeStepViewContoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733EA291E531A00733C45 /* ThemeStepViewContoller.swift */; };
-		9D9733ED291E532200733C45 /* ThemeStepViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733EC291E532200733C45 /* ThemeStepViewModel.swift */; };
+		9D9733EB291E531A00733C45 /* ChallengeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733EA291E531A00733C45 /* ChallengeViewController.swift */; };
+		9D9733ED291E532200733C45 /* ChallengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733EC291E532200733C45 /* ChallengeViewModel.swift */; };
 		9D9733F0291E688E00733C45 /* ThemeTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733EF291E688E00733C45 /* ThemeTaskViewController.swift */; };
 		9D9733F2291E689600733C45 /* ThemeTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733F1291E689600733C45 /* ThemeTaskViewModel.swift */; };
 		9D9733F42924E0EE00733C45 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733F32924E0EE00733C45 /* NetworkService.swift */; };
@@ -242,6 +243,8 @@
 		9D973411292B76F000733C45 /* ThemeTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D973410292B76F000733C45 /* ThemeTypeCell.swift */; };
 		9D973413292C07F700733C45 /* ThemeTypeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D973412292C07F700733C45 /* ThemeTypeItem.swift */; };
 		9D97341729335C2F00733C45 /* TDContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D97341629335C2F00733C45 /* TDContentView.swift */; };
+		9D97341A293B8DDE00733C45 /* ThemeSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D973419293B8DDE00733C45 /* ThemeSettingsViewController.swift */; };
+		9D97341C293B8DE800733C45 /* ThemeSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D97341B293B8DE800733C45 /* ThemeSettingsViewModel.swift */; };
 		9DC65D3C28D320B600221ED2 /* SyncDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */; };
 		9DC65D3E28D320CA00221ED2 /* SyncDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */; };
 		9DC65D4028D3510000221ED2 /* NSManagedObjectContext+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */; };
@@ -371,7 +374,7 @@
 		60AE9DD52652FD1800E51531 /* TaskListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewModel.swift; sourceTree = "<group>"; };
 		60AE9DDD2652FF4200E51531 /* CalendarFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarFlow.swift; sourceTree = "<group>"; };
 		60B299FD27CE3FF60072EE8E /* RxTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxTask.swift; sourceTree = "<group>"; };
-		60B3AE0327FD7CCD00B7E5BD /* Observable+withPrevious.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Observable+withPrevious.swift"; sourceTree = "<group>"; };
+		60B3AE0327FD7CCD00B7E5BD /* Observable+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Observable+Ext.swift"; sourceTree = "<group>"; };
 		60B82FEC2654FCE100BF5F94 /* TaskFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskFlow.swift; sourceTree = "<group>"; };
 		60B82FEE2655031100BF5F94 /* TaskStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStepper.swift; sourceTree = "<group>"; };
 		60B82FF02655078B00BF5F94 /* TabBarFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarFlow.swift; sourceTree = "<group>"; };
@@ -425,6 +428,7 @@
 		9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondPackageType.swift; sourceTree = "<group>"; };
 		9D17D44028899D4200D3E304 /* CalendarYearCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarYearCell.swift; sourceTree = "<group>"; };
 		9D17D46C288FE65200D3E304 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		9D210C7C293E1B77005FD7A8 /* ErrorTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorTracker.swift; sourceTree = "<group>"; };
 		9D3BBC4828F046E300B352E3 /* CoreDataTaskToTaskV1toV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTaskToTaskV1toV2.swift; sourceTree = "<group>"; };
 		9D3BBC4A28F05C2C00B352E3 /* CoreDataTask+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataTask+CoreDataClass.swift"; sourceTree = "<group>"; };
 		9D3BBC4B28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataTask+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -501,8 +505,8 @@
 		9D9733E3291E4A3F00733C45 /* ThemeStepCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStepCell.swift; sourceTree = "<group>"; };
 		9D9733E5291E4A4800733C45 /* ThemeStepHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStepHeader.swift; sourceTree = "<group>"; };
 		9D9733E7291E4A5900733C45 /* ThemeStepSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStepSection.swift; sourceTree = "<group>"; };
-		9D9733EA291E531A00733C45 /* ThemeStepViewContoller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStepViewContoller.swift; sourceTree = "<group>"; };
-		9D9733EC291E532200733C45 /* ThemeStepViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStepViewModel.swift; sourceTree = "<group>"; };
+		9D9733EA291E531A00733C45 /* ChallengeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeViewController.swift; sourceTree = "<group>"; };
+		9D9733EC291E532200733C45 /* ChallengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeViewModel.swift; sourceTree = "<group>"; };
 		9D9733EF291E688E00733C45 /* ThemeTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTaskViewController.swift; sourceTree = "<group>"; };
 		9D9733F1291E689600733C45 /* ThemeTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTaskViewModel.swift; sourceTree = "<group>"; };
 		9D9733F32924E0EE00733C45 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
@@ -520,6 +524,8 @@
 		9D973410292B76F000733C45 /* ThemeTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTypeCell.swift; sourceTree = "<group>"; };
 		9D973412292C07F700733C45 /* ThemeTypeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTypeItem.swift; sourceTree = "<group>"; };
 		9D97341629335C2F00733C45 /* TDContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDContentView.swift; sourceTree = "<group>"; };
+		9D973419293B8DDE00733C45 /* ThemeSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsViewController.swift; sourceTree = "<group>"; };
+		9D97341B293B8DE800733C45 /* ThemeSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsViewModel.swift; sourceTree = "<group>"; };
 		9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewController.swift; sourceTree = "<group>"; };
 		9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewModel.swift; sourceTree = "<group>"; };
 		9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Rx.swift"; sourceTree = "<group>"; };
@@ -641,7 +647,7 @@
 				9D42C01A28CA37BC008F624F /* FIRUser+Rx.swift */,
 				9D42C02C28CB68DF008F624F /* GIDSignIn+Rx.swift */,
 				9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */,
-				60B3AE0327FD7CCD00B7E5BD /* Observable+withPrevious.swift */,
+				60B3AE0327FD7CCD00B7E5BD /* Observable+Ext.swift */,
 				9DC65D4528D3517E00221ED2 /* Persistable.swift */,
 				9D44C0BB28DA271B0022148C /* RangeReplaceableCollection.swift */,
 				60B299FD27CE3FF60072EE8E /* RxTask.swift */,
@@ -845,6 +851,7 @@
 				60ED957627B52C4B005ACC33 /* Todooshka.xcdatamodeld */,
 				60AE9DE1265300AB00E51531 /* TodooshkaUI */,
 				9D6B6B0E284FEA0F000ABAE7 /* Typealias */,
+				9D210C7B293E1B6A005FD7A8 /* Utility */,
 			);
 			path = Todooshka;
 			sourceTree = "<group>";
@@ -866,12 +873,13 @@
 				602EA056274E93AE00525D6C /* BranchScene */,
 				9DFE70422899642800589DC5 /* Calendar */,
 				60C8343A26D7FC4C006E4FBE /* CalendarCell */,
+				9D9733E9291E530300733C45 /* Challenge */,
 				9D42C04528CF29AE008F624F /* ChangeBirthday */,
 				9D42C04028CF283F008F624F /* ChangeGender */,
 				9D42C03B28CF22F8008F624F /* ChangeName */,
 				9D42C04C28CF29EA008F624F /* ChangePassword */,
-				60C8343D26D80615006E4FBE /* ConfirmRemoveTask */,
 				9D9734142930B9FA00733C45 /* Choose */,
+				60C8343D26D80615006E4FBE /* ConfirmRemoveTask */,
 				9DF7CA7A28EB0C1A000AE2B6 /* DeleteAccount */,
 				9DE960832861068A00E5981A /* Diamond */,
 				9DE960822861068100E5981A /* Feather */,
@@ -906,7 +914,7 @@
 				602591C82679CF0800E2BBF8 /* TaskList */,
 				9D9733D129192F7E00733C45 /* Theme */,
 				9D0A8211290FEB20006D777C /* ThemeCell */,
-				9D9733E9291E530300733C45 /* ThemeStep */,
+				9D973418293B8DA800733C45 /* ThemeSettings */,
 				9D9733E2291E4A2C00733C45 /* ThemeStepCell */,
 				9D9733EE291E687A00733C45 /* ThemeTask */,
 				9D97340D292B76CB00733C45 /* ThemeTypeCell */,
@@ -1129,6 +1137,14 @@
 			path = ThemeCell;
 			sourceTree = "<group>";
 		};
+		9D210C7B293E1B6A005FD7A8 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				9D210C7C293E1B77005FD7A8 /* ErrorTracker.swift */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
 		9D3BBC4728F046C700B352E3 /* Migration */ = {
 			isa = PBXGroup;
 			children = (
@@ -1299,13 +1315,13 @@
 			path = ThemeStepCell;
 			sourceTree = "<group>";
 		};
-		9D9733E9291E530300733C45 /* ThemeStep */ = {
+		9D9733E9291E530300733C45 /* Challenge */ = {
 			isa = PBXGroup;
 			children = (
-				9D9733EA291E531A00733C45 /* ThemeStepViewContoller.swift */,
-				9D9733EC291E532200733C45 /* ThemeStepViewModel.swift */,
+				9D9733EA291E531A00733C45 /* ChallengeViewController.swift */,
+				9D9733EC291E532200733C45 /* ChallengeViewModel.swift */,
 			);
-			path = ThemeStep;
+			path = Challenge;
 			sourceTree = "<group>";
 		};
 		9D9733EE291E687A00733C45 /* ThemeTask */ = {
@@ -1341,6 +1357,15 @@
 			children = (
 			);
 			path = Choose;
+			sourceTree = "<group>";
+		};
+		9D973418293B8DA800733C45 /* ThemeSettings */ = {
+			isa = PBXGroup;
+			children = (
+				9D973419293B8DDE00733C45 /* ThemeSettingsViewController.swift */,
+				9D97341B293B8DE800733C45 /* ThemeSettingsViewModel.swift */,
+			);
+			path = ThemeSettings;
 			sourceTree = "<group>";
 		};
 		9DC65D3A28D3209A00221ED2 /* SyncData */ = {
@@ -1608,6 +1633,7 @@
 				9D44C0D228E0708E0022148C /* KindOfTaskSection.swift in Sources */,
 				60FA513F26D806BA007B3B36 /* ConfirmRemoveTaskViewController.swift in Sources */,
 				60FFF65727A9A5D800290331 /* ShopViewController.swift in Sources */,
+				9D210C7D293E1B77005FD7A8 /* ErrorTracker.swift in Sources */,
 				605823A826C2F18F00F79155 /* TaskReusableView.swift in Sources */,
 				60A2F49926EE55BF00C328C1 /* AlertFlow.swift in Sources */,
 				9D42C01F28CB426A008F624F /* UserProfileViewController.swift in Sources */,
@@ -1643,7 +1669,7 @@
 				6053F85C2820347F0047C204 /* Palette.swift in Sources */,
 				9DF7CA7E28EB0C37000AE2B6 /* DeleteAccountViewModel.swift in Sources */,
 				602D0959266B779D00946D1D /* UIVIew.swift in Sources */,
-				60B3AE0427FD7CCD00B7E5BD /* Observable+withPrevious.swift in Sources */,
+				60B3AE0427FD7CCD00B7E5BD /* Observable+Ext.swift in Sources */,
 				6067D99F26B1EF3A00F0FB72 /* TabBarViewModel.swift in Sources */,
 				60AE9DD22652FCEA00E51531 /* CalendarViewModel.swift in Sources */,
 				9D9733E6291E4A4800733C45 /* ThemeStepHeader.swift in Sources */,
@@ -1694,7 +1720,7 @@
 				9D9734092928BF1200733C45 /* FeedFlow.swift in Sources */,
 				606B03AD26C4619200F332C5 /* Date.swift in Sources */,
 				9D42C05328CF3514008F624F /* ChangeGenderCell.swift in Sources */,
-				9D9733ED291E532200733C45 /* ThemeStepViewModel.swift in Sources */,
+				9D9733ED291E532200733C45 /* ChallengeViewModel.swift in Sources */,
 				9D9734052927B4D100733C45 /* FunViewController.swift in Sources */,
 				9DE96089286106B600E5981A /* DiamondViewController.swift in Sources */,
 				602D1B3E26C1BBE600DAA711 /* TDTaskCommentTextView.swift in Sources */,
@@ -1734,6 +1760,7 @@
 				6053F85E28206C060047C204 /* AlertBuyButton.swift in Sources */,
 				9D9733F2291E689600733C45 /* ThemeTaskViewModel.swift in Sources */,
 				60AE9D652652E5AA00E51531 /* SceneDelegate.swift in Sources */,
+				9D97341A293B8DDE00733C45 /* ThemeSettingsViewController.swift in Sources */,
 				60C1522926BC3A9E00F10284 /* KindOfTaskListCell.swift in Sources */,
 				9D42BF6A28C76A38008F624F /* AuthViewModel.swift in Sources */,
 				9D42C04228CF2866008F624F /* ChangeGenderViewController.swift in Sources */,
@@ -1792,6 +1819,7 @@
 				6024B30926B1871900876DC6 /* TabBarController.swift in Sources */,
 				6053F85A282025D30047C204 /* AlertBuyView.swift in Sources */,
 				9D42BF6228C75F0C008F624F /* AuthFlow.swift in Sources */,
+				9D97341C293B8DE800733C45 /* ThemeSettingsViewModel.swift in Sources */,
 				60D5662826CC202B00D865DD /* OnboardingSectionModel.swift in Sources */,
 				6055D19D26720B9E00316BB4 /* DatabaseReference.swift in Sources */,
 				9D0A8215290FEB4C006D777C /* ThemeSection.swift in Sources */,
@@ -1826,7 +1854,7 @@
 				60855BDC2659064200079D75 /* TaskViewModel.swift in Sources */,
 				609ADE3D2750F40F00E81FBF /* BranchScene.swift in Sources */,
 				60ED958727B54927005ACC33 /* Todooshka.xcdatamodeld in Sources */,
-				9D9733EB291E531A00733C45 /* ThemeStepViewContoller.swift in Sources */,
+				9D9733EB291E531A00733C45 /* ChallengeViewController.swift in Sources */,
 				60F9921726AD912300A2449A /* UIButton.swift in Sources */,
 				60FFF65927A9A5E300290331 /* ShopViewModel.swift in Sources */,
 				9D9733DC291D4A1500733C45 /* ThemePlusButtonCell.swift in Sources */,
@@ -1997,7 +2025,7 @@
 				INFOPLIST_FILE = Todooshka/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DragoDo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2027,7 +2055,7 @@
 				INFOPLIST_FILE = Todooshka/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DragoDo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

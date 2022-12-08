@@ -21,12 +21,12 @@ class SettingsCell: UITableViewCell {
   }
 
   // MARK: - Configure
-  func configure(imageName: String, text: String ) {
+  func configure(image: UIImage, text: String ) {
     backgroundColor = .clear
     cornerRadius = height / 2
     layer.borderWidth = 0
 
-    imageView?.image = UIImage(named: imageName)?.template
+    imageView?.image = image.template
     imageView?.tintColor = Style.App.text
     textLabel?.text = text
     textLabel?.textColor = Style.App.text

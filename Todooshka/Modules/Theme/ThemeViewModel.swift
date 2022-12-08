@@ -27,23 +27,25 @@ class ThemeViewModel: Stepper {
   let theme: Theme
 
   struct Input {
-    let addImageButtonClickTrigger: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
-    let daySelection: Driver<IndexPath>
-    let description: Driver<String>
-    let name: Driver<String>
+    let settingsButtonClickTrigger: Driver<Void>
     let saveButtonClickTrigger: Driver<Void>
+    let name: Driver<String>
+    let addImageButtonClickTrigger: Driver<Void>
+    let description: Driver<String>
+    let addStepButtonClickTrigger: Driver<Void>
+    let stepSelection: Driver<IndexPath>
   }
 
   struct Output {
-    let mode: Driver<OpenViewControllerMode>
+    let initData: Driver<Theme>
     let navigateBack: Driver<Void>
-    let openThemeStep: Driver<Void>
-    let save: Driver<Result<Void, Error>>
-    let theme: Driver<Theme>
     let title: Driver<String>
-    let themeStepDataSource: Driver<[ThemeStepSection]>
-    let typeDataSource: Driver<[ThemeTypeSection]>
+    let openSettings: Driver<Void>
+    let saveTheme: Driver<Result<Void, Error>>
+    let stepsDataSource: Driver<[ThemeStepSection]>
+    let addStep: Driver<Void>
+    let openStep: Driver<Void>
   }
 
   // MARK: - Init
@@ -57,9 +59,11 @@ class ThemeViewModel: Stepper {
     let name = input.name
     let description = input.description
     
+    let initData = Driver<Theme>.just(self.theme)
+
     let mode = Driver<OpenViewControllerMode>
       .just(self.theme.status == .draft ? .edit : .view)
-    
+
     let theme = Driver
       .combineLatest(name, description) { name, description -> Theme in
         Theme(
@@ -89,9 +93,8 @@ class ThemeViewModel: Stepper {
       .map { $0.isEmpty ? "Новая тема" : $0 }
       .startWith("Новая тема")
     
-    
     // dayDataSource
-    let themeStepDataSource = Driver<[ThemeStepSection]>.just(
+    let stepsDataSource = Driver<[ThemeStepSection]>.just(
       [
         ThemeStepSection(header: "", items: [
           ThemeStep(UID: UUID().uuidString, goal: "Шаг 1"),
@@ -104,18 +107,29 @@ class ThemeViewModel: Stepper {
     )
     
     let themeStepSelected = input
-      .daySelection
-      .withLatestFrom(themeStepDataSource) { indexPath, dataSource -> ThemeStep in
+      .stepSelection
+      .withLatestFrom(stepsDataSource) { indexPath, dataSource -> ThemeStep in
         dataSource[indexPath.section].items[indexPath.item]
       }
 
-    let openThemeStep = themeStepSelected
+    let openStep = themeStepSelected
       .withLatestFrom(mode) { step, mode in
         self.steps.accept(
           AppStep.themeStepIsRequired(
             themeStep: step,
             openViewControllerMode: mode))
       }
+    
+    let addStep = input.addStepButtonClickTrigger
+      .do { _ in
+        self.steps.accept(
+          AppStep.themeStepIsRequired(
+            themeStep: ThemeStep(UID: UUID().uuidString, goal: ""),
+            openViewControllerMode: .edit))
+      }
+    
+    let openSettings = input.settingsButtonClickTrigger
+      .do { _ in self.steps.accept(AppStep.themeSettingsIsRequired(theme: self.theme)) }
     
     // dayDataSource
     let typeDataSource = Driver<[ThemeTypeSection]>.just(
@@ -137,14 +151,14 @@ class ThemeViewModel: Stepper {
       .map { self.steps.accept( AppStep.themeProcessingIsCompleted ) }
 
     return Output(
-      mode: mode,
+      initData: initData,
       navigateBack: navigateBack,
-      openThemeStep: openThemeStep,
-      save: save,
-      theme: theme,
       title: title,
-      themeStepDataSource: themeStepDataSource,
-      typeDataSource: typeDataSource
+      openSettings: openSettings,
+      saveTheme: save,
+      stepsDataSource: stepsDataSource,
+      addStep: addStep,
+      openStep: openStep
     )
   }
 }

@@ -58,12 +58,12 @@ class MarketplaceViewModel: Stepper {
     
     let addTheme = input.addThemeButtonClickTrigger
       .do { _ in
-        self.steps.accept(AppStep.openThemeIsRequired(theme: Theme.empty))
+        self.steps.accept(AppStep.themeIsRequired(theme: Theme.empty))
       }
     
     let openTheme = themeSelected
       .do { 
-        self.steps.accept(AppStep.openThemeIsRequired(theme: $0))
+        self.steps.accept(AppStep.themeIsRequired(theme: $0))
       }
 
     return Output(

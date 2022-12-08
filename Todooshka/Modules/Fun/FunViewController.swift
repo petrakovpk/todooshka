@@ -78,17 +78,11 @@ class FunViewController: TDViewController {
 
     let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.nextContent.drive(nextContentBinder)
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+//    [
+//    
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
   }
   
-  var nextContentBinder: Binder<Void> {
-    return Binder(self, binding: { vc, _ in
-      print("1234 next")
-    })
-  }
-
 }
 

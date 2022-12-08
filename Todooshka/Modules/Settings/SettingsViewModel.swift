@@ -20,14 +20,14 @@ class SettingsViewModel: Stepper {
   private let showAlert = BehaviorRelay<Bool>(value: false)
 
   // auth
-  let logInIsRequired = SettingsItem(imageName: "login", text: "Войти в аккаунт", type: .logInIsRequired)
+  let logInIsRequired = SettingsItem(image: Icon.login.image, text: "Войти в аккаунт", type: .logInIsRequired)
   // data
-  let syncDataIsRequired = SettingsItem(imageName: "box-tick", text: "Синхронизировать данные", type: .syncDataIsRequired)
+  let syncDataIsRequired = SettingsItem(image: Icon.boxTick.image, text: "Синхронизировать данные", type: .syncDataIsRequired)
   // deleted
-  let deletedTaskTypeListIsRequired = SettingsItem(imageName: "trash", text: "Типы", type: .deletedTaskTypeListIsRequired)
-  let deletedTaskListIsRequired = SettingsItem(imageName: "trash", text: "Задачи", type: .deletedTaskListIsRequired)
+  let deletedTaskTypeListIsRequired = SettingsItem(image: Icon.trash.image, text: "Типы", type: .deletedTaskTypeListIsRequired)
+  let deletedTaskListIsRequired = SettingsItem(image:Icon.trash.image, text: "Задачи", type: .deletedTaskListIsRequired)
   // help
-  let askSupport = SettingsItem(imageName: "message-notif", text: "Обратиться в поддержку", type: .supportIsRequired)
+  let askSupport = SettingsItem(image: Icon.messageNotif.image, text: "Обратиться в поддержку", type: .supportIsRequired)
 
   struct Input {
     let backButtonClickTrigger: Driver<Void>
@@ -71,7 +71,7 @@ class SettingsViewModel: Stepper {
       .startWith("")
       .map {
         SettingsItem(
-          imageName: "user-square",
+          image: Icon.userSquare.image,
           text: $0,
           type: .userProfileIsRequiared
         )
@@ -112,6 +112,8 @@ class SettingsViewModel: Stepper {
           self.steps.accept(AppStep.syncDataIsRequired)
         case .supportIsRequired:
           self.steps.accept(AppStep.supportIsRequired)
+        default:
+          return
         }
       }
 

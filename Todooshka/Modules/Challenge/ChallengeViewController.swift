@@ -1,5 +1,5 @@
 //
-//  ThemeStepViewContoller.swift
+//  ChallengeViewController.swift
 //  DragoDo
 //
 //  Created by Pavel Petakov on 11.11.2022.
@@ -8,13 +8,13 @@
 import RxCocoa
 import RxSwift
 
-class ThemeStepViewContoller: TDViewController {
+class ChallengeViewController: TDViewController {
   
   // MARK: - Rx
   private let disposeBag = DisposeBag()
 
   // MARK: - MVVM
-  public var viewModel: ThemeStepViewModel!
+  public var viewModel: ChallengeViewModel!
   
   // MARK: - UI Elements
   private let addImageButton: UIButton = {
@@ -129,7 +129,7 @@ class ThemeStepViewContoller: TDViewController {
   }
   
   func bindViewModel() {
-    let input = ThemeStepViewModel.Input(
+    let input = ChallengeViewModel.Input(
       addThemeTaskIsRequired: addTaskButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver()
     )

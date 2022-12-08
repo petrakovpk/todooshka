@@ -10,7 +10,7 @@ import RxFlow
 import RxSwift
 import RxCocoa
 
-class ThemeStepViewModel: Stepper {
+class ChallengeViewModel: Stepper {
   let services: AppServices
   let steps = PublishRelay<Step>()
   
