@@ -12,7 +12,6 @@ import Foundation
 import SwipeCellKit
 
 class TaskCell: SwipeCollectionViewCell {
-  // MARK: - Public
   static let reuseID: String = "TaskCell"
 
   var disposeBag = DisposeBag()
@@ -21,6 +20,9 @@ class TaskCell: SwipeCollectionViewCell {
   // MARK: - Public
   // UI
   public let repeatButton: UIButton = {
+    let attributedTitle = NSAttributedString(
+      string: "В работу",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11, weight: .semibold)])
     let button = UIButton(type: .custom)
     button.setImage(Icon.refreshCircle.image, for: .normal)
     button.backgroundColor = Palette.SingleColors.BlueRibbon
@@ -28,10 +30,7 @@ class TaskCell: SwipeCollectionViewCell {
     button.setTitleColor(.white, for: .normal)
     button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
     button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0)
-
-    let attributedTitle = NSAttributedString(string: "В работу", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11, weight: .semibold)])
     button.setAttributedTitle(attributedTitle, for: .normal)
-
     return button
   }()
 

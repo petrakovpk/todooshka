@@ -13,13 +13,19 @@ import RxCocoa
 class FunViewModel: Stepper {
   let services: AppServices
   let steps = PublishRelay<Step>()
-
+  
   struct Input {
-    let swipeTrigger: Driver<UISwipeGestureRecognizer>
+    let authorImageClickTrigger: Driver<Void>
+    let authorNameClickTrigger: Driver<Void>
+    let taskTextClickTrigger: Driver<Void>
+    let badButtonClickTrigger: Driver<Void>
+    let goodButtonClickTrigger: Driver<Void>
   }
-
+  
   struct Output {
-    let nextContent: Driver<Void>
+    let openAuthorPage: Driver<Void>
+    let openTaskPage: Driver<Void>
+    let getNextTask: Driver<Void>
   }
 
   // MARK: - Init
@@ -28,12 +34,25 @@ class FunViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-   
-    let nextContent = input.swipeTrigger
-      .map { _ in () }
 
+    let openAuthorPage = Driver.of(
+      input.authorNameClickTrigger,
+      input.authorImageClickTrigger
+    )
+      .merge()
+    
+    let openTaskPage = input.taskTextClickTrigger
+    
+    let getNextTask = Driver.of(
+      input.badButtonClickTrigger,
+      input.goodButtonClickTrigger
+    )
+      .merge()
+    
     return Output(
-      nextContent: nextContent
+      openAuthorPage: openAuthorPage,
+      openTaskPage: openTaskPage,
+      getNextTask: getNextTask
     )
   }
 }

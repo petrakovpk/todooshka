@@ -26,8 +26,8 @@ enum AppStep: Step {
   case changingEmailIsRequired
   case changingPasswordIsRequired
   
-  // Feed
-  case feedIsRequired
+  // Fun
+  case funIsRequired
 
   // Task List
   case completedTaskListIsRequired(date: Date)
@@ -83,6 +83,9 @@ enum AppStep: Step {
   // Onboarding
   case onboardingIsRequired
   case onboardingIsCompleted
+  
+  // profile
+  case profileIsRequired
 
   // Remove Task
   case removeTaskIsRequired

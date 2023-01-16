@@ -81,8 +81,13 @@ class TaskListViewController: TDViewController {
     view.addSubview(collectionView)
 
     // collectionView
-    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
-    collectionView.register(TaskReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TaskReusableView.reuseID)
+    collectionView.register(
+      TaskCell.self,
+      forCellWithReuseIdentifier: TaskCell.reuseID)
+    collectionView.register(
+      TaskReusableView.self,
+      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+      withReuseIdentifier: TaskReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
     collectionView.dataSource = self

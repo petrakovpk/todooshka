@@ -36,17 +36,44 @@ class ChallengeViewController: TDViewController {
     return imageView
   }()
   
-  private let addTaskButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.borderWidth = 1.0
-    button.borderColor = .black
-    button.cornerRadius = 3.0
-    button.setTitle("Добавить задачу", for: .normal)
-    button.setTitleColor(.black, for: .normal)
-    return button
+  private let nameLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Название:"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    return label
   }()
   
-  private let descriptionTextView: UITextView = {
+  private let nameTextField: UITextField = {
+    let textField = UITextField()
+    textField.cornerRadius = 5
+    textField.borderWidth = 1.0
+    textField.borderColor = .black
+    return textField
+  }()
+  
+  private let rankLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Звание за завершение:"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    return label
+  }()
+  
+  private let rankTextField: UITextField = {
+    let textField = UITextField()
+    textField.cornerRadius = 5
+    textField.borderWidth = 1.0
+    textField.borderColor = .black
+    return textField
+  }()
+  
+  private let challengeLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Что надо сделать:"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    return label
+  }()
+  
+  private let challengeTextView: UITextView = {
     let textView = UITextView()
     textView.cornerRadius = 5.0
     textView.borderWidth = 1.0
@@ -55,9 +82,32 @@ class ChallengeViewController: TDViewController {
     return textView
   }()
   
-  private let tasksLabel: UILabel = {
+  private let challengeImageLabel: UILabel = {
     let label = UILabel()
-    label.text = "Задачи дня:"
+    label.text = "Фотоподсказки (необязательно):"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    return label
+  }()
+  
+  private let checkLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Как проверим:"
+    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    return label
+  }()
+  
+  private let checkTextView: UITextView = {
+    let textView = UITextView()
+    textView.cornerRadius = 5.0
+    textView.borderWidth = 1.0
+    textView.borderColor = .black
+    textView.backgroundColor = .clear
+    return textView
+  }()
+  
+  private let exampleLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Пример выполнения (необязательно):"
     label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     return label
   }()
@@ -75,9 +125,15 @@ class ChallengeViewController: TDViewController {
     view.addSubviews([
       addImageButton,
       imageView,
-      addTaskButton,
-      descriptionTextView,
-      tasksLabel
+      nameLabel,
+      nameTextField,
+      rankLabel,
+      rankTextField,
+      challengeLabel,
+      challengeTextView,
+      checkLabel,
+      checkTextView,
+      exampleLabel
     ])
     
     // addImageButton
@@ -100,44 +156,109 @@ class ChallengeViewController: TDViewController {
       heightConstant: 75
     )
     
-    // descriptionTextView
-    descriptionTextView.anchor(
+    // nameLabel
+    nameLabel.anchor(
       top: headerView.bottomAnchor,
       left: addImageButton.rightAnchor,
-      bottom: addImageButton.bottomAnchor,
       right: view.rightAnchor,
-      topConstant: 16,
+      topConstant: 8,
       leftConstant: 16,
       rightConstant: 16
     )
     
-    // tasksLabel
-    tasksLabel.anchor(
-      top: addImageButton.bottomAnchor,
-      left: view.leftAnchor,
-      topConstant: 16,
-      leftConstant: 16
+    // nameTextField
+    nameTextField.anchor(
+      top: nameLabel.bottomAnchor,
+      left: addImageButton.rightAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 40
     )
     
-    addTaskButton.centerYAnchor.constraint(equalTo: tasksLabel.centerYAnchor).isActive = true
-    addTaskButton.anchor(
+    // rankLabel
+    rankLabel.anchor(
+      top: nameTextField.bottomAnchor,
+      left: addImageButton.rightAnchor,
       right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16
+    )
+    
+    // rankTextField
+    rankTextField.anchor(
+      top: rankLabel.bottomAnchor,
+      left: addImageButton.rightAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
       rightConstant: 16,
-      widthConstant: 160.0,
-      heightConstant: 25.0
+      heightConstant: 40
+    )
+    
+    // challengeLabel
+    challengeLabel.anchor(
+      top: rankTextField.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16
+    )
+    
+    // challengeTextView
+    challengeTextView.anchor(
+      top: challengeLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 75
+    )
+    
+    // checkLabel
+    checkLabel.anchor(
+      top: challengeTextView.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16
+    )
+    
+    // checkTextView
+    checkTextView.anchor(
+      top: checkLabel.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: 75
+    )
+    
+    // exampleLabel
+    exampleLabel.anchor(
+      top: checkTextView.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16
     )
   }
   
   func bindViewModel() {
     let input = ChallengeViewModel.Input(
-      addThemeTaskIsRequired: addTaskButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
 
     [
-      outputs.addThemeTask.drive(),
       outputs.navigateBack.drive(),
       outputs.openViewControllerMode.drive(openViewControllerModeBinder)
     ]
@@ -149,13 +270,9 @@ class ChallengeViewController: TDViewController {
       switch mode {
       case .edit:
         vc.addImageButton.isHidden = false
-        vc.addTaskButton.isHidden = false
-        vc.descriptionTextView.isEditable = true
         vc.imageView.isHidden = true
       case .view:
         vc.addImageButton.isHidden = true
-        vc.addTaskButton.isHidden = true
-        vc.descriptionTextView.isEditable = false
         vc.imageView.isHidden = false
       }
     })

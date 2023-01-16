@@ -18,12 +18,10 @@ class ChallengeViewModel: Stepper {
   let openViewControllerMode: OpenViewControllerMode
 
   struct Input {
-    let addThemeTaskIsRequired: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
   }
   
   struct Output {
-    let addThemeTask: Driver<Void>
     let navigateBack: Driver<Void>
     let openViewControllerMode: Driver<OpenViewControllerMode>
   }
@@ -36,15 +34,6 @@ class ChallengeViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    
-    // addThemeTask
-    let addThemeTask = input.addThemeTaskIsRequired
-      .map { self.steps.accept(
-        AppStep.themeTaskIsRequired(
-          themeTaskUID: UUID().uuidString,
-          openViewControllerMode: self.openViewControllerMode))
-      }
-    
     let openViewControllerMode = Driver<OpenViewControllerMode>
       .just(self.openViewControllerMode)
     
@@ -54,7 +43,6 @@ class ChallengeViewModel: Stepper {
       .map { self.steps.accept(AppStep.navigateBack) }
 
     return Output(
-      addThemeTask: addThemeTask,
       navigateBack: navigateBack,
       openViewControllerMode: openViewControllerMode
     )

@@ -170,7 +170,7 @@ struct Sizes {
 
   struct TextViews {
     struct TaskDescriptionTextView {
-      static let height = 200.adjustByHeight
+      static let height = 150.adjustByHeight
     }
 
     struct OnboardingDescriptionTextView {

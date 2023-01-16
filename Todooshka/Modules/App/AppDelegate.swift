@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Initializing the AppMetrica SDK.
     let configuration = YMMYandexMetricaConfiguration.init(apiKey: "36538b4c-0eb1-408f-b8e5-c8786424d033")
     configuration?.sessionTimeout = 15
-    YMMYandexMetrica.activate(with: configuration!)
+  //  YMMYandexMetrica.activate(with: configuration!)
 
     FirebaseApp.configure()
 

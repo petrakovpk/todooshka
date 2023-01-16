@@ -71,11 +71,13 @@ class KindOfTaskCell: UICollectionViewCell {
   func configure(kindOfTask: KindOfTask, isSelected: Bool) {
     // textView
     textView.text = kindOfTask.text
+   // textView.textColor = isSelected ? Style.Cells.KindOfTask.SelectedBackground : Style.App.text
     textView.textColor = isSelected ? .white : Style.App.text
 
     // imageView
-    imageView.image = kindOfTask.icon.image
+    imageView.image = kindOfTask.icon.image.template
     imageView.tintColor = isSelected ? .white : kindOfTask.color
+   // imageView.tintColor = isSelected ? Style.Cells.KindOfTask.SelectedBackground : kindOfTask.color
 
     // shapeLayer
     shapeLayer.borderWidth = isSelected ? 0 : 1
@@ -85,6 +87,7 @@ class KindOfTaskCell: UICollectionViewCell {
     shapeLayer.shadowPath = isSelected ? shapeLayer.path : nil
     shapeLayer.shadowOffset = isSelected ? CGSize(width: 0, height: 4) : CGSize(width: 0, height: 0)
     shapeLayer.shadowColor = isSelected ? Style.Cells.KindOfTask.SelectedBackground.cgColor : UIColor.clear.cgColor
+  //  shapeLayer.fillColor = Style.Cells.KindOfTask.UnselectedBackground?.cgColor
     shapeLayer.fillColor = isSelected ? Style.Cells.KindOfTask.SelectedBackground.cgColor : Style.Cells.KindOfTask.UnselectedBackground?.cgColor
   }
 }

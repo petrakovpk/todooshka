@@ -24,7 +24,9 @@ enum Icon: String {
   case boxTick
   case briefcase
   case call
+  case camera
   case clipboardTick
+  case crown
   case dumbbell
   case edit
   case editWithSquare

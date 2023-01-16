@@ -12,10 +12,9 @@ import RxGesture
 
 class TabBar: UITabBar {
   // MARK: - Properties
-  public let tabBarItem1 = UIImageView(image: Icon.home2.image.template)
-  public let tabBarItem2 = UIImageView(image: Icon.bookSaved.image.template)
-  public let tabBarItem4 = UIImageView(image: Icon.clipboardTick.image.template)
-  public let tabBarItem5 = UIImageView(image: Icon.userSquare.image.template)
+  public let tabBarItem1 = UIImageView(image: Icon.crown.image.template)
+  public let tabBarItem2 = UIImageView(image: Icon.clipboardTick.image.template)
+  public let tabBarItem3 = UIImageView(image: Icon.userSquare.image.template)
 
   public let addTaskButton = TDAddTaskButton(type: .system)
 
@@ -27,23 +26,15 @@ class TabBar: UITabBar {
       case 1:
         tabBarItem1.tintColor = Style.TabBar.Selected
         tabBarItem2.tintColor = Style.TabBar.Unselected
-        tabBarItem4.tintColor = Style.TabBar.Unselected
-        tabBarItem5.tintColor = Style.TabBar.Unselected
+        tabBarItem3.tintColor = Style.TabBar.Unselected
       case 2:
         tabBarItem1.tintColor = Style.TabBar.Unselected
         tabBarItem2.tintColor = Style.TabBar.Selected
-        tabBarItem4.tintColor = Style.TabBar.Unselected
-        tabBarItem5.tintColor = Style.TabBar.Unselected
-      case 4:
+        tabBarItem3.tintColor = Style.TabBar.Unselected
+      case 3:
         tabBarItem1.tintColor = Style.TabBar.Unselected
         tabBarItem2.tintColor = Style.TabBar.Unselected
-        tabBarItem4.tintColor = Style.TabBar.Selected
-        tabBarItem5.tintColor = Style.TabBar.Unselected
-      case 5:
-        tabBarItem1.tintColor = Style.TabBar.Unselected
-        tabBarItem2.tintColor = Style.TabBar.Unselected
-        tabBarItem4.tintColor = Style.TabBar.Unselected
-        tabBarItem5.tintColor = Style.TabBar.Selected
+        tabBarItem3.tintColor = Style.TabBar.Selected
       default:
         return
       }
@@ -60,8 +51,7 @@ class TabBar: UITabBar {
       addTaskButton,
       tabBarItem1,
       tabBarItem2,
-      tabBarItem4,
-      tabBarItem5
+      tabBarItem3
     ])
 
     // tabBar
@@ -70,42 +60,30 @@ class TabBar: UITabBar {
 
     // tabBarItem1
     tabBarItem1.anchor(widthConstant: 24, heightConstant: 24)
-    tabBarItem1.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + bounds.width / 10 )
+    tabBarItem1.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + bounds.width / 8 )
     tabBarItem1.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
 
     // tabBarItem2
     tabBarItem2.anchor(widthConstant: 24, heightConstant: 24)
-    tabBarItem2.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 3 * bounds.width / 10 )
+    tabBarItem2.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 3 * bounds.width / 8 )
     tabBarItem2.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
 
-    // tabBarItem4
-    tabBarItem4.anchor(widthConstant: 24, heightConstant: 24)
-    tabBarItem4.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 7 * bounds.width / 10 )
-    tabBarItem4.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
+    // tabBarItem3
+    tabBarItem3.anchor(widthConstant: 24, heightConstant: 24)
+    tabBarItem3.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 5 * bounds.width / 8 )
+    tabBarItem3.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
     
-    // tabBarItem5
-    tabBarItem5.anchor(widthConstant: 24, heightConstant: 24)
-    tabBarItem5.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 9 * bounds.width / 10 )
-    tabBarItem5.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
-
     // addTaskButton
-    addTaskButton.anchorCenterXToSuperview()
+    addTaskButton.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 7 * bounds.width / 8 )
+    addTaskButton.anchorCenterYToSuperview(constant: -22)
     addTaskButton.anchor(
-      top: topAnchor,
-     // right: rightAnchor,
-      topConstant: -20,
-     // rightConstant: 16,
       widthConstant: 60.0,
       heightConstant: 60.0
     )
   }
 
   override func draw(_ rect: CGRect) {
-    if traitCollection.userInterfaceStyle == .dark {
-      drawDarkMode()
-    } else {
-      drawLightMode()
-    }
+    traitCollection.userInterfaceStyle == .dark ? drawDarkMode() : drawLightMode()
   }
 
   // MARK: - Configure UI
@@ -173,21 +151,12 @@ class TabBar: UITabBar {
     let width = self.frame.width
 
     // start top left minus 17
-    path.move(to: CGPoint(x: 0, y: 17))
-    
-    // first arc
-    path.addArc(
-      withCenter: CGPoint(x: 17, y: 17),
-      radius: 17,
-      startAngle: -.pi,
-      endAngle: -.pi / 2,
-      clockwise: true
-    )
-    
-    // second arc left to the button
+    path.move(to: CGPoint(x: 0, y: 0))
+
+    // arc left to the button
     path.addArc(
       withCenter: CGPoint(
-        x: (width / 2 - plusButtonRadius - 17),
+        x: (7 * bounds.width / 8 - plusButtonRadius - 17),
         y: 17
       ),
       radius: 17,
@@ -196,10 +165,10 @@ class TabBar: UITabBar {
       clockwise: true
     )
     
-    // third arc right to the button
+    // arc right to the button
     path.addArc(
       withCenter: CGPoint(
-        x: (width / 2 + plusButtonRadius + 17),
+        x: (7 * bounds.width / 8 + plusButtonRadius + 17),
         y: 17
       ),
       radius: 17,
@@ -208,17 +177,8 @@ class TabBar: UITabBar {
       clockwise: true
     )
     
-    // fourth arc top rigth corner
-    path.addArc(
-      withCenter: CGPoint(
-        x: width - 17,
-        y: 17
-      ),
-      radius: 17,
-      startAngle: -.pi / 2,
-      endAngle: 0,
-      clockwise: true
-    )
+    // to the right top
+    path.addLine(to: CGPoint(x: self.frame.width, y: 0))
     
     // to the right bottom
     path.addLine(to: CGPoint(x: self.frame.width, y: self.frame.height))

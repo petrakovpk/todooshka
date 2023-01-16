@@ -28,12 +28,10 @@ class TabBarViewModel: Stepper {
   func selectedItem(item: UITabBarItem) {
     switch item.tag {
     case 1:
-      services.tabBarService.selectedItem.accept(.feed)
+      services.tabBarService.selectedItem.accept(.fun)
     case 2:
-      services.tabBarService.selectedItem.accept(.marketplace)
-    case 4:
       services.tabBarService.selectedItem.accept(.taskList)
-    case 5:
+    case 3:
       if services.tabBarService.selectedItem.value == .userProfile {
         services.preferencesService.scrollToCurrentMonthTrigger.accept((true, true))
       }

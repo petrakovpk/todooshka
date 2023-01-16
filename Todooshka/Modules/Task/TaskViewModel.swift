@@ -6,130 +6,206 @@
 //
 
 import CoreData
-import RxCocoa
 import RxFlow
+import RxGesture
+import RxCocoa
 import RxSwift
 import YandexMobileMetrica
 
 class TaskViewModel: Stepper {
+  
+  public let steps = PublishRelay<Step>()
+  
+  private let appDelegate = UIApplication.shared.delegate as! AppDelegate
   private let disposeBag = DisposeBag()
+  private let services: AppServices
 
-  // MARK: - Properties
-  // core data
-  let appDelegate = UIApplication.shared.delegate as? AppDelegate
-  var managedContext: NSManagedObjectContext? { appDelegate?.persistentContainer.viewContext }
-
-  // rx
-  let steps = PublishRelay<Step>()
-  let services: AppServices
-
-  // task attr
-  var task: BehaviorRelay<Task>
-
-  // helpers
-  var isDescriptionPlaceholderEnabled = false
+  private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
+  private var task: Task
+  private var isDescriptionPlaceholderEnabled = false
 
   struct Input {
-    // alert complete
-    let alertOkButtonClickTrigger: Driver<Void>
-    // alertDatePicker
-    let alertDatePickerDate: Driver<Date>
-    let alertDatePickerOKButtonClick: Driver<Void>
-    let alertDatePickerCancelButtonClick: Driver<Void>
-    // complete button
-    let completeButtonClickTrigger: Driver<Void>
-    // configure kindsOfTask button
-    let configureTaskTypesButtonClickTrigger: Driver<Void>
-    // collectionView
-    let selection: Driver<IndexPath>
-    // datePickerButton
-    let datePickerButtonClickTrigger: Driver<Void>
-    // descriptionTextField
+    // back
+    let backButtonClickTrigger: Driver<Void>
+    // text
+    let nameTextField: Driver<String>
+    let nameTextFieldEditingDidEndOnExit: Driver<Void>
+    let saveNameTextFieldButtonClickTrigger: Driver<Void>
+    // expected DateTime
+    let expectedDateButtonClickTrigger: Driver<Void>
+    let expectedDate: Driver<Date>
+    let expectedDatePickerClearButtonClickTrigger: Driver<Void>
+    let expectedDatePickerOkButtonClickTrigger: Driver<Void>
+    let expectedDatePickerBackgroundClickTrigger: Driver<Void>
+    let expectedTimeButtonClickTrigger: Driver<Void>
+    let expectedTime: Driver<Date>
+    let expectedTimePickerClearButtonClickTrigger: Driver<Void>
+    let expectedTimePickerOkButtonClickTrigger: Driver<Void>
+    let expectedTimePickerBackgroundClickTrigger: Driver<Void>
+    // kindOfTask Settings
+    let kindOfTaskSettingsButtonClickTrigger: Driver<Void>
+    let kindOfTaskSelection: Driver<IndexPath>
+    // description
     let descriptionTextView: Driver<String>
     let descriptionTextViewDidBeginEditing: Driver<Void>
     let descriptionTextViewDidEndEditing: Driver<Void>
-    // header buttons
-    let backButtonClickTrigger: Driver<Void>
-    let saveTaskButtonClickTrigger: Driver<Void>
-    // nameTextField
-    let nameTextField: Driver<String>
-    let nameTextFieldEditingDidEndOnExit: Driver<Void>
+    let saveDescriptionTextViewButtonClickTrigger: Driver<Void>
+    // resultImageView
+    let resultImageViewClickTrigger: Driver<Void>
+    // bottom buttons
+    let completeButtonClickTrigger: Driver<Void>
+    let getPhotoButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
-    // alert complete
-    let showComleteAlertTrigger: Driver<Void>
-    // alertDatePicker
-    let datePickerDate: Driver<Date>
-    let hideAlertTrigger: Driver<Void>
-    let plannedText: Driver<String>
-    let showDatePickerAlertTrigger: Driver<Void>
-    // complete button
-    let completeButtonIsHidden: Driver<Bool>
-    // collectionView
+    // INIT
+    let initData: Driver<Task>
+    // BACK
+    let navigateBack: Driver<Void>
+    // TEXT
+    let saveNameTextFieldButtonIsHidden: Driver<Bool>
+    let saveText: Driver<Result<Void, Error>>
+    // EXPECTED DATE
+    let expectedDateTime: Driver<Date>
+    let expectedDatePickerIsHidden: Driver<Bool>
+    let expectedTimePickerIsHidden: Driver<Bool>
+    let saveExpectedDate: Driver<Result<Void,Error>>
+    let saveExpectedTime: Driver<Result<Void,Error>>
+    // KINDOFTASK
+    let openKindOfTaskSettings: Driver<Void>
     let dataSource: Driver<[KindOfTaskSection]>
-    // descriptionTextVIew
+    let selectKindOfTask: Driver<Result<Void, Error>>
+    // DESCRIPTION
     let hideDescriptionPlaceholder: Driver<Void>
     let showDescriptionPlaceholder: Driver<Void>
-    // header buttons
-    let navigateBack: Driver<Void>
-    let save: Driver<Result<Void, Error>>
-    // init
-    let initData: Driver<Task>
-    // open kindsOfTask list
-    let openKindsOfTaskList: Driver<Void>
+    let saveDescriptionTextViewButtonIsHidden: Driver<Bool>
+    let saveDescription: Driver<Result<Void, Error>>
+    // kinOfTask
     // task
     let taskIsNew: Driver<Bool>
+    //
     // yandex
-    let yandexMetrika: Driver<Void>
+  //  let yandexMetrika: Driver<Void>
   }
 
   // MARK: - Init
   init(services: AppServices, task: Task) {
     self.services = services
-    self.task = BehaviorRelay<Task>(value: task)
+    self.task = task
   }
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    let initData = Driver.just(self.task.value)
-    
-    let name = input
-      .nameTextField
-    
-    let description = input
-      .descriptionTextView
-      .map { self.isDescriptionPlaceholderEnabled ? "" : $0 }
+    let initData = Driver.just(self.task)
 
-    // description
-    let showDescriptionPlaceholderWhenStart = Driver
-      .just(self.task.value.description)
-      .filter { $0.isEmpty }
+    let task = services
+      .dataService
+      .tasks
+      .compactMap { $0.first { $0.UID == self.task.UID } }
+      .startWith(self.task)
     
-    let showDescriptionPlaceholderWhenEndEditing = input.descriptionTextViewDidEndEditing
-      .withLatestFrom(description) { $1 }
-      .filter { $0.isEmpty }
-    
-    let showDescriptionPlaceholder = Driver.of(
-      showDescriptionPlaceholderWhenStart,
-      showDescriptionPlaceholderWhenEndEditing
-    )
-      .merge()
-      .map { _ in () }
-      .do { _ in self.isDescriptionPlaceholderEnabled = true }
-    
-    let hideDescriptionPlaceholder = input.descriptionTextViewDidBeginEditing
-      .filter { _ in self.isDescriptionPlaceholderEnabled }
-      .do { _ in self.isDescriptionPlaceholderEnabled = false }
-
-    // kindsOfTask
     let kindsOfTask = services.dataService
       .kindsOfTask
       .map { $0.filter { $0.status == .active } }
     
-    // dataSource
+    // MARK: - BACK
+    let navigateBack = input.backButtonClickTrigger
+      .do { _ in self.steps.accept(AppStep.taskProcessingIsCompleted) }
+    
+    // MARK: - TEXT
+    let text = input
+      .nameTextField
+    
+    let saveNameTextFieldButtonIsHidden = Driver
+      .combineLatest(text, task) { text, task -> Bool in
+        task.text == text
+      }
+    
+    let saveText = Driver
+      .of(
+        input.saveNameTextFieldButtonClickTrigger,
+        input.nameTextFieldEditingDidEndOnExit
+      )
+      .merge()
+      .withLatestFrom(text)
+      .withLatestFrom(task) { text, task -> Task in
+        var task = task
+        task.text = text
+        return task
+      }
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+    
+    // MARK: - EXPECTED DATE
+    let expectedDateTime = task
+      .compactMap { $0.planned }
+    
+    let showExpectedDatePicker = input.expectedDateButtonClickTrigger
+      .map { false }
+    
+    let closeExpectedDatePicker = Driver.of(
+      input.expectedDatePickerBackgroundClickTrigger,
+      input.expectedDatePickerOkButtonClickTrigger
+    )
+      .merge()
+      .map { true }
+    
+    let expectedDatePickerIsHidden = Driver.of(
+      showExpectedDatePicker,
+      closeExpectedDatePicker
+    )
+      .merge()
+    
+    let saveExpectedDate = input.expectedDatePickerOkButtonClickTrigger
+      .withLatestFrom(input.expectedDate)
+      .withLatestFrom(task) { expectedDate, task -> Task in
+        var task = task
+        let constDate = task.planned ?? Date()
+        let constTime = Int(constDate.timeIntervalSince1970 - constDate.startOfDay.timeIntervalSince1970)
+        task.planned = expectedDate.startOfDay.adding(.second, value: constTime)
+        return task
+      }
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+    
+    // MARK: - EXPECTED TIME
+    let showExpectedTimePicker = input.expectedTimeButtonClickTrigger
+      .map { false }
+    
+    let closeExpectedTimePicker = Driver.of(
+      input.expectedTimePickerBackgroundClickTrigger,
+      input.expectedTimePickerOkButtonClickTrigger
+    )
+      .merge()
+      .map { true }
+    
+    let expectedTimePickerIsHidden = Driver.of(
+      showExpectedTimePicker,
+      closeExpectedTimePicker
+    )
+      .merge()
+     
+    let saveExpectedTime = input.expectedTimePickerOkButtonClickTrigger
+      .withLatestFrom(input.expectedTime)
+      .withLatestFrom(task) { expectedTime, task -> Task in
+        var task = task
+        let constDate = (task.planned ?? Date()).startOfDay
+        let deltaSeconds = Int(expectedTime.timeIntervalSince1970 - expectedTime.startOfDay.timeIntervalSince1970)
+        task.planned = constDate.adding(.second, value: deltaSeconds)
+        return task
+      }
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+    
+    // MARK: - KINDOFTASK
+    let openKindOfTaskSettings = input.kindOfTaskSettingsButtonClickTrigger
+      .do { _ in self.steps.accept(AppStep.kindsOfTaskListIsRequired) }
+    
     let dataSource = Driver
-      .combineLatest(task.asDriver(), kindsOfTask) { task, kindsOfTask -> [KindOfTaskSection] in
+      .combineLatest(task, kindsOfTask) { task, kindsOfTask -> [KindOfTaskSection] in
         [
           KindOfTaskSection(
             header: "",
@@ -143,167 +219,105 @@ class TaskViewModel: Stepper {
         ]
       }
       .asDriver(onErrorJustReturn: [])
+    
+    // MARK: - DESCRIPTION
+    let description = input
+      .descriptionTextView
+      .map { self.isDescriptionPlaceholderEnabled ? "" : $0 }
+    
+    let saveDescriptionTextViewButtonIsHidden = Driver.combineLatest(description, task) { description, task -> Bool in
+      description == task.description
+    }
 
-    let startedKindOfTask = kindsOfTask
-      .compactMap { kindsOfTask -> KindOfTask? in
-        kindsOfTask.first { $0.UID == self.task.value.kindOfTaskUID }
+    let showDescriptionPlaceholderWhenStart = Driver
+      .just(self.task.description)
+      .filter { $0.isEmpty }
+    
+    let showDescriptionPlaceholderWhenEndEditing = input.descriptionTextViewDidEndEditing
+      .withLatestFrom(description) { $1 }
+      .filter { $0.isEmpty }
+    
+    let showDescriptionPlaceholder = Driver.of(
+      showDescriptionPlaceholderWhenStart,
+      showDescriptionPlaceholderWhenEndEditing
+    )
+      .merge()
+      .mapToVoid()
+      .do { _ in self.isDescriptionPlaceholderEnabled = true }
+    
+    let hideDescriptionPlaceholder = input.descriptionTextViewDidBeginEditing
+      .filter { _ in self.isDescriptionPlaceholderEnabled }
+      .do { _ in self.isDescriptionPlaceholderEnabled = false }
+
+    let saveDescription = input.saveDescriptionTextViewButtonClickTrigger
+      .withLatestFrom(description)
+      .withLatestFrom(task) { description, task -> Task in
+        var task = task
+        task.description = description
+        return task
       }
-     
-    let selectedKindfOfTask = input.selection
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+    
+    // MARK: - COMPLETE
+    let completeTask = input.completeButtonClickTrigger
+      .withLatestFrom(task) { _, task -> Task in
+        var task = task
+        task.status = .completed
+        task.closed = Date()
+        return task
+      }
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+    
+    let selectKindOfTask = input.kindOfTaskSelection
       .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTask in
         dataSource[indexPath.section].items[indexPath.item].kindOfTask
       }
-    
-    let kindOfTask = Driver
-      .of(startedKindOfTask, selectedKindfOfTask)
-      .merge()
-    
-    let planned = input.alertDatePickerOKButtonClick
-      .withLatestFrom(input.alertDatePickerDate) { $1 }
-      .startWith(self.task.value.planned)
-    
-    let closed = input.alertOkButtonClickTrigger
-      .map { Date() }
-      .startWith(self.task.value.closed)
-    
-    let statusPlanned = planned
-      .compactMap { $0 }
-      .compactMap { planned -> TaskStatus? in
-        planned.startOfDay > Date().startOfDay ? .planned : nil
+      .withLatestFrom(task) { kindOfTask, task -> Task in
+        var task = task
+        task.kindOfTaskUID = kindOfTask.UID
+        return task
       }
-    
-    let statusCompleted = input
-      .alertOkButtonClickTrigger
-      .map { _ -> TaskStatus in
-          .completed
-      }
-    
-    let status = Driver
-      .of(
-        statusPlanned,
-        statusCompleted
-      )
-      .merge()
-      .startWith(self.task.value.status)
-    
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+   
     let taskIsNew = services
       .dataService
       .tasks
       .asDriver()
       .map { tasks -> Bool in
-        !tasks.contains { $0.UID == self.task.value.UID }
+        !tasks.contains { $0.UID == self.task.UID }
       }
-
-    let task = Driver
-      .combineLatest(name, description, kindOfTask, planned, closed, status) { name, description, kindOfTask, planned, closed, status -> Task in
-        Task(
-          UID: self.task.value.UID,
-          text: name,
-          description: description,
-          kindOfTaskUID: kindOfTask.UID,
-          status: status,
-          created: self.task.value.created,
-          closed: closed,
-          planned: planned
-        )
-      }
-      .do {
-        self.task.accept($0)
-      }
-    
-    let plannedText = planned
-      .compactMap { $0 }
-      .compactMap { Calendar.current.isDate($0, inSameDayAs: Date()) ?
-        "Сегодня" : self.services.preferencesService.midFormatter.string(for: $0)
-      }
-      .startWith( "Когда-то" )
- 
-    let completeButtonIsHidden = Driver
-      .combineLatest(taskIsNew, task) { taskIsNew, task -> Bool in
-        taskIsNew || task.status == .completed
-      }
-    
-    let saveTrigger = Driver
-      .of(
-        input.nameTextFieldEditingDidEndOnExit,
-        input.saveTaskButtonClickTrigger,
-        input.alertOkButtonClickTrigger,
-        input.selection.map { _ in () },
-        input.alertDatePickerOKButtonClick
-      )
-      .merge()
-    
-    let save = saveTrigger
-      .withLatestFrom(task) { $1 }
-      .asObservable()
-      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let yandexMetrika = save
-      .withLatestFrom(taskIsNew) { $1 }
-      .filter { $0 }
-      .withLatestFrom(task) { $1.text }
-      .distinctUntilChanged()
-      .map { text -> Void in
-        let params: [AnyHashable: Any] = ["text": text]
-        YMMYandexMetrica.reportEvent("Create Task", parameters: params, onFailure: nil)
-        return ()
-      }
-
-    let showComleteAlertTrigger = input.completeButtonClickTrigger
-    let showDatePickerAlertTrigger = input.datePickerButtonClickTrigger
-
-    let hideAlertTrigger = Driver.of(
-      input.alertOkButtonClickTrigger,
-      input.alertDatePickerCancelButtonClick,
-      input.alertDatePickerOKButtonClick
-    )
-      .merge()
-
-    // configure task button click
-    let openKindsOfTaskList = input.configureTaskTypesButtonClickTrigger
-      .do { _ in self.steps.accept(AppStep.kindsOfTaskListIsRequired) }
-
-    let datePickerDate = planned
-      .compactMap { $0 }
-      .startWith(Date())
-
-    //  navigateBack
-    let navigateBack = Driver
-      .of(
-        input.saveTaskButtonClickTrigger,
-        input.backButtonClickTrigger,
-        input.alertOkButtonClickTrigger
-      )
-      .merge()
-      .do { _ in self.steps.accept(AppStep.taskProcessingIsCompleted) }
 
     return Output(
-      // alert complete
-      showComleteAlertTrigger: showComleteAlertTrigger,
-      // alertDatePicker
-      datePickerDate: datePickerDate,
-      hideAlertTrigger: hideAlertTrigger,
-      plannedText: plannedText,
-      showDatePickerAlertTrigger: showDatePickerAlertTrigger,
-      // complete button
-      completeButtonIsHidden: completeButtonIsHidden,
-      // collectionView
+      // INIT
+      initData: initData,
+      // BACK
+      navigateBack: navigateBack,
+      // TEXT
+      saveNameTextFieldButtonIsHidden: saveNameTextFieldButtonIsHidden,
+      saveText: saveText,
+      // EXPECTED DATE
+      expectedDateTime: expectedDateTime,
+      expectedDatePickerIsHidden: expectedDatePickerIsHidden,
+      expectedTimePickerIsHidden: expectedTimePickerIsHidden,
+      saveExpectedDate: saveExpectedDate,
+      saveExpectedTime: saveExpectedTime,
+      // KINDOFTASK
+      openKindOfTaskSettings: openKindOfTaskSettings,
       dataSource: dataSource,
-      // descriptionTextVIew
+      selectKindOfTask: selectKindOfTask,
+      // DESCRIPtiON
       hideDescriptionPlaceholder: hideDescriptionPlaceholder,
       showDescriptionPlaceholder: showDescriptionPlaceholder,
-      // header buttons
-      navigateBack: navigateBack,
-      save: save,
-      // initData
-      initData: initData,
-      // open kindsOfTask list
-      openKindsOfTaskList: openKindsOfTaskList,
-      // task
-      taskIsNew: taskIsNew,
-      // yandex
-      yandexMetrika: yandexMetrika
+      saveDescriptionTextViewButtonIsHidden: saveDescriptionTextViewButtonIsHidden,
+      saveDescription: saveDescription,
+      // TASK IS NEW
+      taskIsNew: taskIsNew
     )
   }
 }

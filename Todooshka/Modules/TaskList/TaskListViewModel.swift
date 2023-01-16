@@ -145,7 +145,7 @@ class TaskListViewModel: Stepper {
         dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
       }
       .change(status: .idea)
-      .change(planned: nil)
+      .change(planned: Date().adding(.year, value: 1))
       .asObservable()
       .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))

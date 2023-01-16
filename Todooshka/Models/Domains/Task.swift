@@ -21,7 +21,7 @@ struct Task: IdentifiableType, Equatable {
   var index: Int = 0 { willSet { lastModified = Date()}}
 
   var created: Date = Date() { willSet { lastModified = Date()}}
-  var planned: Date? { willSet { lastModified = Date()}}
+  var planned: Date = Date().endOfDay { willSet { lastModified = Date()}}
   var closed: Date? { willSet { lastModified = Date()}}
 
   var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { willSet { lastModified = Date()}}
@@ -73,7 +73,7 @@ struct Task: IdentifiableType, Equatable {
     self.created = created
   }
 
-  init(UID: String, text: String, description: String, kindOfTaskUID: String, status: TaskStatus, created: Date, closed: Date?, planned: Date?) {
+  init(UID: String, text: String, description: String, kindOfTaskUID: String, status: TaskStatus, created: Date, closed: Date?, planned: Date) {
     self.UID = UID
     self.text = text
     self.description = description
@@ -112,7 +112,7 @@ extension Task {
         "kindOfTaskUID": kindOfTaskUID,
         "created": created.timeIntervalSince1970,
         "closed": closed?.timeIntervalSince1970,
-        "planned": planned?.timeIntervalSince1970,
+        "planned": planned.timeIntervalSince1970,
         "index": index,
         "lastModified": lastModified.timeIntervalSince1970
     ]
@@ -169,7 +169,8 @@ extension Task: Persistable {
       let statusRawValue = entity.value(forKey: "statusRawValue") as? String,
       let status = TaskStatus(rawValue: statusRawValue),
       let text = entity.value(forKey: "text") as? String,
-      let lastModified = entity.value(forKey: "lastModified") as? Date
+      let lastModified = entity.value(forKey: "lastModified") as? Date,
+      let planned = entity.value(forKey: "planned") as? Date
     else { return nil }
 
     self.UID = UID
@@ -181,7 +182,7 @@ extension Task: Persistable {
     self.lastModified = lastModified
     self.closed = entity.value(forKey: "closed") as? Date
     self.description = description
-    self.planned = entity.value(forKey: "planned") as? Date
+    self.planned = planned
     self.userUID = entity.value(forKey: "userUID") as? String
   }
 

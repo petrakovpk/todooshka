@@ -237,7 +237,7 @@
 		9D9734022926210D00733C45 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734012926210D00733C45 /* ButtonStyle.swift */; };
 		9D9734052927B4D100733C45 /* FunViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734042927B4D100733C45 /* FunViewController.swift */; };
 		9D9734072927B4D900733C45 /* FunViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734062927B4D900733C45 /* FunViewModel.swift */; };
-		9D9734092928BF1200733C45 /* FeedFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734082928BF1200733C45 /* FeedFlow.swift */; };
+		9D9734092928BF1200733C45 /* FunFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734082928BF1200733C45 /* FunFlow.swift */; };
 		9D97340B2928C02000733C45 /* EmptyFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D97340A2928C02000733C45 /* EmptyFlow.swift */; };
 		9D97340F292B76E700733C45 /* ThemeTypeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D97340E292B76E700733C45 /* ThemeTypeSection.swift */; };
 		9D973411292B76F000733C45 /* ThemeTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D973410292B76F000733C45 /* ThemeTypeCell.swift */; };
@@ -245,6 +245,14 @@
 		9D97341729335C2F00733C45 /* TDContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D97341629335C2F00733C45 /* TDContentView.swift */; };
 		9D97341A293B8DDE00733C45 /* ThemeSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D973419293B8DDE00733C45 /* ThemeSettingsViewController.swift */; };
 		9D97341C293B8DE800733C45 /* ThemeSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D97341B293B8DE800733C45 /* ThemeSettingsViewModel.swift */; };
+		9DA83C0D297591E500EB9E97 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA83C0C297591E500EB9E97 /* DateFormatter.swift */; };
+		9DB1310E296EC1C7007A0D37 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB1310D296EC1C7007A0D37 /* ProfileViewController.swift */; };
+		9DB13110296EC1CF007A0D37 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB1310F296EC1CF007A0D37 /* ProfileViewModel.swift */; };
+		9DB13113296ED4D3007A0D37 /* TaskWithImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB13112296ED4D3007A0D37 /* TaskWithImageCell.swift */; };
+		9DB13115296ED4DF007A0D37 /* TaskWithImageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB13114296ED4DF007A0D37 /* TaskWithImageHeader.swift */; };
+		9DB13119296EF952007A0D37 /* ProfileFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB13118296EF952007A0D37 /* ProfileFlow.swift */; };
+		9DB1311B296EFE9A007A0D37 /* TaskSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB1311A296EFE9A007A0D37 /* TaskSection.swift */; };
+		9DB1311D296EFEF4007A0D37 /* TaskSectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB1311C296EFEF4007A0D37 /* TaskSectionItem.swift */; };
 		9DC65D3C28D320B600221ED2 /* SyncDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */; };
 		9DC65D3E28D320CA00221ED2 /* SyncDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */; };
 		9DC65D4028D3510000221ED2 /* NSManagedObjectContext+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */; };
@@ -518,7 +526,7 @@
 		9D9734012926210D00733C45 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
 		9D9734042927B4D100733C45 /* FunViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunViewController.swift; sourceTree = "<group>"; };
 		9D9734062927B4D900733C45 /* FunViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunViewModel.swift; sourceTree = "<group>"; };
-		9D9734082928BF1200733C45 /* FeedFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedFlow.swift; sourceTree = "<group>"; };
+		9D9734082928BF1200733C45 /* FunFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunFlow.swift; sourceTree = "<group>"; };
 		9D97340A2928C02000733C45 /* EmptyFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyFlow.swift; sourceTree = "<group>"; };
 		9D97340E292B76E700733C45 /* ThemeTypeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTypeSection.swift; sourceTree = "<group>"; };
 		9D973410292B76F000733C45 /* ThemeTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTypeCell.swift; sourceTree = "<group>"; };
@@ -526,6 +534,14 @@
 		9D97341629335C2F00733C45 /* TDContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDContentView.swift; sourceTree = "<group>"; };
 		9D973419293B8DDE00733C45 /* ThemeSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsViewController.swift; sourceTree = "<group>"; };
 		9D97341B293B8DE800733C45 /* ThemeSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsViewModel.swift; sourceTree = "<group>"; };
+		9DA83C0C297591E500EB9E97 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
+		9DB1310D296EC1C7007A0D37 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		9DB1310F296EC1CF007A0D37 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		9DB13112296ED4D3007A0D37 /* TaskWithImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskWithImageCell.swift; sourceTree = "<group>"; };
+		9DB13114296ED4DF007A0D37 /* TaskWithImageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskWithImageHeader.swift; sourceTree = "<group>"; };
+		9DB13118296EF952007A0D37 /* ProfileFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFlow.swift; sourceTree = "<group>"; };
+		9DB1311A296EFE9A007A0D37 /* TaskSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSection.swift; sourceTree = "<group>"; };
+		9DB1311C296EFEF4007A0D37 /* TaskSectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSectionItem.swift; sourceTree = "<group>"; };
 		9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewController.swift; sourceTree = "<group>"; };
 		9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewModel.swift; sourceTree = "<group>"; };
 		9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Rx.swift"; sourceTree = "<group>"; };
@@ -638,6 +654,7 @@
 				9D08CDEA2901763C00689427 /* Array+Rx.swift */,
 				6055D19C26720B9E00316BB4 /* DatabaseReference.swift */,
 				606B03AC26C4619200F332C5 /* Date.swift */,
+				9DA83C0C297591E500EB9E97 /* DateFormatter.swift */,
 				9DC65D4328D3515100221ED2 /* FetchedResultsControllerControllerEntityObserver.swift .swift */,
 				9DC65D4128D3512900221ED2 /* FetchedResultsControllerSectionObserver.swift */,
 				9D42BFB628C9F955008F624F /* FIRAuth+Rx.swift */,
@@ -766,6 +783,8 @@
 			children = (
 				60EB11402656A9B000992BF8 /* TaskCell.swift */,
 				605823A726C2F18F00F79155 /* TaskReusableView.swift */,
+				9DB1311A296EFE9A007A0D37 /* TaskSection.swift */,
+				9DB1311C296EFEF4007A0D37 /* TaskSectionItem.swift */,
 			);
 			path = TaskCell;
 			sourceTree = "<group>";
@@ -900,6 +919,7 @@
 				60E970372823F28100577484 /* NestScene */,
 				60AE9DC62652FC7300E51531 /* Onboarding */,
 				60D5662926CC2C8000D865DD /* OnboardingCell */,
+				9DB1310C296EC19B007A0D37 /* Profile */,
 				9D42C04B28CF29E4008F624F /* SetEmail */,
 				9D42C04A28CF29D7008F624F /* SetPhone */,
 				6022899C267B55F900E9429A /* Settings */,
@@ -912,6 +932,7 @@
 				60855BD8265905F700079D75 /* Task */,
 				605823A926C2F33800F79155 /* TaskCell */,
 				602591C82679CF0800E2BBF8 /* TaskList */,
+				9DB13111296EC9A8007A0D37 /* TaskWithImageCell */,
 				9D9733D129192F7E00733C45 /* Theme */,
 				9D0A8211290FEB20006D777C /* ThemeCell */,
 				9D973418293B8DA800733C45 /* ThemeSettings */,
@@ -933,8 +954,9 @@
 				9D42BF6128C75F0C008F624F /* AuthFlow.swift */,
 				60AE9DDD2652FF4200E51531 /* CalendarFlow.swift */,
 				9D97340A2928C02000733C45 /* EmptyFlow.swift */,
-				9D9734082928BF1200733C45 /* FeedFlow.swift */,
+				9D9734082928BF1200733C45 /* FunFlow.swift */,
 				9D0A821A29100871006D777C /* MarketplaceFlow.swift */,
+				9DB13118296EF952007A0D37 /* ProfileFlow.swift */,
 				60B82FF02655078B00BF5F94 /* TabBarFlow.swift */,
 				60B82FEC2654FCE100BF5F94 /* TaskFlow.swift */,
 				60C00D9F26B2F6E600AAD0E1 /* TaskListFlow.swift */,
@@ -1368,6 +1390,24 @@
 			path = ThemeSettings;
 			sourceTree = "<group>";
 		};
+		9DB1310C296EC19B007A0D37 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				9DB1310D296EC1C7007A0D37 /* ProfileViewController.swift */,
+				9DB1310F296EC1CF007A0D37 /* ProfileViewModel.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		9DB13111296EC9A8007A0D37 /* TaskWithImageCell */ = {
+			isa = PBXGroup;
+			children = (
+				9DB13112296ED4D3007A0D37 /* TaskWithImageCell.swift */,
+				9DB13114296ED4DF007A0D37 /* TaskWithImageHeader.swift */,
+			);
+			path = TaskWithImageCell;
+			sourceTree = "<group>";
+		};
 		9DC65D3A28D3209A00221ED2 /* SyncData */ = {
 			isa = PBXGroup;
 			children = (
@@ -1619,6 +1659,7 @@
 				9DC65D4028D3510000221ED2 /* NSManagedObjectContext+Rx.swift in Sources */,
 				9D42C05928CF4F9B008F624F /* SetPhoneViewModel.swift in Sources */,
 				9D42C03228CF0E98008F624F /* UserProfileSection.swift in Sources */,
+				9DB1311B296EFE9A007A0D37 /* TaskSection.swift in Sources */,
 				9D42C03D28CF245F008F624F /* ChangeNameViewContoller.swift in Sources */,
 				9D08CDD928FB3EE100689427 /* Sizes.swift in Sources */,
 				600DA58B27FED471004A4634 /* Icon.swift in Sources */,
@@ -1627,6 +1668,7 @@
 				9DC65D4628D3517E00221ED2 /* Persistable.swift in Sources */,
 				9D0A82272913E3C4006D777C /* CalendarSectionType.swift in Sources */,
 				60227A0827AD299200DA7572 /* DataService.swift in Sources */,
+				9DB13119296EF952007A0D37 /* ProfileFlow.swift in Sources */,
 				9D0A8213290FEB43006D777C /* ThemeItem.swift in Sources */,
 				9D0A821B29100871006D777C /* MarketplaceFlow.swift in Sources */,
 				9D9733D329192F8E00733C45 /* ThemeViewController.swift in Sources */,
@@ -1704,6 +1746,7 @@
 				9DE96087286106AB00E5981A /* FeatherViewModel.swift in Sources */,
 				60AE9DB72652F72C00E51531 /* PreferencesService.swift in Sources */,
 				602EA052274E67F000525D6C /* TDAuthTextField.swift in Sources */,
+				9DA83C0D297591E500EB9E97 /* DateFormatter.swift in Sources */,
 				9D42C05528CF4F67008F624F /* SetEmailViewModel.swift in Sources */,
 				9D42C03A28CF22AB008F624F /* UserProfileData.swift in Sources */,
 				6006F82F27AA701F00E5AE9E /* Clade.swift in Sources */,
@@ -1717,7 +1760,7 @@
 				9D9733F42924E0EE00733C45 /* NetworkService.swift in Sources */,
 				6006F82B27AA6C0200E5AE9E /* ShopCellHeader.swift in Sources */,
 				9DC65D3E28D320CA00221ED2 /* SyncDataViewModel.swift in Sources */,
-				9D9734092928BF1200733C45 /* FeedFlow.swift in Sources */,
+				9D9734092928BF1200733C45 /* FunFlow.swift in Sources */,
 				606B03AD26C4619200F332C5 /* Date.swift in Sources */,
 				9D42C05328CF3514008F624F /* ChangeGenderCell.swift in Sources */,
 				9D9733ED291E532200733C45 /* ChallengeViewModel.swift in Sources */,
@@ -1764,7 +1807,9 @@
 				60C1522926BC3A9E00F10284 /* KindOfTaskListCell.swift in Sources */,
 				9D42BF6A28C76A38008F624F /* AuthViewModel.swift in Sources */,
 				9D42C04228CF2866008F624F /* ChangeGenderViewController.swift in Sources */,
+				9DB1311D296EFEF4007A0D37 /* TaskSectionItem.swift in Sources */,
 				9DF7CA7C28EB0C2E000AE2B6 /* DeleteAccountViewController.swift in Sources */,
+				9DB13113296ED4D3007A0D37 /* TaskWithImageCell.swift in Sources */,
 				9D42C01728CA1495008F624F /* FIRDatabaseQuery+Rx.swift in Sources */,
 				9D42BF7928C76A5A008F624F /* LoginViewController.swift in Sources */,
 				6006F82D27AA6E7100E5AE9E /* Bird.swift in Sources */,
@@ -1790,6 +1835,7 @@
 				604257692677AAAD005A518C /* SettingsViewModel.swift in Sources */,
 				9D44C0BF28DC66830022148C /* KindOfTaskListForBirdViewController.swift in Sources */,
 				6042576F2677BE1C005A518C /* SettingsSectionModel.swift in Sources */,
+				9DB13115296ED4DF007A0D37 /* TaskWithImageHeader.swift in Sources */,
 				9D42C03F28CF246E008F624F /* ChangeNameViewModel.swift in Sources */,
 				60DF0E5327FC37F500249AEA /* MainTaskListViewModel.swift in Sources */,
 				9DC65D4428D3515100221ED2 /* FetchedResultsControllerControllerEntityObserver.swift .swift in Sources */,
@@ -1812,6 +1858,7 @@
 				9D9734072927B4D900733C45 /* FunViewModel.swift in Sources */,
 				9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */,
 				9D42C03828CF2269008F624F /* Gender.swift in Sources */,
+				9DB13110296EC1CF007A0D37 /* ProfileViewModel.swift in Sources */,
 				9D0A8219290FEC41006D777C /* Theme.swift in Sources */,
 				9D08CDEB2901763D00689427 /* Array+Rx.swift in Sources */,
 				9D6193FA28F42E6800C526A7 /* MigrationService.swift in Sources */,
@@ -1832,6 +1879,7 @@
 				60EB11412656A9B000992BF8 /* TaskCell.swift in Sources */,
 				9D42BF49289A82DB008F624F /* SKEggNode.swift in Sources */,
 				9D42C05B28CF4FD9008F624F /* ChangePasswordViewController.swift in Sources */,
+				9DB1310E296EC1C7007A0D37 /* ProfileViewController.swift in Sources */,
 				9DC65D4B28D3AF8100221ED2 /* Task+Rx.swift in Sources */,
 				9D9733F82925403B00733C45 /* ThemeType.swift in Sources */,
 				60ED956E27B520C1005ACC33 /* TaskStatus.swift in Sources */,

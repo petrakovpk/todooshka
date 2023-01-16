@@ -79,8 +79,8 @@ class MarketplaceFlow: Flow {
   }
   
   private func navigateToThemeStep(themeStep: ThemeStep, openViewControllerMode: OpenViewControllerMode) -> FlowContributors {
-    let viewController = ThemeStepViewContoller()
-    let viewModel = ThemeStepViewModel(services: services, themeStep: themeStep, openViewControllerMode: openViewControllerMode)
+    let viewController = ChallengeViewController()
+    let viewModel = ChallengeViewModel(services: services, themeStep: themeStep, openViewControllerMode: openViewControllerMode)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

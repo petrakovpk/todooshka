@@ -33,8 +33,6 @@ class MainTaskListViewController: UIViewController {
     return label
   }()
 
-//  private let animationView = AnimationView(name: "task_animation")
-
   private let expandImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit

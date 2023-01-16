@@ -22,9 +22,7 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
   let repeatButton: UIButton = {
     let attributedTitle = NSAttributedString(
       string: "Актививировать",
-      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11, weight: .semibold)]
-    )
-
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11, weight: .semibold)])
     let button = UIButton(type: .system)
     button.backgroundColor = Palette.SingleColors.BlueRibbon
     button.cornerRadius = 25 / 2
