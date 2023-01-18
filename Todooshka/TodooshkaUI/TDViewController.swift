@@ -9,7 +9,19 @@ import UIKit
 
 class TDViewController: UIViewController {
   // MARK: - UI Elements
-  public let headerView = UIView()
+  public let headerView: UIView = {
+    let view = UIView()
+    view.backgroundColor = Style.Views.Header.Background
+    return view
+  }()
+  
+  public let backButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.isHidden = true
+    button.setImage(Icon.arrowLeft.image.template, for: .normal)
+    button.tintColor = Style.App.text
+    return button
+  }()
   
   public let titleLabel: UILabel = {
     let label = UILabel()
@@ -18,34 +30,11 @@ class TDViewController: UIViewController {
     return label
   }()
 
-  public let backButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.isHidden = true
-    button.setImage(Icon.arrowLeft.image.template, for: .normal)
-    button.tintColor = Style.App.text
-    return button
-  }()
-
   public let addButton: UIButton = {
     let button = UIButton(type: .system)
     button.isHidden = true
     button.setImage(Icon.addSquare.image.template, for: .normal)
     button.tintColor = Style.App.text
-    return button
-  }()
-  
-  public let refreshButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.isHidden = true
-    button.setImage(Icon.rotateRight.image.template, for: .normal)
-    button.tintColor = Style.App.text
-    return button
-  }()
-
-  public let removeAllButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.isHidden = true
-    button.setImage(Icon.trashCustom.image, for: .normal)
     return button
   }()
   
@@ -65,8 +54,32 @@ class TDViewController: UIViewController {
     return button
   }()
   
-  private let safeAreaHeaderView = UIView()
-  private let dividerView = UIView()
+  public let refreshButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.isHidden = true
+    button.setImage(Icon.rotateRight.image.template, for: .normal)
+    button.tintColor = Style.App.text
+    return button
+  }()
+
+  public let removeAllButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.isHidden = true
+    button.setImage(Icon.trashCustom.image, for: .normal)
+    return button
+  }()
+
+  private let safeAreaHeaderView: UIView = {
+    let view = UIView()
+    view.backgroundColor = Style.Views.Header.Background
+    return view
+  }()
+  
+  private let dividerView: UIView = {
+    let view = UIView()
+    view.backgroundColor = Style.Views.Header.Divider
+    return view
+  }()
 
   // MARK: - Lifecycle
   open override func viewDidLoad() {
@@ -87,18 +100,17 @@ class TDViewController: UIViewController {
 
     // headerView
     headerView.addSubviews([
-      addButton,
       backButton,
+      titleLabel,
+      addButton,
       saveButton,
       settingsButton,
-      titleLabel,
-      dividerView,
       refreshButton,
-      removeAllButton
+      removeAllButton,
+      dividerView
     ])
 
     // safeAreaHeaderView
-    safeAreaHeaderView.backgroundColor = Style.Views.Header.Background
     safeAreaHeaderView.anchor(
       top: view.topAnchor,
       left: view.leftAnchor,
@@ -106,7 +118,6 @@ class TDViewController: UIViewController {
       right: view.rightAnchor)
 
     // headerView
-    headerView.backgroundColor = Style.Views.Header.Background
     headerView.anchor(
       top: view.safeAreaLayoutGuide.topAnchor,
       left: view.leftAnchor,
@@ -179,7 +190,6 @@ class TDViewController: UIViewController {
     )
 
     // dividerView
-    dividerView.backgroundColor = Style.Views.Header.Divider
     dividerView.anchor(
       left: headerView.leftAnchor,
       bottom: headerView.bottomAnchor,

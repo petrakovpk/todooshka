@@ -15,32 +15,82 @@ import RxGesture
 import Lottie
 
 class MainTaskListViewController: UIViewController {
-  // MARK: - Properties
-  let disposeBag = DisposeBag()
-
-  // view models
-  var sceneModel: NestSceneModel!
-  var viewModel: MainTaskListViewModel!
-  var listViewModel: TaskListViewModel!
+  public var sceneModel: NestSceneModel!
+  public var viewModel: MainTaskListViewModel!
+  public var listViewModel: TaskListViewModel!
+  
+  private let disposeBag = DisposeBag()
 
   // MARK: - UI Elements
+  private let scene: NestScene? = {
+    let scene = SKScene(fileNamed: "NestScene") as? NestScene
+    scene?.scaleMode = .aspectFill
+    return scene
+  }()
+
+  private let sceneView: SKView = {
+    let view = SKView(
+      frame: CGRect(
+        center: .zero,
+        size: CGSize(
+          width: Style.Scene.width,
+          height: Style.Scene.height)))
+    return view
+  }()
+  
+  private let taskListBackgroundView: UIView = {
+    let view = UIView()
+    return view
+  }()
+  
+  private let calendarBackgroundView: UIView = {
+    let view = UIView()
+    view.backgroundColor = .red.withAlphaComponent(0.2)
+    return view
+  }()
+  
+  private let overduedTasksButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
+    button.cornerRadius = 8
+    button.setTitle("Просрочка", for: .normal)
+    button.setTitleColor(Style.App.text, for: .normal)
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+    return button
+  }()
+
+  private let ideaTasksButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
+    button.cornerRadius = 8
+    button.setTitle("Ящик идей", for: .normal)
+    button.setTitleColor(Style.App.text, for: .normal)
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+    return button
+  }()
+  
+  private let calendarButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
+    button.cornerRadius = 8
+    button.setImage(Icon.calendar.image.template, for: .normal)
+    button.tintColor = Style.App.text
+    return button
+  }()
+  
   private var collectionView: UICollectionView!
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
 
-  private let taskCountLabel: UILabel = {
-    let label = UILabel()
-    label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-    return label
-  }()
+  private let dragonBackgroundView = UIView()
 
-  private let expandImageView: UIImageView = {
+  private let dragonImageView: UIImageView = {
     let imageView = UIImageView()
+    imageView.image = UIImage(named: "дракон_главный_экран")
     imageView.contentMode = .scaleAspectFit
-    imageView.tintColor = .white
-    imageView.image = Icon.arrowTop.image.template
+    imageView.alpha = 0.1
     return imageView
   }()
-
+  
   private let alertView: UIView = {
     let view = UIView()
     view.backgroundColor = .black.withAlphaComponent(0.5)
@@ -64,7 +114,9 @@ class MainTaskListViewController: UIViewController {
   }()
 
   private let alertDeleteButton: UIButton = {
-    let attrString = NSAttributedString(string: "Удалить", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+    let attrString = NSAttributedString(
+      string: "Удалить",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .custom)
     button.backgroundColor = Style.Buttons.AlertRoseButton.Background
     button.setAttributedTitle(attrString, for: .normal)
@@ -73,55 +125,12 @@ class MainTaskListViewController: UIViewController {
   }()
 
   private let alertCancelButton: UIButton = {
+    let attrString = NSAttributedString(
+      string: "Отмена",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     let button = UIButton(type: .custom)
-    let attrString = NSAttributedString(string: "Отмена", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
     button.setAttributedTitle(attrString, for: .normal)
     button.setTitleColor(Style.App.text!.withAlphaComponent(0.5), for: .normal)
-    return button
-  }()
-
-  private let dragonBackgroundView = UIView()
-
-  private let dragonImageView: UIImageView = {
-    let imageView = UIImageView()
-    imageView.image = UIImage(named: "дракон_главный_экран")
-    imageView.contentMode = .scaleAspectFit
-    imageView.alpha = 0.1
-    return imageView
-  }()
-
-  private let scene: NestScene? = {
-    let scene = SKScene(fileNamed: "NestScene") as? NestScene
-    scene?.scaleMode = .aspectFill
-    return scene
-  }()
-
-  private let sceneView: SKView = {
-    let view = SKView(frame: CGRect(
-      center: .zero,
-      size: CGSize(
-        width: Style.Scene.width,
-        height: Style.Scene.height)))
-    return view
-  }()
-
-  private let overduedTasksButton: UIButton = {
-    let button = UIButton(type: .custom)
-    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
-    button.cornerRadius = 15
-    button.setTitle("Просрочка", for: .normal)
-    button.setTitleColor(Style.App.text, for: .normal)
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-    return button
-  }()
-
-  private let ideaTasksButton: UIButton = {
-    let button = UIButton(type: .custom)
-    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
-    button.cornerRadius = 15
-    button.setTitle("Ящик идей", for: .normal)
-    button.setTitleColor(Style.App.text, for: .normal)
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     return button
   }()
 
@@ -151,7 +160,12 @@ class MainTaskListViewController: UIViewController {
   func configureScene() {
     view.addSubview(sceneView)
     sceneView.presentScene(scene)
-    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,              heightConstant: sceneView.frame.height)
+    sceneView.anchor(
+      top: view.topAnchor,
+      left: view.safeAreaLayoutGuide.leftAnchor,
+      right: view.safeAreaLayoutGuide.rightAnchor,
+      heightConstant: sceneView.frame.height
+    )
   }
 
   // MARK: - ConfigureUI
@@ -159,49 +173,86 @@ class MainTaskListViewController: UIViewController {
     // collectionView
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
 
-    // add
+    // adding 1 layer
     view.addSubviews([
+      taskListBackgroundView,
+      calendarBackgroundView
+    ])
+
+    // adding 2 layer
+    taskListBackgroundView.addSubviews([
       dragonBackgroundView,
       overduedTasksButton,
       ideaTasksButton,
+      calendarButton,
       collectionView
     ])
-
-    dragonBackgroundView.addSubview(dragonImageView)
+    
+    // adding 3 layer
+    dragonBackgroundView.addSubviews([
+      dragonImageView
+    ])
 
     // view
     view.backgroundColor = Style.App.background
 
-    // expiredTasksButton
+    taskListBackgroundView.frame = CGRect(
+      x: 0,
+      y: sceneView.bounds.height,
+      width: view.frame.width,
+      height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height )
+    
+    calendarBackgroundView.frame = CGRect(
+        x: self.view.frame.width,
+        y: self.sceneView.bounds.height,
+        width: view.frame.width,
+        height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height)
+
+    // overduedTasksButton
     overduedTasksButton.anchor(
-      top: sceneView.bottomAnchor,
-      left: view.leftAnchor,
+      top: taskListBackgroundView.topAnchor,
+      left: taskListBackgroundView.leftAnchor,
       topConstant: 16,
       leftConstant: 16,
-      widthConstant: UIScreen.main.bounds.width / 2 - 16 - 8,
+      widthConstant: (UIScreen.main.bounds.width - 2 * 16 - 40) / 2 - 8,
+      heightConstant: 40
+    )
+    
+    // showCalendar
+    calendarButton.anchor(
+      top: taskListBackgroundView.topAnchor,
+      right: taskListBackgroundView.rightAnchor,
+      topConstant: 16,
+      rightConstant: 16,
+      widthConstant: 40,
       heightConstant: 40
     )
 
     // ideaTasksButton
     ideaTasksButton.anchor(
-      top: sceneView.bottomAnchor,
-      right: view.rightAnchor,
+      top: taskListBackgroundView.topAnchor,
+      left: overduedTasksButton.rightAnchor,
+      right: calendarButton.leftAnchor,
       topConstant: 16,
-      rightConstant: 16,
-      widthConstant: UIScreen.main.bounds.width / 2 - 16 - 8,
+      leftConstant: 8,
+      rightConstant: 8,
       heightConstant: 40
     )
 
     // collectionView
     collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+    collectionView.register(
+      TaskReusableView.self,
+      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+      withReuseIdentifier: TaskReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.layer.masksToBounds = false
     collectionView.backgroundColor = .clear
     collectionView.anchor(
       top: overduedTasksButton.bottomAnchor,
-      left: view.leftAnchor,
-      bottom: view.safeAreaLayoutGuide.bottomAnchor,
-      right: view.rightAnchor,
+      left: taskListBackgroundView.leftAnchor,
+      bottom: taskListBackgroundView.safeAreaLayoutGuide.bottomAnchor,
+      right: taskListBackgroundView.rightAnchor,
       topConstant: 8,
       leftConstant: 16,
       bottomConstant: 16,
@@ -211,9 +262,9 @@ class MainTaskListViewController: UIViewController {
     // dragonBackgroundView
     dragonBackgroundView.anchor(
       top: overduedTasksButton.bottomAnchor,
-      left: view.leftAnchor,
-      bottom: view.safeAreaLayoutGuide.bottomAnchor,
-      right: view.rightAnchor
+      left: taskListBackgroundView.leftAnchor,
+      bottom: taskListBackgroundView.safeAreaLayoutGuide.bottomAnchor,
+      right: taskListBackgroundView.rightAnchor
     )
 
     // dragonImageView
@@ -225,32 +276,41 @@ class MainTaskListViewController: UIViewController {
   private func configureAlert() {
     // adding
     view.addSubview(alertView)
+    
     alertView.addSubview(alertSubView)
-    alertSubView.addSubview(alertLabel)
-    alertSubView.addSubview(alertDeleteButton)
-    alertSubView.addSubview(alertCancelButton)
+    
+    alertSubView.addSubviews([
+      alertLabel,
+      alertDeleteButton,
+      alertCancelButton
+    ])
 
     // alertView
-    alertView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    alertView.anchor(
+      top: view.topAnchor,
+      left: view.leftAnchor,
+      bottom: view.bottomAnchor,
+      right: view.rightAnchor
+    )
 
     // alertSubView
-    alertSubView.anchor(widthConstant: Sizes.Views.AlertDeleteView.width, heightConstant: Sizes.Views.AlertDeleteView.height)
     alertSubView.anchorCenterXToSuperview()
     alertSubView.anchorCenterYToSuperview()
+    alertSubView.anchor(widthConstant: Sizes.Views.AlertDeleteView.width, heightConstant: Sizes.Views.AlertDeleteView.height)
 
     // alertLabel
     alertLabel.anchorCenterXToSuperview()
     alertLabel.anchorCenterYToSuperview(constant: -1 * Sizes.Views.AlertDeleteView.height / 4)
 
     // alertDeleteButton
-    alertDeleteButton.anchor(widthConstant: Sizes.Buttons.AlertOkButton.width, heightConstant: Sizes.Buttons.AlertOkButton.height)
     alertDeleteButton.cornerRadius = Sizes.Buttons.AlertOkButton.height / 2
     alertDeleteButton.anchorCenterXToSuperview()
     alertDeleteButton.anchorCenterYToSuperview(constant: Sizes.Buttons.AlertOkButton.height / 2)
+    alertDeleteButton.anchor(widthConstant: Sizes.Buttons.AlertOkButton.width, heightConstant: Sizes.Buttons.AlertOkButton.height)
 
     // alertCancelButton
-    alertCancelButton.anchor(top: alertDeleteButton.bottomAnchor, topConstant: 10)
     alertCancelButton.anchorCenterXToSuperview()
+    alertCancelButton.anchor(top: alertDeleteButton.bottomAnchor, topConstant: 10)
   }
 
   // MARK: - Configure Data Source
@@ -262,12 +322,20 @@ class MainTaskListViewController: UIViewController {
           withReuseIdentifier: TaskCell.reuseID,
           for: indexPath
         ) as? TaskCell else { return UICollectionViewCell() }
-        cell.configure(with: dataSource[indexPath.section].mode)
-        cell.configure(with: item.task)
-        cell.configure(with: item.kindOfTask)
+        cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
         cell.delegate = self
         return cell
-      })
+      },
+      configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        guard let header = collectionView.dequeueReusableSupplementaryView(
+          ofKind: kind,
+          withReuseIdentifier: TaskReusableView.reuseID,
+          for: indexPath
+        ) as? TaskReusableView else { return UICollectionReusableView() }
+        header.configure(text: dataSource[indexPath.section].header)
+        return header
+      }
+    )
   }
 
   // MARK: - Setup CollectionView
@@ -285,6 +353,12 @@ class MainTaskListViewController: UIViewController {
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50.0))
+    let header = NSCollectionLayoutBoundarySupplementaryItem(
+      layoutSize: headerSize,
+      elementKind: UICollectionView.elementKindSectionHeader,
+      alignment: .top)
+    section.boundarySupplementaryItems = [header]
     return section
   }
 
@@ -305,14 +379,17 @@ class MainTaskListViewController: UIViewController {
   // MARK: - Bind View Model
   func bindViewModel() {
     let input = MainTaskListViewModel.Input(
+      overduedButtonClickTrigger: overduedTasksButton.rx.tap.asDriver(),
       ideaButtonClickTrigger: ideaTasksButton.rx.tap.asDriver(),
-      overduedButtonClickTrigger: overduedTasksButton.rx.tap.asDriver() )
+      calendarButtonClickTrigger: calendarButton.rx.tap.asDriver()
+      )
 
     let outputs = viewModel.transform(input: input)
 
     [
-      outputs.ideaButtonClick.drive(),
-      outputs.overduedButtonClick.drive()
+      outputs.openOverduedTasklist.drive(),
+      outputs.openIdeaTaskList.drive(),
+      outputs.openCalendar.drive(openCalendarViewBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
@@ -320,32 +397,35 @@ class MainTaskListViewController: UIViewController {
   // MARK: - Bind Task List Model
   func bindListViewModel() {
     let input = TaskListViewModel.Input(
-      // selection
-      selection: collectionView.rx.itemSelected.asDriver(),
-      // alert
-      alertDeleteButtonClick: alertDeleteButton.rx.tap.asDriver(),
-      alertCancelButtonClick: alertCancelButton.rx.tap.asDriver(),
-      // back
+      // BACK
       backButtonClickTrigger: Driver<Void>.of(),
-      // add
+      // ADD
       addTaskButtonClickTrigger: Driver<Void>.of(),
-      // remove all
-      removeAllButtonClickTrigger: Driver<Void>.of()
+      // REMOVE ALL
+      removeAllButtonClickTrigger: Driver<Void>.of(),
+      // SELECT TASK
+      selection: collectionView.rx.itemSelected.asDriver(),
+      // ALERT
+      alertDeleteButtonClick: alertDeleteButton.rx.tap.asDriver(),
+      alertCancelButtonClick: alertCancelButton.rx.tap.asDriver()
     )
 
     let outputs = listViewModel.transform(input: input)
 
     [
-      outputs.change.drive(changeBinder),
-      outputs.hideAlert.drive(hideAlertBinder),
-      outputs.hideCell.drive(hideCellBinder),
-      outputs.openTask.drive(),
-      outputs.removeTask.drive(),
-      outputs.reloadItems.drive(reloadItemsBinder),
-      outputs.setAlertText.drive(alertLabel.rx.text),
+      // DATASOURCE
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.dataSource.drive(dataSourceBinder),
-      outputs.showAlert.drive(showAlertBinder)
+      outputs.reloadItems.drive(reloadItemsBinder),
+      outputs.hideCellWhenAlertClosed.drive(hideCellBinder),
+      // TASK
+      outputs.openTask.drive(),
+      outputs.changeTaskStatus.drive(changeBinder),
+      outputs.removeTask.drive(),
+      // ALERT
+      outputs.alertText.drive(alertLabel.rx.text),
+      outputs.showAlert.drive(showAlertBinder),
+      outputs.hideAlert.drive(hideAlertBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }
@@ -409,13 +489,32 @@ class MainTaskListViewController: UIViewController {
 
   var dataSourceBinder: Binder<[TaskListSection]> {
     return Binder(self, binding: { vc, dataSource in
-      if let firstSection = dataSource.first, firstSection.items.isEmpty {
+      if dataSource.map { $0.items.count }.sum() == 0 {
         vc.dragonImageView.isHidden = false
       } else {
         vc.dragonImageView.isHidden = true
       }
     })
   }
+  
+  var openCalendarViewBinder: Binder<Void> {
+    return Binder(self, binding: { vc, _ in
+      UIView.animate(withDuration: 0.5) {
+        self.taskListBackgroundView.frame = CGRect(
+          x: -self.view.frame.width,
+          y: self.sceneView.bounds.height,
+          width: self.view.frame.width,
+          height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height )
+
+        self.calendarBackgroundView.frame = CGRect(
+          x: 0,
+          y: self.sceneView.bounds.height,
+          width: self.view.frame.width,
+          height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height )
+      }
+    })
+  }
+  
 }
 
 extension MainTaskListViewController: SwipeCollectionViewCellDelegate {

@@ -34,7 +34,7 @@ class TaskListFlow: Flow {
     switch step {
       // Main Task List Is Required
     case .mainTaskListIsRequired:
-      return navigateToTaskList()
+      return navigateToMainTaskList()
 
       // Overdued Task List Is Required
     case .overduedTaskListIsRequired:
@@ -71,7 +71,7 @@ class TaskListFlow: Flow {
     }
   }
 
-  private func navigateToTaskList() -> FlowContributors {
+  private func navigateToMainTaskList() -> FlowContributors {
     let viewController = MainTaskListViewController()
     let mainTaskListSceneModel = NestSceneModel(services: services)
     let mainTaskListViewModel = MainTaskListViewModel(services: services)

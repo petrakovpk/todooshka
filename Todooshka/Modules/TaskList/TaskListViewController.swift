@@ -105,33 +105,46 @@ class TaskListViewController: TDViewController {
   }
 
   private func configureAlert() {
-    view.addSubview(alertView)
-    alertView.addSubview(alertSubView)
-    alertSubView.addSubview(alertLabel)
-    alertSubView.addSubview(alertDeleteButton)
-    alertSubView.addSubview(alertCancelButton)
+    view.addSubviews([
+      alertView
+    ])
+    
+    alertView.addSubviews([
+      alertSubView
+    ])
+    
+    alertSubView.addSubviews([
+      alertLabel,
+      alertDeleteButton,
+      alertCancelButton
+    ])
 
     // alertView
-    alertView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
+    alertView.anchor(
+      top: view.topAnchor,
+      left: view.leftAnchor,
+      bottom: view.bottomAnchor,
+      right: view.rightAnchor
+    )
 
     // alertSubView
-    alertSubView.anchor(widthConstant: Sizes.Views.AlertDeleteView.width, heightConstant: Sizes.Views.AlertDeleteView.height)
     alertSubView.anchorCenterXToSuperview()
     alertSubView.anchorCenterYToSuperview()
-
+    alertSubView.anchor(widthConstant: Sizes.Views.AlertDeleteView.width, heightConstant: Sizes.Views.AlertDeleteView.height)
+    
     // alertLabel
     alertLabel.anchorCenterXToSuperview()
     alertLabel.anchorCenterYToSuperview(constant: -1 * Sizes.Views.AlertDeleteView.height / 4)
 
     // alertDeleteButton
-    alertDeleteButton.anchor(widthConstant: Sizes.Buttons.AlertOkButton.width, heightConstant: Sizes.Buttons.AlertOkButton.height)
-    alertDeleteButton.cornerRadius = Sizes.Buttons.AlertOkButton.height / 2
     alertDeleteButton.anchorCenterXToSuperview()
     alertDeleteButton.anchorCenterYToSuperview(constant: 15)
+    alertDeleteButton.anchor(widthConstant: Sizes.Buttons.AlertOkButton.width, heightConstant: Sizes.Buttons.AlertOkButton.height)
+    alertDeleteButton.cornerRadius = Sizes.Buttons.AlertOkButton.height / 2
 
     // alertCancelButton
-    alertCancelButton.anchor(top: alertDeleteButton.bottomAnchor, topConstant: 10)
     alertCancelButton.anchorCenterXToSuperview()
+    alertCancelButton.anchor(top: alertDeleteButton.bottomAnchor, topConstant: 10)
   }
 
   // MARK: - Setup Collection View
@@ -161,36 +174,45 @@ class TaskListViewController: TDViewController {
   // MARK: - Bind To
   func bindViewModel() {
     let input = TaskListViewModel.Input(
-      // selection
-      selection: collectionView.rx.itemSelected.asDriver(),
-      // alert
-      alertDeleteButtonClick: alertDeleteButton.rx.tap.asDriver(),
-      alertCancelButtonClick: alertCancelButton.rx.tap.asDriver(),
-      // back
+      // BACK
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      // add
+      // ADD
       addTaskButtonClickTrigger: addButton.rx.tap.asDriver(),
-      // remove all
-      removeAllButtonClickTrigger: removeAllButton.rx.tap.asDriver()
+      // REMOVE ALL
+      removeAllButtonClickTrigger: removeAllButton.rx.tap.asDriver(),
+      // SELECT TASK
+      selection: collectionView.rx.itemSelected.asDriver(),
+      // ALERT
+      alertDeleteButtonClick: alertDeleteButton.rx.tap.asDriver(),
+      alertCancelButtonClick: alertCancelButton.rx.tap.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
 
     [
-      outputs.addTask.drive(),
-      outputs.addTaskButtonIsHidden.drive(addButton.rx.isHidden),
-      outputs.change.drive(),
-      outputs.dataSource.drive(dataSourceBinder),
-      outputs.hideAlert.drive(hideAlertBinder),
-      outputs.hideCell.drive(hideCellBinder),
+      // HEADER
+      outputs.title.drive(titleLabel.rx.text),
+      // NAVIGATE BACK
       outputs.navigateBack.drive(),
+      // ADD TASK
+      outputs.addTask.drive(),
+    //  outputs.addTaskButtonIsHidden.drive(addButton.rx.isHidden),
+      // MODE
+      outputs.mode.drive(modeBinder),
+      // REMOVE ALL TASKS
+      outputs.removeAllTasks.drive(),
+    //  outputs.removeAllTasksButtonIsHidden.drive(removeAllButton.rx.isHidden),
+      // DATASOURCE
+      outputs.dataSource.drive(dataSourceBinder),
+      outputs.hideCellWhenAlertClosed.drive(hideCellBinder),
+      // TASK
       outputs.openTask.drive(),
-      outputs.removeAll.drive(),
+      outputs.changeTaskStatus.drive(),
       outputs.removeTask.drive(),
-      outputs.setAlertText.drive(alertLabel.rx.text),
+      // ALERT
+      outputs.alertText.drive(alertLabel.rx.text),
       outputs.showAlert.drive(showAlertBinder),
-      outputs.showRemovaAllButton.drive(showRemovaAllButtonBinder),
-      outputs.title.drive(titleLabel.rx.text)
+      outputs.hideAlert.drive(hideAlertBinder),
     ]
       .forEach({ $0?.disposed(by: disposeBag) })
   }
@@ -203,6 +225,25 @@ class TaskListViewController: TDViewController {
     })
   }
 
+  var modeBinder: Binder<TaskListMode> {
+    return Binder(self, binding: { vc, mode in
+      switch mode {
+      case .idea:
+        vc.addButton.isHidden = false
+      case .deleted:
+        vc.removeAllButton.isHidden = false
+      default:
+        return
+      }
+    })
+  }
+  
+  var showAlertBinder: Binder<Void> {
+    return Binder(self, binding: { vc, _ in
+      vc.alertView.isHidden = false
+    })
+  }
+  
   var hideAlertBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
       vc.alertView.isHidden = true
@@ -216,35 +257,11 @@ class TaskListViewController: TDViewController {
       }
     })
   }
-
-  var showAlertBinder: Binder<Void> {
-    return Binder(self, binding: { vc, _ in
-      vc.alertView.isHidden = false
-    })
-  }
-
-  var showRemovaAllButtonBinder: Binder<Void> {
-    return Binder(self, binding: { vc, _ in
-      vc.removeAllButton.isHidden = false
-    })
-  }
-
-  var addTaskButtonIsHiddenBinder: Binder<Bool> {
-    return Binder(self, binding: { vc, isHidden in
-      vc.addButton.isHidden = isHidden
-    })
-  }
-
-  var removeAllDeletedTasksButtonIsHiddenBinder: Binder<Bool> {
-    return Binder(self, binding: { vc, isHidden in
-      vc.removeAllButton.isHidden = isHidden
-    })
-  }
-
+  
   var repeatButtonBinder: Binder<IndexPath?> {
-    return Binder(self, binding: { _, indexPath in
+    return Binder(self, binding: { vc, indexPath in
       guard let indexPath = indexPath else { return }
-      self.viewModel.changeStatus(indexPath: indexPath, status: .inProgress, completed: nil)
+      vc.viewModel.changeStatus(indexPath: indexPath, status: .inProgress, completed: nil)
     })
   }
 }
@@ -273,9 +290,7 @@ extension TaskListViewController: UICollectionViewDataSource {
       for: indexPath
     ) as? TaskCell else { return UICollectionViewCell() }
     let item = dataSource[indexPath.section].items[indexPath.item]
-    cell.configure(with: dataSource[indexPath.section].mode)
-    cell.configure(with: item.task)
-    cell.configure(with: item.kindOfTask)
+    cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
     cell.delegate = self
     cell.repeatButton.rx.tap
       .map { _ -> IndexPath in indexPath }

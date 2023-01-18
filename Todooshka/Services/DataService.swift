@@ -109,7 +109,7 @@ class DataService {
     let allTasks = managedContext
       .rx
       .entities(Task.self)
-      .map { $0.sorted { $0.created < $1.created }}
+      //.map { $0.sorted { $0.created < $1.created }}
       .asDriver(onErrorJustReturn: [])
 
     let allKindsOfTask = managedContext
@@ -169,9 +169,9 @@ class DataService {
     // получаем количество закрытых задач (максимум 7 в день) и вычитаем общую стоимость купленных птиц
     goldTasks = tasks
       .map { $0.filter { $0.status == .completed } }     // отбираем только звкрытые задачи
-      .map { $0.filter { $0.closed != nil } }
-      .map { $0.sorted { $0.closed! < $1.closed! } }     // сортируем их по дате закрытия
-      .map { Dictionary(grouping: $0) { $0.closed!.startOfDay } } // превращаем в дикт по дате
+      .map { $0.filter { $0.completed != nil } }
+      .map { $0.sorted { $0.completed! < $1.completed! } }     // сортируем их по дате закрытия
+      .map { Dictionary(grouping: $0) { $0.completed!.startOfDay } } // превращаем в дикт по дате
       .map { $0.values.flatMap { $0.prefix(7) } } // берем первые 7 задач
       .asDriver()
 
@@ -198,24 +198,23 @@ class DataService {
 
     // при открытии проверяем и делаем все плановые задачи с плановой датой выполнения == сегодня задачи в работе
     let checkPlannedTasksTrigger = checkPlannedTasksTrigger.asDriver()
-
-    Driver
-      .combineLatest(tasks, checkPlannedTasksTrigger) { tasks, _ in tasks }
-      .map { $0.filter { $0.status == .planned } }
-      .map { $0.filter { $0.planned != nil } }
-      .map { $0.filter { $0.planned!.startOfDay <= Date().startOfDay } }
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .map { task -> Task in
-        var task = task
-        task.status = .inProgress
-        task.created = Date().startOfDay
-        return task
-      }
-      .flatMapLatest({ managedContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-      .drive()
-      .disposed(by: disposeBag)
+//
+//    Driver
+//      .combineLatest(tasks, checkPlannedTasksTrigger) { tasks, _ in tasks }
+//      .map { $0.filter { $0.status == .inProgress } }
+//      .map { $0.filter { $0.planned.startOfDay <= Date().startOfDay } }
+//      .asObservable()
+//      .flatMapLatest({ Observable.from($0) })
+//      .map { task -> Task in
+//        var task = task
+//        task.status = .inProgress
+//        task.created = Date().startOfDay
+//        return task
+//      }
+//      .flatMapLatest({ managedContext.rx.update($0) })
+//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//      .drive()
+//      .disposed(by: disposeBag)
 
     // MARK: - Bird
     let openedBirds = birds
@@ -226,40 +225,40 @@ class DataService {
       .map { $0.filter { $0.isBought } }
       .map { $0.map { $0.price }.sum() }
 
-    Driver
-      .combineLatest(goldTasks, openedBirdSum) { goldTasks, openedBirdSum -> Bool in
-        openedBirdSum > goldTasks.count
-      }
-      .filter { $0 }
-      .withLatestFrom(openedBirds) { $1 }
-      .compactMap { $0.max { $0.price < $1.price }}
-      .compactMap { $0 }
-      .map { bird -> Bird in
-        var bird = bird
-        bird.isBought = false
-        return bird
-      }
-      .asObservable()
-      .flatMapLatest({ managedContext.rx.update($0) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-      .drive()
-      .disposed(by: disposeBag)
+//    Driver
+//      .combineLatest(goldTasks, openedBirdSum) { goldTasks, openedBirdSum -> Bool in
+//        openedBirdSum > goldTasks.count
+//      }
+//      .filter { $0 }
+//      .withLatestFrom(openedBirds) { $1 }
+//      .compactMap { $0.max { $0.price < $1.price }}
+//      .compactMap { $0 }
+//      .map { bird -> Bird in
+//        var bird = bird
+//        bird.isBought = false
+//        return bird
+//      }
+//      .asObservable()
+//      .flatMapLatest({ managedContext.rx.update($0) })
+//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//      .drive()
+//      .disposed(by: disposeBag)
 
     // MARK: - Nest DataSource
     let completedTasks = tasks
       .map { tasks -> [Task] in
         tasks
           .filter { $0.status == .completed }
-          .filter { $0.closed != nil }
-          .filter { Calendar.current.isDate($0.closed!, inSameDayAs: Date()) }
-          .sorted { $0.closed! < $1.closed! }
+          .filter { $0.completed != nil }
+          .filter { Calendar.current.isDate($0.completed!, inSameDayAs: Date()) }
+          .sorted { $0.completed! < $1.completed! }
       }
 
     let inProgressTasks = tasks
       .map { tasks -> [Task] in
         tasks
           .filter { $0.status == .inProgress }
-          .filter { $0.is24hoursPassed == false }
+          .filter { $0.planned.startOfDay == Date().startOfDay }
           .sorted { $0.created < $1.created }
       }
 
@@ -326,9 +325,9 @@ class DataService {
       .combineLatest(tasks, selectedDate) { tasks, selectedDate -> [Task] in
         tasks
           .filter { $0.status == .completed }
-          .filter { $0.closed != nil }
-          .filter { Calendar.current.isDate($0.closed!, inSameDayAs: selectedDate ) }
-          .sorted { $0.closed! < $1.closed! }
+          .filter { $0.completed != nil }
+          .filter { Calendar.current.isDate($0.completed!, inSameDayAs: selectedDate ) }
+          .sorted { $0.completed! < $1.completed! }
       }
 
     let sittingAction = Driver

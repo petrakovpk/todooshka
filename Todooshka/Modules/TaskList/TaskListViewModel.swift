@@ -25,49 +25,56 @@ struct ChangeStatus {
 
 class TaskListViewModel: Stepper {
   // MARK: - Properties
-  // context
-  let appDelegate = UIApplication.shared.delegate as? AppDelegate
-  var managedContext: NSManagedObjectContext? { appDelegate?.persistentContainer.viewContext }
-
-  // rx
-  let services: AppServices
-  let steps = PublishRelay<Step>()
-
-  let changeStatusTrigger = BehaviorRelay<ChangeStatus?>(value: nil)
-  var editingIndexPath: IndexPath?
-  let mode: TaskListMode
-  let reloadData = BehaviorRelay<Void>(value: ())
-
+  public let steps = PublishRelay<Step>()
+  public var editingIndexPath: IndexPath?
+  
+  private let appDelegate = UIApplication.shared.delegate as! AppDelegate
+  private let services: AppServices
+  private let changeStatusTrigger = BehaviorRelay<ChangeStatus?>(value: nil)
+  private let mode: TaskListMode
+  private let reloadData = BehaviorRelay<Void>(value: ())
+  
+  private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
+  
   struct Input {
-    // selection
+    // BACK
+    let backButtonClickTrigger: Driver<Void>
+    // ADD
+    let addTaskButtonClickTrigger: Driver<Void>
+    // REMOVE ALL
+    let removeAllButtonClickTrigger: Driver<Void>
+    // SELECT TASK
     let selection: Driver<IndexPath>
-    // alert
+    // ALERT
     let alertDeleteButtonClick: Driver<Void>
     let alertCancelButtonClick: Driver<Void>
-    // back
-    let backButtonClickTrigger: Driver<Void>
-    // add
-    let addTaskButtonClickTrigger: Driver<Void>
-    // remove all
-    let removeAllButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
-    let addTask: Driver<Void>
-    let addTaskButtonIsHidden: Driver<Bool>
-    let change: Driver<Result<Void, Error>>
-    let dataSource: Driver<[TaskListSection]>
-    let hideAlert: Driver<Void>
-    let hideCell: Driver<IndexPath>
-    let navigateBack: Driver<Void>
-    let openTask: Driver<Void>
-    let removeAll: Driver<Result<Void, Error>>
-    let removeTask: Driver<Result<Void, Error>>
-    let reloadItems: Driver<[IndexPath]>
-    let setAlertText: Driver<String>
+    // HEADER
     let title: Driver<String>
+    // NAVIGATE BACK
+    let navigateBack: Driver<Void>
+    // MODE
+    let mode: Driver<TaskListMode>
+    // ADD TASK
+    let addTask: Driver<Void>
+   // let addTaskButtonIsHidden: Driver<Bool>
+    // REMOVE ALL TASKS
+    let removeAllTasks: Driver<Result<Void, Error>>
+  //  let removeAllTasksButtonIsHidden: Driver<Bool>
+    // DATASOURCE
+    let dataSource: Driver<[TaskListSection]>
+    let reloadItems: Driver<[IndexPath]>
+    let hideCellWhenAlertClosed: Driver<IndexPath>
+    // TASK
+    let openTask: Driver<Void>
+    let changeTaskStatus: Driver<Result<Void, Error>>
+    let removeTask: Driver<Result<Void, Error>>
+    // ALERT
+    let alertText: Driver<String>
     let showAlert: Driver<Void>
-    let showRemovaAllButton: Driver<Void>
+    let hideAlert: Driver<Void>
   }
 
   // MARK: - Init
@@ -77,64 +84,280 @@ class TaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let kindsOfTask = services.dataService
-      .kindsOfTask
-
-    let tasks = services.dataService.tasks
-      .map {
-        $0.filter { task in
-          switch self.mode {
-          case .main:
-            return task.is24hoursPassed == false && task.status == .inProgress
-          case .overdued:
-            return task.is24hoursPassed && task.status == .inProgress
-          case .deleted:
-            return task.status == .deleted
-          case .idea:
-            return task.status == .idea
-          case .completed(let date):
-            return task.status == .completed && Calendar.current.isDate(date, inSameDayAs: task.closed ?? Date())
-          case .planned(let planned):
-            return task.status == .planned && Calendar.current.isDate(planned, inSameDayAs: task.planned ?? Date())
-          }
+    // MARK: - INIT
+    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
+    let tasks = services.dataService.tasks.asDriver()
+    
+    let mode = Driver<TaskListMode>.of(self.mode)
+    
+    // MARK: - BACK
+    let navigateBack = input.backButtonClickTrigger
+      .map { self.steps.accept(AppStep.taskListIsCompleted) }
+    
+    
+    
+    // MARK: - DATASOURCE MAIN
+    let mainListTasks = tasks
+      .map { tasks -> [Task] in
+        tasks.filter { task -> Bool in
+          guard
+            case .main = self.mode
+          else { return false }
+          
+          return task.status == .inProgress &&
+          task.planned.startOfDay >= Date().startOfDay &&
+          task.planned.endOfDay <= Date().endOfDay
+        }
+        .sorted { prevTask, nextTask -> Bool in
+          prevTask.created < nextTask.created
+        }
+      }
+      
+    let mainListItems = Driver
+      .combineLatest(mainListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+        tasks.map { task -> TaskListSectionItem in
+          TaskListSectionItem(
+            task: task,
+            kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
+          )
         }
       }
 
-    let taskListSectionItems = Driver
-      .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+    let mainListSectionWithTime = mainListItems
+      .compactMap { $0.filter { $0.task.planned != Date().endOfDay } }
+      .map {
+        TaskListSection(
+          header: "Внимание, время:",
+          mode: .redLineAndTime,
+          items: $0
+        )
+      }
+    
+    let mainListSectionWithoutTime = mainListItems
+      .compactMap { $0.filter { $0.task.planned == Date().endOfDay } }
+      .map {
+        TaskListSection(
+          header: "В течении дня:",
+          mode: .blueLine,
+          items: $0
+        )
+      }
+
+    // MARK: - DATASOURCE OVERDUED
+    let overduedListTasks = tasks
+      .map { tasks -> [Task] in
+        tasks.filter { task -> Bool in
+          guard
+            case .overdued = self.mode
+          else { return false }
+          
+          return task.status == .inProgress &&
+          task.planned.startOfDay < Date().startOfDay
+        }
+        .sorted { prevTask, nextTask -> Bool in
+          prevTask.created < nextTask.created
+        }
+      }
+    
+    let overduedListItems = Driver.combineLatest(overduedListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+      tasks.map { task -> TaskListSectionItem in
+        TaskListSectionItem(
+          task: task,
+          kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
+        )
+      }
+    }
+    
+    let overduedListSectionWithRepeatButton = overduedListItems
+      .map {
+        TaskListSection(
+          header: "",
+          mode: .repeatButton,
+          items: $0
+        )
+      }
+    
+    // MARK: - DATASOURCE IDEA
+    let ideaListTasks = tasks
+      .map { tasks -> [Task] in
+        tasks.filter { task -> Bool in
+          guard
+            case .idea = self.mode
+          else { return false }
+          
+          return task.status == .idea
+        }
+      }
+    
+    let ideaListItems = Driver
+      .combineLatest(ideaListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
         tasks
           .sorted { prevTask, nextTask -> Bool in
-            switch self.mode {
-            case .idea:
-              let prevIndex = kindsOfTask.first { $0.UID == prevTask.kindOfTaskUID }?.index ?? 0
-              let nextIndex = kindsOfTask.first { $0.UID == nextTask.kindOfTaskUID }?.index ?? 0
-              return prevIndex == nextIndex ? prevTask.text < nextTask.text : prevIndex < nextIndex
-            case .completed:
-              return prevTask.closed ?? Date() < nextTask.closed ?? Date()
-            default:
-              return prevTask.created < nextTask.created
-            }
+            guard
+              let prevIndex = kindsOfTask.first { $0.UID == prevTask.kindOfTaskUID }?.index,
+            let nextIndex = kindsOfTask.first { $0.UID == nextTask.kindOfTaskUID }?.index
+            else { return false }
+            
+            return (prevIndex == nextIndex) ? (prevTask.text < nextTask.text) : (prevIndex < nextIndex)
           }
-          .map { task in
+          .map { task -> TaskListSectionItem in
             TaskListSectionItem(
               task: task,
-              kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
+              kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
             )
           }
       }
-
-    // dataSource
-    let dataSource = taskListSectionItems
-      .map {[
+    
+    let ideaListSectionWithRepeatButton = ideaListItems
+      .map {
         TaskListSection(
           header: "",
-          mode: self.mode == .main ? .withTimer : .withRepeatButton,
+          mode: .repeatButton,
           items: $0
         )
-      ]
       }
-      .asDriver()
+    
+    // MARK: - DATASOURCE COMPLETED
+    let completedListTasks = tasks
+      .map { tasks -> [Task] in
+        tasks
+          .filter { task -> Bool in
+            guard
+              case .completed(let completedDate) = self.mode,
+              let completed = task.completed
+            else { return false }
+            
+            return task.status == .completed &&
+            completed.startOfDay >= completedDate.startOfDay &&
+            completed.endOfDay <= completedDate.endOfDay
+          }
+          .sorted { prevTask, nextTask -> Bool in
+            guard
+              let prevTaskCompleted = prevTask.completed,
+              let nextTaskCompleted = nextTask.completed
+            else { return false }
+            
+            return prevTaskCompleted < nextTaskCompleted
+          }
+      }
+    
+    let completedListItems = Driver.combineLatest(completedListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+      tasks.map { task -> TaskListSectionItem in
+        TaskListSectionItem(
+          task: task,
+          kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
+        )
+      }
+    }
+    
+    let completedListSectionWithRepeatButton = completedListItems
+      .map {
+        TaskListSection(
+          header: "",
+          mode: .repeatButton,
+          items: $0
+        )
+      }
+    
+    // MARK: - PLANNED COMPLETED
+    let plannedListTasks = tasks
+      .map { tasks -> [Task] in
+        tasks.filter { task -> Bool in
+          guard
+            case .planned(let planned) = self.mode
+          else { return false }
+          
+          return task.status == .inProgress &&
+          task.planned.startOfDay >= planned.startOfDay &&
+          task.planned.endOfDay <= planned.endOfDay
+        }
+        .sorted { prevTask, nextTask -> Bool in
+          prevTask.created < nextTask.created
+        }
+      }
+    
+    let plannedListItems = Driver.combineLatest(plannedListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+      tasks.map { task -> TaskListSectionItem in
+        TaskListSectionItem(
+          task: task,
+          kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
+        )
+      }
+    }
+    
+    let plannedListSectionWithRepeatButton = plannedListItems
+      .map {
+        TaskListSection(
+          header: "PLANNED",
+          mode: .repeatButton,
+          items: $0
+        )
+      }
+    
+    // MARK: - DELETED COMPLETED
+    let deletedListTasks = tasks
+      .map { tasks -> [Task] in
+        tasks.filter { task -> Bool in
+          guard
+            case .deleted = self.mode
+          else { return false }
+          
+          return task.status == .deleted
+        }
+        .sorted { prevTask, nextTask -> Bool in
+          prevTask.created < nextTask.created
+        }
+      }
+    
+    let deletedListItems = Driver.combineLatest(deletedListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+      tasks.map { task -> TaskListSectionItem in
+        TaskListSectionItem(
+          task: task,
+          kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
+        )
+      }
+    }
+    
+    let deletedListItemsWithRepeatButton = plannedListItems
+      .map {
+        TaskListSection(
+          header: "",
+          mode: .repeatButton,
+          items: $0
+        )
+      }
+    
+    // MARK: - DATASOURCE
+    let dataSource = Driver
+      .combineLatest(
+        mainListSectionWithTime,
+        mainListSectionWithoutTime,
+        overduedListSectionWithRepeatButton,
+        ideaListSectionWithRepeatButton,
+        completedListSectionWithRepeatButton,
+        plannedListSectionWithRepeatButton,
+        deletedListItemsWithRepeatButton )
+    {
+      mainListItemsWithTime,
+      mainListItemsWithoutTime,
+      overduedListTasksWithRepeatButton,
+      ideaListTasksWithRepeatButton,
+      completedListItemsWithRepeatButton,
+      plannedListItemsWithRepeatButton,
+      deletedListItemsWithRepeatButton -> [TaskListSection] in
+      [
+        mainListItemsWithTime,
+        mainListItemsWithoutTime,
+        overduedListTasksWithRepeatButton,
+        ideaListTasksWithRepeatButton,
+        completedListItemsWithRepeatButton,
+        plannedListItemsWithRepeatButton,
+        deletedListItemsWithRepeatButton
+      ]
+        .filter { !$0.items.isEmpty }
+    }
 
+    // MARK: - Swipe
     let changeStatus = changeStatusTrigger
       .asDriver()
       .compactMap { $0 }
@@ -147,7 +370,7 @@ class TaskListViewModel: Stepper {
       .change(status: .idea)
       .change(planned: Date().adding(.year, value: 1))
       .asObservable()
-      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     let changeToInProgress = changeStatus
@@ -159,7 +382,7 @@ class TaskListViewModel: Stepper {
       .change(planned: Date())
       .change(created: Date())
       .asObservable()
-      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     let changeToCompleted = changeStatus
@@ -167,16 +390,17 @@ class TaskListViewModel: Stepper {
       .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
         var task = dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
         task.status = .completed
-        task.closed = changeStatus.closed
+        task.completed = changeStatus.closed
         return task
-      }.asObservable()
-      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      }
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     let changeToRemove = changeStatus
       .filter { $0.status == .deleted }
 
-    let change = Driver
+    let changeTaskStatus = Driver
       .of(changeToIdea, changeToInProgress, changeToCompleted)
       .merge()
       .do { _ in self.reloadData.accept(()) }
@@ -214,7 +438,7 @@ class TaskListViewModel: Stepper {
       .of(input.alertCancelButtonClick, input.alertDeleteButtonClick)
       .merge()
 
-    let hideCell = hideAlert
+    let hideCellWhenAlertClosed = hideAlert
       .withLatestFrom(changeStatus) { $1.indexPath }
       .compactMap { $0 }
 
@@ -223,12 +447,13 @@ class TaskListViewModel: Stepper {
       .compactMap { removeMode -> Task? in
         guard case .one(let task) = removeMode else { return nil }
         return task
-      }.change(status: .deleted)
+      }
+      .change(status: .deleted)
       .asObservable()
-      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
-    let removeAll = input.alertDeleteButtonClick
+    let removeAllTasks = input.alertDeleteButtonClick
       .withLatestFrom(removeMode) { $1 }
       .compactMap { removeMode -> [Task]? in
         guard case .all(let tasks) = removeMode else { return nil }
@@ -241,7 +466,7 @@ class TaskListViewModel: Stepper {
         task.status = .archive
         return task
       }
-      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.driverError)) })
+      .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     let addTask = input.addTaskButtonClickTrigger
@@ -250,7 +475,7 @@ class TaskListViewModel: Stepper {
         case .idea:
           return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .idea))
         case .planned(let date):
-          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .planned, planned: date))
+          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .inProgress, planned: date))
         default:
           return nil
         }
@@ -258,16 +483,15 @@ class TaskListViewModel: Stepper {
       .map { self.steps.accept($0) }
 
     // title
-     let title = Driver.just(self.getTitle(with: self.mode))
+    let title = Driver.just(self.getTitle(with: self.mode))
 
     let addTaskButtonIsHidden = Driver<Bool>.of(self.addTaskButtonIsHidden())
 
-    let showRemovaAllButton = Driver.of(self.mode)
-      .filter { $0 == .deleted }
-      .map { _ in () }
+    let removeAllTasksButtonIsHidden = Driver.of(self.mode)
+      .map { $0 == .deleted }
 
     let timer = Observable<Int>
-      .timer(.seconds(0), period: .seconds(1), scheduler: MainScheduler.instance)
+      .timer(.seconds(0), period: .seconds(60), scheduler: MainScheduler.instance)
       .asDriver(onErrorJustReturn: 0)
 
     let reloadItems = timer
@@ -279,32 +503,37 @@ class TaskListViewModel: Stepper {
         }
       }
 
-    // navigateBack
-    let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.taskListIsCompleted) }
-
     return Output(
-      addTask: addTask,
-      addTaskButtonIsHidden: addTaskButtonIsHidden,
-      change: change,
-      dataSource: dataSource,
-      hideAlert: hideAlert,
-      hideCell: hideCell,
-      navigateBack: navigateBack,
-      openTask: openTask,
-      removeAll: removeAll,
-      removeTask: removeTask,
-      reloadItems: reloadItems,
-      setAlertText: alertText,
+      // HEADER
       title: title,
+      // NAVIGATE BACK
+      navigateBack: navigateBack,
+      // MODE
+      mode: mode,
+      // ADD TASK
+      addTask: addTask,
+  //   addTaskButtonIsHidden: addTaskButtonIsHidden,
+      // REMOVE ALL TASKS
+      removeAllTasks: removeAllTasks,
+   //   removeAllTasksButtonIsHidden: removeAllTasksButtonIsHidden,
+      // DATASOURCE
+      dataSource: dataSource,
+      reloadItems: reloadItems,
+      hideCellWhenAlertClosed: hideCellWhenAlertClosed,
+      // TASK
+      openTask: openTask,
+      changeTaskStatus: changeTaskStatus,
+      removeTask: removeTask,
+      // ALERT
+      alertText: alertText,
       showAlert: showAlert,
-      showRemovaAllButton: showRemovaAllButton
+      hideAlert: hideAlert
     )
   }
 
   func addTaskButtonIsHidden() -> Bool {
     switch self.mode {
-    case .planned, .idea:
+    case .main, .idea:
       return false
     default:
       return true
@@ -321,8 +550,6 @@ class TaskListViewModel: Stepper {
       return "Ящик идей"
     case .overdued:
       return "Просроченные задачи"
-    case .planned(date: _):
-      return "Запланированные задачи"
     default:
       return ""
     }

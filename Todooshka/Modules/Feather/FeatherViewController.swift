@@ -164,18 +164,16 @@ class FeatherViewController: TDViewController {
           withReuseIdentifier: TaskCell.reuseID,
           for: indexPath
       ) as? TaskCell else { return UICollectionViewCell() }
-      cell.configure(with: dataSource[indexPath.section].mode)
-      cell.configure(with: item.task)
-      cell.configure(with: item.kindOfTask)
+      cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
       return cell
     }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
-      guard let section = collectionView.dequeueReusableSupplementaryView(
+      guard let header = collectionView.dequeueReusableSupplementaryView(
         ofKind: kind,
         withReuseIdentifier: TaskReusableView.reuseID,
         for: indexPath
       ) as? TaskReusableView else { return UICollectionReusableView() }
-      section.configure(text: dataSource[indexPath.section].header)
-      return section
+      header.configure(text: dataSource[indexPath.section].header)
+      return header
     })
   }
 }

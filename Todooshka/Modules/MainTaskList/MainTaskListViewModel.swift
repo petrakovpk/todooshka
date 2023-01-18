@@ -17,18 +17,18 @@ class MainTaskListViewModel: Stepper {
   let disposeBag = DisposeBag()
 
   struct Input {
-    // idea
-    let ideaButtonClickTrigger: Driver<Void>
-    // overdued
+    // OVERDUED
     let overduedButtonClickTrigger: Driver<Void>
+    // IDEA
+    let ideaButtonClickTrigger: Driver<Void>
+    // CALENDAR
+    let calendarButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
-    // idea
-    let ideaButtonClick: Driver<Void>
-    // overdued
-    let overduedButtonClick: Driver<Void>
-    // egg
+    let openOverduedTasklist: Driver<Void>
+    let openIdeaTaskList: Driver<Void>
+    let openCalendar: Driver<Void>
   }
 
   // MARK: - Init
@@ -37,19 +37,22 @@ class MainTaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    // idea
-    let ideaButtonClick = input.ideaButtonClickTrigger
-      .map { self.steps.accept(AppStep.ideaTaskListIsRequired) }
-
     // overdued
-    let overduedButtonClick = input.overduedButtonClickTrigger
-      .map { self.steps.accept(AppStep.overduedTaskListIsRequired) }
+    let openOverduedTasklist = input.overduedButtonClickTrigger
+      .do { _ in self.steps.accept(AppStep.overduedTaskListIsRequired) }
+    
+    // idea
+    let openIdeaTaskList = input.ideaButtonClickTrigger
+      .do { _ in self.steps.accept(AppStep.ideaTaskListIsRequired) }
+    
+    // calendar
+    let openCalendar = input.calendarButtonClickTrigger
+     
 
     return Output(
-      // idea
-      ideaButtonClick: ideaButtonClick,
-      // overdued
-      overduedButtonClick: overduedButtonClick
+      openOverduedTasklist: openOverduedTasklist,
+      openIdeaTaskList: openIdeaTaskList,
+      openCalendar: openCalendar
     )
   }
 }

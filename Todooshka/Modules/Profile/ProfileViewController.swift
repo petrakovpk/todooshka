@@ -135,14 +135,14 @@ class ProfileViewController: TDViewController {
   func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskSection>(
-      configureCell: {_, collectionView, indexPath, item in
+      configureCell: {dataSource, collectionView, indexPath, item in
         switch item.type {
         case .text:
           guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: TaskWithImageCell.reuseID,
             for: indexPath
           ) as? TaskCell else { return UICollectionViewCell() }
-          cell.configure(with: item.task)
+       //   cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
           return cell
         case .textAndImage:
           guard let cell = collectionView.dequeueReusableCell(

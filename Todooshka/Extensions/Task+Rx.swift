@@ -12,7 +12,7 @@ extension SharedSequence where Element == Task {
   func change(closed date: Date) -> RxCocoa.SharedSequence<SharingStrategy, Task> {
     return self.map { task in
       var task = task
-      task.closed = date
+      task.completed = date
       return task
     }
   }

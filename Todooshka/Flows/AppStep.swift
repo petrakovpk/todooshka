@@ -16,7 +16,6 @@ enum AppStep: Step {
   // Tab Bar
   case calendarIsRequired
   case tabBarIsRequired
-  case mainTaskListIsRequired
 
   // Changing
   case changingNameIsRequired
@@ -30,11 +29,12 @@ enum AppStep: Step {
   case funIsRequired
 
   // Task List
+  case mainTaskListIsRequired
+  case overduedTaskListIsRequired
+  case ideaTaskListIsRequired
+  case plannedTaskListIsRequired(date: Date)
   case completedTaskListIsRequired(date: Date)
   case deletedTaskListIsRequired
-  case ideaTaskListIsRequired
-  case overduedTaskListIsRequired
-  case plannedTaskListIsRequired(date: Date)
   case taskListIsCompleted
 
   // KindOfTask

@@ -8,10 +8,9 @@
 import Foundation
 
 enum TaskStatus: String {
-  case archive = "Archive"
-  case completed = "Completed"
-  case deleted = "Deleted"
-  case idea = "Idea"
-  case inProgress = "InProgress"
-  case planned = "Planned"
+  case inProgress
+  case idea
+  case completed
+  case deleted
+  case archive
 }

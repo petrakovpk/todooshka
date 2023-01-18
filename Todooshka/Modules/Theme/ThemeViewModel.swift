@@ -82,7 +82,6 @@ class ThemeViewModel: Stepper {
       .asObservable()
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-      .debug()
     
     let title = services
       .dataService

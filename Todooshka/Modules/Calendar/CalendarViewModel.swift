@@ -80,12 +80,12 @@ class CalendarViewModel: Stepper {
     let completedTasks = services.dataService
       .tasks
       .map { $0.filter { $0.status == .completed } }
-      .map { $0.filter { $0.closed != nil } }
+      .map { $0.filter { $0.completed != nil } }
       .asDriver(onErrorJustReturn: [])
 
     let plannedTasks = services.dataService
       .tasks
-      .map { $0.filter { $0.status == .planned } }
+      .map { $0.filter { $0.status == .inProgress } }
       .map { $0.filter { $0.planned != nil } }
       .asDriver(onErrorJustReturn: [])
 
@@ -107,8 +107,8 @@ class CalendarViewModel: Stepper {
                 CalendarItem(type: .day(
                   date: date,
                   isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate),
-                  completedTasksCount: completedTasks.filter { Calendar.current.isDate($0.closed!, inSameDayAs: date) }.count,
-                  plannedTasksCount: plannedTasks.filter { Calendar.current.isDate($0.planned!, inSameDayAs: date) }.count
+                  completedTasksCount: completedTasks.filter { Calendar.current.isDate($0.completed!, inSameDayAs: date) }.count,
+                  plannedTasksCount: plannedTasks.filter { Calendar.current.isDate($0.planned, inSameDayAs: date) }.count
                 ))
               }
           )

@@ -67,8 +67,10 @@ class TaskViewModel: Stepper {
     let saveText: Driver<Result<Void, Error>>
     // EXPECTED DATE
     let expectedDateTime: Driver<Date>
-    let expectedDatePickerIsHidden: Driver<Bool>
-    let expectedTimePickerIsHidden: Driver<Bool>
+    let openExpectedDatePickerTrigger: Driver<Void>
+    let closeExpectedDatePickerTrigger: Driver<Void>
+    let openExpectedTimePickerTrigger: Driver<Void>
+    let closeExpectedTimePickerTrigger: Driver<Void>
     let saveExpectedDate: Driver<Result<Void,Error>>
     let saveExpectedTime: Driver<Result<Void,Error>>
     // KINDOFTASK
@@ -80,7 +82,8 @@ class TaskViewModel: Stepper {
     let showDescriptionPlaceholder: Driver<Void>
     let saveDescriptionTextViewButtonIsHidden: Driver<Bool>
     let saveDescription: Driver<Result<Void, Error>>
-    // kinOfTask
+    // CLOSED
+    let completeTask: Driver<Result<Void, Error>>
     // task
     let taskIsNew: Driver<Bool>
     //
@@ -141,19 +144,11 @@ class TaskViewModel: Stepper {
     let expectedDateTime = task
       .compactMap { $0.planned }
     
-    let showExpectedDatePicker = input.expectedDateButtonClickTrigger
-      .map { false }
-    
-    let closeExpectedDatePicker = Driver.of(
+    let openExpectedDatePickerTrigger = input.expectedDateButtonClickTrigger
+
+    let closeExpectedDatePickerTrigger = Driver.of(
       input.expectedDatePickerBackgroundClickTrigger,
       input.expectedDatePickerOkButtonClickTrigger
-    )
-      .merge()
-      .map { true }
-    
-    let expectedDatePickerIsHidden = Driver.of(
-      showExpectedDatePicker,
-      closeExpectedDatePicker
     )
       .merge()
     
@@ -171,19 +166,11 @@ class TaskViewModel: Stepper {
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
     
     // MARK: - EXPECTED TIME
-    let showExpectedTimePicker = input.expectedTimeButtonClickTrigger
-      .map { false }
+    let openExpectedTimePickerTrigger = input.expectedTimeButtonClickTrigger
     
-    let closeExpectedTimePicker = Driver.of(
+    let closeExpectedTimePickerTrigger = Driver.of(
       input.expectedTimePickerBackgroundClickTrigger,
       input.expectedTimePickerOkButtonClickTrigger
-    )
-      .merge()
-      .map { true }
-    
-    let expectedTimePickerIsHidden = Driver.of(
-      showExpectedTimePicker,
-      closeExpectedTimePicker
     )
       .merge()
      
@@ -260,18 +247,6 @@ class TaskViewModel: Stepper {
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
     
-    // MARK: - COMPLETE
-    let completeTask = input.completeButtonClickTrigger
-      .withLatestFrom(task) { _, task -> Task in
-        var task = task
-        task.status = .completed
-        task.closed = Date()
-        return task
-      }
-      .asObservable()
-      .flatMapLatest { self.managedContext.rx.update($0) }
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-    
     let selectKindOfTask = input.kindOfTaskSelection
       .withLatestFrom(dataSource) { indexPath, dataSource -> KindOfTask in
         dataSource[indexPath.section].items[indexPath.item].kindOfTask
@@ -284,7 +259,19 @@ class TaskViewModel: Stepper {
       .asObservable()
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-   
+
+    // MARK: - COMPLETE
+    let completeTask = input.completeButtonClickTrigger
+      .withLatestFrom(task) { _, task -> Task in
+        var task = task
+        task.status = .completed
+        task.completed = Date()
+        return task
+      }
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+
     let taskIsNew = services
       .dataService
       .tasks
@@ -303,8 +290,10 @@ class TaskViewModel: Stepper {
       saveText: saveText,
       // EXPECTED DATE
       expectedDateTime: expectedDateTime,
-      expectedDatePickerIsHidden: expectedDatePickerIsHidden,
-      expectedTimePickerIsHidden: expectedTimePickerIsHidden,
+      openExpectedDatePickerTrigger: openExpectedDatePickerTrigger,
+      closeExpectedDatePickerTrigger: closeExpectedDatePickerTrigger,
+      openExpectedTimePickerTrigger: openExpectedTimePickerTrigger,
+      closeExpectedTimePickerTrigger: closeExpectedTimePickerTrigger,
       saveExpectedDate: saveExpectedDate,
       saveExpectedTime: saveExpectedTime,
       // KINDOFTASK
@@ -316,6 +305,8 @@ class TaskViewModel: Stepper {
       showDescriptionPlaceholder: showDescriptionPlaceholder,
       saveDescriptionTextViewButtonIsHidden: saveDescriptionTextViewButtonIsHidden,
       saveDescription: saveDescription,
+      // CLOSED
+      completeTask: completeTask,
       // TASK IS NEW
       taskIsNew: taskIsNew
     )

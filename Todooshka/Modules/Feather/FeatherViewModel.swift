@@ -50,10 +50,10 @@ class FeatherViewModel: Stepper {
     let dataSource = taskListSectionItems
       .map {
         Dictionary
-          .init(grouping: $0, by: { $0.task.closed!.startOfDay })
+          .init(grouping: $0, by: { $0.task.completed!.startOfDay })
           .sorted(by: { $0.key > $1.key })
           .map { key, value in
-            TaskListSection(header: self.services.preferencesService.formatter.string(from: key), mode: .withFeather, items: value)
+            TaskListSection(header: self.services.preferencesService.formatter.string(from: key), mode: .empty, items: value)
           }
       }
 

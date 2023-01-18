@@ -8,7 +8,7 @@
 import RxDataSources
 
 struct TaskListSection: AnimatableSectionModelType {
-  var identity: String { header }
+  var identity: String { mode.rawValue }
 
   var header: String
   var mode: TaskCellMode

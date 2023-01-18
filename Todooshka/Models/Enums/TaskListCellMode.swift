@@ -8,7 +8,8 @@
 import Foundation
 
 enum TaskCellMode: String {
-  case withTimer = "WithTimer"
-  case withRepeatButton = "WithRepeatButton"
-  case withFeather = "WithFeather"
+  case empty
+  case blueLine
+  case redLineAndTime
+  case repeatButton
 }

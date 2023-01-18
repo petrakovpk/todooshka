@@ -23,6 +23,7 @@ enum Icon: String {
   case boxAdd
   case boxTick
   case briefcase
+  case calendar
   case call
   case camera
   case clipboardTick

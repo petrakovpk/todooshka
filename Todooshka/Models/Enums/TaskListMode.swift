@@ -7,10 +7,10 @@
 import Foundation
 
 enum TaskListMode: Equatable {
-  case completed(date: Date)
-  case deleted
-  case idea
   case main
   case overdued
+  case idea
   case planned(date: Date)
+  case completed(date: Date)
+  case deleted
 }

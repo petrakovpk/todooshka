@@ -20,9 +20,9 @@ struct Task: IdentifiableType, Equatable {
   var status: TaskStatus { willSet { lastModified = Date()}}
   var index: Int = 0 { willSet { lastModified = Date()}}
 
-  var created: Date = Date() { willSet { lastModified = Date()}}
-  var planned: Date = Date().endOfDay { willSet { lastModified = Date()}}
-  var closed: Date? { willSet { lastModified = Date()}}
+  var created = Date() { willSet { lastModified = Date()}}
+  var planned = Date().endOfDay { willSet { lastModified = Date()}}
+  var completed: Date? { willSet { lastModified = Date()}}
 
   var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { willSet { lastModified = Date()}}
   var userUID: String? = Auth.auth().currentUser?.uid { willSet { lastModified = Date()}}
@@ -30,27 +30,8 @@ struct Task: IdentifiableType, Equatable {
   var lastModified = Date()
 
   // MARK: - Calculated Propertie
-  var is24hoursPassed: Bool {
-    created.timeIntervalSince1970 <= Date().timeIntervalSince1970 - 24 * 60 * 60
-  }
-
   var secondsLeft: Double {
-    max(24 * 60 * 60 + created.timeIntervalSince1970 - Date().timeIntervalSince1970, 0)
-  }
-
-  let formatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "HH'h' mm'm' ss's'"
-    formatter.timeZone = TimeZone(secondsFromGMT: 0)
-    return formatter
-  }()
-
-  var timeLeftText: String {
-    formatter.string(from: Date(timeIntervalSince1970: secondsLeft))
-  }
-
-  var timeLeftPercent: Double {
-    status == .inProgress ? secondsLeft / (24 * 60 * 60) : 0
+    max(planned.timeIntervalSince1970 - Date().startOfDay.timeIntervalSince1970, 0)
   }
 
   // MARK: - init
@@ -80,7 +61,7 @@ struct Task: IdentifiableType, Equatable {
     self.status = status
     self.created = created
     self.kindOfTaskUID = kindOfTaskUID
-    self.closed = closed
+    self.completed = closed
     self.planned = planned
   }
 
@@ -92,7 +73,7 @@ struct Task: IdentifiableType, Equatable {
     && lhs.status == rhs.status
     && lhs.kindOfTaskUID == rhs.kindOfTaskUID
     && lhs.created == rhs.created
-    && lhs.closed == rhs.closed
+    && lhs.completed == rhs.completed
     && lhs.planned == rhs.planned
     && lhs.index == rhs.index
     && lhs.userUID == rhs.userUID
@@ -111,7 +92,7 @@ extension Task {
         "status": status.rawValue,
         "kindOfTaskUID": kindOfTaskUID,
         "created": created.timeIntervalSince1970,
-        "closed": closed?.timeIntervalSince1970,
+        "closed": completed?.timeIntervalSince1970,
         "planned": planned.timeIntervalSince1970,
         "index": index,
         "lastModified": lastModified.timeIntervalSince1970
@@ -143,7 +124,7 @@ extension Task {
     self.lastModified = Date(timeIntervalSince1970: lastModifiedTimeInterval)
 
     if let closedTimeInterval = dict.value(forKey: "closed") as? TimeInterval {
-      self.closed = Date(timeIntervalSince1970: closedTimeInterval)
+      self.completed = Date(timeIntervalSince1970: closedTimeInterval)
     }
     if let plannedTimeInterval = dict.value(forKey: "planned") as? TimeInterval {
       self.planned = Date(timeIntervalSince1970: plannedTimeInterval)
@@ -180,7 +161,7 @@ extension Task: Persistable {
     self.status = status
     self.text = text
     self.lastModified = lastModified
-    self.closed = entity.value(forKey: "closed") as? Date
+    self.completed = entity.value(forKey: "closed") as? Date
     self.description = description
     self.planned = planned
     self.userUID = entity.value(forKey: "userUID") as? String
@@ -188,7 +169,7 @@ extension Task: Persistable {
 
   func update(_ entity: T) {
     entity.setValue(UID, forKey: "uid")
-    entity.setValue(closed, forKey: "closed")
+    entity.setValue(completed, forKey: "closed")
     entity.setValue(created, forKey: "created")
     entity.setValue(description, forKey: "desc")
     entity.setValue(index, forKey: "index")

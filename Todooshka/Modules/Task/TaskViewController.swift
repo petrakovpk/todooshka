@@ -656,15 +656,11 @@ class TaskViewController: TDViewController {
       outputs.saveText.drive(),
       // EXPECTED
       outputs.expectedDateTime.drive(expectedDateTimeBinder),
-      outputs.expectedDatePickerIsHidden.drive(expectedDateTimeBackground.rx.isHidden),
-      outputs.expectedDatePickerIsHidden.drive(expectedDatePicker.rx.isHidden),
-      outputs.expectedDatePickerIsHidden.drive(expectedDatePickerClearButton.rx.isHidden),
-      outputs.expectedDatePickerIsHidden.drive(expectedDatePickerOkButton.rx.isHidden),
+      outputs.openExpectedDatePickerTrigger.drive(openExpectedDatePickerTriggerBinder),
+      outputs.closeExpectedDatePickerTrigger.drive(closeExpectedDatePickerTriggerBinder),
       outputs.saveExpectedDate.drive(),
-      outputs.expectedTimePickerIsHidden.drive(expectedDateTimeBackground.rx.isHidden),
-      outputs.expectedTimePickerIsHidden.drive(expectedTimePicker.rx.isHidden),
-      outputs.expectedTimePickerIsHidden.drive(expectedTimePickerClearButton.rx.isHidden),
-      outputs.expectedTimePickerIsHidden.drive(expectedTimePickerOkButton.rx.isHidden),
+      outputs.openExpectedTimePickerTrigger.drive(openExpectedTimePickerTriggerBinder),
+      outputs.closeExpectedTimePickerTrigger.drive(closeExpectedTimePickerTriggerBinder),
       outputs.saveExpectedTime.drive(),
       // KINDOFTASK
       outputs.openKindOfTaskSettings.drive(),
@@ -675,6 +671,8 @@ class TaskViewController: TDViewController {
       outputs.showDescriptionPlaceholder.drive(showDescriptionPlaceholderBinder),
       outputs.saveDescriptionTextViewButtonIsHidden.drive(saveDescriptionTextViewButton.rx.isHidden),
       outputs.saveDescription.drive(),
+      // COMPLETED
+      outputs.completeTask.drive(),
       // task
       outputs.taskIsNew.drive(taskIsNewBinder),
       // yandex
@@ -700,13 +698,44 @@ class TaskViewController: TDViewController {
     })
   }
   
-  
-  
-  var hideCompleteButtonBinder: Binder<Void> {
+  var openExpectedDatePickerTriggerBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
-      vc.completeButton.isHidden = true
+      vc.expectedDateTimeBackground.isHidden = false
+      vc.expectedDatePicker.isHidden = false
+      vc.expectedDatePickerOkButton.isHidden = false
+      vc.expectedDatePickerClearButton.isHidden = false
+      vc.dismissKeyboard()
     })
   }
+  
+  var closeExpectedDatePickerTriggerBinder: Binder<Void> {
+    return Binder(self, binding: { vc, _ in
+      vc.expectedDateTimeBackground.isHidden = true
+      vc.expectedDatePicker.isHidden = true
+      vc.expectedDatePickerOkButton.isHidden = true
+      vc.expectedDatePickerClearButton.isHidden = true
+    })
+  }
+  
+  var openExpectedTimePickerTriggerBinder: Binder<Void> {
+    return Binder(self, binding: { vc, _ in
+      vc.expectedDateTimeBackground.isHidden = false
+      vc.expectedTimePicker.isHidden = false
+      vc.expectedTimePickerOkButton.isHidden = false
+      vc.expectedTimePickerClearButton.isHidden = false
+      vc.dismissKeyboard()
+    })
+  }
+  
+  var closeExpectedTimePickerTriggerBinder: Binder<Void> {
+    return Binder(self, binding: { vc, _ in
+      vc.expectedDateTimeBackground.isHidden = true
+      vc.expectedTimePicker.isHidden = true
+      vc.expectedTimePickerOkButton.isHidden = true
+      vc.expectedTimePickerClearButton.isHidden = true
+    })
+  }
+
 
   var hideDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
