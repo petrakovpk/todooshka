@@ -152,6 +152,7 @@ class MainTaskListViewController: UIViewController {
     button.cornerRadius = 8
     button.tintColor = Style.App.text
     button.setImage(Icon.arrowCircleLeft.image.template, for: .normal)
+    button.imageView?.layer.masksToBounds = false
     return button
   }()
   
@@ -527,7 +528,6 @@ class MainTaskListViewController: UIViewController {
       rightConstant: 16
     )
     
-    scrollToNextPeriodButton.centerYAnchor.constraint(equalTo: calendarView.centerYAnchor).isActive = true
     scrollToNextPeriodButton.anchor(
       top: calendarDayNamesStackView.topAnchor,
       left: calendarView.rightAnchor,
