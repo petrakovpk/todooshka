@@ -11,6 +11,8 @@ import RxDataSources
 enum Icon: String {
   case addSquare
   case arrowBottom
+  case arrowCircleLeft
+  case arrowCircleRight
   case arrowUp
   case arrowLeft
   case arrowLeftCustom
@@ -62,6 +64,7 @@ enum Icon: String {
   case sms
   case sort
   case sun
+  case taskListSquare
   case teacher
   case tick
   case tickRound

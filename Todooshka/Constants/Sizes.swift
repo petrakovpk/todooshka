@@ -66,8 +66,8 @@ struct Sizes {
       static let height = 76.adjustByHeight
     }
     struct CalendarCell {
-      static let width = min(45.adjustByHeight, 45.adjustByWidth)
-      static let height = min(45.adjustByHeight, 45.adjustByWidth)
+      static let header = 20.adjustByHeight
+      static let size = (UIScreen.main.bounds.width - 4 * 16 - 2 * 30) / 7
     }
     struct ColorCell {
       static let width = 48.adjustByHeight

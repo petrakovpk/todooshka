@@ -8,7 +8,6 @@ import UIKit
 import Foundation
 
 class KindOfTaskCell: UICollectionViewCell {
-  // MARK: - Properties
   static var reuseID: String = "KindOfTaskCell"
 
   let shapeLayer = CAShapeLayer()
@@ -34,6 +33,8 @@ class KindOfTaskCell: UICollectionViewCell {
 
   // draw
   override func draw(_ rect: CGRect) {
+    super.draw(rect)
+    
     // adding
     contentView.addSubviews([
       imageView,

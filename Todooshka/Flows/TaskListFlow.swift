@@ -76,9 +76,11 @@ class TaskListFlow: Flow {
     let mainTaskListSceneModel = NestSceneModel(services: services)
     let mainTaskListViewModel = MainTaskListViewModel(services: services)
     let taskListViewModel = TaskListViewModel(services: services, mode: .main)
+    let calendarViewModel = CalendarViewModel(services: services)
     viewController.sceneModel = mainTaskListSceneModel
     viewController.viewModel = mainTaskListViewModel
     viewController.listViewModel = taskListViewModel
+    viewController.calendarViewModel = calendarViewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.pushViewController(viewController, animated: false)

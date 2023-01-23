@@ -21,5 +21,6 @@ pod 'FirebaseAuth'
 pod 'FirebaseFirestore'	
 pod 'FirebaseDatabase'
 pod 'GoogleSignIn'
+pod 'JTAppleCalendar'
 
 end

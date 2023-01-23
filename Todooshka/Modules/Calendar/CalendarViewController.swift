@@ -145,32 +145,47 @@ class CalendarViewController: UIViewController {
 
     // sceneView
     sceneView.presentScene(scene)
-    sceneView.anchor(top: view.topAnchor, left: view.safeAreaLayoutGuide.leftAnchor, right: view.safeAreaLayoutGuide.rightAnchor,              heightConstant: sceneView.frame.height)
+    sceneView.anchor(
+      top: view.topAnchor,
+      left: view.safeAreaLayoutGuide.leftAnchor,
+      right: view.safeAreaLayoutGuide.rightAnchor,
+      heightConstant: sceneView.frame.height
+    )
   }
 
   func configureUI() {
-    // adding
-    view.addSubview(settingsButton)
-    view.addSubview(pointsBackgroundView)
-    view.addSubview(shopButton)
-    view.addSubview(calendarBackgroundView)
-
-    // adding pointsBackgroundView
-    pointsBackgroundView.addSubview(featherBackgroundView)
-    pointsBackgroundView.addSubview(diamondBackroundView)
+    // adding 1 layer
+    view.addSubviews([
+      settingsButton,
+      pointsBackgroundView,
+      shopButton,
+      calendarBackgroundView
+    ])
+    
+    // adding 2 layer
+    pointsBackgroundView.addSubviews([
+      featherBackgroundView,
+      diamondBackroundView
+    ])
 
     // featherBackgroundView
-    featherBackgroundView.addSubview(featherLabel)
-    featherBackgroundView.addSubview(feathersImageView)
+    featherBackgroundView.addSubviews([
+      featherLabel,
+      feathersImageView
+    ])
 
     // diamondBackroundView
-    diamondBackroundView.addSubview(diamondLabel)
-    diamondBackroundView.addSubview(diamondsImageView)
+    diamondBackroundView.addSubviews([
+      diamondLabel,
+      diamondsImageView
+    ])
 
     // calendarBackgroundView
-    calendarBackgroundView.addSubview(calendarHeaderView)
-    calendarBackgroundView.addSubview(calendarDividerView)
-    calendarBackgroundView.addSubview(calendarView)
+    calendarBackgroundView.addSubviews([
+      calendarHeaderView,
+      calendarDividerView,
+      calendarView
+    ])
 
     // view
     view.backgroundColor = Style.App.background
@@ -316,9 +331,9 @@ class CalendarViewController: UIViewController {
     )
 
     // calendarView
-    calendarView.delegate = self
-    calendarView.dataSource = self
-    calendarView.calendarViewDelegate = self
+//    calendarView.delegate = self
+//    calendarView.dataSource = self
+//    calendarView.calendarViewDelegate = self
     calendarView.anchor(
       top: calendarDividerView.bottomAnchor,
       left: calendarBackgroundView.leftAnchor,
@@ -333,237 +348,237 @@ class CalendarViewController: UIViewController {
 
   // MARK: - Bind View Model
   func bindViewModel() {
-    let input = CalendarViewModel.Input(
-      settingsButtonClickTrigger: settingsButton.rx.tap.asDriver(),
-      shopButtonClickTrigger: shopButton.rx.tap.asDriver(),
-      featherBackgroundViewClickTrigger: featherBackgroundView
-        .rx
-        .tapGesture()
-        .when(.recognized)
-        .map { _ in return () }
-        .asDriver(onErrorJustReturn: ()),
-      diamondBackgroundViewClickTrigger: diamondBackroundView
-        .rx
-        .tapGesture()
-        .when(.recognized)
-        .map { _ in return () }
-        .asDriver(onErrorJustReturn: ()),
-      selection: calendarView.rx.itemSelected.asDriver(),
-      willDisplayCell: calendarView.rx.willDisplayCell.asDriver()
-    )
-
-    let outputs = viewModel.transform(input: input)
-
-    [
-      outputs.dataSource.drive(dataSourceBinder),
-      outputs.settingsButtonClickHandler.drive(),
-      outputs.shopButtonClickHandler.drive(),
-      outputs.openTaskList.drive(),
-      outputs.saveSelectedDate.drive(),
-      outputs.featherScoreLabel.drive(featherLabel.rx.text),
-      outputs.diamondScoreLabel.drive(diamondLabel.rx.text),
-      outputs.featherBackgroundViewClickHandler.drive(),
-      outputs.diamondBackgroundViewClickHandler.drive(),
-      outputs.willDisplayCell.drive(),
-      outputs.scrollToCurrentMonth.drive(scrollToCurrentMonthBinder)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    let input = CalendarViewModel.Input(
+//      settingsButtonClickTrigger: settingsButton.rx.tap.asDriver(),
+//      shopButtonClickTrigger: shopButton.rx.tap.asDriver(),
+//      featherBackgroundViewClickTrigger: featherBackgroundView
+//        .rx
+//        .tapGesture()
+//        .when(.recognized)
+//        .map { _ in return () }
+//        .asDriver(onErrorJustReturn: ()),
+//      diamondBackgroundViewClickTrigger: diamondBackroundView
+//        .rx
+//        .tapGesture()
+//        .when(.recognized)
+//        .map { _ in return () }
+//        .asDriver(onErrorJustReturn: ()),
+//      selection: calendarView.rx.itemSelected.asDriver(),
+//      willDisplayCell: calendarView.rx.willDisplayCell.asDriver()
+//    )
+//
+//    let outputs = viewModel.transform(input: input)
+//
+//    [
+//      outputs.dataSource.drive(dataSourceBinder),
+//      outputs.settingsButtonClickHandler.drive(),
+//      outputs.shopButtonClickHandler.drive(),
+//      outputs.openTaskList.drive(),
+//      outputs.saveSelectedDate.drive(),
+//      outputs.featherScoreLabel.drive(featherLabel.rx.text),
+//      outputs.diamondScoreLabel.drive(diamondLabel.rx.text),
+//      outputs.featherBackgroundViewClickHandler.drive(),
+//      outputs.diamondBackgroundViewClickHandler.drive(),
+//      outputs.willDisplayCell.drive(),
+//      outputs.scrollToCurrentMonth.drive(scrollToCurrentMonthBinder)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   func bindSceneModel() {
-    let input = BranchSceneModel.Input()
-    let outputs = sceneModel.transform(input: input)
-
-    [
-      outputs.background.drive(sceneBackgroundBinder),
-      outputs.dataSource.drive(sceneDataSourceBinder)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    let input = BranchSceneModel.Input()
+//    let outputs = sceneModel.transform(input: input)
+//
+//    [
+//      outputs.background.drive(sceneBackgroundBinder),
+//      outputs.dataSource.drive(sceneDataSourceBinder)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
-  // MARK: - Binder
-  var sceneBackgroundBinder: Binder<UIImage?> {
-    return Binder(self, binding: { vc, image in
-      if let image = image, let scene = vc.scene {
-        scene.setup(with: image)
-      }
-    })
-  }
-
-  var sceneDataSourceBinder: Binder<[BirdActionType]> {
-    return Binder(self, binding: { vc, actions in
-      if let scene = vc.scene {
-        scene.setup(with: actions)
-        if vc.isVisible {
-          scene.reloadData()
-        }
-      }
-    })
-  }
-
-  var scrollToCurrentMonthBinder: Binder<(trigger: Bool, withAnimation: Bool)> {
-    return Binder(self, binding: { vc, scrollEvent in
-      if scrollEvent.trigger {
-        // иначе не получим лейаут
-        vc.calendarView.layoutIfNeeded()
-
-        // получаем секцию куда будем скролить
-        guard
-          let sectionIndex = self.dataSource.firstIndex(where: { $0.startOfPeriod.month == Date().month }),
-          let layoutAttributesForSupplementaryElement = vc.calendarView.layoutAttributesForSupplementaryElement(
-            ofKind: UICollectionView.elementKindSectionHeader,
-            at: IndexPath(item: 0, section: sectionIndex)
-          )
-        else { return }
-
-        // Скроллим
-        vc.calendarView.collectionViewLayout.invalidateLayout()
-        vc.calendarView.collectionViewLayout.prepare()
-        vc.calendarView.setContentOffset(CGPoint(x: 0, y: layoutAttributesForSupplementaryElement.frame.origin.y), animated: scrollEvent.withAnimation)
-      }
-    })
-  }
-
-  var dataSourceBinder: Binder<[CalendarSection]> {
-    return Binder(self, binding: { vc, newDataSource in
-      let oldDataSource = self.dataSource
-      self.dataSource = newDataSource
-
-      // Добавляем предыдущий месяц - если в новом dataSource первый месяц меньше, чем в старом dataSource
-      if let oldFirstSection = oldDataSource.first,
-         let newFirstSection = newDataSource.first,
-         case .month(let oldFirstMonth) = oldFirstSection.type,
-         case .month(let newFirstMonth) = newFirstSection.type,
-         oldFirstMonth > newFirstMonth {
-        // получаем лейауты
-        guard
-          let firstSectionHeaderLayout = vc.calendarView.layoutAttributesForSupplementaryElement(
-            ofKind: UICollectionView.elementKindSectionHeader,
-            at: IndexPath(item: 0, section: 0)
-          ),
-          let firstItemFirstSectionLayout = vc.calendarView.layoutAttributesForItem(at: IndexPath(item: 0, section: 0))
-        else { return }
-
-        // получаем количество строк в первой секции
-        let firstSectionRowCount = ceilf(newFirstSection.items.count.float / 7).cgFloat
-
-        UIView.performWithoutAnimation {
-          vc.calendarView.insertSections(IndexSet(integer: 0))
-          vc.calendarView.contentOffset.y = vc.calendarView.contentOffset.y
-          + firstSectionHeaderLayout.bounds.height
-          + firstSectionRowCount * (firstItemFirstSectionLayout.bounds.height + vc.calendarView.layoutMargins.top)
-          + Sizes.Views.Calendar.sectionInset.bottom
-        }
-      }
-
-      if let oldLastSection = oldDataSource.last,
-         let newLastSection = newDataSource.last,
-         case .month(let oldLastMonth) = oldLastSection.type,
-         case .month(let newLastMonth) = newLastSection.type,
-         oldLastMonth < newLastMonth {
-        vc.calendarView.insertSections(IndexSet(integer: newDataSource.count - 1))
-      }
-
-      // Перегружаем
-      for (newSectionIndex, newSection) in newDataSource.enumerated() {
-        for oldSection in oldDataSource where oldSection.identity == newSection.identity {
-          for (newItemIndex, newItem) in newSection.items.enumerated() {
-            for oldItem in oldSection.items {
-              guard case .day(let newDate, let newIsSelected, let newCompletedTasksCount, let newPlannedTasksCount) = newItem.type else { continue }
-              guard case .day(let oldDate, let oldIsSelected, let oldCompletedTasksCount, let oldPlannedTasksCount) = oldItem.type else { continue }
-              guard Calendar.current.isDate(newDate, inSameDayAs: oldDate) else { continue }
-              if newIsSelected != oldIsSelected
-                  || newCompletedTasksCount != oldCompletedTasksCount
-                  || newPlannedTasksCount != oldPlannedTasksCount {
-                vc.calendarView.reloadItems(at: [IndexPath(item: newItemIndex, section: newSectionIndex)])
-              }
-            }
-          }
-        }
-      }
-    })
-  }
+//  // MARK: - Binder
+//  var sceneBackgroundBinder: Binder<UIImage?> {
+//    return Binder(self, binding: { vc, image in
+//      if let image = image, let scene = vc.scene {
+//        scene.setup(with: image)
+//      }
+//    })
+//  }
+//
+//  var sceneDataSourceBinder: Binder<[BirdActionType]> {
+//    return Binder(self, binding: { vc, actions in
+//      if let scene = vc.scene {
+//        scene.setup(with: actions)
+//        if vc.isVisible {
+//          scene.reloadData()
+//        }
+//      }
+//    })
+//  }
+//
+//  var scrollToCurrentMonthBinder: Binder<(trigger: Bool, withAnimation: Bool)> {
+//    return Binder(self, binding: { vc, scrollEvent in
+//      if scrollEvent.trigger {
+//        // иначе не получим лейаут
+//        vc.calendarView.layoutIfNeeded()
+//
+//        // получаем секцию куда будем скролить
+//        guard
+//          let sectionIndex = self.dataSource.firstIndex(where: { $0.startOfPeriod.month == Date().month }),
+//          let layoutAttributesForSupplementaryElement = vc.calendarView.layoutAttributesForSupplementaryElement(
+//            ofKind: UICollectionView.elementKindSectionHeader,
+//            at: IndexPath(item: 0, section: sectionIndex)
+//          )
+//        else { return }
+//
+//        // Скроллим
+//        vc.calendarView.collectionViewLayout.invalidateLayout()
+//        vc.calendarView.collectionViewLayout.prepare()
+//        vc.calendarView.setContentOffset(CGPoint(x: 0, y: layoutAttributesForSupplementaryElement.frame.origin.y), animated: scrollEvent.withAnimation)
+//      }
+//    })
+//  }
+//
+//  var dataSourceBinder: Binder<[CalendarSection]> {
+//    return Binder(self, binding: { vc, newDataSource in
+//      let oldDataSource = self.dataSource
+//      self.dataSource = newDataSource
+//
+//      // Добавляем предыдущий месяц - если в новом dataSource первый месяц меньше, чем в старом dataSource
+//      if let oldFirstSection = oldDataSource.first,
+//         let newFirstSection = newDataSource.first,
+//         case .month(let oldFirstMonth) = oldFirstSection.type,
+//         case .month(let newFirstMonth) = newFirstSection.type,
+//         oldFirstMonth > newFirstMonth {
+//        // получаем лейауты
+//        guard
+//          let firstSectionHeaderLayout = vc.calendarView.layoutAttributesForSupplementaryElement(
+//            ofKind: UICollectionView.elementKindSectionHeader,
+//            at: IndexPath(item: 0, section: 0)
+//          ),
+//          let firstItemFirstSectionLayout = vc.calendarView.layoutAttributesForItem(at: IndexPath(item: 0, section: 0))
+//        else { return }
+//
+//        // получаем количество строк в первой секции
+//        let firstSectionRowCount = ceilf(newFirstSection.items.count.float / 7).cgFloat
+//
+//        UIView.performWithoutAnimation {
+//          vc.calendarView.insertSections(IndexSet(integer: 0))
+//          vc.calendarView.contentOffset.y = vc.calendarView.contentOffset.y
+//          + firstSectionHeaderLayout.bounds.height
+//          + firstSectionRowCount * (firstItemFirstSectionLayout.bounds.height + vc.calendarView.layoutMargins.top)
+//          + Sizes.Views.Calendar.sectionInset.bottom
+//        }
+//      }
+//
+//      if let oldLastSection = oldDataSource.last,
+//         let newLastSection = newDataSource.last,
+//         case .month(let oldLastMonth) = oldLastSection.type,
+//         case .month(let newLastMonth) = newLastSection.type,
+//         oldLastMonth < newLastMonth {
+//        vc.calendarView.insertSections(IndexSet(integer: newDataSource.count - 1))
+//      }
+//
+//      // Перегружаем
+//      for (newSectionIndex, newSection) in newDataSource.enumerated() {
+//        for oldSection in oldDataSource where oldSection.identity == newSection.identity {
+//          for (newItemIndex, newItem) in newSection.items.enumerated() {
+//            for oldItem in oldSection.items {
+//              guard case .day(let newDate, let newIsSelected, let newCompletedTasksCount, let newPlannedTasksCount) = newItem.type else { continue }
+//              guard case .day(let oldDate, let oldIsSelected, let oldCompletedTasksCount, let oldPlannedTasksCount) = oldItem.type else { continue }
+//              guard Calendar.current.isDate(newDate, inSameDayAs: oldDate) else { continue }
+//              if newIsSelected != oldIsSelected
+//                  || newCompletedTasksCount != oldCompletedTasksCount
+//                  || newPlannedTasksCount != oldPlannedTasksCount {
+//                vc.calendarView.reloadItems(at: [IndexPath(item: newItemIndex, section: newSectionIndex)])
+//              }
+//            }
+//          }
+//        }
+//      }
+//    })
+//  }
 }
-
-extension CalendarViewController: UICollectionViewDataSource {
-  func numberOfSections(in collectionView: UICollectionView) -> Int {
-    dataSource.count
-  }
-
-  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    dataSource[section].items.count
-  }
-
-  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-    switch dataSource[indexPath.section].type {
-    case .month(let startOfMonth):
-
-      guard let cell = collectionView.dequeueReusableCell(
-        withReuseIdentifier: CalendarCell.reuseID,
-        for: indexPath
-      ) as? CalendarCell else { return UICollectionViewCell() }
-
-      let item = dataSource[indexPath.section].items[indexPath.item]
-
-      switch item.type {
-      case .empty:
-        cell.configureAsEmpty()
-      case .day(let date, let isSelected, let completedTasksCount, let plannedTasksCount):
-        cell.configure(date: date, isSelected: isSelected, completedTasksCount: completedTasksCount, plannedTasksCount: plannedTasksCount)
-      }
-      return cell
-    case .year(let year):
-      guard let cell = collectionView.dequeueReusableCell(
-        withReuseIdentifier: CalendarYearCell.reuseID,
-        for: indexPath
-      ) as? CalendarYearCell else { return UICollectionViewCell() }
-      cell.configure(year: year)
-      return cell
-    }
-  }
-
-  func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-    guard let header = collectionView.dequeueReusableSupplementaryView(
-      ofKind: kind,
-      withReuseIdentifier: CalendarReusableView.reuseID,
-      for: indexPath
-    ) as? CalendarReusableView else { return UICollectionReusableView() }
-
-    switch dataSource[indexPath.section].type {
-    case .month(let startOfMonth):
-      header.label.text = monthFormatter.string(from: startOfMonth)
-    case .year:
-      header.label.text = nil
-    }
-
-    header.label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-    header.label.textAlignment = .left
-    header.label.text?.firstCharacterUppercased()
-    return header
-  }
-}
-
-extension CalendarViewController: CalendarViewDelegate {
-  func appendPastData() {
-    viewModel.appendPastData()
-  }
-
-  func appendFutureData() {
-    viewModel.appendFutureData()
-  }
-}
-
-// MARK: - UICollectionViewDelegateFlowLayout
-extension CalendarViewController: UICollectionViewDelegateFlowLayout {
-  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    CGSize(width: Sizes.Cells.CalendarCell.width, height: Sizes.Cells.CalendarCell.height)
-  }
-
-  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-    Sizes.Views.Calendar.sectionInset
-  }
-
-  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-    CGSize(width: collectionView.bounds.width, height: Sizes.Views.Calendar.headerSizeHeight)
-  }
-}
+//
+//extension CalendarViewController: UICollectionViewDataSource {
+//  func numberOfSections(in collectionView: UICollectionView) -> Int {
+//    dataSource.count
+//  }
+//
+//  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//    dataSource[section].items.count
+//  }
+//
+//  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//    switch dataSource[indexPath.section].type {
+//    case .month(let startOfMonth):
+//
+//      guard let cell = collectionView.dequeueReusableCell(
+//        withReuseIdentifier: CalendarCell.reuseID,
+//        for: indexPath
+//      ) as? CalendarCell else { return UICollectionViewCell() }
+//
+//      let item = dataSource[indexPath.section].items[indexPath.item]
+//
+//      switch item.type {
+//      case .empty:
+//        cell.configureAsEmpty()
+//      case .day(let date, let isSelected, let completedTasksCount, let plannedTasksCount):
+//        cell.configure(date: date, isSelected: isSelected, completedTasksCount: completedTasksCount, plannedTasksCount: plannedTasksCount)
+//      }
+//      return cell
+//    case .year(let year):
+//      guard let cell = collectionView.dequeueReusableCell(
+//        withReuseIdentifier: CalendarYearCell.reuseID,
+//        for: indexPath
+//      ) as? CalendarYearCell else { return UICollectionViewCell() }
+//      cell.configure(year: year)
+//      return cell
+//    }
+//  }
+//
+//  func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+//    guard let header = collectionView.dequeueReusableSupplementaryView(
+//      ofKind: kind,
+//      withReuseIdentifier: CalendarReusableView.reuseID,
+//      for: indexPath
+//    ) as? CalendarReusableView else { return UICollectionReusableView() }
+//
+//    switch dataSource[indexPath.section].type {
+//    case .month(let startOfMonth):
+//      header.label.text = monthFormatter.string(from: startOfMonth)
+//    case .year:
+//      header.label.text = nil
+//    }
+//
+//    header.label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+//    header.label.textAlignment = .left
+//    header.label.text?.firstCharacterUppercased()
+//    return header
+//  }
+//}
+//
+//extension CalendarViewController: CalendarViewDelegate {
+//  func appendPastData() {
+//    viewModel.appendPastData()
+//  }
+//
+//  func appendFutureData() {
+//    viewModel.appendFutureData()
+//  }
+//}
+//
+//// MARK: - UICollectionViewDelegateFlowLayout
+//extension CalendarViewController: UICollectionViewDelegateFlowLayout {
+//  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//    CGSize(width: Sizes.Cells.CalendarCell.width, height: Sizes.Cells.CalendarCell.height)
+//  }
+//
+//  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+//    Sizes.Views.Calendar.sectionInset
+//  }
+//
+//  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+//    CGSize(width: collectionView.bounds.width, height: Sizes.Views.Calendar.headerSizeHeight)
+//  }
+//}

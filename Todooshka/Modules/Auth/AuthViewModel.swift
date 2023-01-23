@@ -57,32 +57,44 @@ class AuthViewModel: Stepper {
 
     // AUTH WITH GOOGLE
     let authWithGoogle = input.googleButtonClickTrigger
-      .compactMap { viewController -> AuthWithGoogleData? in
-        guard let clientID = FirebaseApp.app()?.options.clientID else { return nil }
-        return AuthWithGoogleData(viewController: viewController, config: GIDConfiguration(clientID: clientID))
-      }.asObservable()
-      .flatMapLatest { authWithGoogleData -> Observable<Result<GIDGoogleUser, Error>>  in
-        GIDSignIn.sharedInstance.rx.signIn(with: authWithGoogleData.config, presenting: authWithGoogleData.viewController)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let googleGetCredential = authWithGoogle
-      .compactMap { result -> GIDGoogleUser? in
-        guard case .success(let user) = result else { return nil }
-        return user
-      }.compactMap { user -> AuthCredential? in
-        guard let idToken = user.authentication.idToken else { return nil }
-        return GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.authentication.accessToken)
+      .asObservable()
+      .flatMapLatest { viewController -> Observable<Result<GIDSignInResult, Error>>  in
+        GIDSignIn.sharedInstance.rx.signIn(with: viewController)
       }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//      .compactMap { viewController -> AuthWithGoogleData? in
+//        guard let clientID = FirebaseApp.app()?.options.clientID else { return nil }
+//        return AuthWithGoogleData(viewController: viewController, config: GIDConfiguration(clientID: clientID))
+//      }
+     
+      
+      
 
-    let authWithCredentials = Driver
-      .of(googleGetCredential, appleGetCredential)
-      .merge()
+//    let googleGetCredential = authWithGoogle
+//      .compactMap { result -> GIDSignInResult? in
+//        guard case .success(let result) = result else { return nil }
+//        return result
+//      }
+//      .compactMap { result -> AuthCredential? in
+//        guard let idToken = result.user.authentication.idToken else { return nil }
+//        return GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.authentication.accessToken)
+//      }
+//
+//    let appleGetCredential = Driver
+//      .of(googleGetCredential, appleGetCredential)
+//      .merge()
+//      .asObservable()
+//      .flatMapLatest { credential ->  Observable<Result<AuthDataResult, Error>> in
+//        Auth.auth().rx.signInAndRetrieveData(with: credential)
+//      }
+    //      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+    
+    let auth = appleGetCredential
       .asObservable()
       .flatMapLatest { credential ->  Observable<Result<AuthDataResult, Error>> in
         Auth.auth().rx.signInAndRetrieveData(with: credential)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let auth = authWithCredentials
+      }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
       .compactMap { result -> AuthDataResult? in
         guard case .success(let authDataResult) = result else { return nil }
         return authDataResult

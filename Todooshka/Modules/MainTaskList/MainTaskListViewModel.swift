@@ -23,12 +23,18 @@ class MainTaskListViewModel: Stepper {
     let ideaButtonClickTrigger: Driver<Void>
     // CALENDAR
     let calendarButtonClickTrigger: Driver<Void>
+    // TASK LIST
+    let taskListButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
+    // BUTTONS
     let openOverduedTasklist: Driver<Void>
     let openIdeaTaskList: Driver<Void>
     let openCalendar: Driver<Void>
+    let openTaskList: Driver<Void>
+    // DATASOURCE
+    let calendarDataSource: Driver<[CalendarSection]>
   }
 
   // MARK: - Init
@@ -37,22 +43,26 @@ class MainTaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    // overdued
+    // MARK: - BUTTONS
     let openOverduedTasklist = input.overduedButtonClickTrigger
       .do { _ in self.steps.accept(AppStep.overduedTaskListIsRequired) }
     
-    // idea
     let openIdeaTaskList = input.ideaButtonClickTrigger
       .do { _ in self.steps.accept(AppStep.ideaTaskListIsRequired) }
     
-    // calendar
     let openCalendar = input.calendarButtonClickTrigger
      
+    let openTaskList = input.taskListButtonClickTrigger
+    
+    // MARK: - DATASOURCE
+    let calendarDataSource = Driver<[CalendarSection]>.of([])
 
     return Output(
       openOverduedTasklist: openOverduedTasklist,
       openIdeaTaskList: openIdeaTaskList,
-      openCalendar: openCalendar
+      openCalendar: openCalendar,
+      openTaskList: openTaskList,
+      calendarDataSource: calendarDataSource
     )
   }
 }
