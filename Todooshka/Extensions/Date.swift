@@ -42,4 +42,11 @@ extension Date {
     let components = calendar.dateComponents([.weekday], from: self)
     return components.weekday == 2
   }
+  
+  /// Returns the amount of months from another date
+  /// https://stackoverflow.com/questions/27182023/getting-the-difference-between-two-dates-months-days-hours-minutes-seconds-in
+  func months(from date: Date) -> Int {
+    return Calendar.current.dateComponents([.month], from: date, to: self).month ?? 0
+  }
+  
 }

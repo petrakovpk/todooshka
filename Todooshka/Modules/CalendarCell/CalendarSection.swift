@@ -15,6 +15,14 @@ struct CalendarSection: AnimatableSectionModelType {
   var identity: String {
     year.string + month.string
   }
+  
+  var startDate: Date {
+    Date(year: year, month: month, day: 1)!
+  }
+  
+  var endDate: Date {
+    startDate.endOfMonth
+  }
 
   init(year: Int, month: Int, items: [CalendarItem]) {
     self.year = year

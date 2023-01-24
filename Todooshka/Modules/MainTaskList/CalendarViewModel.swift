@@ -17,7 +17,7 @@ class CalendarViewModel: Stepper {
   public let displayDate = BehaviorRelay<Date>(value: Date())
 
   private let services: AppServices
-  private let minMonthIndex = BehaviorRelay<Int>(value: -1)
+  private let minMonthIndex = BehaviorRelay<Int>(value: -2)
   private let maxMonthIndex = BehaviorRelay<Int>(value: 2)
   
   private var isCalendarInShortMode = false
@@ -31,7 +31,8 @@ class CalendarViewModel: Stepper {
 
   struct Output {
     let isCalendarInShortMode: Driver<Bool>
-    let dataSource: Driver<[CalendarSection]>
+    let calendarAddMonths: Driver<Void>
+    let calendarDataSource: Driver<[CalendarSection]>
     let scrollToDate: Driver<Date>
     let monthButtonTitle: Driver<String>
     let addTask: Driver<Void>
@@ -60,12 +61,32 @@ class CalendarViewModel: Stepper {
       .map { _ -> Bool in
         return !self.isCalendarInShortMode
       }
+      .startWith(false)
       .do { isCalendarInShortMode in
         self.isCalendarInShortMode = isCalendarInShortMode
       }
     
     // MARK: - DATASOURCE
-    let dataSource = Driver.combineLatest(minMonthIndex, maxMonthIndex) { minMonthIndex, maxMonthIndex -> [CalendarSection] in
+    let calendarAddPreviousMonth = displayDate
+      .withLatestFrom(minMonthIndex) { displayDate, minMonthIndex in
+        if displayDate.months(from: Date()) < (minMonthIndex + 2) {
+          self.minMonthIndex.accept(minMonthIndex - 1)
+        }
+      }
+    
+    let calendarAddNextMonth = displayDate
+      .withLatestFrom(maxMonthIndex) { displayDate, maxMonthIndex in
+        if displayDate.months(from: Date()) >= (maxMonthIndex - 1) {
+          self.maxMonthIndex.accept(maxMonthIndex + 1)
+        }
+      }
+    
+    let calendarAddMonths = Driver
+      .of(calendarAddPreviousMonth, calendarAddNextMonth)
+      .merge()
+    
+    let calendarDataSource = Driver.combineLatest(tasks, minMonthIndex, maxMonthIndex)
+    {tasks, minMonthIndex, maxMonthIndex -> [CalendarSection] in
       (minMonthIndex ... maxMonthIndex)
         .map { monthIndex -> Date in
           Date().adding(.month, value: monthIndex).startOfMonth
@@ -78,11 +99,20 @@ class CalendarViewModel: Stepper {
               Calendar.current
               .numberOfDaysInMonth(for: startOfMonth)
               .countableRange
-              .map { dayIndex -> CalendarItem in
+              .compactMap { dayIndex -> Date in
+                startOfMonth.adding(.day, value: dayIndex)
+              }
+              .map { date -> CalendarItem in
                 CalendarItem(
-                  date: startOfMonth.adding(.day, value: dayIndex),
+                  date: date,
                   isSelected: false,
-                  completedTasksCount: 0,
+                  completedTasksCount:
+                    tasks
+                    .filter { task -> Bool in
+                      guard let completed = task.completed else { return false }
+                      return task.status == .completed
+                      && completed.startOfDay == date.startOfDay
+                    }.count,
                   plannedTasksCount: 0
                 )
               }
@@ -92,14 +122,14 @@ class CalendarViewModel: Stepper {
     
     let scrollToPreviousPeriod = input.scrollToPreviousPeriodButtonClickTrigger
       .withLatestFrom(displayDate)
-      .map { displayDate -> Date in
-        displayDate.adding(.month, value: -1)
+      .withLatestFrom(isCalendarInShortMode) { displayDate, isCalendarInShortMode -> Date in
+        displayDate.adding(isCalendarInShortMode ? .weekOfMonth : .month, value: -1)
       }
     
     let scrollToNextPeriod = input.scrollToNextPeriodButtonClickTrigger
       .withLatestFrom(displayDate)
-      .map { displayDate -> Date in
-        displayDate.adding(.month, value: 1)
+      .withLatestFrom(isCalendarInShortMode) { displayDate, isCalendarInShortMode -> Date in
+        displayDate.adding(isCalendarInShortMode ? .weekOfMonth : .month, value: 1)
       }
     
     let scrollToDate = Driver
@@ -165,23 +195,59 @@ class CalendarViewModel: Stepper {
     
     let completedListSectionEmpty = completedListItems
       .map {
-        [
-          TaskListSection(
-            header: "",
-            mode: .empty,
-            items: $0
-          )
-        ]
+        TaskListSection(
+          header: "",
+          mode: .empty,
+          items: $0
+        )
       }
+    
+    // MARK: - PLANNED COMPLETED
+    let plannedListTasks = Driver
+      .combineLatest(tasks, selectedDate) { tasks, selectedDate -> [Task] in
+        tasks.filter { task -> Bool in
+          task.status == .inProgress &&
+          task.planned.startOfDay >= selectedDate.startOfDay &&
+          task.planned.endOfDay <= selectedDate.endOfDay
+        }
+        .sorted { prevTask, nextTask -> Bool in
+          prevTask.created < nextTask.created
+        }
+      }
+    
+    let plannedListItems = Driver.combineLatest(plannedListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+      tasks.map { task -> TaskListSectionItem in
+        TaskListSectionItem(
+          task: task,
+          kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
+        )
+      }
+    }
+    
+    let plannedListSectionEmpty = plannedListItems
+      .map {
+        TaskListSection(
+          header: "PLANNED",
+          mode: .empty,
+          items: $0
+        )
+      }
+    
+    // MARK: - DATASOURCE
+    let calendarTaskListDataSource = Driver
+      .combineLatest(completedListSectionEmpty, plannedListSectionEmpty, selectedDate ) { completedListSectionEmpty, plannedListSectionEmpty, selectedDate -> [TaskListSection] in
+      selectedDate.startOfDay <= Date().startOfDay ? [completedListSectionEmpty] : [plannedListSectionEmpty]
+    }
     
     return Output(
       isCalendarInShortMode: isCalendarInShortMode,
-      dataSource: dataSource,
+      calendarAddMonths: calendarAddMonths,
+      calendarDataSource: calendarDataSource,
       scrollToDate: scrollToDate,
       monthButtonTitle: monthButtonTitle,
       addTask: addTask,
       calendarTaskListLabel: calendarTaskListLabel,
-      calendarTaskListDataSource: completedListSectionEmpty
+      calendarTaskListDataSource: calendarTaskListDataSource
     )
   }
 
