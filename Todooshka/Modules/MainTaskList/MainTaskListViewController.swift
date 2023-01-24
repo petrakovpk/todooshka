@@ -25,7 +25,9 @@ class MainTaskListViewController: UIViewController {
   private let disposeBag = DisposeBag()
   
   private var isCalendarAnimationRunning: Bool = false
-
+  private var isCalendarInShortMode: Bool = false
+  private var selectedDate: Date?
+  
   // MARK: - UI Elements - Scene
   private let scene: NestScene? = {
     let scene = SKScene(fileNamed: "NestScene") as? NestScene
@@ -74,14 +76,14 @@ class MainTaskListViewController: UIViewController {
     return button
   }()
   
-  // MARK: - UI Elements - Task List
+  // MARK: - UI Elements - Main Task List
   private let taskListContainerView: UIView = {
     let view = UIView()
     return view
   }()
   
-  private var taskListCollectionView: UICollectionView!
-  private var taskListDataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
+  private var mainTaskListCollectionView: UICollectionView!
+  private var mainTaskListDataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
 
   private let dragonBackgroundView = UIView()
 
@@ -221,7 +223,7 @@ class MainTaskListViewController: UIViewController {
     return label
   }()
   
-  private var isCalendarInShortMode: Bool = false
+  
   private let calendarView: JTACMonthView = {
     let calendarView = JTACMonthView()
     calendarView.layer.cornerRadius = 8
@@ -241,7 +243,6 @@ class MainTaskListViewController: UIViewController {
   private let dayTasksLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-    label.text = "На 23 февраля запланировано:"
     return label
   }()
   
@@ -253,6 +254,9 @@ class MainTaskListViewController: UIViewController {
     button.tintColor = Style.App.text
     return button
   }()
+  
+  private var calendarTaskListCollectionView: UICollectionView!
+  private var calendarTaskListDataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
   
   // MARK: - UI Elements - Alert
   private let alertView: UIView = {
@@ -302,22 +306,19 @@ class MainTaskListViewController: UIViewController {
   override func viewDidLoad() {
     configureScene()
     configureUI()
-    configureTaskListDataSource()
+    configureMainTaskListDataSource()
+    configureCalendarTaskListDataSource()
     bindSceneModel()
     bindViewModel()
-    bindListViewModel()
+    bindMainTaskListViewModel()
     bindCalendarViewModel()
   }
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     scene?.reloadData()
-    viewModel.services.dataService.checkPlannedTasksTrigger.accept(())
+//    viewModel.services.dataService.checkPlannedTasksTrigger.accept(())
     navigationController?.tabBarController?.tabBar.isHidden = false
-  }
-
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
   }
 
   // MARK: - Configure View Controller
@@ -360,7 +361,7 @@ class MainTaskListViewController: UIViewController {
   }
   
   private func configureTaskListUI() {
-    taskListCollectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createTaskListCompositionalLayout())
+    mainTaskListCollectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createMainTaskListCompositionalLayout())
     
     // adding 2 layer
     taskListContainerView.addSubviews([
@@ -368,7 +369,7 @@ class MainTaskListViewController: UIViewController {
       overduedTasksButton,
       ideaTasksButton,
       calendarButton,
-      taskListCollectionView
+      mainTaskListCollectionView
     ])
     
     // adding 3 layer
@@ -404,15 +405,15 @@ class MainTaskListViewController: UIViewController {
       heightConstant: 30
     )
 
-    taskListCollectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
-    taskListCollectionView.register(
+    mainTaskListCollectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+    mainTaskListCollectionView.register(
       TaskReusableView.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
       withReuseIdentifier: TaskReusableView.reuseID)
-    taskListCollectionView.alwaysBounceVertical = true
-    taskListCollectionView.layer.masksToBounds = false
-    taskListCollectionView.backgroundColor = .clear
-    taskListCollectionView.anchor(
+    mainTaskListCollectionView.alwaysBounceVertical = true
+    mainTaskListCollectionView.layer.masksToBounds = false
+    mainTaskListCollectionView.backgroundColor = .clear
+    mainTaskListCollectionView.anchor(
       top: overduedTasksButton.bottomAnchor,
       left: taskListContainerView.leftAnchor,
       bottom: taskListContainerView.safeAreaLayoutGuide.bottomAnchor,
@@ -447,6 +448,8 @@ class MainTaskListViewController: UIViewController {
     calendarDayNamesStackView.spacing = 0
     calendarDayNamesStackView.backgroundColor = Style.Views.Calendar.Background
     
+    calendarTaskListCollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createCalendarTaskListCompositionalLayout())
+    
     calendarContainerView.addSubviews([
       taskListButton,
       featherButton,
@@ -456,7 +459,8 @@ class MainTaskListViewController: UIViewController {
       scrollToPreviousPeriodButton,
       scrollToNextPeriodButton,
       dayTasksLabel,
-      addTaskButton
+      addTaskButton,
+      calendarTaskListCollectionView
     ])
     
     taskListButton.anchor(
@@ -549,6 +553,20 @@ class MainTaskListViewController: UIViewController {
       right: calendarContainerView.rightAnchor,
       rightConstant: 16
     )
+    
+    calendarTaskListCollectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+    calendarTaskListCollectionView.alwaysBounceVertical = true
+    calendarTaskListCollectionView.layer.masksToBounds = false
+    calendarTaskListCollectionView.backgroundColor = .clear
+    calendarTaskListCollectionView.anchor(
+      top: dayTasksLabel.bottomAnchor,
+      left: calendarContainerView.leftAnchor,
+      bottom: calendarContainerView.bottomAnchor,
+      right: calendarContainerView.rightAnchor,
+      topConstant: 8,
+      leftConstant: 16,
+      rightConstant: 16
+    )
   }
 
   private func configureAlert() {
@@ -591,10 +609,33 @@ class MainTaskListViewController: UIViewController {
     alertCancelButton.anchor(top: alertDeleteButton.bottomAnchor, topConstant: 10)
   }
 
-  // MARK: - Data Source
-  private func configureTaskListDataSource() {
-    taskListCollectionView.dataSource = nil
-    taskListDataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(
+  // MARK: - Main Task List Collection View
+  private func createMainTaskListCompositionalLayout() -> UICollectionViewLayout {
+    return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
+      return self.mainTaskListSection()
+    }
+  }
+  
+  private func mainTaskListSection() -> NSCollectionLayoutSection {
+    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62))
+    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
+    let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+    let section = NSCollectionLayoutSection(group: group)
+    section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50.0))
+    let header = NSCollectionLayoutBoundarySupplementaryItem(
+      layoutSize: headerSize,
+      elementKind: UICollectionView.elementKindSectionHeader,
+      alignment: .top)
+    section.boundarySupplementaryItems = [header]
+    return section
+  }
+  
+  private func configureMainTaskListDataSource() {
+    mainTaskListCollectionView.dataSource = nil
+    mainTaskListDataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(
       configureCell: { dataSource, collectionView, indexPath, item in
         guard let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: TaskCell.reuseID,
@@ -615,15 +656,14 @@ class MainTaskListViewController: UIViewController {
       }
     )
   }
-
-  // MARK: - CollectionView
-  private func createTaskListCompositionalLayout() -> UICollectionViewLayout {
+  
+  private func createCalendarTaskListCompositionalLayout() -> UICollectionViewLayout {
     return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
-      return self.taskListSection()
+      return self.calendarTaskListSection()
     }
   }
   
-  private func taskListSection() -> NSCollectionLayoutSection {
+  private func calendarTaskListSection() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
@@ -631,16 +671,25 @@ class MainTaskListViewController: UIViewController {
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50.0))
-    let header = NSCollectionLayoutBoundarySupplementaryItem(
-      layoutSize: headerSize,
-      elementKind: UICollectionView.elementKindSectionHeader,
-      alignment: .top)
-    section.boundarySupplementaryItems = [header]
-    section.orthogonalScrollingBehavior = .groupPaging
     return section
   }
   
+  // MARK: - Calendar Task List Collection View
+  private func configureCalendarTaskListDataSource() {
+    calendarTaskListCollectionView.dataSource = nil
+    calendarTaskListDataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(
+      configureCell: { dataSource, collectionView, indexPath, item in
+        guard let cell = collectionView.dequeueReusableCell(
+          withReuseIdentifier: TaskCell.reuseID,
+          for: indexPath
+        ) as? TaskCell else { return UICollectionViewCell() }
+        cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
+        cell.delegate = self
+        return cell
+      }
+    )
+  }
+
   // MARK: - Bind
   func bindSceneModel() {
     let input = NestSceneModel.Input()
@@ -674,7 +723,7 @@ class MainTaskListViewController: UIViewController {
       .forEach { $0.disposed(by: disposeBag) }
   }
 
-  func bindListViewModel() {
+  func bindMainTaskListViewModel() {
     let input = TaskListViewModel.Input(
       // BACK
       backButtonClickTrigger: Driver<Void>.of(),
@@ -683,7 +732,7 @@ class MainTaskListViewController: UIViewController {
       // REMOVE ALL
       removeAllButtonClickTrigger: Driver<Void>.of(),
       // SELECT TASK
-      selection: taskListCollectionView.rx.itemSelected.asDriver(),
+      selection: mainTaskListCollectionView.rx.itemSelected.asDriver(),
       // ALERT
       alertDeleteButtonClick: alertDeleteButton.rx.tap.asDriver(),
       alertCancelButtonClick: alertCancelButton.rx.tap.asDriver()
@@ -693,7 +742,7 @@ class MainTaskListViewController: UIViewController {
 
     [
       // DATASOURCE
-      outputs.dataSource.drive(taskListCollectionView.rx.items(dataSource: taskListDataSource)),
+      outputs.dataSource.drive(mainTaskListCollectionView.rx.items(dataSource: mainTaskListDataSource)),
       outputs.dataSource.drive(dataSourceBinder),
       outputs.reloadItems.drive(reloadItemsBinder),
       outputs.hideCellWhenAlertClosed.drive(hideCellBinder),
@@ -711,11 +760,11 @@ class MainTaskListViewController: UIViewController {
   
   func bindCalendarViewModel() {
     let input = CalendarViewModel.Input(
-    //  selection: calendarView.rx.itemSelected.asDriver(),
       changeCalendarModeButtonClickTrigger: changeCalendarModeButton.rx.tap
         .filter { _ in !self.isCalendarAnimationRunning }.mapToVoid().asDriverOnErrorJustComplete(),
       scrollToPreviousPeriodButtonClickTrigger: scrollToPreviousPeriodButton.rx.tap.asDriver(),
-      scrollToNextPeriodButtonClickTrigger: scrollToNextPeriodButton.rx.tap.asDriver()
+      scrollToNextPeriodButtonClickTrigger: scrollToNextPeriodButton.rx.tap.asDriver(),
+      addTaskButtonClickTrigger: addTaskButton.rx.tap.asDriver()
     )
 
     let outputs = calendarViewModel.transform(input: input)
@@ -723,15 +772,18 @@ class MainTaskListViewController: UIViewController {
     [
       outputs.isCalendarInShortMode.drive(isCalendarInShortModeBinder),
       outputs.scrollToDate.drive(scrollToDateBinder),
-      outputs.monthButtonTitle.drive(monthLabel.rx.text)
+      outputs.monthButtonTitle.drive(monthLabel.rx.text),
+      outputs.addTask.drive(),
+      outputs.calendarTaskListLabel.drive(dayTasksLabel.rx.text),
+      outputs.calendarTaskListDataSource.drive(calendarTaskListCollectionView.rx.items(dataSource: calendarTaskListDataSource)),
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }
 
-  // MARK: - Binders
+  // MARK: - Task List Binders
   var changeBinder: Binder<Result<Void, Error>> {
     return Binder(self, binding: { vc, _ in
-      vc.taskListCollectionView.reloadData()
+      vc.mainTaskListCollectionView.reloadData()
     })
   }
   
@@ -743,7 +795,7 @@ class MainTaskListViewController: UIViewController {
 
   var hideCellBinder: Binder<IndexPath> {
     return Binder(self, binding: { vc, indexPath in
-      if let cell = vc.taskListCollectionView.cellForItem(at: indexPath) as? TaskCell {
+      if let cell = vc.mainTaskListCollectionView.cellForItem(at: indexPath) as? TaskCell {
         cell.hideSwipe(animated: true)
       }
     })
@@ -752,10 +804,10 @@ class MainTaskListViewController: UIViewController {
   var reloadItemsBinder: Binder<[IndexPath]> {
     return Binder(self, binding: { vc, indexPaths in
       if self.listViewModel.editingIndexPath == nil {
-        vc.taskListCollectionView.reloadData()
+        vc.mainTaskListCollectionView.reloadData()
       } else {
         UIView.performWithoutAnimation {
-         vc.taskListCollectionView.reloadItems(at: indexPaths)
+         vc.mainTaskListCollectionView.reloadItems(at: indexPaths)
         }
       }
     })
@@ -813,7 +865,8 @@ class MainTaskListViewController: UIViewController {
       }
     })
   }
-  
+
+  // MARK: - Calendar Binders
   var openTaskListViewBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
       UIView.animate(withDuration: 0.5) {
@@ -832,7 +885,6 @@ class MainTaskListViewController: UIViewController {
     })
   }
   
-  // MARK: - Calendar Binders
   var isCalendarInShortModeBinder: Binder<Bool> {
     return Binder(self, binding: { vc, isCalendarInShortMode in
       UIView.animate(withDuration: 0.5) {
@@ -842,10 +894,10 @@ class MainTaskListViewController: UIViewController {
         vc.changeCalendarModeButton.setImage(
           isCalendarInShortMode ? Icon.arrowBottom.image.template : Icon.arrowTop.image.template,
           for: .normal)
-        
       } completion: { _ in
         self.isCalendarAnimationRunning = false
         vc.calendarView.reloadData()
+        vc.calendarView.scrollToDate(self.selectedDate ?? Date(), animateScroll: false)
       }
     })
   }
@@ -855,13 +907,6 @@ class MainTaskListViewController: UIViewController {
       vc.calendarView.scrollToDate(date)
     })
   }
-  
-//  var monthButtonTitleBinder: Binder<String> {
-//    return Binder(self, binding: { vc, title in
-//      vc.monthButton.setTitle(title, for: .normal)
-//    })
-//  }
-  
 }
 
 extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
@@ -957,15 +1002,20 @@ extension MainTaskListViewController: JTACMonthViewDelegate {
   
   func calendar(_ calendar: JTACMonthView, didSelectDate date: Date, cell: JTACDayCell?, cellState: CellState, indexPath: IndexPath) {
     if let cell = cell as? CalendarCell {
+      selectedDate = date
+      calendarViewModel.selectedDate.accept(date)
       cell.backgroundColor = Style.Cells.Calendar.Selected
       cell.dateLabel.textColor = .white
     }
   }
   
+  
   func calendar(_ calendar: JTACMonthView, didDeselectDate date: Date, cell: JTACDayCell?, cellState: CellState, indexPath: IndexPath) {
     if let cell = cell as? CalendarCell {
+      selectedDate = nil
       cell.backgroundColor = .clear
       cell.dateLabel.textColor = Style.App.text
+
     }
   }
   
@@ -977,6 +1027,14 @@ extension MainTaskListViewController: JTACMonthViewDelegate {
     guard let cell = view as? CalendarCell else { return }
     cell.dateLabel.text = cellState.text
     
+    if cellState.date.startOfDay == self.selectedDate?.startOfDay {
+      cell.backgroundColor = Style.Cells.Calendar.Selected
+      cell.dateLabel.textColor = .white
+    } else {
+      cell.backgroundColor = .clear
+      cell.dateLabel.textColor = Style.App.text
+    }
+
     if cellState.date.startOfDay == Date().startOfDay {
       cell.contentView.borderWidth = 1.0
     } else {

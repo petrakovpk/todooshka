@@ -42,7 +42,7 @@ enum AppStep: Step {
   case showKindOfTaskIsRequired(kindOfTask: KindOfTask)
 
   // Task
-  case createTaskIsRequired(task: Task)
+  case createTaskIsRequired(task: Task, isModal: Bool)
   case showTaskIsRequired(task: Task)
   case taskProcessingIsCompleted
 

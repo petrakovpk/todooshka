@@ -58,7 +58,10 @@ class TabBarFlow: Flow {
       flowContributor: .contribute(
         withNextPresentable: taskFlow,
         withNextStepper: OneStepper(
-          withSingleStep: AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .inProgress))
+          withSingleStep: AppStep.createTaskIsRequired(
+            task: Task(UID: UUID().uuidString, status: .inProgress),
+            isModal: true
+          )
         )
       )
     )
@@ -68,7 +71,6 @@ class TabBarFlow: Flow {
     let funFlow = FunFlow(withServices: self.services)
     let taskListFlow = TaskListFlow(withServices: self.services)
     let profileFlow = ProfileFlow(withServices: self.services)
-    //let calendarFlow = CalendarFlow(withServices: self.services)
     let emptyFlow = EmptyFlow()
 
     let viewModel = TabBarViewModel(services: services)
@@ -106,6 +108,7 @@ class TabBarFlow: Flow {
       .contribute(withNextPresentable: self, withNextStepper: viewModel),
       .contribute(withNextPresentable: funFlow, withNextStepper: OneStepper(withSingleStep: AppStep.funIsRequired)),
       .contribute(withNextPresentable: taskListFlow, withNextStepper: OneStepper(withSingleStep: AppStep.mainTaskListIsRequired)),
+      //.contribute(withNextPresentable: taskListFlow, withNextStepper: <#T##Stepper#>)
       .contribute(withNextPresentable: profileFlow, withNextStepper: OneStepper(withSingleStep: AppStep.profileIsRequired)),
       .contribute(withNextPresentable: emptyFlow, withNextStepper: OneStepper(withSingleStep: AppStep.navigateBack))
     ])

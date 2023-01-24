@@ -6,11 +6,17 @@
 
 import Foundation
 
+
+
 extension Date {
   var startOfDay: Date {
-    return Calendar.current.startOfDay(for: self)
+    Calendar.current.startOfDay(for: self)
   }
-
+  
+  var startOfWeek: Date {
+    Calendar.current.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self).date!
+  }
+  
   var startOfMonth: Date {
     let calendar = Calendar(identifier: .gregorian)
     let components = calendar.dateComponents([.year, .month], from: self)

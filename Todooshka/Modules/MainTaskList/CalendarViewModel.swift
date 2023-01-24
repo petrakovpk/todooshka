@@ -20,12 +20,13 @@ class CalendarViewModel: Stepper {
   private let minMonthIndex = BehaviorRelay<Int>(value: -1)
   private let maxMonthIndex = BehaviorRelay<Int>(value: 2)
   
-  private var isCalendarInShortMode: Bool = false
+  private var isCalendarInShortMode = false
   
   struct Input {
     let changeCalendarModeButtonClickTrigger: Driver<Void>
     let scrollToPreviousPeriodButtonClickTrigger: Driver<Void>
     let scrollToNextPeriodButtonClickTrigger: Driver<Void>
+    let addTaskButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
@@ -33,6 +34,9 @@ class CalendarViewModel: Stepper {
     let dataSource: Driver<[CalendarSection]>
     let scrollToDate: Driver<Date>
     let monthButtonTitle: Driver<String>
+    let addTask: Driver<Void>
+    let calendarTaskListLabel: Driver<String>
+    let calendarTaskListDataSource: Driver<[TaskListSection]>
   }
 
   // MARK: - Init
@@ -47,6 +51,8 @@ class CalendarViewModel: Stepper {
     let maxMonthIndex = maxMonthIndex.asDriver()
     let selectedDate = selectedDate.asDriver()
     let displayDate = displayDate.asDriver()
+    let tasks = services.dataService.tasks
+    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
     
     // MARK: - CALENDAR
     let isCalendarInShortMode = input
@@ -106,11 +112,76 @@ class CalendarViewModel: Stepper {
         DateFormatter.monthAndYear.string(from: date).capitalized + " " + date.year.string
       }
     
+    let addTask = input.addTaskButtonClickTrigger
+      .withLatestFrom(selectedDate)
+      .map { selectedDate -> Void in
+        self.steps.accept(
+          AppStep.createTaskIsRequired(
+            task: Task(
+              UID: UUID().uuidString,
+              status: .inProgress,
+              planned: selectedDate),
+            isModal: true
+          ))
+      }
+    
+    let calendarTaskListLabel = selectedDate
+      .map { selectedDate -> String in
+        if selectedDate.startOfDay <= Date().startOfDay {
+          return selectedDate.string(withFormat: "dd MMMM yyyy") + " выполнено:"
+        } else {
+          return "На " + selectedDate.string(withFormat: "dd MMMM yyyy") + " запланировано:"
+        }
+      }
+    
+    // MARK: - DATASOURCE COMPLETED
+    let completedListTasks = Driver
+      .combineLatest(tasks, selectedDate) { tasks, selectedDate -> [Task] in
+        tasks
+          .filter { task -> Bool in
+            guard let completed = task.completed else { return false }
+            return task.status == .completed &&
+            completed.startOfDay >= selectedDate.startOfDay &&
+            completed.endOfDay <= selectedDate.endOfDay
+          }
+          .sorted { prevTask, nextTask -> Bool in
+            guard
+              let prevTaskCompleted = prevTask.completed,
+              let nextTaskCompleted = nextTask.completed
+            else { return false }
+            
+            return prevTaskCompleted < nextTaskCompleted
+          }
+      }
+  
+    let completedListItems = Driver.combineLatest(completedListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+      tasks.map { task -> TaskListSectionItem in
+        TaskListSectionItem(
+          task: task,
+          kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
+        )
+      }
+    }
+    
+    let completedListSectionEmpty = completedListItems
+      .map {
+        [
+          TaskListSection(
+            header: "",
+            mode: .empty,
+            items: $0
+          )
+        ]
+      }
+    
     return Output(
       isCalendarInShortMode: isCalendarInShortMode,
       dataSource: dataSource,
       scrollToDate: scrollToDate,
-      monthButtonTitle: monthButtonTitle
+      monthButtonTitle: monthButtonTitle,
+      addTask: addTask,
+      calendarTaskListLabel: calendarTaskListLabel,
+      calendarTaskListDataSource: completedListSectionEmpty
     )
   }
 

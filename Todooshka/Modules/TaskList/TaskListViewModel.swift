@@ -85,16 +85,14 @@ class TaskListViewModel: Stepper {
 
   func transform(input: Input) -> Output {
     // MARK: - INIT
-    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
     let tasks = services.dataService.tasks.asDriver()
+    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
     
     let mode = Driver<TaskListMode>.of(self.mode)
     
     // MARK: - BACK
     let navigateBack = input.backButtonClickTrigger
       .map { self.steps.accept(AppStep.taskListIsCompleted) }
-    
-    
     
     // MARK: - DATASOURCE MAIN
     let mainListTasks = tasks
@@ -473,9 +471,9 @@ class TaskListViewModel: Stepper {
       .compactMap { _ -> AppStep? in
         switch self.mode {
         case .idea:
-          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .idea))
+          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .idea), isModal: false)
         case .planned(let date):
-          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .inProgress, planned: date))
+          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .inProgress, planned: date), isModal: false)
         default:
           return nil
         }
