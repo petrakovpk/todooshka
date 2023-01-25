@@ -103,7 +103,7 @@
 //    contentView.backgroundColor = item.isSelected ? Style.Cells.Calendar.Selected : UIColor.clear
 //
 //    // imageView
-////    imageView.image = getImage(count: item.completedTasksCount)
+//   imageView.image = getImage(count: item.completedTasksCount)
 //
 //    // dateLabel
 //    dateLabel.text = item.date.day.string

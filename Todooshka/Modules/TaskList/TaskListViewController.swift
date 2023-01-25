@@ -335,21 +335,21 @@ extension TaskListViewController: SwipeCollectionViewCellDelegate {
       self.viewModel.changeStatus(indexPath: indexPath, status: .idea, completed: nil)
     }
 
-    let completeTaskAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
-      guard let self = self else { return }
-      action.fulfill(with: .reset)
-      self.viewModel.changeStatus(indexPath: indexPath, status: .completed, completed: Date())
-    }
+//    let completeTaskAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
+//      guard let self = self else { return }
+//      action.fulfill(with: .reset)
+//      self.viewModel.changeStatus(indexPath: indexPath, status: .completed, completed: Date())
+//    }
 
     configure(action: deleteAction, with: .trash)
     configure(action: ideaBoxAction, with: .idea)
-    configure(action: completeTaskAction, with: .complete)
+   // configure(action: completeTaskAction, with: .complete)
 
     deleteAction.backgroundColor = Style.App.background
     ideaBoxAction.backgroundColor = Style.App.background
-    completeTaskAction.backgroundColor = Style.App.background
+   // completeTaskAction.backgroundColor = Style.App.background
 
-    return [completeTaskAction, deleteAction, ideaBoxAction]
+    return [deleteAction, ideaBoxAction]
   }
 
   func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {

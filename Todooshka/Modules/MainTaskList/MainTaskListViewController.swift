@@ -262,14 +262,14 @@ class MainTaskListViewController: UIViewController {
   private var calendarTaskListDataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
   
   // MARK: - UI Elements - Alert
-  private let alertView: UIView = {
+  private let alertContainerView: UIView = {
     let view = UIView()
     view.backgroundColor = .black.withAlphaComponent(0.5)
     view.isHidden = true
     return view
   }()
 
-  private let alertSubView: UIView = {
+  private let alertView: UIView = {
     let view = UIView()
     view.cornerRadius = 27
     view.backgroundColor = Style.App.background
@@ -342,7 +342,20 @@ class MainTaskListViewController: UIViewController {
     // adding 1 layer
     view.addSubviews([
       taskListContainerView,
-      calendarContainerView
+      calendarContainerView,
+      alertContainerView
+    ])
+    
+    // adding 2 layer
+    alertContainerView.addSubviews([
+      alertView
+    ])
+    
+    // adding 3 layer
+    alertView.addSubviews([
+      alertLabel,
+      alertDeleteButton,
+      alertCancelButton
     ])
 
     taskListContainerView.frame = CGRect(
@@ -359,6 +372,32 @@ class MainTaskListViewController: UIViewController {
         height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height
     )
 
+    alertContainerView.anchor(
+      top: view.topAnchor,
+      left: view.leftAnchor,
+      bottom: view.bottomAnchor,
+      right: view.rightAnchor
+    )
+
+    alertView.anchorCenterXToSuperview()
+    alertView.anchorCenterYToSuperview()
+    alertView.anchor(widthConstant: Sizes.Views.AlertDeleteView.width, heightConstant: Sizes.Views.AlertDeleteView.height)
+
+    alertLabel.anchorCenterXToSuperview()
+    alertLabel.anchorCenterYToSuperview(constant: -1 * Sizes.Views.AlertDeleteView.height / 4)
+
+    alertDeleteButton.cornerRadius = Sizes.Buttons.AlertOkButton.height / 2
+    alertDeleteButton.anchorCenterXToSuperview()
+    alertDeleteButton.anchorCenterYToSuperview(constant: Sizes.Buttons.AlertOkButton.height / 2)
+    alertDeleteButton.anchor(
+      widthConstant: Sizes.Buttons.AlertOkButton.width,
+      heightConstant: Sizes.Buttons.AlertOkButton.height)
+
+    alertCancelButton.anchorCenterXToSuperview()
+    alertCancelButton.anchor(
+      top: alertDeleteButton.bottomAnchor,
+      topConstant: 10)
+    
     configureTaskListUI()
     configureCalendarUIFirstStep()
   }
@@ -572,46 +611,6 @@ class MainTaskListViewController: UIViewController {
     )
   }
 
-  private func configureAlert() {
-    // adding
-    view.addSubview(alertView)
-    
-    alertView.addSubview(alertSubView)
-    
-    alertSubView.addSubviews([
-      alertLabel,
-      alertDeleteButton,
-      alertCancelButton
-    ])
-
-    // alertView
-    alertView.anchor(
-      top: view.topAnchor,
-      left: view.leftAnchor,
-      bottom: view.bottomAnchor,
-      right: view.rightAnchor
-    )
-
-    // alertSubView
-    alertSubView.anchorCenterXToSuperview()
-    alertSubView.anchorCenterYToSuperview()
-    alertSubView.anchor(widthConstant: Sizes.Views.AlertDeleteView.width, heightConstant: Sizes.Views.AlertDeleteView.height)
-
-    // alertLabel
-    alertLabel.anchorCenterXToSuperview()
-    alertLabel.anchorCenterYToSuperview(constant: -1 * Sizes.Views.AlertDeleteView.height / 4)
-
-    // alertDeleteButton
-    alertDeleteButton.cornerRadius = Sizes.Buttons.AlertOkButton.height / 2
-    alertDeleteButton.anchorCenterXToSuperview()
-    alertDeleteButton.anchorCenterYToSuperview(constant: Sizes.Buttons.AlertOkButton.height / 2)
-    alertDeleteButton.anchor(widthConstant: Sizes.Buttons.AlertOkButton.width, heightConstant: Sizes.Buttons.AlertOkButton.height)
-
-    // alertCancelButton
-    alertCancelButton.anchorCenterXToSuperview()
-    alertCancelButton.anchor(top: alertDeleteButton.bottomAnchor, topConstant: 10)
-  }
-
   // MARK: - Main Task List Collection View
   private func createMainTaskListCompositionalLayout() -> UICollectionViewLayout {
     return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
@@ -763,6 +762,7 @@ class MainTaskListViewController: UIViewController {
   
   func bindCalendarViewModel() {
     let input = CalendarViewModel.Input(
+      monthLabelClickTrigger: monthLabel.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
       changeCalendarModeButtonClickTrigger: changeCalendarModeButton.rx.tap
         .filter { _ in !self.isCalendarAnimationRunning }.mapToVoid().asDriverOnErrorJustComplete(),
       scrollToPreviousPeriodButtonClickTrigger: scrollToPreviousPeriodButton.rx.tap.asDriver(),
@@ -794,7 +794,7 @@ class MainTaskListViewController: UIViewController {
   
   var hideAlertBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
-      vc.alertView.isHidden = true
+      vc.alertContainerView.isHidden = true
     })
   }
 
@@ -820,7 +820,7 @@ class MainTaskListViewController: UIViewController {
 
   var showAlertBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
-      vc.alertView.isHidden = false
+      vc.alertContainerView.isHidden = false
     })
   }
 
@@ -926,6 +926,11 @@ class MainTaskListViewController: UIViewController {
 
 extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
   func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
+    if collectionView == self.mainTaskListCollectionView {
+      print("1234 main")
+    } else if collectionView == self.calendarTaskListCollectionView {
+      print("1234 calendar")
+    }
     listViewModel.editingIndexPath = indexPath
   }
 
@@ -948,21 +953,13 @@ extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
       self.listViewModel.changeStatus(indexPath: indexPath, status: .idea, completed: nil)
     }
 
-    let completeTaskAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
-      guard let self = self else { return }
-      action.fulfill(with: .reset)
-      self.listViewModel.changeStatus(indexPath: indexPath, status: .completed, completed: Date())
-    }
-
     configure(action: deleteAction, with: .trash)
     configure(action: ideaBoxAction, with: .idea)
-    configure(action: completeTaskAction, with: .complete)
 
     deleteAction.backgroundColor = Style.App.background
     ideaBoxAction.backgroundColor = Style.App.background
-    completeTaskAction.backgroundColor = Style.App.background
 
-    return [completeTaskAction, deleteAction, ideaBoxAction]
+    return [deleteAction, ideaBoxAction]
   }
 
   func collectionView(_ collectionView: UICollectionView, editActionsOptionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
@@ -1009,24 +1006,42 @@ extension MainTaskListViewController: JTACMonthViewDelegate {
 
   func calendar(_ calendar: JTAppleCalendar.JTACMonthView, cellForItemAt date: Date, cellState: JTAppleCalendar.CellState, indexPath: IndexPath) -> JTAppleCalendar.JTACDayCell {
     let cell = calendar.dequeueReusableJTAppleCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
-    
     guard let section = calendarDataSource[safe: indexPath.section],
           let item = section.items[safe: indexPath.item] else {
-      cell.configure(cellState: cellState, selectedDate: self.selectedDate, completedTasksCount: 0)
+      cell.configure(
+        cellState: cellState,
+        selectedDate: self.selectedDate,
+        completedTasksCount: 0,
+        plannedTasksCount: 0)
       return cell
     }
     
-    cell.configure(cellState: cellState, selectedDate: self.selectedDate, completedTasksCount: item.completedTasksCount)
+    cell.configure(
+      cellState: cellState,
+      selectedDate: self.selectedDate,
+      completedTasksCount: item.completedTasksCount,
+      plannedTasksCount: item.plannedTasksCount)
     return cell
   }
 
   func calendar(_ calendar: JTAppleCalendar.JTACMonthView, willDisplay cell: JTAppleCalendar.JTACDayCell, forItemAt date: Date, cellState: JTAppleCalendar.CellState, indexPath: IndexPath) {
-    if let cell = cell as? CalendarCell {
+    let cell = cell as! CalendarCell
+    
+    if let section = calendarDataSource[safe: indexPath.section],
+      let item = section.items[safe: indexPath.item] {
       cell.configure(
         cellState: cellState,
         selectedDate: self.selectedDate,
-        completedTasksCount: calendarDataSource[indexPath.section].items[indexPath.item].completedTasksCount)
+        completedTasksCount: item.completedTasksCount,
+        plannedTasksCount: item.plannedTasksCount)
+      return
     }
+    
+    cell.configure(
+      cellState: cellState,
+      selectedDate: self.selectedDate,
+      completedTasksCount: 0,
+      plannedTasksCount: 0)
   }
   
   func calendar(_ calendar: JTACMonthView, didSelectDate date: Date, cell: JTACDayCell?, cellState: CellState, indexPath: IndexPath) {

@@ -25,15 +25,42 @@ class CalendarCell: JTACDayCell {
     return imageView
   }()
   
+  private let leftDot: UIView = {
+    let view = UIView()
+    view.cornerRadius = 2
+    view.isHidden = true
+    view.backgroundColor = Palette.SingleColors.Shamrock
+    return view
+  }()
+  
+  private let centralDot: UIView = {
+    let view = UIView()
+    view.cornerRadius = 2
+    view.isHidden = true
+    view.backgroundColor = Palette.SingleColors.JungleGreen
+    return view
+  }()
+  
+  private let rightDot: UIView = {
+    let view = UIView()
+    view.cornerRadius = 2
+    view.isHidden = true
+    view.backgroundColor = Palette.SingleColors.Jevel
+    return view
+  }()
+  
   override func draw(_ rect: CGRect) {
     super.draw(rect)
+    let dotsStackView = UIStackView(arrangedSubviews: [leftDot, centralDot, rightDot])
+    
     cornerRadius = bounds.width / 2
     
     contentView.cornerRadius = bounds.width / 2
     contentView.borderColor = Style.Cells.Calendar.Selected
     contentView.addSubviews([
       imageView,
-      dateLabel
+      dateLabel,
+      dotsStackView
     ])
     
     dateLabel.anchor(
@@ -48,10 +75,27 @@ class CalendarCell: JTACDayCell {
       bottom: contentView.bottomAnchor,
       right: contentView.rightAnchor)
     
+    leftDot.anchor(
+      widthConstant: 4,
+      heightConstant: 4)
+    
+    centralDot.anchor(
+      widthConstant: 4,
+      heightConstant: 4)
+    
+    rightDot.anchor(
+      widthConstant: 4,
+      heightConstant: 4)
+    
+    dotsStackView.anchorCenterXToSuperview()
+    dotsStackView.anchorCenterYToSuperview(constant: 10)
+    dotsStackView.anchor(
+      topConstant: 4,
+      heightConstant: 4)
     
   }
   
-  func configure(cellState: CellState, selectedDate: Date, completedTasksCount: Int) {
+  func configure(cellState: CellState, selectedDate: Date, completedTasksCount: Int, plannedTasksCount: Int) {
     dateLabel.text = cellState.text
     imageView.image = getImage(count: completedTasksCount)
     
@@ -74,26 +118,55 @@ class CalendarCell: JTACDayCell {
     } else {
       isHidden = true
     }
-  }
-  
-    func getImage(count: Int) -> UIImage? {
-      switch count {
+    
+    if cellState.date.startOfDay <= Date().startOfDay {
+      leftDot.isHidden = true
+      centralDot.isHidden = true
+      rightDot.isHidden = true
+    } else {
+      switch plannedTasksCount {
+      case 0:
+        leftDot.isHidden = true
+        centralDot.isHidden = true
+        rightDot.isHidden = true
       case 1:
-        return UIImage(named: "крылья_курица")
+        leftDot.isHidden = false
+        centralDot.isHidden = true
+        rightDot.isHidden = true
       case 2:
-        return UIImage(named: "крылья_страус")
-      case 3:
-        return UIImage(named: "крылья_пингвин")
-      case 4:
-        return UIImage(named: "крылья_сова")
-      case 5:
-        return UIImage(named: "крылья_попугай")
-      case 6:
-        return UIImage(named: "крылья_орел")
-      case 7 ... .max:
-        return UIImage(named: "крылья_дракон")
+        leftDot.isHidden = false
+        centralDot.isHidden = false
+        rightDot.isHidden = true
+      case 3 ... Int.max:
+        leftDot.isHidden = false
+        centralDot.isHidden = false
+        rightDot.isHidden = false
       default:
-        return nil
+        leftDot.isHidden = true
+        centralDot.isHidden = true
+        rightDot.isHidden = true
       }
     }
+  }
+ 
+  func getImage(count: Int) -> UIImage? {
+    switch count {
+    case 1:
+      return UIImage(named: "крылья_курица")
+    case 2:
+      return UIImage(named: "крылья_страус")
+    case 3:
+      return UIImage(named: "крылья_пингвин")
+    case 4:
+      return UIImage(named: "крылья_сова")
+    case 5:
+      return UIImage(named: "крылья_попугай")
+    case 6:
+      return UIImage(named: "крылья_орел")
+    case 7 ... .max:
+      return UIImage(named: "крылья_дракон")
+    default:
+      return nil
+    }
+  }
 }

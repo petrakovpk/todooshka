@@ -214,65 +214,6 @@ class TaskViewController: TDViewController {
     button.tintColor = .white
     return button
   }()
-  
-  // MARK: - Complete Task Alert UI Elements
-//  private let alertBackgroundView: UIView = {
-//    let view = UIView()
-//    view.backgroundColor = .black.withAlphaComponent(0.5)
-//    view.isHidden = true
-//    return view
-//  }()
-//
-//  private let alertOkButton: UIButton = {
-//    let button = UIButton(type: .system)
-//    button.cornerRadius = Sizes.Buttons.AlertOkButton.height / 2
-//    button.setTitle("Да, я молодец :)", for: .normal)
-//    button.setTitleColor(.white, for: .normal)
-//    button.backgroundColor = Style.Buttons.AlertRoseButton.Background
-//    button.isHidden = true
-//    return button
-//  }()
-//
-//  private let alertAnimationView: AnimationView = {
-//    let animationView = AnimationView(name: "taskDone2")
-//    animationView.isHidden = true
-//    animationView.contentMode = .scaleAspectFill
-//    animationView.loopMode = .repeat(3.0)
-//    animationView.animationSpeed = 1.0
-//    animationView.isHidden = true
-//    return animationView
-//  }()
-//
-//  private let alertDatePicker: UIDatePicker = {
-//    let picker = UIDatePicker()
-//    picker.datePickerMode = .date
-//    picker.preferredDatePickerStyle = .inline
-//    picker.backgroundColor = Style.App.background
-//    picker.cornerRadius = 15
-//    picker.isHidden = true
-//    picker.locale = Locale(identifier: "ru_RU")
-//    return picker
-//  }()
-//
-//  private let alertDatePickerOkButton: UIButton = {
-//    let button = UIButton(type: .system)
-//    button.cornerRadius = 12
-//    button.setTitle("Выбрать", for: .normal)
-//    button.setTitleColor(Style.App.text, for: .normal)
-//    button.backgroundColor = Palette.SingleColors.Portage
-//    button.isHidden = true
-//    return button
-//  }()
-//
-//  private let alertDatePickerCancelButton: UIButton = {
-//    let button = UIButton(type: .system)
-//    button.cornerRadius = 12
-//    button.setTitle("Отмена", for: .normal)
-//    button.setTitleColor(Style.App.text, for: .normal)
-//    button.backgroundColor = Style.App.background
-//    button.isHidden = true
-//    return button
-//  }()
 
   // MARK: - Lifecycle
   override func viewDidLoad() {
@@ -284,10 +225,8 @@ class TaskViewController: TDViewController {
 
   // MARK: - Configure UI
   private func configureUI() {
-    // titleLabel
     titleLabel.text = "Задача"
 
-    // collectionView
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
 
     // adding 1 order
@@ -325,7 +264,6 @@ class TaskViewController: TDViewController {
       expectedTimePickerOkButton
     ])
     
-    // nameTextField
     nameTextField.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
@@ -336,7 +274,6 @@ class TaskViewController: TDViewController {
       heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant
     )
     
-    // saveNameTextFieldButton
     saveNameTextFieldButton.centerYAnchor.constraint(equalTo: nameTextField.centerYAnchor).isActive = true
     saveNameTextFieldButton.anchor(
       right: nameTextField.rightAnchor,
@@ -344,7 +281,6 @@ class TaskViewController: TDViewController {
       heightConstant: 24
     )
     
-    // expectedDateTimelabel
     expectedDateTimelabel.anchor(
       top: nameTextField.bottomAnchor,
       left: view.leftAnchor,
@@ -353,7 +289,6 @@ class TaskViewController: TDViewController {
       rightConstant: 16
     )
     
-    // expectedDateButton
     expectedDateButton.anchor(
       top: expectedDateTimelabel.bottomAnchor,
       left: view.leftAnchor,
@@ -363,7 +298,6 @@ class TaskViewController: TDViewController {
       heightConstant: 42
     )
     
-    // expectedTimeButton
     expectedTimeButton.anchor(
       top: expectedDateTimelabel.bottomAnchor,
       left: expectedDateButton.rightAnchor,
@@ -373,7 +307,6 @@ class TaskViewController: TDViewController {
       heightConstant: 42
     )
     
-    // expectedDateTimeBackground
     expectedDateTimeBackground.anchor(
       top: view.topAnchor,
       left: view.leftAnchor,
@@ -381,11 +314,9 @@ class TaskViewController: TDViewController {
       right: view.rightAnchor
     )
     
-    // expectedDatePicker
     expectedDatePicker.anchorCenterXToSuperview()
     expectedDatePicker.anchorCenterYToSuperview()
     
-    // expectedDatePickerClearButton
     expectedDatePickerClearButton.anchor(
       top: expectedDatePicker.bottomAnchor,
       left: expectedDatePicker.leftAnchor,
@@ -394,7 +325,6 @@ class TaskViewController: TDViewController {
       heightConstant: 40
     )
     
-    // expectedDatePickerOkButton
     expectedDatePickerOkButton.anchor(
       top: expectedDatePicker.bottomAnchor,
       right: expectedDatePicker.rightAnchor,
@@ -403,11 +333,9 @@ class TaskViewController: TDViewController {
       heightConstant: 40
     )
     
-    // expectedTimePicker
     expectedTimePicker.anchorCenterXToSuperview()
     expectedTimePicker.anchorCenterYToSuperview()
     
-    // expectedDatePickerClearButton
     expectedTimePickerClearButton.anchor(
       top: expectedTimePicker.bottomAnchor,
       left: expectedTimePicker.leftAnchor,
@@ -416,7 +344,6 @@ class TaskViewController: TDViewController {
       heightConstant: 40
     )
     
-    // expectedDatePickerOkButton
     expectedTimePickerOkButton.anchor(
       top: expectedTimePicker.bottomAnchor,
       right: expectedTimePicker.rightAnchor,
@@ -425,7 +352,6 @@ class TaskViewController: TDViewController {
       heightConstant: 40
     )
 
-    // kindOfTaskLabel
     kindOfTaskLabel.anchor(
       top: expectedDateButton.bottomAnchor,
       left: view.leftAnchor,
@@ -435,14 +361,12 @@ class TaskViewController: TDViewController {
       rightConstant: 16
     )
 
-    // kindsOfTaskButton
     kindOfTaskSettingsButton.centerYAnchor.constraint(equalTo: kindOfTaskLabel.centerYAnchor).isActive = true
     kindOfTaskSettingsButton.anchor(
       right: view.rightAnchor,
       rightConstant: 16
     )
 
-    // collectionView
     collectionView.backgroundColor = UIColor.clear
     collectionView.clipsToBounds = false
     collectionView.isScrollEnabled = false
@@ -456,7 +380,6 @@ class TaskViewController: TDViewController {
       heightConstant: Sizes.Views.KindsOfTaskCollectionView.height
     )
 
-    // descriptionLabel
     descriptionLabel.anchor(
       top: collectionView.bottomAnchor,
       left: view.leftAnchor,
@@ -465,7 +388,6 @@ class TaskViewController: TDViewController {
       rightConstant: 16
     )
     
-    // saveDescriptionTextViewButton
     saveDescriptionTextViewButton.centerYAnchor.constraint(equalTo: descriptionLabel.centerYAnchor).isActive = true
     saveDescriptionTextViewButton.anchor(
       right: view.rightAnchor,
@@ -474,7 +396,6 @@ class TaskViewController: TDViewController {
       heightConstant: 24
     )
     
-    // descriptionTextView
     descriptionTextView.anchor(
       top: descriptionLabel.bottomAnchor,
       left: view.leftAnchor,
@@ -486,7 +407,6 @@ class TaskViewController: TDViewController {
       heightConstant: Sizes.TextViews.TaskDescriptionTextView.height
     )
 
-    // dividerView
     dividerView.anchor(
       left: descriptionTextView.leftAnchor,
       bottom: descriptionTextView.bottomAnchor,
@@ -494,7 +414,6 @@ class TaskViewController: TDViewController {
       heightConstant: 1.0
     )
     
-    // showToTheWorldLabel
     resultPhotoLabel.anchor(
       top: dividerView.bottomAnchor,
       left: view.leftAnchor,
@@ -502,7 +421,6 @@ class TaskViewController: TDViewController {
       leftConstant: 16
     )
     
-    // resultPhotoButton
     resultImageView.anchorCenterXToSuperview()
     resultImageView.anchor(
       top: resultPhotoLabel.bottomAnchor,
@@ -511,7 +429,6 @@ class TaskViewController: TDViewController {
       heightConstant: 100
     )
 
-    // getPhotoButton
     getPhotoButton.anchor(
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
       right: view.rightAnchor,
@@ -521,7 +438,6 @@ class TaskViewController: TDViewController {
       heightConstant: Sizes.Buttons.AppButton.height
     )
     
-    // completeTaskButton
     completeButton.anchor(
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
@@ -532,56 +448,6 @@ class TaskViewController: TDViewController {
       heightConstant: Sizes.Buttons.AppButton.height
     )
   }
-
-//  private func configureAlert() {
-//    // adding
-//    view.addSubviews([
-//      alertBackgroundView,
-//      alertAnimationView,
-//      alertDatePicker,
-//      alertDatePickerOkButton,
-//      alertDatePickerCancelButton
-//    ])
-//
-//    alertAnimationView.addSubview(alertOkButton)
-//
-//    // alertView
-//    alertBackgroundView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor)
-//
-//    // alertAnimationView
-//    alertAnimationView.anchorCenterXToSuperview()
-//    alertAnimationView.anchorCenterYToSuperview()
-//
-//    // alertDatePicker
-//    alertDatePicker.anchorCenterXToSuperview()
-//    alertDatePicker.anchorCenterYToSuperview()
-//
-//    // alertDatePickerOkButton
-//    alertDatePickerOkButton.anchor(
-//      top: alertDatePicker.bottomAnchor,
-//      right: alertDatePicker.rightAnchor,
-//      topConstant: 8,
-//      widthConstant: alertDatePicker.bounds.width / 2 - 8,
-//      heightConstant: 50
-//    )
-//
-//    // alertDatePickerCancelButton
-//    alertDatePickerCancelButton.anchor(
-//      top: alertDatePicker.bottomAnchor,
-//      left: alertDatePicker.leftAnchor,
-//      topConstant: 8,
-//      widthConstant: alertDatePicker.bounds.width / 2 - 8,
-//      heightConstant: 50
-//    )
-//
-//    // alertButton
-//    alertOkButton.anchor(
-//      top: completeButton.topAnchor,
-//      left: completeButton.leftAnchor,
-//      bottom: completeButton.bottomAnchor,
-//      right: completeButton.rightAnchor
-//    )
-//  }
 
   // MARK: - CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
@@ -686,8 +552,10 @@ class TaskViewController: TDViewController {
     return Binder(self, binding: { vc, task in
       vc.nameTextField.insertText(task.text)
       vc.descriptionTextView.insertText(task.description)
-      vc.expectedDatePicker.date = task.planned ?? Date()
-      vc.expectedTimePicker.date = task.planned ?? Date()
+      vc.expectedDatePicker.date = task.planned
+      vc.expectedTimePicker.date = task.planned
+      vc.expectedDateButton.setTitle(DateFormatter.midDateFormatter.string(for: task.planned), for: .normal)
+      vc.expectedTimeButton.setTitle(DateFormatter.midTimeFormatter.string(for: task.planned), for: .normal)
     })
   }
   
@@ -736,7 +604,6 @@ class TaskViewController: TDViewController {
     })
   }
 
-
   var hideDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
       vc.descriptionTextView.textColor = Style.App.text
@@ -751,53 +618,6 @@ class TaskViewController: TDViewController {
     })
   }
 
-//  var showComleteAlertTriggerBinder: Binder<Void> {
-//    return Binder(self, binding: { vc, _ in
-//      let texts = ["Да, я молодец!", "Просто герой :)", "Красавчик же", "Светлое будущее приближается :)"]
-//
-//      // alertView
-//      vc.alertBackgroundView.isHidden = false
-//
-//      // alertAnimationView
-//      vc.alertAnimationView.isHidden = false
-//      vc.alertAnimationView.animation = Animation.named("taskDone1")
-//      vc.alertAnimationView.removeAllConstraints()
-//      vc.alertAnimationView.anchor(top: vc.view.topAnchor, left: vc.view.leftAnchor, bottom: vc.view.bottomAnchor, right: vc.view.rightAnchor)
-//      vc.alertAnimationView.play()
-//
-//      // alertButton
-//      vc.alertOkButton.isHidden = false
-//      vc.alertOkButton.setTitle(texts.randomElement(), for: .normal)
-//    })
-//  }
-
-//  var showDatePickerAlertTriggerBinder: Binder<Void> {
-//    return Binder(self, binding: { vc, _ in
-//      // alertView
-//      vc.alertBackgroundView.isHidden = false
-//      vc.alertDatePicker.isHidden = false
-//      vc.alertDatePickerOkButton.isHidden = false
-//      vc.alertDatePickerCancelButton.isHidden = false
-//      vc.dismissKeyboard()
-//    })
-//  }
-
-//  var plannedButtonTextBinder: Binder<String> {
-//    return Binder(self, binding: { vc, text in
-//      vc.plannedDateButton.setTitle(text, for: .normal)
-//    })
-//  }
-
-//  var hideAlertBinder: Binder<Void> {
-//    return Binder(self, binding: { vc, _ in
-//      vc.alertAnimationView.isHidden = true
-//      vc.alertBackgroundView.isHidden = true
-//      vc.alertDatePicker.isHidden = true
-//      vc.alertDatePickerOkButton.isHidden = true
-//      vc.alertDatePickerCancelButton.isHidden = true
-//    })
-//  }
-
   var taskIsNewBinder: Binder<Bool> {
     return Binder(self, binding: { vc, isNew in
       if isNew {
@@ -808,7 +628,6 @@ class TaskViewController: TDViewController {
       }
     })
   }
-
 
   func configureDataSource() {
     collectionView.dataSource = nil

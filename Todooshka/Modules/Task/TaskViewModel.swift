@@ -88,7 +88,7 @@ class TaskViewModel: Stepper {
     let taskIsNew: Driver<Bool>
     //
     // yandex
-  //  let yandexMetrika: Driver<Void>
+    // let yandexMetrika: Driver<Void>
   }
 
   // MARK: - Init
@@ -100,10 +100,18 @@ class TaskViewModel: Stepper {
   // MARK: - Transform
   func transform(input: Input) -> Output {
     let initData = Driver.just(self.task)
-
-    let task = services
-      .dataService
-      .tasks
+    
+    let tasks = services.dataService.tasks
+    
+    let taskIsNew = tasks
+      .map { tasks -> Bool in
+        !tasks.contains { $0.UID == self.task.UID }
+      }
+      .asObservable()
+      .take(1)
+      .asDriverOnErrorJustComplete()
+    
+    let task = tasks
       .compactMap { $0.first { $0.UID == self.task.UID } }
       .startWith(self.task)
     
@@ -272,13 +280,8 @@ class TaskViewModel: Stepper {
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
-    let taskIsNew = services
-      .dataService
-      .tasks
-      .asDriver()
-      .map { tasks -> Bool in
-        !tasks.contains { $0.UID == self.task.UID }
-      }
+
+      
 
     return Output(
       // INIT

@@ -23,6 +23,7 @@ class CalendarViewModel: Stepper {
   private var isCalendarInShortMode = false
   
   struct Input {
+    let monthLabelClickTrigger: Driver<Void>
     let changeCalendarModeButtonClickTrigger: Driver<Void>
     let scrollToPreviousPeriodButtonClickTrigger: Driver<Void>
     let scrollToNextPeriodButtonClickTrigger: Driver<Void>
@@ -86,7 +87,7 @@ class CalendarViewModel: Stepper {
       .merge()
     
     let calendarDataSource = Driver.combineLatest(tasks, minMonthIndex, maxMonthIndex)
-    {tasks, minMonthIndex, maxMonthIndex -> [CalendarSection] in
+    { tasks, minMonthIndex, maxMonthIndex -> [CalendarSection] in
       (minMonthIndex ... maxMonthIndex)
         .map { monthIndex -> Date in
           Date().adding(.month, value: monthIndex).startOfMonth
@@ -113,12 +114,20 @@ class CalendarViewModel: Stepper {
                       return task.status == .completed
                       && completed.startOfDay == date.startOfDay
                     }.count,
-                  plannedTasksCount: 0
+                  plannedTasksCount:
+                    tasks
+                    .filter { task -> Bool in
+                      task.status == .inProgress
+                      && task.planned.startOfDay == date.startOfDay
+                    }.count
                 )
               }
           )
         }
     }
+    
+    let scrollToCurrentDate = input.monthLabelClickTrigger
+      .map { Date() }
     
     let scrollToPreviousPeriod = input.scrollToPreviousPeriodButtonClickTrigger
       .withLatestFrom(displayDate)
@@ -133,7 +142,7 @@ class CalendarViewModel: Stepper {
       }
     
     let scrollToDate = Driver
-      .of(scrollToPreviousPeriod, scrollToNextPeriod)
+      .of(scrollToCurrentDate, scrollToPreviousPeriod, scrollToNextPeriod)
       .merge()
       .startWith(Date())
     
