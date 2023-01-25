@@ -11,5 +11,6 @@ enum TaskCellMode: String {
   case empty
   case blueLine
   case redLineAndTime
+  case time
   case repeatButton
 }

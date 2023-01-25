@@ -40,30 +40,31 @@ struct Task: IdentifiableType, Equatable {
     self.status = status
   }
   
-  init(UID: String, status: TaskStatus, planned: Date) {
+  init(UID: String, status: TaskStatus, planned: Date, completed: Date?) {
     self.UID = UID
     self.status = status
     self.planned = planned
+    self.completed = completed
   }
   
-  init(UID: String, text: String, description: String, status: TaskStatus, created: Date) {
-    self.UID = UID
-    self.text = text
-    self.description = description
-    self.status = status
-    self.created = created
-  }
-
-  init(UID: String, text: String, description: String, kindOfTaskUID: String, status: TaskStatus, created: Date, closed: Date?, planned: Date) {
-    self.UID = UID
-    self.text = text
-    self.description = description
-    self.status = status
-    self.created = created
-    self.kindOfTaskUID = kindOfTaskUID
-    self.completed = closed
-    self.planned = planned
-  }
+//  init(UID: String, text: String, description: String, status: TaskStatus, created: Date) {
+//    self.UID = UID
+//    self.text = text
+//    self.description = description
+//    self.status = status
+//    self.created = created
+//  }
+//
+//  init(UID: String, text: String, description: String, kindOfTaskUID: String, status: TaskStatus, created: Date, closed: Date?, planned: Date) {
+//    self.UID = UID
+//    self.text = text
+//    self.description = description
+//    self.status = status
+//    self.created = created
+//    self.kindOfTaskUID = kindOfTaskUID
+//    self.completed = closed
+//    self.planned = planned
+//  }
 
   // MARK: - Equatable
   static func == (lhs: Task, rhs: Task) -> Bool {

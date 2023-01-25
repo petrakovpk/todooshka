@@ -28,6 +28,7 @@ class CalendarViewModel: Stepper {
     let scrollToPreviousPeriodButtonClickTrigger: Driver<Void>
     let scrollToNextPeriodButtonClickTrigger: Driver<Void>
     let addTaskButtonClickTrigger: Driver<Void>
+    let calendarTaskListSelection: Driver<IndexPath>
   }
 
   struct Output {
@@ -39,6 +40,7 @@ class CalendarViewModel: Stepper {
     let addTask: Driver<Void>
     let calendarTaskListLabel: Driver<String>
     let calendarTaskListDataSource: Driver<[TaskListSection]>
+    let openCalendarTask: Driver<Task>
   }
 
   // MARK: - Init
@@ -158,8 +160,9 @@ class CalendarViewModel: Stepper {
           AppStep.createTaskIsRequired(
             task: Task(
               UID: UUID().uuidString,
-              status: .inProgress,
-              planned: selectedDate),
+              status:  selectedDate.startOfDay <= Date().startOfDay ? .completed : .inProgress,
+              planned: selectedDate.endOfDay,
+              completed: selectedDate.startOfDay <= Date().startOfDay ? selectedDate : nil),
             isModal: true
           ))
       }
@@ -174,8 +177,8 @@ class CalendarViewModel: Stepper {
       }
     
     // MARK: - DATASOURCE COMPLETED
-    let completedListTasks = Driver
-      .combineLatest(tasks, selectedDate) { tasks, selectedDate -> [Task] in
+    let completedListSections = Driver
+      .combineLatest(selectedDate, tasks, kindsOfTask) { selectedDate, tasks, kindsOfTask -> [TaskListSectionItem] in
         tasks
           .filter { task -> Bool in
             guard let completed = task.completed else { return false }
@@ -188,65 +191,80 @@ class CalendarViewModel: Stepper {
               let prevTaskCompleted = prevTask.completed,
               let nextTaskCompleted = nextTask.completed
             else { return false }
-            
             return prevTaskCompleted < nextTaskCompleted
           }
+          .map { task -> TaskListSectionItem in
+            TaskListSectionItem(
+              task: task,
+              kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
+            )
+          }
       }
-  
-    let completedListItems = Driver.combineLatest(completedListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
-      tasks.map { task -> TaskListSectionItem in
-        TaskListSectionItem(
-          task: task,
-          kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
-        )
-      }
-    }
-    
-    let completedListSectionEmpty = completedListItems
-      .map {
-        TaskListSection(
-          header: "",
-          mode: .empty,
-          items: $0
-        )
+      .withLatestFrom(selectedDate) { items, selectedDate -> [TaskListSection] in
+        [
+          TaskListSection(
+            header: "",
+            mode: .empty,
+            items: items
+          )
+        ]
       }
     
-    // MARK: - PLANNED COMPLETED
-    let plannedListTasks = Driver
-      .combineLatest(tasks, selectedDate) { tasks, selectedDate -> [Task] in
-        tasks.filter { task -> Bool in
-          task.status == .inProgress &&
-          task.planned.startOfDay >= selectedDate.startOfDay &&
-          task.planned.endOfDay <= selectedDate.endOfDay
-        }
-        .sorted { prevTask, nextTask -> Bool in
-          prevTask.created < nextTask.created
-        }
+    // MARK: - DATASOURCE PLANNED
+    let plannedListSections = Driver<[TaskListSectionItem]>
+      .combineLatest(selectedDate, tasks, kindsOfTask) { selectedDate, tasks, kindsOfTask -> [TaskListSectionItem] in
+        tasks
+          .filter { task -> Bool in
+            task.status == .inProgress &&
+            task.planned.startOfDay >= selectedDate.startOfDay &&
+            task.planned.endOfDay <= selectedDate.endOfDay
+          }
+          .map { task -> TaskListSectionItem in
+            TaskListSectionItem(
+              task: task,
+              kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
+            )
+          }
+          .sorted { prevItem, nextItem -> Bool in
+            prevItem.task.created < nextItem.task.created
+          }
       }
-    
-    let plannedListItems = Driver.combineLatest(plannedListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
-      tasks.map { task -> TaskListSectionItem in
-        TaskListSectionItem(
-          task: task,
-          kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
-        )
-      }
-    }
-    
-    let plannedListSectionEmpty = plannedListItems
-      .map {
-        TaskListSection(
-          header: "PLANNED",
-          mode: .empty,
-          items: $0
-        )
+      .withLatestFrom(selectedDate) { items, selectedDate -> [TaskListSection] in
+        [
+          TaskListSection(
+            header: "Внимание, время:",
+            mode: .time,
+            items: items
+              .filter { item -> Bool in
+                item.task.planned.roundToTheBottomMinute != selectedDate.endOfDay.roundToTheBottomMinute
+              }),
+          TaskListSection(
+            header: "В течении дня:",
+            mode: .empty,
+            items: items
+              .filter { item -> Bool in
+                item.task.planned.roundToTheBottomMinute == selectedDate.endOfDay.roundToTheBottomMinute
+              })
+        ]
+          .filter { section -> Bool in
+            !section.items.isEmpty
+          }
       }
     
     // MARK: - DATASOURCE
     let calendarTaskListDataSource = Driver
-      .combineLatest(completedListSectionEmpty, plannedListSectionEmpty, selectedDate ) { completedListSectionEmpty, plannedListSectionEmpty, selectedDate -> [TaskListSection] in
-      selectedDate.startOfDay <= Date().startOfDay ? [completedListSectionEmpty] : [plannedListSectionEmpty]
-    }
+      .zip(completedListSections, plannedListSections) { completedListSections, plannedListSections -> [TaskListSection] in
+        self.selectedDate.value.startOfDay <= Date().startOfDay ? completedListSections : plannedListSections
+      }
+
+    
+    let openCalendarTask = input.calendarTaskListSelection
+      .withLatestFrom(calendarTaskListDataSource) { indexPath, dataSource -> Task in
+        dataSource[indexPath.section].items[indexPath.item].task
+      }
+      .do { task in
+        self.steps.accept(AppStep.showTaskIsRequired(task: task))
+      }
     
     return Output(
       isCalendarInShortMode: isCalendarInShortMode,
@@ -256,7 +274,8 @@ class CalendarViewModel: Stepper {
       monthButtonTitle: monthButtonTitle,
       addTask: addTask,
       calendarTaskListLabel: calendarTaskListLabel,
-      calendarTaskListDataSource: calendarTaskListDataSource
+      calendarTaskListDataSource: calendarTaskListDataSource,
+      openCalendarTask: openCalendarTask
     )
   }
 

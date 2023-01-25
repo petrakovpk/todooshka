@@ -18,9 +18,8 @@ extension Date {
   }
   
   var startOfMonth: Date {
-    let calendar = Calendar(identifier: .gregorian)
     let components = calendar.dateComponents([.year, .month], from: self)
-    return calendar.date(from: components)!
+    return Calendar.current.date(from: components)!
   }
 
   var endOfDay: Date {
@@ -28,6 +27,11 @@ extension Date {
     components.day = 1
     components.second = -1
     return Calendar.current.date(byAdding: components, to: startOfDay)!
+  }
+  
+  var roundToTheBottomMinute: Date {
+    let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
+    return Calendar.current.date(from: components)!
   }
 
   var endOfMonth: Date {

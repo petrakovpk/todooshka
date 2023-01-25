@@ -221,12 +221,16 @@ class TaskCell: SwipeCollectionViewCell {
   }
   
   func configure(mode: TaskCellMode, task: Task, kindOfTask: KindOfTask) {
-    
     switch mode {
     case .redLineAndTime:
       configureLineLayout(
         percent: max((task.planned.timeIntervalSince1970 - Date().timeIntervalSince1970) / (24 * 60 * 60), 0),
         color: UIColor(hexString: "#fc3e08")!)
+      timeLabel.text = task.planned.string(withFormat: "HH:mm")
+      timeView.backgroundColor = task.planned < Date() ? UIColor(hexString: "FA5123") : Style.Cells.TaskList.TimeLeftViewBackground
+      timeView.isHidden = false
+      repeatButton.isHidden = true
+    case .time:
       timeLabel.text = task.planned.string(withFormat: "HH:mm")
       timeView.backgroundColor = task.planned < Date() ? UIColor(hexString: "FA5123") : Style.Cells.TaskList.TimeLeftViewBackground
       timeView.isHidden = false

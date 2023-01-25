@@ -107,7 +107,7 @@ class TaskListViewModel: Stepper {
           task.planned.endOfDay <= Date().endOfDay
         }
         .sorted { prevTask, nextTask -> Bool in
-          prevTask.created < nextTask.created
+          (prevTask.planned == nextTask.planned) ? (prevTask.created < nextTask.created) : (prevTask.planned < nextTask.planned)
         }
       }
       
@@ -473,7 +473,7 @@ class TaskListViewModel: Stepper {
         case .idea:
           return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .idea), isModal: false)
         case .planned(let date):
-          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .inProgress, planned: date), isModal: false)
+          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .inProgress, planned: date, completed: nil), isModal: false)
         default:
           return nil
         }

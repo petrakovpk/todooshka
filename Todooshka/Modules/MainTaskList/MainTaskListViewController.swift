@@ -767,7 +767,8 @@ class MainTaskListViewController: UIViewController {
         .filter { _ in !self.isCalendarAnimationRunning }.mapToVoid().asDriverOnErrorJustComplete(),
       scrollToPreviousPeriodButtonClickTrigger: scrollToPreviousPeriodButton.rx.tap.asDriver(),
       scrollToNextPeriodButtonClickTrigger: scrollToNextPeriodButton.rx.tap.asDriver(),
-      addTaskButtonClickTrigger: addTaskButton.rx.tap.asDriver()
+      addTaskButtonClickTrigger: addTaskButton.rx.tap.asDriver(),
+      calendarTaskListSelection: calendarTaskListCollectionView.rx.itemSelected.asDriver()
     )
 
     let outputs = calendarViewModel.transform(input: input)
@@ -781,6 +782,7 @@ class MainTaskListViewController: UIViewController {
       outputs.addTask.drive(),
       outputs.calendarTaskListLabel.drive(dayTasksLabel.rx.text),
       outputs.calendarTaskListDataSource.drive(calendarTaskListCollectionView.rx.items(dataSource: calendarTaskListDataSource)),
+      outputs.openCalendarTask.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }
