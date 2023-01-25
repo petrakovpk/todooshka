@@ -34,7 +34,6 @@ class AlertFlow: Flow {
     switch step {
     case .dismiss:
       return dismiss()
-
     default:
       return .none
     }

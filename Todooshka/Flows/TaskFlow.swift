@@ -36,14 +36,14 @@ class TaskFlow: Flow {
       return navigateToTask(taskUID: UUID().uuidString)
     case .kindsOfTaskListIsRequired:
       return navigateToTaskTypesList()
-    case .taskProcessingIsCompleted:
-      return dismissTask()
     case .createKindOfTaskIsRequired:
       return navigateToCreateKindOfTask()
     case .showKindOfTaskIsRequired(let kindOfTask):
       return navigateToShowTaskType(kindOfTask: kindOfTask)
     case .navigateBack:
       return navigateBack()
+    case .dismiss:
+      return dismiss()
     default:
       return .none
     }
@@ -51,7 +51,7 @@ class TaskFlow: Flow {
 
   private func navigateToTask(taskUID: String) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, task: Task(UID: UUID().uuidString, status: .inProgress) )
+    let viewModel = TaskViewModel(services: services, task: Task(UID: UUID().uuidString, status: .inProgress), isModal: false)
     viewController.viewModel = viewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: false)
@@ -89,7 +89,7 @@ class TaskFlow: Flow {
     return .none
   }
 
-  private func dismissTask() -> FlowContributors {
+  private func dismiss() -> FlowContributors {
     rootViewController.dismiss(animated: true)
     return .none
   }

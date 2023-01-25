@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 class KindOfTaskIconCell: UICollectionViewCell {
-  // MARK: - Properties
   static var reuseID: String = "KindOfTaskIconCell"
 
   // MARK: - UI Elements
@@ -24,6 +23,7 @@ class KindOfTaskIconCell: UICollectionViewCell {
     super.draw(rect)
 
     contentView.addSubview(imageView)
+    
     imageView.anchorCenterXToSuperview()
     imageView.anchorCenterYToSuperview()
 
@@ -45,7 +45,7 @@ class KindOfTaskIconCell: UICollectionViewCell {
 
   func configure(with item: KindOfTaskIconItem) {
     UIView.performWithoutAnimation {
-      imageView.image = item.icon.image
+      imageView.image = item.icon.image.template
     }
 
     shapeLayer.fillColor = item.isSelected ? Style.Cells.KindOfTask.SelectedBackground.cgColor : Style.Cells.KindOfTask.UnselectedBackground?.cgColor

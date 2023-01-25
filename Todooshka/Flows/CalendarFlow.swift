@@ -250,19 +250,11 @@ class CalendarFlow: Flow {
 
   private func navigateToTask(task: Task) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, task: task)
+    let viewModel = TaskViewModel(services: services, task: task, isModal: false)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-
-//  private func navigateToTask(planned: Date) -> FlowContributors {
-//    let viewController = TaskViewController()
-//    let viewModel = TaskViewModel(services: services, taskUID: UUID().uuidString, status: .planned, planned: planned)
-//    viewController.viewModel = viewModel
-//    rootViewController.pushViewController(viewController, animated: true)
-//    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-//  }
 
   private func navigateToFeather() -> FlowContributors {
     let viewController = FeatherViewController()

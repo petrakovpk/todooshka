@@ -17,7 +17,7 @@ class TaskViewController: TDViewController {
   public var viewModel: TaskViewModel!
   private let disposeBag = DisposeBag()
 
-  // MARK: - UI Elements
+  // MARK: - UI Elements - NAME
   private let nameTextField: TDTaskTextField = {
     let textField = TDTaskTextField(placeholder: "Введите название задачи")
     let spacer = UIView()
@@ -37,6 +37,7 @@ class TaskViewController: TDViewController {
     return button
   }()
 
+  // MARK: - UI Elements - EXPECTED DATETIME
   private let expectedDateTimelabel: UILabel = {
     let label = UILabel(text: "Срок")
     label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
@@ -137,6 +138,7 @@ class TaskViewController: TDViewController {
     return button
   }()
   
+  // MARK: - UI Elements - KINDS OF TASK
   private let kindOfTaskLabel: UILabel = {
     let label = UILabel(text: "Тип")
     label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
@@ -154,6 +156,7 @@ class TaskViewController: TDViewController {
   private var collectionView: UICollectionView!
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskSection>!
   
+  // MARK: - UI Elements - DESCRIPTION
   private let descriptionLabel: UILabel = {
     let label = UILabel(text: "Комментарий")
     label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
@@ -182,6 +185,7 @@ class TaskViewController: TDViewController {
     return view
   }()
 
+  // MARK: - UI Elements - RESULT
   private let resultPhotoLabel: UILabel = {
     let label = UILabel(text: "Фото результата:")
     label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
@@ -196,6 +200,17 @@ class TaskViewController: TDViewController {
     return imageView
   }()
 
+  // MARK: - UI Elements - BOTTOM BUTTONS
+  private let addTaskButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 8
+    button.setTitle("Создать!", for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    button.backgroundColor = Palette.SingleColors.BlueRibbon
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+    return button
+  }()
+  
   private let completeButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 8
@@ -245,6 +260,7 @@ class TaskViewController: TDViewController {
       dividerView,
       resultPhotoLabel,
       resultImageView,
+      addTaskButton,
       completeButton,
       getPhotoButton
     ])
@@ -428,6 +444,16 @@ class TaskViewController: TDViewController {
       widthConstant: 100,
       heightConstant: 100
     )
+    
+    addTaskButton.anchor(
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor,
+      leftConstant: 16,
+      bottomConstant: 16,
+      rightConstant: 8,
+      heightConstant: Sizes.Buttons.AppButton.height
+    )
 
     getPhotoButton.anchor(
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
@@ -506,6 +532,7 @@ class TaskViewController: TDViewController {
       // imageView
       resultImageViewClickTrigger: resultImageView.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
       // bottom buttons
+      addTaskButtonClickTrigger: addTaskButton.rx.tap.asDriver(),
       completeButtonClickTrigger: completeButton.rx.tap.asDriver(),
       getPhotoButtonClickTrigger: getPhotoButton.rx.tap.asDriver()
     )
@@ -515,6 +542,8 @@ class TaskViewController: TDViewController {
     [
       // INIT
       outputs.initData.drive(initDataBinder),
+      outputs.taskIsNew.drive(taskIsNewBinder),
+      outputs.isModal.drive(isModalBinder),
       // BACK
       outputs.navigateBack.drive(),
       // TEXT
@@ -539,10 +568,10 @@ class TaskViewController: TDViewController {
       outputs.showDescriptionPlaceholder.drive(showDescriptionPlaceholderBinder),
       outputs.saveDescriptionTextViewButtonIsHidden.drive(saveDescriptionTextViewButton.rx.isHidden),
       outputs.saveDescription.drive(),
-      // COMPLETED
+      // COMPLETE TASK
       outputs.completeTask.drive(),
-      // task
-      outputs.taskIsNew.drive(taskIsNewBinder),
+      // CLOSE VIEW CONTROLLER
+      outputs.dismissViewController.drive()
       // yandex
    //   outputs.yandexMetrika.drive()
     ]
@@ -564,10 +593,29 @@ class TaskViewController: TDViewController {
   var taskIsNewBinder: Binder<Bool> {
     return Binder(self, binding: { vc, isNew in
       if isNew {
+        vc.addTaskButton.isHidden = false
+        vc.completeButton.isHidden = true
+        vc.getPhotoButton.isHidden = true
+        vc.resultPhotoLabel.isHidden = true
+        vc.resultImageView.isHidden = true
         vc.nameTextField.becomeFirstResponder()
       } else {
-        vc.backButton.isHidden = false
+        vc.addTaskButton.isHidden = true
+        vc.completeButton.isHidden = false
+        vc.getPhotoButton.isHidden = false
+        vc.resultPhotoLabel.isHidden = false
+        vc.resultImageView.isHidden = false
         vc.hideKeyboardWhenTappedAround()
+      }
+    })
+  }
+  
+  var isModalBinder: Binder<Bool> {
+    return Binder(self, binding: { vc, isModal in
+      if isModal {
+        vc.backButton.isHidden = true
+      } else {
+        vc.backButton.isHidden = false
       }
     })
   }

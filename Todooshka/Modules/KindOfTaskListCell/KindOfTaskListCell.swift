@@ -67,7 +67,6 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
 
   // MARK: - Configure
   func configureUI() {
-    // adding
     contentView.addSubviews([
       leftImageView,
       nameLabel,
@@ -75,32 +74,40 @@ class KindOfTaskListCell: SwipeCollectionViewCell {
       repeatButton
     ])
 
-    // contentView
     contentView.cornerRadius = height / 2
     contentView.layer.borderWidth = 1
     contentView.layer.borderColor = Style.Cells.KindOfTask.Border?.cgColor
     contentView.backgroundColor = Style.Cells.KindOfTask.UnselectedBackground
     contentView.layer.masksToBounds = false
 
-    // leftImageView
     leftImageView.anchorCenterYToSuperview()
-    leftImageView.anchor(left: contentView.leftAnchor, leftConstant: 8, widthConstant: 40)
+    leftImageView.anchor(
+      left: contentView.leftAnchor,
+      leftConstant: 8,
+      widthConstant: 40)
 
-    // repeatButton
     repeatButton.anchorCenterYToSuperview()
-    repeatButton.anchor(right: contentView.rightAnchor, rightConstant: 4, widthConstant: 120, heightConstant: 25)
+    repeatButton.anchor(
+      right: contentView.rightAnchor,
+      rightConstant: 4,
+      widthConstant: 120,
+      heightConstant: 25)
 
-    // rightImageView
     rightImageView.anchorCenterYToSuperview()
-    rightImageView.anchor(right: contentView.rightAnchor, rightConstant: 8, widthConstant: 40)
+    rightImageView.anchor(
+      right: contentView.rightAnchor,
+      rightConstant: 8,
+      widthConstant: 40)
 
-    // nameLabel
     nameLabel.anchorCenterYToSuperview()
-    nameLabel.anchor(left: leftImageView.rightAnchor, right: repeatButton.leftAnchor, leftConstant: 8)
+    nameLabel.anchor(
+      left: leftImageView.rightAnchor,
+      right: repeatButton.leftAnchor,
+      leftConstant: 8)
   }
 
   func configure(with kindOfTask: KindOfTask, mode: KindOfTaskListCellMode) {
-    leftImageView.image = kindOfTask.icon.image
+    leftImageView.image = kindOfTask.icon.image.template
     leftImageView.tintColor = kindOfTask.color
     nameLabel.text = kindOfTask.text
 

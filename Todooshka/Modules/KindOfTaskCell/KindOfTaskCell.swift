@@ -35,29 +35,28 @@ class KindOfTaskCell: UICollectionViewCell {
   override func draw(_ rect: CGRect) {
     super.draw(rect)
     
-    // adding
+    shapeLayer.frame = bounds
+    shapeLayer.lineWidth = 1
+    shapeLayer.cornerRadius = 11
+    shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 11).cgPath
+    
     contentView.addSubviews([
       imageView,
       textView
     ])
 
-    // contentView
     contentView.cornerRadius = 11
     contentView.clipsToBounds = false
     contentView.layer.masksToBounds = false
 
-    // taskTypeImageView
     imageView.anchorCenterXToSuperview()
     imageView.anchorCenterYToSuperview(constant: -1 * contentView.bounds.height / 6)
 
-    // taskTypeTextView
-    textView.anchor(top: imageView.bottomAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
-
-    // shapeLayer
-    shapeLayer.frame = bounds
-    shapeLayer.lineWidth = 1
-    shapeLayer.cornerRadius = 11
-    shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 11).cgPath
+    textView.anchor(
+      top: imageView.bottomAnchor,
+      left: contentView.leftAnchor,
+      bottom: contentView.bottomAnchor,
+      right: contentView.rightAnchor)
 
     if let oldShapeLayer = oldShapeLayer {
       contentView.layer.replaceSublayer(oldShapeLayer, with: shapeLayer)
@@ -70,17 +69,12 @@ class KindOfTaskCell: UICollectionViewCell {
 
   // MARK: - Configure
   func configure(kindOfTask: KindOfTask, isSelected: Bool) {
-    // textView
     textView.text = kindOfTask.text
-   // textView.textColor = isSelected ? Style.Cells.KindOfTask.SelectedBackground : Style.App.text
     textView.textColor = isSelected ? .white : Style.App.text
 
-    // imageView
     imageView.image = kindOfTask.icon.image.template
     imageView.tintColor = isSelected ? .white : kindOfTask.color
-   // imageView.tintColor = isSelected ? Style.Cells.KindOfTask.SelectedBackground : kindOfTask.color
 
-    // shapeLayer
     shapeLayer.borderWidth = isSelected ? 0 : 1
     shapeLayer.borderColor = Style.Cells.KindOfTask.Border?.cgColor
     shapeLayer.shadowOpacity = isSelected ? 1 : 0

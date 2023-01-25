@@ -259,7 +259,7 @@ class CalendarViewModel: Stepper {
     // MARK: - DATASOURCE
     let calendarTaskListDataSource = Driver
       .zip(completedListSections, plannedListSections) { completedListSections, plannedListSections -> [TaskListSection] in
-        self.selectedDate.value.startOfDay <= Date().startOfDay ? completedListSections : plannedListSections
+        completedListSections + plannedListSections
       }
     
     let openCalendarTask = input.calendarTaskListSelection

@@ -19,6 +19,7 @@ class TaskViewModel: Stepper {
   private let appDelegate = UIApplication.shared.delegate as! AppDelegate
   private let disposeBag = DisposeBag()
   private let services: AppServices
+  private let isModal: Bool
 
   private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
   private var task: Task
@@ -53,6 +54,7 @@ class TaskViewModel: Stepper {
     // resultImageView
     let resultImageViewClickTrigger: Driver<Void>
     // bottom buttons
+    let addTaskButtonClickTrigger: Driver<Void>
     let completeButtonClickTrigger: Driver<Void>
     let getPhotoButtonClickTrigger: Driver<Void>
   }
@@ -60,6 +62,8 @@ class TaskViewModel: Stepper {
   struct Output {
     // INIT
     let initData: Driver<Task>
+    let taskIsNew: Driver<Bool>
+    let isModal: Driver<Bool>
     // BACK
     let navigateBack: Driver<Void>
     // TEXT
@@ -84,26 +88,27 @@ class TaskViewModel: Stepper {
     let showDescriptionPlaceholder: Driver<Void>
     let saveDescriptionTextViewButtonIsHidden: Driver<Bool>
     let saveDescription: Driver<Result<Void, Error>>
-    // CLOSED
+    // COMPLETE
     let completeTask: Driver<Result<Void, Error>>
-    // task
-    let taskIsNew: Driver<Bool>
+    // CLOSE VIEW CONTROLLER
+    let dismissViewController: Driver<Void>
     //
     // yandex
     // let yandexMetrika: Driver<Void>
   }
 
   // MARK: - Init
-  init(services: AppServices, task: Task) {
+  init(services: AppServices, task: Task, isModal: Bool) {
     self.services = services
     self.task = task
+    self.isModal = isModal
   }
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
     let initData = Driver.just(self.task)
-    
     let tasks = services.dataService.tasks
+    let isModal = Driver.just(self.isModal)
     
     let taskIsNew = tasks
       .map { tasks -> Bool in
@@ -123,7 +128,7 @@ class TaskViewModel: Stepper {
     
     // MARK: - BACK
     let navigateBack = input.backButtonClickTrigger
-      .do { _ in self.steps.accept(AppStep.taskProcessingIsCompleted) }
+      .do { _ in self.steps.accept(AppStep.navigateBack) }
     
     // MARK: - TEXT
     let text = input
@@ -137,8 +142,8 @@ class TaskViewModel: Stepper {
     let saveText = Driver
       .of(
         input.saveNameTextFieldButtonClickTrigger,
-        input.nameTextFieldEditingDidEndOnExit
-      )
+        input.nameTextFieldEditingDidEndOnExit,
+        input.addTaskButtonClickTrigger )
       .merge()
       .withLatestFrom(text)
       .withLatestFrom(task) { text, task -> Task in
@@ -158,8 +163,7 @@ class TaskViewModel: Stepper {
 
     let closeExpectedDatePickerTrigger = Driver.of(
       input.expectedDatePickerBackgroundClickTrigger,
-      input.expectedDatePickerOkButtonClickTrigger
-    )
+      input.expectedDatePickerOkButtonClickTrigger )
       .merge()
     
     let scrollToTodayDatePickerTrigger = input.expectedDatePickerClearButtonClickTrigger
@@ -167,15 +171,14 @@ class TaskViewModel: Stepper {
     
     let expectedDate = Driver.of(
       input.expectedDate,
-      scrollToTodayDatePickerTrigger
-    )
+      scrollToTodayDatePickerTrigger )
       .merge()
     
     let saveExpectedDate = input.expectedDatePickerOkButtonClickTrigger
       .withLatestFrom(expectedDate)
       .withLatestFrom(task) { expectedDate, task -> Task in
         var task = task
-        let constDate = task.planned ?? Date()
+        let constDate = task.planned
         let constTime = Int(constDate.timeIntervalSince1970 - constDate.startOfDay.timeIntervalSince1970)
         task.planned = expectedDate.startOfDay.adding(.second, value: constTime)
         return task
@@ -189,8 +192,7 @@ class TaskViewModel: Stepper {
     
     let closeExpectedTimePickerTrigger = Driver.of(
       input.expectedTimePickerBackgroundClickTrigger,
-      input.expectedTimePickerOkButtonClickTrigger
-    )
+      input.expectedTimePickerOkButtonClickTrigger )
       .merge()
      
     let scrollToEndOfDateTimePickerTrigger = input.expectedTimePickerClearButtonClickTrigger
@@ -199,13 +201,14 @@ class TaskViewModel: Stepper {
     let expectedTime = Driver.of(
       input.expectedTime,
       scrollToEndOfDateTimePickerTrigger
-    ).merge()
+    )
+      .merge()
     
     let saveExpectedTime = input.expectedTimePickerOkButtonClickTrigger
       .withLatestFrom(expectedTime)
       .withLatestFrom(task) { expectedTime, task -> Task in
         var task = task
-        let constDate = (task.planned ?? Date()).startOfDay
+        let constDate = task.planned.startOfDay
         let deltaSeconds = Int(expectedTime.timeIntervalSince1970 - expectedTime.startOfDay.timeIntervalSince1970)
         task.planned = constDate.adding(.second, value: deltaSeconds)
         return task
@@ -253,8 +256,7 @@ class TaskViewModel: Stepper {
     
     let showDescriptionPlaceholder = Driver.of(
       showDescriptionPlaceholderWhenStart,
-      showDescriptionPlaceholderWhenEndEditing
-    )
+      showDescriptionPlaceholderWhenEndEditing )
       .merge()
       .mapToVoid()
       .do { _ in self.isDescriptionPlaceholderEnabled = true }
@@ -263,7 +265,10 @@ class TaskViewModel: Stepper {
       .filter { _ in self.isDescriptionPlaceholderEnabled }
       .do { _ in self.isDescriptionPlaceholderEnabled = false }
 
-    let saveDescription = input.saveDescriptionTextViewButtonClickTrigger
+    let saveDescription = Driver.of(
+      input.saveDescriptionTextViewButtonClickTrigger,
+      input.addTaskButtonClickTrigger )
+      .merge()
       .withLatestFrom(description)
       .withLatestFrom(task) { description, task -> Task in
         var task = task
@@ -299,11 +304,23 @@ class TaskViewModel: Stepper {
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
-      
+    let dismissViewController = Driver.of(
+      input.addTaskButtonClickTrigger,
+      input.nameTextFieldEditingDidEndOnExit
+    )
+      .merge()
+      .withLatestFrom(taskIsNew)
+      .filter { $0 }
+      .mapToVoid()
+      .do { _ in
+        self.isModal ? self.steps.accept(AppStep.dismiss) :  self.steps.accept(AppStep.navigateBack)
+      }
 
     return Output(
       // INIT
       initData: initData,
+      taskIsNew: taskIsNew,
+      isModal: isModal,
       // BACK
       navigateBack: navigateBack,
       // TEXT
@@ -328,10 +345,10 @@ class TaskViewModel: Stepper {
       showDescriptionPlaceholder: showDescriptionPlaceholder,
       saveDescriptionTextViewButtonIsHidden: saveDescriptionTextViewButtonIsHidden,
       saveDescription: saveDescription,
-      // CLOSED
+      // COMPLETE TASK
       completeTask: completeTask,
-      // TASK IS NEW
-      taskIsNew: taskIsNew
+      // CLOSE VIEW CONTROLLER
+      dismissViewController: dismissViewController
     )
   }
 }

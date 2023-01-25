@@ -12,12 +12,10 @@ import RxCocoa
 import RxDataSources
 
 class KindOfTaskViewController: TDViewController {
-  // MARK: - Properties
-  var viewModel: KindOfTaskViewModel!
-  let disposeBag = DisposeBag()
 
-  private var dataSourceColor: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskColorSection>!
-  private var dataSourceIcon: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskIconSection>!
+  public var viewModel: KindOfTaskViewModel!
+  
+  private let disposeBag = DisposeBag()
 
   // MARK: - UI Elements
   private let taskTypeImageContainerView: UIView = {
@@ -36,7 +34,14 @@ class KindOfTaskViewController: TDViewController {
     return imageView
   }()
 
-  private let textLabel = UILabel()
+  private let textLabel: UILabel = {
+    let label = UILabel()
+    label.text = "Название типа задач"
+    label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+    label.textAlignment = .left
+    return label
+  }()
+  
   private let textField = TDTaskTextField(placeholder: "Введите название типа")
 
   private let textLenLabel: UILabel = {
@@ -54,8 +59,11 @@ class KindOfTaskViewController: TDViewController {
     return label
   }()
 
-  private var collectionViewColor: UICollectionView!
-  private let collectionViewColorLayout: UICollectionViewFlowLayout = {
+ 
+  private var colorCollecionView: UICollectionView!
+  private var colorDataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskColorSection>!
+  
+  private let colorCollectionViewLayout: UICollectionViewFlowLayout = {
     let layout = UICollectionViewFlowLayout()
     layout.itemSize = CGSize(width: Sizes.Cells.ColorCell.width, height: Sizes.Cells.ColorCell.height)
     layout.minimumLineSpacing = 11
@@ -69,8 +77,10 @@ class KindOfTaskViewController: TDViewController {
     return label
   }()
 
-  private var collectionViewIcon: UICollectionView!
-  private let collectionViewIconLayout: UICollectionViewFlowLayout = {
+  private var iconCollectionView: UICollectionView!
+  private var iconDataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskIconSection>!
+  
+  private let iconCollectionViewLayout: UICollectionViewFlowLayout = {
     let layout = UICollectionViewFlowLayout()
     layout.itemSize = CGSize(width: Sizes.Cells.IconCell.width, height: Sizes.Cells.IconCell.height)
     layout.minimumLineSpacing = 8
@@ -87,32 +97,33 @@ class KindOfTaskViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-    backButton.isHidden = false
+    colorCollecionView = UICollectionView(frame: .zero, collectionViewLayout: colorCollectionViewLayout)
+    iconCollectionView = UICollectionView(frame: .zero, collectionViewLayout: iconCollectionViewLayout)
     
-    collectionViewColor = UICollectionView(frame: .zero, collectionViewLayout: collectionViewColorLayout)
-    collectionViewIcon = UICollectionView(frame: .zero, collectionViewLayout: collectionViewIconLayout)
-
-    // adding 
-    view.addSubview(textLabel)
-    view.addSubview(textField)
-    view.addSubview(textLenLabel)
-    view.addSubview(colorLabel)
-    view.addSubview(collectionViewColor)
-    view.addSubview(imageLabel)
-    view.addSubview(collectionViewIcon)
-    view.addSubview(taskTypeImageContainerView)
-    taskTypeImageContainerView.addSubview(taskTypeImageView)
-
-    // view
-    view.backgroundColor = Style.App.background
-
-    // keyboard
-    hideKeyboardWhenTappedAround()
-
-    // saveButton
+    backButton.isHidden = false
     saveButton.isHidden = false
+    
+    view.backgroundColor = Style.App.background
+    
+    hideKeyboardWhenTappedAround()
+    
+    // adding 1 layer
+    view.addSubviews([
+      textLabel,
+      textField,
+      textLenLabel,
+      colorLabel,
+      colorCollecionView,
+      imageLabel,
+      iconCollectionView,
+      taskTypeImageContainerView
+    ])
 
-    // taskTypeImageContainerView
+    // adding 2 layer
+    taskTypeImageContainerView.addSubviews([
+      taskTypeImageView
+    ])
+
     taskTypeImageContainerView.anchorCenterXToSuperview()
     taskTypeImageContainerView.anchor(
       top: headerView.bottomAnchor,
@@ -121,37 +132,44 @@ class KindOfTaskViewController: TDViewController {
       heightConstant: Sizes.Views.KindsOfTaskContainerView.height
     )
 
-    // taskTypeImageView
     taskTypeImageView.anchorCenterXToSuperview()
     taskTypeImageView.anchorCenterYToSuperview()
 
-    // textLabel
-    textLabel.text = "Название типа задач"
-    textLabel.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-    textLabel.textAlignment = .left
-    textLabel.anchor(top: taskTypeImageContainerView.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, topConstant: 21, leftConstant: 16, rightConstant: 16)
+    textLabel.anchor(
+      top: taskTypeImageContainerView.bottomAnchor,
+      left: view.leftAnchor,
+      right: view.rightAnchor,
+      topConstant: 21,
+      leftConstant: 16,
+      rightConstant: 16)
 
-    // nameTextField
     textField.returnKeyType = .done
     textField.anchor(
       top: textLabel.bottomAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
       topConstant: 8,
-      leftConstant: 16, rightConstant: 16, heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant)
+      leftConstant: 16,
+      rightConstant: 16,
+      heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant)
 
-    // nameSymbolsCountLabel
-    textLenLabel.anchor(top: textLabel.topAnchor, bottom: textLabel.bottomAnchor, right: view.rightAnchor, rightConstant: 16)
+    textLenLabel.anchor(
+      top: textLabel.topAnchor,
+      bottom: textLabel.bottomAnchor,
+      right: view.rightAnchor,
+      rightConstant: 16)
 
-    // colorLabel
-    colorLabel.anchor(top: textField.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
+    colorLabel.anchor(
+      top: textField.bottomAnchor,
+      left: view.leftAnchor,
+      topConstant: 16,
+      leftConstant: 16)
 
-    // colorCollectionView
-    collectionViewColor.register(KindOfTaskColorCell.self, forCellWithReuseIdentifier: KindOfTaskColorCell.reuseID)
-    collectionViewColor.clipsToBounds = false
-    collectionViewColor.isScrollEnabled = false
-    collectionViewColor.backgroundColor = UIColor.clear
-    collectionViewColor.anchor(
+    colorCollecionView.register(KindOfTaskColorCell.self, forCellWithReuseIdentifier: KindOfTaskColorCell.reuseID)
+    colorCollecionView.clipsToBounds = false
+    colorCollecionView.isScrollEnabled = false
+    colorCollecionView.backgroundColor = UIColor.clear
+    colorCollecionView.anchor(
       top: colorLabel.bottomAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
@@ -161,15 +179,17 @@ class KindOfTaskViewController: TDViewController {
       heightConstant: (48 + 48 + 10).adjustByWidth
     )
 
-    // imageLabel
-    imageLabel.anchor(top: collectionViewColor.bottomAnchor, left: view.leftAnchor, topConstant: 16, leftConstant: 16)
+    imageLabel.anchor(
+      top: colorCollecionView.bottomAnchor,
+      left: view.leftAnchor,
+      topConstant: 16,
+      leftConstant: 16)
 
-    // imageCollectionView
-    collectionViewIcon.register(KindOfTaskIconCell.self, forCellWithReuseIdentifier: KindOfTaskIconCell.reuseID)
-    collectionViewIcon.clipsToBounds = false
-    collectionViewIcon.isScrollEnabled = false
-    collectionViewIcon.backgroundColor = UIColor.clear
-    collectionViewIcon.anchor(
+    iconCollectionView.register(KindOfTaskIconCell.self, forCellWithReuseIdentifier: KindOfTaskIconCell.reuseID)
+    iconCollectionView.clipsToBounds = false
+    iconCollectionView.isScrollEnabled = false
+    iconCollectionView.backgroundColor = UIColor.clear
+    iconCollectionView.anchor(
       top: imageLabel.bottomAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
@@ -182,8 +202,8 @@ class KindOfTaskViewController: TDViewController {
 
   // MARK: - Color CollectionView
   func configureDataSource() {
-    collectionViewColor.dataSource = nil
-    dataSourceColor = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskColorSection>(
+    colorCollecionView.dataSource = nil
+    colorDataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskColorSection>(
       configureCell: {_, collectionView, indexPath, item in
         guard let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: KindOfTaskColorCell.reuseID,
@@ -193,8 +213,8 @@ class KindOfTaskViewController: TDViewController {
         return cell
       })
 
-    collectionViewIcon.dataSource = nil
-    dataSourceIcon = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskIconSection>(
+    iconCollectionView.dataSource = nil
+    iconDataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskIconSection>(
       configureCell: {_, collectionView, indexPath, item in
         guard let cell = collectionView.dequeueReusableCell(
           withReuseIdentifier: KindOfTaskIconCell.reuseID,
@@ -210,22 +230,22 @@ class KindOfTaskViewController: TDViewController {
     let input = KindOfTaskViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       saveButtonClickTrigger: saveButton.rx.tap.asDriver(),
-      selectionColor: collectionViewColor.rx.itemSelected.asDriver(),
-      selectionIcon: collectionViewIcon.rx.itemSelected.asDriver(),
+      selectionColor: colorCollecionView.rx.itemSelected.asDriver(),
+      selectionIcon: iconCollectionView.rx.itemSelected.asDriver(),
       text: textField.rx.text.orEmpty.asDriver()
     )
 
-    let output = viewModel.transform(input: input)
+    let outputs = viewModel.transform(input: input)
 
     [
-      output.navigateBack.drive(),
-      output.dataSourceColor.drive(collectionViewColor.rx.items(dataSource: dataSourceColor)),
-      output.dataSourceIcon.drive(collectionViewIcon.rx.items(dataSource: dataSourceIcon)),
-      output.text.drive(textField.rx.text),
-      output.save.drive(),
-      output.selectIcon.drive(taskTypeImageView.rx.image),
-      output.selectColor.drive(taskTypeImageView.rx.tintColor),
-      output.textLen.drive(textLenLabel.rx.text)
+      outputs.navigateBack.drive(),
+      outputs.dataSourceColor.drive(colorCollecionView.rx.items(dataSource: colorDataSource)),
+      outputs.dataSourceIcon.drive(iconCollectionView.rx.items(dataSource: iconDataSource)),
+      outputs.text.drive(textField.rx.text),
+      outputs.save.drive(),
+      outputs.selectIcon.drive(taskTypeImageView.rx.image),
+      outputs.selectColor.drive(taskTypeImageView.rx.tintColor),
+      outputs.textLen.drive(textLenLabel.rx.text)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }

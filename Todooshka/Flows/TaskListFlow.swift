@@ -123,7 +123,7 @@ class TaskListFlow: Flow {
 
   private func navigateToTask(task: Task, isModal: Bool) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, task: task)
+    let viewModel = TaskViewModel(services: services, task: task, isModal: isModal)
     viewController.viewModel = viewModel
     if isModal {
       rootViewController.tabBarController?.tabBar.isHidden = false
