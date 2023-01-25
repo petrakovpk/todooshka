@@ -18,7 +18,7 @@ enum RemoveMode: Equatable {
 }
 
 struct ChangeStatus {
-  let closed: Date?
+  let completed: Date?
   let indexPath: IndexPath
   let status: TaskStatus
 }
@@ -28,12 +28,13 @@ class TaskListViewModel: Stepper {
   public let steps = PublishRelay<Step>()
   public var editingIndexPath: IndexPath?
   
-  private let appDelegate = UIApplication.shared.delegate as! AppDelegate
+ 
   private let services: AppServices
   private let changeStatusTrigger = BehaviorRelay<ChangeStatus?>(value: nil)
   private let mode: TaskListMode
   private let reloadData = BehaviorRelay<Void>(value: ())
   
+  private let appDelegate = UIApplication.shared.delegate as! AppDelegate
   private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
   
   struct Input {
@@ -388,7 +389,7 @@ class TaskListViewModel: Stepper {
       .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
         var task = dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
         task.status = .completed
-        task.completed = changeStatus.closed
+        task.completed = changeStatus.completed
         return task
       }
       .asObservable()
@@ -554,6 +555,6 @@ class TaskListViewModel: Stepper {
   }
 
   func changeStatus(indexPath: IndexPath, status: TaskStatus, completed: Date?) {
-    changeStatusTrigger.accept(ChangeStatus(closed: completed, indexPath: indexPath, status: status))
+    changeStatusTrigger.accept(ChangeStatus(completed: completed, indexPath: indexPath, status: status))
   }
 }

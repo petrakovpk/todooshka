@@ -90,7 +90,7 @@ class TaskViewController: TDViewController {
     let button = UIButton(type: .system)
     button.cornerRadius = 8
     button.backgroundColor = Style.App.background
-    button.setTitle("Сбросить", for: .normal)
+    button.setTitle("Сегодня", for: .normal)
     button.setTitleColor(Style.App.text, for: .normal)
     button.isHidden = true
     return button
@@ -121,7 +121,7 @@ class TaskViewController: TDViewController {
     let button = UIButton(type: .system)
     button.cornerRadius = 8
     button.backgroundColor = Style.App.background
-    button.setTitle("Сбросить", for: .normal)
+    button.setTitle("В течении дня", for: .normal)
     button.setTitleColor(Style.App.text, for: .normal)
     button.isHidden = true
     return button
@@ -527,6 +527,8 @@ class TaskViewController: TDViewController {
       outputs.saveExpectedDate.drive(),
       outputs.openExpectedTimePickerTrigger.drive(openExpectedTimePickerTriggerBinder),
       outputs.closeExpectedTimePickerTrigger.drive(closeExpectedTimePickerTriggerBinder),
+      outputs.scrollToTodayDatePickerTrigger.drive(scrollToTodayDatePickerTriggerBinder),
+      outputs.scrollToEndOfDateTimePickerTrigger.drive(scrollToEndOfDateTimePickerTriggerBinder),
       outputs.saveExpectedTime.drive(),
       // KINDOFTASK
       outputs.openKindOfTaskSettings.drive(),
@@ -547,7 +549,7 @@ class TaskViewController: TDViewController {
       .forEach { $0.disposed(by: disposeBag) }
   }
 
-  // MARK: - Binders
+  // MARK: - INIT BINERS
   var initDataBinder: Binder<Task> {
     return Binder(self, binding: { vc, task in
       vc.nameTextField.insertText(task.text)
@@ -559,6 +561,18 @@ class TaskViewController: TDViewController {
     })
   }
   
+  var taskIsNewBinder: Binder<Bool> {
+    return Binder(self, binding: { vc, isNew in
+      if isNew {
+        vc.nameTextField.becomeFirstResponder()
+      } else {
+        vc.backButton.isHidden = false
+        vc.hideKeyboardWhenTappedAround()
+      }
+    })
+  }
+  
+  // MARK: - EXPECTED DATETIME BINDERS
   var expectedDateTimeBinder: Binder<Date> {
     return Binder(self, binding: { vc, expectedDate in
       vc.expectedDateButton.setTitle(DateFormatter.midDateFormatter.string(for: expectedDate), for: .normal)
@@ -576,15 +590,6 @@ class TaskViewController: TDViewController {
     })
   }
   
-  var closeExpectedDatePickerTriggerBinder: Binder<Void> {
-    return Binder(self, binding: { vc, _ in
-      vc.expectedDateTimeBackground.isHidden = true
-      vc.expectedDatePicker.isHidden = true
-      vc.expectedDatePickerOkButton.isHidden = true
-      vc.expectedDatePickerClearButton.isHidden = true
-    })
-  }
-  
   var openExpectedTimePickerTriggerBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
       vc.expectedDateTimeBackground.isHidden = false
@@ -592,6 +597,27 @@ class TaskViewController: TDViewController {
       vc.expectedTimePickerOkButton.isHidden = false
       vc.expectedTimePickerClearButton.isHidden = false
       vc.dismissKeyboard()
+    })
+  }
+  
+  var scrollToTodayDatePickerTriggerBinder: Binder<Date> {
+    return Binder(self, binding: { vc, date in
+      vc.expectedDatePicker.setDate(date, animated: true)
+    })
+  }
+  
+  var scrollToEndOfDateTimePickerTriggerBinder: Binder<Date> {
+    return Binder(self, binding: { vc, date in
+      vc.expectedTimePicker.setDate(date, animated: true)
+    })
+  }
+  
+  var closeExpectedDatePickerTriggerBinder: Binder<Void> {
+    return Binder(self, binding: { vc, _ in
+      vc.expectedDateTimeBackground.isHidden = true
+      vc.expectedDatePicker.isHidden = true
+      vc.expectedDatePickerOkButton.isHidden = true
+      vc.expectedDatePickerClearButton.isHidden = true
     })
   }
   
@@ -604,6 +630,7 @@ class TaskViewController: TDViewController {
     })
   }
 
+  // MARK: - TEXT AND DESCRIPTION BINDERS
   var hideDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
       vc.descriptionTextView.textColor = Style.App.text
@@ -618,16 +645,7 @@ class TaskViewController: TDViewController {
     })
   }
 
-  var taskIsNewBinder: Binder<Bool> {
-    return Binder(self, binding: { vc, isNew in
-      if isNew {
-        vc.nameTextField.becomeFirstResponder()
-      } else {
-        vc.backButton.isHidden = false
-        vc.hideKeyboardWhenTappedAround()
-      }
-    })
-  }
+  
 
   func configureDataSource() {
     collectionView.dataSource = nil

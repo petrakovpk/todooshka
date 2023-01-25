@@ -71,8 +71,10 @@ class TaskViewModel: Stepper {
     let closeExpectedDatePickerTrigger: Driver<Void>
     let openExpectedTimePickerTrigger: Driver<Void>
     let closeExpectedTimePickerTrigger: Driver<Void>
-    let saveExpectedDate: Driver<Result<Void,Error>>
-    let saveExpectedTime: Driver<Result<Void,Error>>
+    let scrollToTodayDatePickerTrigger: Driver<Date>
+    let scrollToEndOfDateTimePickerTrigger: Driver<Date>
+    let saveExpectedDate: Driver<Result<Void, Error>>
+    let saveExpectedTime: Driver<Result<Void, Error>>
     // KINDOFTASK
     let openKindOfTaskSettings: Driver<Void>
     let dataSource: Driver<[KindOfTaskSection]>
@@ -160,8 +162,17 @@ class TaskViewModel: Stepper {
     )
       .merge()
     
+    let scrollToTodayDatePickerTrigger = input.expectedDatePickerClearButtonClickTrigger
+      .map { Date() }
+    
+    let expectedDate = Driver.of(
+      input.expectedDate,
+      scrollToTodayDatePickerTrigger
+    )
+      .merge()
+    
     let saveExpectedDate = input.expectedDatePickerOkButtonClickTrigger
-      .withLatestFrom(input.expectedDate)
+      .withLatestFrom(expectedDate)
       .withLatestFrom(task) { expectedDate, task -> Task in
         var task = task
         let constDate = task.planned ?? Date()
@@ -182,8 +193,16 @@ class TaskViewModel: Stepper {
     )
       .merge()
      
+    let scrollToEndOfDateTimePickerTrigger = input.expectedTimePickerClearButtonClickTrigger
+      .map { Date().endOfDay.roundToTheBottomMinute }
+    
+    let expectedTime = Driver.of(
+      input.expectedTime,
+      scrollToEndOfDateTimePickerTrigger
+    ).merge()
+    
     let saveExpectedTime = input.expectedTimePickerOkButtonClickTrigger
-      .withLatestFrom(input.expectedTime)
+      .withLatestFrom(expectedTime)
       .withLatestFrom(task) { expectedTime, task -> Task in
         var task = task
         let constDate = (task.planned ?? Date()).startOfDay
@@ -280,7 +299,6 @@ class TaskViewModel: Stepper {
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
-
       
 
     return Output(
@@ -297,6 +315,8 @@ class TaskViewModel: Stepper {
       closeExpectedDatePickerTrigger: closeExpectedDatePickerTrigger,
       openExpectedTimePickerTrigger: openExpectedTimePickerTrigger,
       closeExpectedTimePickerTrigger: closeExpectedTimePickerTrigger,
+      scrollToTodayDatePickerTrigger: scrollToTodayDatePickerTrigger,
+      scrollToEndOfDateTimePickerTrigger: scrollToEndOfDateTimePickerTrigger,
       saveExpectedDate: saveExpectedDate,
       saveExpectedTime: saveExpectedTime,
       // KINDOFTASK

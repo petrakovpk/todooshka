@@ -15,10 +15,14 @@ class CalendarViewModel: Stepper {
   public let steps = PublishRelay<Step>()
   public let selectedDate = BehaviorRelay<Date>(value: Date())
   public let displayDate = BehaviorRelay<Date>(value: Date())
-
+  public let changeStatusTrigger = PublishRelay<ChangeStatus>()
+  
   private let services: AppServices
   private let minMonthIndex = BehaviorRelay<Int>(value: -2)
   private let maxMonthIndex = BehaviorRelay<Int>(value: 2)
+  
+  private let appDelegate = UIApplication.shared.delegate as! AppDelegate
+  private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
   
   private var isCalendarInShortMode = false
   
@@ -41,6 +45,7 @@ class CalendarViewModel: Stepper {
     let calendarTaskListLabel: Driver<String>
     let calendarTaskListDataSource: Driver<[TaskListSection]>
     let openCalendarTask: Driver<Task>
+    let changeCalendarTaskStatus: Driver<Result<Void, Error>>
   }
 
   // MARK: - Init
@@ -256,7 +261,6 @@ class CalendarViewModel: Stepper {
       .zip(completedListSections, plannedListSections) { completedListSections, plannedListSections -> [TaskListSection] in
         self.selectedDate.value.startOfDay <= Date().startOfDay ? completedListSections : plannedListSections
       }
-
     
     let openCalendarTask = input.calendarTaskListSelection
       .withLatestFrom(calendarTaskListDataSource) { indexPath, dataSource -> Task in
@@ -265,6 +269,18 @@ class CalendarViewModel: Stepper {
       .do { task in
         self.steps.accept(AppStep.showTaskIsRequired(task: task))
       }
+    
+    let changeCalendarTaskStatus = changeStatusTrigger
+      .withLatestFrom(calendarTaskListDataSource) { changeStatus, dataSource -> Task in
+        let indexPath = changeStatus.indexPath
+        var task = dataSource[indexPath.section].items[indexPath.item].task
+        task.status = changeStatus.status
+        task.completed = changeStatus.completed
+        return task
+      }
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
     
     return Output(
       isCalendarInShortMode: isCalendarInShortMode,
@@ -275,7 +291,8 @@ class CalendarViewModel: Stepper {
       addTask: addTask,
       calendarTaskListLabel: calendarTaskListLabel,
       calendarTaskListDataSource: calendarTaskListDataSource,
-      openCalendarTask: openCalendarTask
+      openCalendarTask: openCalendarTask,
+      changeCalendarTaskStatus: changeCalendarTaskStatus
     )
   }
 

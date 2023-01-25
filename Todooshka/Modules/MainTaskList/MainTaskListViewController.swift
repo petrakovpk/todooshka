@@ -782,7 +782,8 @@ class MainTaskListViewController: UIViewController {
       outputs.addTask.drive(),
       outputs.calendarTaskListLabel.drive(dayTasksLabel.rx.text),
       outputs.calendarTaskListDataSource.drive(calendarTaskListCollectionView.rx.items(dataSource: calendarTaskListDataSource)),
-      outputs.openCalendarTask.drive()
+      outputs.openCalendarTask.drive(),
+      outputs.changeCalendarTaskStatus.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }
@@ -929,15 +930,14 @@ class MainTaskListViewController: UIViewController {
 extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
   func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
     if collectionView == self.mainTaskListCollectionView {
-      print("1234 main")
-    } else if collectionView == self.calendarTaskListCollectionView {
-      print("1234 calendar")
+      listViewModel.editingIndexPath = indexPath
     }
-    listViewModel.editingIndexPath = indexPath
   }
 
   func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
-    listViewModel.editingIndexPath = nil
+    if collectionView == self.mainTaskListCollectionView {
+      listViewModel.editingIndexPath = nil
+    }
   }
 
   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
@@ -946,13 +946,21 @@ extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
     let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      self.listViewModel.changeStatus(indexPath: indexPath, status: .deleted, completed: nil)
+      if  collectionView == self.mainTaskListCollectionView {
+        self.listViewModel.changeStatus(indexPath: indexPath, status: .deleted, completed: nil)
+      } else {
+        self.calendarViewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .deleted))
+      }
     }
 
     let ideaBoxAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      self.listViewModel.changeStatus(indexPath: indexPath, status: .idea, completed: nil)
+      if  collectionView == self.mainTaskListCollectionView {
+        self.listViewModel.changeStatus(indexPath: indexPath, status: .idea, completed: nil)
+      } else {
+        self.calendarViewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .idea))
+      }
     }
 
     configure(action: deleteAction, with: .trash)
