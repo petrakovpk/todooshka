@@ -33,7 +33,7 @@ class TaskFlow: Flow {
     guard let step = step as? AppStep else { return .none }
     switch step {
     case .createTaskIsRequired:
-      return navigateToTask(taskUID: UUID().uuidString)
+      return navigateToTask(taskUID: UUID().uuidString, isModal: true)
     case .kindsOfTaskListIsRequired:
       return navigateToTaskTypesList()
     case .createKindOfTaskIsRequired:
@@ -49,9 +49,9 @@ class TaskFlow: Flow {
     }
   }
 
-  private func navigateToTask(taskUID: String) -> FlowContributors {
+  private func navigateToTask(taskUID: String, isModal: Bool) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, task: Task(UID: UUID().uuidString, status: .inProgress), isModal: false)
+    let viewModel = TaskViewModel(services: services, task: Task(UID: UUID().uuidString, status: .inProgress), isModal: isModal)
     viewController.viewModel = viewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: false)

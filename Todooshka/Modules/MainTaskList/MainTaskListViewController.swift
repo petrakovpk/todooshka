@@ -245,7 +245,7 @@ class MainTaskListViewController: UIViewController {
   
   private let dayTasksLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
     return label
   }()
   
@@ -597,6 +597,10 @@ class MainTaskListViewController: UIViewController {
     )
     
     calendarTaskListCollectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+    calendarTaskListCollectionView.register(
+      TaskReusableView.self,
+      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+      withReuseIdentifier: TaskReusableView.reuseID)
     calendarTaskListCollectionView.alwaysBounceVertical = true
     calendarTaskListCollectionView.layer.masksToBounds = false
     calendarTaskListCollectionView.backgroundColor = .clear
@@ -673,6 +677,12 @@ class MainTaskListViewController: UIViewController {
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(30))
+    let header = NSCollectionLayoutBoundarySupplementaryItem(
+      layoutSize: headerSize,
+      elementKind: UICollectionView.elementKindSectionHeader,
+      alignment: .top)
+    section.boundarySupplementaryItems = [header]
     return section
   }
   
@@ -688,6 +698,14 @@ class MainTaskListViewController: UIViewController {
         cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
         cell.delegate = self
         return cell
+      }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        guard let header = collectionView.dequeueReusableSupplementaryView(
+          ofKind: kind,
+          withReuseIdentifier: TaskReusableView.reuseID,
+          for: indexPath
+        ) as? TaskReusableView else { return UICollectionReusableView() }
+        header.configure(text: dataSource[indexPath.section].header)
+        return header
       }
     )
   }

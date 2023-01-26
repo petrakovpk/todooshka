@@ -174,11 +174,7 @@ class CalendarViewModel: Stepper {
     
     let calendarTaskListLabel = selectedDate
       .map { selectedDate -> String in
-        if selectedDate.startOfDay <= Date().startOfDay {
-          return selectedDate.string(withFormat: "dd MMMM yyyy") + " выполнено:"
-        } else {
-          return "На " + selectedDate.string(withFormat: "dd MMMM yyyy") + " запланировано:"
-        }
+        selectedDate.string(withFormat: "dd MMMM yyyy")
       }
     
     // MARK: - DATASOURCE COMPLETED
@@ -208,7 +204,7 @@ class CalendarViewModel: Stepper {
       .withLatestFrom(selectedDate) { items, selectedDate -> [TaskListSection] in
         [
           TaskListSection(
-            header: "",
+            header: "Выполнено:",
             mode: .empty,
             items: items
           )
@@ -237,29 +233,29 @@ class CalendarViewModel: Stepper {
       .withLatestFrom(selectedDate) { items, selectedDate -> [TaskListSection] in
         [
           TaskListSection(
-            header: "Внимание, время:",
+            header: "Запланировано ко времени:",
             mode: .time,
             items: items
               .filter { item -> Bool in
                 item.task.planned.roundToTheBottomMinute != selectedDate.endOfDay.roundToTheBottomMinute
               }),
           TaskListSection(
-            header: "В течении дня:",
+            header: "Запланировано в течении дня:",
             mode: .empty,
             items: items
               .filter { item -> Bool in
                 item.task.planned.roundToTheBottomMinute == selectedDate.endOfDay.roundToTheBottomMinute
               })
         ]
-          .filter { section -> Bool in
-            !section.items.isEmpty
-          }
+          
       }
     
     // MARK: - DATASOURCE
     let calendarTaskListDataSource = Driver
       .zip(completedListSections, plannedListSections) { completedListSections, plannedListSections -> [TaskListSection] in
-        completedListSections + plannedListSections
+        (completedListSections + plannedListSections).filter { section -> Bool in
+          !section.items.isEmpty
+        }
       }
     
     let openCalendarTask = input.calendarTaskListSelection
