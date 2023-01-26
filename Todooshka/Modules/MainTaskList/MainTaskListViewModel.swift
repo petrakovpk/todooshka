@@ -25,6 +25,8 @@ class MainTaskListViewModel: Stepper {
     let calendarButtonClickTrigger: Driver<Void>
     // TASK LIST
     let taskListButtonClickTrigger: Driver<Void>
+    // SHOP
+    let shopButtoClickTrigger: Driver<Void>
   }
 
   struct Output {
@@ -33,6 +35,7 @@ class MainTaskListViewModel: Stepper {
     let openIdeaTaskList: Driver<Void>
     let openCalendar: Driver<Void>
     let openTaskList: Driver<Void>
+    let openShop: Driver<Void>
     // DATASOURCE
     let calendarDataSource: Driver<[CalendarSection]>
   }
@@ -54,6 +57,9 @@ class MainTaskListViewModel: Stepper {
      
     let openTaskList = input.taskListButtonClickTrigger
     
+    let openShop = input.shopButtoClickTrigger
+      .do { _ in self.steps.accept(AppStep.shopIsRequired) }
+    
     // MARK: - DATASOURCE
     let calendarDataSource = Driver<[CalendarSection]>.of([])
 
@@ -62,6 +68,7 @@ class MainTaskListViewModel: Stepper {
       openIdeaTaskList: openIdeaTaskList,
       openCalendar: openCalendar,
       openTaskList: openTaskList,
+      openShop: openShop,
       calendarDataSource: calendarDataSource
     )
   }

@@ -9,7 +9,6 @@ import UIKit
 import SpriteKit
 
 class BranchScene: SKScene {
-  // MARK: - Private
   private var actions: [BirdActionType] = [.create, .create, .create, .create, .create, .create, .create]
   private var SKBirdNodes: [SKBirdNode] = []
 
@@ -25,17 +24,14 @@ class BranchScene: SKScene {
   // MARK: - Lifecycle
   override func didMove(to view: SKView) {
     if let scene = scene {
-      // scene
+      scene.position = view.frame.origin
       scene.size = view.size
       scene.backgroundColor = .clear
 
-      // adding
       addChild(background)
 
-      // background
       background.position = CGPoint(x: position.x + 40, y: position.y)
 
-      // birds
       SKBirdNodes = [
         SKBirdNode(level: 1, style: .simple),
         SKBirdNode(level: 2, style: .simple),

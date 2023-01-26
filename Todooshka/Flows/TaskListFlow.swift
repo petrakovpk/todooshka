@@ -56,6 +56,9 @@ class TaskListFlow: Flow {
 
     case .removeTaskIsRequired:
       return navigateToRemoveConfirmation()
+      
+    case .shopIsRequired:
+      return navigateToShop()
 
     case .navigateBack,
         .taskProcessingIsCompleted,
@@ -69,13 +72,13 @@ class TaskListFlow: Flow {
 
   private func navigateToMainTaskList() -> FlowContributors {
     let viewController = MainTaskListViewController()
-    let mainTaskListSceneModel = NestSceneModel(services: services)
+    let mainSceneModel = MainSceneModel(services: services)
     let mainTaskListViewModel = MainTaskListViewModel(services: services)
     let taskListViewModel = TaskListViewModel(services: services, mode: .main)
     let calendarViewModel = CalendarViewModel(services: services)
-    viewController.sceneModel = mainTaskListSceneModel
-    viewController.viewModel = mainTaskListViewModel
-    viewController.listViewModel = taskListViewModel
+    viewController.mainSceneModel = mainSceneModel
+    viewController.mainViewModel = mainTaskListViewModel
+    viewController.taskListViewModel = taskListViewModel
     viewController.calendarViewModel = calendarViewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.tabBarController?.tabBar.isHidden = false
@@ -135,6 +138,7 @@ class TaskListFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
+  
   private func navigateToIdeaBoxTaskList() -> FlowContributors {
     let viewController = TaskListViewController()
     let viewModel = TaskListViewModel(services: services, mode: .idea)
@@ -156,6 +160,15 @@ class TaskListFlow: Flow {
   private func navigateToShowTaskType(kindOfTask: KindOfTask) -> FlowContributors {
     let viewController = KindOfTaskViewController()
     let viewModel = KindOfTaskViewModel(services: services, kindOfTaskUID: kindOfTask.UID )
+    viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToShop() -> FlowContributors {
+    let viewController = ShopViewController()
+    let viewModel = ShopViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)

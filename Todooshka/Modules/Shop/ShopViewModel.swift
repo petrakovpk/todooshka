@@ -10,9 +10,8 @@ import RxSwift
 import RxCocoa
 
 class ShopViewModel: Stepper {
-  // MARK: - Properties
-  let steps = PublishRelay<Step>()
-  let services: AppServices
+  public let steps = PublishRelay<Step>()
+  private let services: AppServices
 
   struct Input {
     let backButtonClickTrigger: Driver<Void>
@@ -32,14 +31,14 @@ class ShopViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    // buttons
-    let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.shopIsCompleted) }
-
-    // birds
+    // MARK: - INIT
     let birds = services.dataService.birds
+    
+    // MARK: - NAVIGATE BACK
+    let navigateBack = input.backButtonClickTrigger
+      .map { self.steps.accept(AppStep.navigateBack) }
 
-    // dataSource
+    // MARK: - DATASOURCE
     let dataSource = birds
       .map { birds -> [ShopSection] in
         Dictionary(grouping: birds, by: { $0.clade })
@@ -54,13 +53,15 @@ class ShopViewModel: Stepper {
               })
             )
           }
-      }.asDriver(onErrorJustReturn: [])
-
+      }
+      .asDriver(onErrorJustReturn: [])
+    
     // item selected
     let show = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource in
         dataSource[indexPath.section].items[indexPath.item]
-      }.map { self.steps.accept(AppStep.showBirdIsRequired(bird: $0)) }
+      }
+      .map { self.steps.accept(AppStep.showBirdIsRequired(bird: $0)) }
 
     return Output(
       dataSource: dataSource,

@@ -20,13 +20,9 @@ class BranchSceneModel: Stepper {
   }
 
   struct Output {
-    // background
-    let background: Driver<UIImage?>
-    // birds
+    let backgroundImage: Driver<UIImage?>
     let birds: Driver<[Bird]>
-    // dataSource
     let dataSource: Driver<[BirdActionType]>
-    // force
     let forceNestUpdate: Driver<Void>
     let forceBranchUpdate: Driver<Void>
   }
@@ -37,7 +33,9 @@ class BranchSceneModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    // force
+    let birds = services.dataService.birds
+    let dataSource = services.dataService.branchDataSource
+    
     let forceNestUpdate = willShow
       .compactMap { $0 }
       .asDriver(onErrorJustReturn: ())
@@ -47,22 +45,16 @@ class BranchSceneModel: Stepper {
       .compactMap { $0 }
       .asDriver(onErrorJustReturn: ())
 
-    // timer
     let timer = Driver<Int>
       .interval(RxTimeInterval.seconds(5))
 
-    // background
-    let background = timer
+    let backgroundImage = timer
       .map { _ in self.getBackgroundImage(date: Date()) }
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
 
-    let birds = services.dataService.birds
-
-    let dataSource = services.dataService.branchDataSource
-
     return Output(
-      background: background,
+      backgroundImage: backgroundImage,
       birds: birds,
       dataSource: dataSource,
       forceNestUpdate: forceNestUpdate,

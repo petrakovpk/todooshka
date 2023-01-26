@@ -16,10 +16,9 @@ import Lottie
 import JTAppleCalendar
 
 class MainTaskListViewController: UIViewController {
-
-  public var sceneModel: NestSceneModel!
-  public var viewModel: MainTaskListViewModel!
-  public var listViewModel: TaskListViewModel!
+  public var mainSceneModel: MainSceneModel!
+  public var mainViewModel: MainTaskListViewModel!
+  public var taskListViewModel: TaskListViewModel!
   public var calendarViewModel: CalendarViewModel!
   
   private let disposeBag = DisposeBag()
@@ -31,13 +30,19 @@ class MainTaskListViewController: UIViewController {
   private var calendarDataSource: [CalendarSection] = []
   
   // MARK: - UI Elements - Scene
-  private let scene: NestScene? = {
-    let scene = SKScene(fileNamed: "NestScene") as? NestScene
+  private let mainSceneleft: MainScene? = {
+    let scene = SKScene(fileNamed: "MainScene") as? MainScene
+    scene?.scaleMode = .aspectFill
+    return scene
+  }()
+  
+  private let mainSceneRight: MainScene? = {
+    let scene = SKScene(fileNamed: "MainScene") as? MainScene
     scene?.scaleMode = .aspectFill
     return scene
   }()
 
-  private let sceneView: SKView = {
+  private let mainSceneLeftView: SKView = {
     let view = SKView(
       frame: CGRect(
         center: .zero,
@@ -47,7 +52,22 @@ class MainTaskListViewController: UIViewController {
     return view
   }()
   
-  // MARK: - UI Elements - Common
+  private let mainSceneRightView: SKView = {
+    let view = SKView(
+      frame: CGRect(
+        center: .zero,
+        size: CGSize(
+          width: Style.Scene.width,
+          height: Style.Scene.height)))
+    return view
+  }()
+  
+  // MARK: - UI Elements - Main Task List
+  private let taskListContainerView: UIView = {
+    let view = UIView()
+    return view
+  }()
+  
   private let overduedTasksButton: UIButton = {
     let button = UIButton(type: .system)
     button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
@@ -78,12 +98,6 @@ class MainTaskListViewController: UIViewController {
     return button
   }()
   
-  // MARK: - UI Elements - Main Task List
-  private let taskListContainerView: UIView = {
-    let view = UIView()
-    return view
-  }()
-  
   private var mainTaskListCollectionView: UICollectionView!
   private var mainTaskListDataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
 
@@ -102,7 +116,7 @@ class MainTaskListViewController: UIViewController {
     let view = UIView()
     return view
   }()
-
+  
   private let taskListButton: UIButton = {
     let button = UIButton(type: .system)
     button.backgroundColor = .clear
@@ -141,10 +155,11 @@ class MainTaskListViewController: UIViewController {
     return button
   }()
   
-  private let featherButton: UIButton = {
+  private let shopButton: UIButton = {
     let button = UIButton(type: .system)
     button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
     button.cornerRadius = 8
+    button.imageView?.contentMode = .scaleAspectFit
     button.tintColor = Style.App.text
     button.setTitle("7", for: .normal)
     return button
@@ -231,7 +246,10 @@ class MainTaskListViewController: UIViewController {
     calendarView.layer.cornerRadius = 8
     calendarView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
     calendarView.backgroundColor = Style.Views.Calendar.Background
-    calendarView.register(CalendarReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CalendarReusableView.reuseID)
+    calendarView.register(
+      CalendarReusableView.self,
+      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+      withReuseIdentifier: CalendarReusableView.reuseID)
     calendarView.register(CalendarCell.self, forCellWithReuseIdentifier: CalendarCell.reuseID)
     calendarView.scrollingMode = .stopAtEachSection
     calendarView.scrollDirection = .horizontal
@@ -307,11 +325,10 @@ class MainTaskListViewController: UIViewController {
   
   // MARK: - Lifecycle
   override func viewDidLoad() {
-    configureScene()
     configureUI()
     configureMainTaskListDataSource()
     configureCalendarTaskListDataSource()
-    bindSceneModel()
+    bindMainSceneModel()
     bindViewModel()
     bindMainTaskListViewModel()
     bindCalendarViewModel()
@@ -319,23 +336,12 @@ class MainTaskListViewController: UIViewController {
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    scene?.reloadData()
+//    taskListScene?.reloadData()
 //    viewModel.services.dataService.checkPlannedTasksTrigger.accept(())
     navigationController?.tabBarController?.tabBar.isHidden = false
   }
 
-  // MARK: - Configure View Controller
-  func configureScene() {
-    view.addSubview(sceneView)
-    sceneView.presentScene(scene)
-    sceneView.anchor(
-      top: view.topAnchor,
-      left: view.safeAreaLayoutGuide.leftAnchor,
-      right: view.safeAreaLayoutGuide.rightAnchor,
-      heightConstant: sceneView.frame.height
-    )
-  }
-
+  // MARK: - Configure UI
   private func configureUI() {
     view.backgroundColor = Style.App.background
     
@@ -360,16 +366,16 @@ class MainTaskListViewController: UIViewController {
 
     taskListContainerView.frame = CGRect(
       x: 0,
-      y: sceneView.bounds.height,
+      y: 0,
       width: view.frame.width,
-      height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height
+      height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0)
     )
     
     calendarContainerView.frame = CGRect(
         x: self.view.frame.width,
-        y: self.sceneView.bounds.height,
+        y: 0,
         width: view.frame.width,
-        height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height
+        height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0)
     )
 
     alertContainerView.anchor(
@@ -407,6 +413,7 @@ class MainTaskListViewController: UIViewController {
     
     // adding 2 layer
     taskListContainerView.addSubviews([
+      mainSceneLeftView,
       dragonBackgroundView,
       overduedTasksButton,
       ideaTasksButton,
@@ -419,8 +426,16 @@ class MainTaskListViewController: UIViewController {
       dragonImageView
     ])
     
-    overduedTasksButton.anchor(
+    mainSceneLeftView.presentScene(mainSceneleft)
+    mainSceneLeftView.anchor(
       top: taskListContainerView.topAnchor,
+      left: taskListContainerView.leftAnchor,
+      right: taskListContainerView.rightAnchor,
+      heightConstant: mainSceneLeftView.frame.height
+    )
+    
+    overduedTasksButton.anchor(
+      top: mainSceneLeftView.bottomAnchor,
       left: taskListContainerView.leftAnchor,
       topConstant: 16,
       leftConstant: 16,
@@ -429,7 +444,7 @@ class MainTaskListViewController: UIViewController {
     )
     
     calendarButton.anchor(
-      top: taskListContainerView.topAnchor,
+      top: mainSceneLeftView.bottomAnchor,
       right: taskListContainerView.rightAnchor,
       topConstant: 16,
       rightConstant: 16,
@@ -438,7 +453,7 @@ class MainTaskListViewController: UIViewController {
     )
 
     ideaTasksButton.anchor(
-      top: taskListContainerView.topAnchor,
+      top: mainSceneLeftView.bottomAnchor,
       left: overduedTasksButton.rightAnchor,
       right: calendarButton.leftAnchor,
       topConstant: 16,
@@ -493,8 +508,9 @@ class MainTaskListViewController: UIViewController {
     calendarTaskListCollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createCalendarTaskListCompositionalLayout())
     
     calendarContainerView.addSubviews([
+      mainSceneRightView,
       taskListButton,
-      featherButton,
+      shopButton,
       calendarNavigateButtonsStackView,
       calendarDayNamesStackView,
       calendarView,
@@ -505,8 +521,16 @@ class MainTaskListViewController: UIViewController {
       calendarTaskListCollectionView
     ])
     
-    taskListButton.anchor(
+    mainSceneRightView.presentScene(mainSceneRight)
+    mainSceneRightView.anchor(
       top: calendarContainerView.topAnchor,
+      left: calendarContainerView.leftAnchor,
+      widthConstant: mainSceneRightView.frame.width,
+      heightConstant: mainSceneRightView.frame.height
+    )
+    
+    taskListButton.anchor(
+      top: mainSceneRightView.bottomAnchor,
       left: calendarContainerView.leftAnchor,
       topConstant: 16,
       leftConstant: 16,
@@ -529,14 +553,14 @@ class MainTaskListViewController: UIViewController {
 
     calendarNavigateButtonsStackView.anchorCenterXToSuperview()
     calendarNavigateButtonsStackView.anchor(
-      top: calendarContainerView.topAnchor,
+      top: mainSceneRightView.bottomAnchor,
       topConstant: 16,
       widthConstant: 7 * Sizes.Cells.CalendarCell.size,
       heightConstant: Sizes.Cells.CalendarCell.size
     )
     
-    featherButton.anchor(
-      top: calendarContainerView.topAnchor,
+    shopButton.anchor(
+      top: mainSceneRightView.bottomAnchor,
       right: calendarContainerView.rightAnchor,
       topConstant: 16,
       rightConstant: 16,
@@ -623,14 +647,14 @@ class MainTaskListViewController: UIViewController {
   }
   
   private func mainTaskListSection() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62))
+    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(50.0))
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
     let header = NSCollectionLayoutBoundarySupplementaryItem(
       layoutSize: headerSize,
       elementKind: UICollectionView.elementKindSectionHeader,
@@ -670,14 +694,14 @@ class MainTaskListViewController: UIViewController {
   }
   
   private func calendarTaskListSection() -> NSCollectionLayoutSection {
-    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(62))
+    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
     item.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 5, trailing: 0)
     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(1.0))
     let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
     let section = NSCollectionLayoutSection(group: group)
     section.contentInsets = NSDirectionalEdgeInsets.init(top: 5, leading: 0, bottom: 0, trailing: 0)
-    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(30))
+    let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
     let header = NSCollectionLayoutBoundarySupplementaryItem(
       layoutSize: headerSize,
       elementKind: UICollectionView.elementKindSectionHeader,
@@ -711,17 +735,26 @@ class MainTaskListViewController: UIViewController {
   }
 
   // MARK: - Bind
-  func bindSceneModel() {
-    let input = NestSceneModel.Input()
-    let outputs = sceneModel.transform(input: input)
-
-    [
-      // scene
-      outputs.backgroundImage.drive(backgroundImageBinder),
-      // dataSource
-      outputs.dataSource.drive(sceneDataSourceBinder)
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+  func bindMainSceneModel() {
+//    let input = NestSceneModel.Input()
+//    let outputs = nestSceneModel.transform(input: input)
+//
+//    [
+//      outputs.backgroundImage.drive(nestSceneBackgroundImageBinder),
+//      outputs.dataSource.drive(nestSceneDataSourceBinder)
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
+  }
+  
+  func bindBranchSceneModel() {
+//    let input = BranchSceneModel.Input()
+//    let outputs = branchSceneModel.transform(input: input)
+//
+//    [
+//      outputs.backgroundImage.drive(branchSceneBackgroundImageBinder),
+//      outputs.dataSource.drive(branchSceneDataSourceBinder)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   func bindViewModel() {
@@ -729,16 +762,18 @@ class MainTaskListViewController: UIViewController {
       overduedButtonClickTrigger: overduedTasksButton.rx.tap.asDriver(),
       ideaButtonClickTrigger: ideaTasksButton.rx.tap.asDriver(),
       calendarButtonClickTrigger: calendarButton.rx.tap.asDriver(),
-      taskListButtonClickTrigger: taskListButton.rx.tap.asDriver()
+      taskListButtonClickTrigger: taskListButton.rx.tap.asDriver(),
+      shopButtoClickTrigger: shopButton.rx.tap.asDriver()
     )
 
-    let outputs = viewModel.transform(input: input)
+    let outputs = mainViewModel.transform(input: input)
 
     [
       outputs.openOverduedTasklist.drive(),
       outputs.openIdeaTaskList.drive(),
       outputs.openCalendar.drive(openCalendarViewBinder),
-      outputs.openTaskList.drive(openTaskListViewBinder)
+      outputs.openTaskList.drive(openTaskListViewBinder),
+      outputs.openShop.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }
@@ -758,7 +793,7 @@ class MainTaskListViewController: UIViewController {
       alertCancelButtonClick: alertCancelButton.rx.tap.asDriver()
     )
 
-    let outputs = listViewModel.transform(input: input)
+    let outputs = taskListViewModel.transform(input: input)
 
     [
       // DATASOURCE
@@ -829,7 +864,7 @@ class MainTaskListViewController: UIViewController {
 
   var reloadItemsBinder: Binder<[IndexPath]> {
     return Binder(self, binding: { vc, indexPaths in
-      if self.listViewModel.editingIndexPath == nil {
+      if self.taskListViewModel.editingIndexPath == nil {
         vc.mainTaskListCollectionView.reloadData()
       } else {
         UIView.performWithoutAnimation {
@@ -845,24 +880,44 @@ class MainTaskListViewController: UIViewController {
     })
   }
 
-  var sceneDataSourceBinder: Binder<[EggActionType]> {
-    return Binder(self, binding: { vc, actions in
-      if let scene = vc.scene {
-        scene.setup(with: actions)
-        if vc.isVisible {
-          scene.reloadData()
-        }
-      }
-    })
-  }
-
-  var backgroundImageBinder: Binder<UIImage?> {
-    return Binder(self, binding: { vc, image in
-      if let image = image, let scene = vc.scene {
-        scene.setup(withBackground: image)
-      }
-    })
-  }
+//  // MARK: - Scene Binders
+//  var nestSceneBackgroundImageBinder: Binder<UIImage?> {
+//    return Binder(self, binding: { vc, image in
+//      if let image = image, let scene = vc.taskListScene {
+//        scene.setup(withBackground: image)
+//      }
+//    })
+//  }
+//
+//  var nestSceneDataSourceBinder: Binder<[EggActionType]> {
+//    return Binder(self, binding: { vc, actions in
+//      if let scene = vc.taskListScene {
+//        scene.setup(with: actions)
+//        if vc.isVisible {
+//          scene.reloadData()
+//        }
+//      }
+//    })
+//  }
+//
+//  var branchSceneBackgroundImageBinder: Binder<UIImage?> {
+//    return Binder(self, binding: { vc, image in
+//      if let image = image, let scene = vc.taskListScene {
+//        scene.setup(withBackground: image)
+//      }
+//    })
+//  }
+//
+//  var branchSceneDataSourceBinder: Binder<[BirdActionType]> {
+//    return Binder(self, binding: { vc, actions in
+//      if let scene = vc.calendarScene {
+//        scene.setup(with: actions)
+//        if vc.isVisible {
+//          scene.reloadData()
+//        }
+//      }
+//    })
+//  }
 
   var dataSourceBinder: Binder<[TaskListSection]> {
     return Binder(self, binding: { vc, dataSource in
@@ -879,15 +934,15 @@ class MainTaskListViewController: UIViewController {
       UIView.animate(withDuration: 0.5) {
         self.taskListContainerView.frame = CGRect(
           x: -self.view.frame.width,
-          y: self.sceneView.bounds.height,
+          y: 0,
           width: self.view.frame.width,
-          height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height )
+          height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) )
 
         self.calendarContainerView.frame = CGRect(
           x: 0,
-          y: self.sceneView.bounds.height,
+          y: 0,
           width: self.view.frame.width,
-          height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height )
+          height: self.view.bounds.height - (self.tabBarController?.tabBar.bounds.height ?? 0))
       }
     })
   }
@@ -898,15 +953,15 @@ class MainTaskListViewController: UIViewController {
       UIView.animate(withDuration: 0.5) {
         vc.taskListContainerView.frame = CGRect(
           x: 0,
-          y: vc.sceneView.bounds.height,
+          y: 0,
           width: vc.view.frame.width,
-          height: vc.view.bounds.height - (vc.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height )
+          height: vc.view.bounds.height - (vc.tabBarController?.tabBar.bounds.height ?? 0))
 
         vc.calendarContainerView.frame = CGRect(
           x: vc.view.frame.width,
-          y: vc.sceneView.bounds.height,
+          y: 0,
           width: vc.view.frame.width,
-          height: vc.view.bounds.height - (vc.tabBarController?.tabBar.bounds.height ?? 0) - Style.Scene.height )
+          height: vc.view.bounds.height - (vc.tabBarController?.tabBar.bounds.height ?? 0))
       }
     })
   }
@@ -948,13 +1003,13 @@ class MainTaskListViewController: UIViewController {
 extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
   func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
     if collectionView == self.mainTaskListCollectionView {
-      listViewModel.editingIndexPath = indexPath
+      taskListViewModel.editingIndexPath = indexPath
     }
   }
 
   func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
     if collectionView == self.mainTaskListCollectionView {
-      listViewModel.editingIndexPath = nil
+      taskListViewModel.editingIndexPath = nil
     }
   }
 
@@ -965,7 +1020,7 @@ extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
       guard let self = self else { return }
       action.fulfill(with: .reset)
       if  collectionView == self.mainTaskListCollectionView {
-        self.listViewModel.changeStatus(indexPath: indexPath, status: .deleted, completed: nil)
+        self.taskListViewModel.changeStatus(indexPath: indexPath, status: .deleted, completed: nil)
       } else {
         self.calendarViewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .deleted))
       }
@@ -975,7 +1030,7 @@ extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
       guard let self = self else { return }
       action.fulfill(with: .reset)
       if  collectionView == self.mainTaskListCollectionView {
-        self.listViewModel.changeStatus(indexPath: indexPath, status: .idea, completed: nil)
+        self.taskListViewModel.changeStatus(indexPath: indexPath, status: .idea, completed: nil)
       } else {
         self.calendarViewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .idea))
       }

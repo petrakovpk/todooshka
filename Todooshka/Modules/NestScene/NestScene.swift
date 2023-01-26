@@ -37,19 +37,15 @@ class NestScene: SKScene {
   // MARK: - Lifecycle
   override func didMove(to view: SKView) {
     if let scene = scene {
-      // scene
       scene.size = view.size
       scene.backgroundColor = .clear
 
-      // adding
       addChild(background)
       addChild(backgroundBottom)
 
-      // background
       background.position = CGPoint(x: position.x + 40, y: position.y)
       backgroundBottom.position = background.position
 
-      // nodes
       SKEggNodes = [
         SKEggNode(level: 1),
         SKEggNode(level: 2),

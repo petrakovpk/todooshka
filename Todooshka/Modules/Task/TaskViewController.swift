@@ -111,6 +111,7 @@ class TaskViewController: TDViewController {
     let picker = UIDatePicker()
     picker.datePickerMode = .time
     picker.preferredDatePickerStyle = .wheels
+    picker.minuteInterval = 5
     picker.backgroundColor = Style.App.background
     picker.cornerRadius = 8
     picker.isHidden = true
@@ -612,7 +613,6 @@ class TaskViewController: TDViewController {
   
   var isModalBinder: Binder<Bool> {
     return Binder(self, binding: { vc, isModal in
-      print("1234", isModal)
       if isModal {
         vc.backButton.isHidden = true
       } else {

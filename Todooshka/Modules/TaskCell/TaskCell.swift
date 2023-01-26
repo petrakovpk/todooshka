@@ -84,7 +84,6 @@ class TaskCell: SwipeCollectionViewCell {
   override func layoutSubviews() {
     super.layoutSubviews()
     configureUI()
-    configureTextAndDescription()
   }
   
   // MARK: - Draw
@@ -112,7 +111,6 @@ class TaskCell: SwipeCollectionViewCell {
     let gradientLayer = CAGradientLayer()
     let shapeLayer = CAShapeLayer()
     
-    // gradientLayer
     gradientLayer.locations = [0, 1]
     gradientLayer.startPoint = CGPoint(x: 0, y: 0)
     gradientLayer.endPoint = CGPoint(x: 0, y: 1)
@@ -123,7 +121,6 @@ class TaskCell: SwipeCollectionViewCell {
       UIColor(red: 0.074, green: 0.09, blue: 0.217, alpha: 0).cgColor
     ]
     
-    // shapeLayer
     shapeLayer.frame = bounds
     shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 8).cgPath
     shapeLayer.strokeColor = UIColor(hexString: "#15183C")?.cgColor
@@ -142,10 +139,12 @@ class TaskCell: SwipeCollectionViewCell {
   
   // MARK: - Configure UI
   func configureUI() {
+    let stackView = UIStackView(arrangedSubviews: [taskTextLabel, descriptionTextLabel])
+    stackView.axis = .vertical
+    
     contentView.addSubviews([
       taskTypeImageView,
-      taskTextLabel,
-      descriptionTextLabel,
+      stackView,
       timeView,
       repeatButton
     ])
@@ -156,14 +155,12 @@ class TaskCell: SwipeCollectionViewCell {
     
     traitCollection.userInterfaceStyle == .dark ? drawDarkMode() : drawLightMode()
     
-    // contentView
     contentView.cornerRadius = 11
     contentView.layer.borderWidth = 0
     contentView.layer.borderColor = UIColor(hexString: "#15183C")?.cgColor
     contentView.layer.masksToBounds = false
     contentView.tintColor = .white
     
-    // taskTypeImageView
     taskTypeImageView.anchorCenterYToSuperview()
     taskTypeImageView.anchor(
       left: contentView.leftAnchor,
@@ -171,7 +168,17 @@ class TaskCell: SwipeCollectionViewCell {
       widthConstant: 20,
       heightConstant: 20)
     
-    // taskTimeLeftView
+    stackView.anchor(
+      top: contentView.topAnchor,
+      left: taskTypeImageView.rightAnchor,
+      bottom: contentView.bottomAnchor,
+      right: timeView.leftAnchor,
+      topConstant: 5,
+      leftConstant: 8,
+      bottomConstant: 5,
+      rightConstant: 8
+    )
+    
     timeView.anchorCenterYToSuperview()
     timeView.anchor(
       right: contentView.rightAnchor,
@@ -179,45 +186,15 @@ class TaskCell: SwipeCollectionViewCell {
       widthConstant: 50,
       heightConstant: 28)
     
-    // taskTimeLeftLabel
     timeLabel.anchorCenterYToSuperview()
     timeLabel.anchorCenterXToSuperview()
     
-    // repeatButton
     repeatButton.anchorCenterYToSuperview()
     repeatButton.anchor(
       right: contentView.rightAnchor,
       rightConstant: 8,
       widthConstant: 110,
       heightConstant: 30)
-  }
-  
-  func configureTextAndDescription() {
-    taskTextLabel.removeAllConstraints()
-    descriptionTextLabel.removeAllConstraints()
-    if descriptionTextLabel.text == "" {
-      taskTextLabel.anchorCenterYToSuperview()
-      taskTextLabel.anchor(
-        left: taskTypeImageView.rightAnchor,
-        right: timeView.leftAnchor,
-        leftConstant: 8,
-        rightConstant: 8)
-    } else {
-      taskTextLabel.anchor(
-        top: contentView.topAnchor,
-        left: taskTypeImageView.rightAnchor,
-        right: timeView.leftAnchor,
-        topConstant: 12,
-        leftConstant: 8,
-        rightConstant: 8)
-      descriptionTextLabel.anchor(
-        top: taskTextLabel.bottomAnchor,
-        left: taskTypeImageView.rightAnchor,
-        right: timeView.leftAnchor,
-        topConstant: 3,
-        leftConstant: 8,
-        rightConstant: 8)
-    }
   }
   
   func configure(mode: TaskCellMode, task: Task, kindOfTask: KindOfTask) {
@@ -256,7 +233,6 @@ class TaskCell: SwipeCollectionViewCell {
     descriptionTextLabel.text = task.description
   }
   
-  // MARK: - Configure UI
   private func configureLineLayout(percent: Double, color: UIColor) {
     let widthConstant = percent * (contentView.frame.width.double - 22)
     let roundGradintLayer = CAGradientLayer()

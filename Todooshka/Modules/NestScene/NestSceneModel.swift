@@ -21,13 +21,9 @@ class NestSceneModel: Stepper {
   }
 
   struct Output {
-    // background
     let backgroundImage: Driver<UIImage?>
-    // birds
     let birds: Driver<[Bird]>
-    // dataSource
     let dataSource: Driver<[EggActionType]>
-    // force
     let forceNestUpdate: Driver<Void>
     let forceBranchUpdate: Driver<Void>
   }
