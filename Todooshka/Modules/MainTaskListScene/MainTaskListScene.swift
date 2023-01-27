@@ -8,7 +8,7 @@
 import UIKit
 import SpriteKit
 
-class NestScene: SKScene {
+class MainTaskListScene: SKScene {
   // MARK: - Private
   private var actions: [EggActionType] = [.create, .create, .create, .create, .create, .create, .create]
   private var SKEggNodes: [SKEggNode] = []

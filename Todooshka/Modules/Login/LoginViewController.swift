@@ -12,14 +12,14 @@ import RxCocoa
 import RxDataSources
 
 class LoginViewController: UIViewController {
-  // MARK: - Properties
-  var viewModel: LoginViewModel!
+  public var viewModel: LoginViewModel!
+  
   private let disposeBag = DisposeBag()
 
   // MARK: - UI Elements
-  fileprivate let headerView = UIView()
+  private let headerView = UIView()
 
-  fileprivate let headerLabel: UILabel = {
+  private let headerLabel: UILabel = {
     let label = UILabel()
     label.text = "DragoDo"
     label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
@@ -27,7 +27,7 @@ class LoginViewController: UIViewController {
     return label
   }()
 
-  fileprivate let secondHeaderLabel: UILabel = {
+  private let secondHeaderLabel: UILabel = {
     let label = UILabel()
     label.text = "Создаем аккаунт"
     label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
@@ -35,7 +35,7 @@ class LoginViewController: UIViewController {
     return label
   }()
 
-  fileprivate let errorTextView: UITextView = {
+  private let errorTextView: UITextView = {
     let textView = UITextView()
     textView.textAlignment = .center
     textView.isEditable = false
@@ -46,7 +46,7 @@ class LoginViewController: UIViewController {
     return textView
   }()
 
-  fileprivate let headerDescriptionTextView: UITextView = {
+  private let headerDescriptionTextView: UITextView = {
     let textView = UITextView()
     textView.text = "Спасибо, что решили зарегестрировать в приложении! Это поможет вам сохранять онлайн задачи и загружать их на других устройствах!"
     textView.isScrollEnabled = false
@@ -59,27 +59,27 @@ class LoginViewController: UIViewController {
     return textView
   }()
 
-  fileprivate let emailButton: UIButton = {
+  private let emailButton: UIButton = {
     let button = UIButton(type: .custom)
     let attrString = NSAttributedString(string: "Email", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium) ])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
 
-  fileprivate let phoneButton: UIButton = {
+  private let phoneButton: UIButton = {
     let button = UIButton(type: .custom)
     let attrString = NSAttributedString(string: "Телефон", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)])
     button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
 
-  fileprivate let emailTextField = TDAuthTextField(type: .email)
-  fileprivate let passwordTextField = TDAuthTextField(type: .password)
-  fileprivate let repeatPasswordTextField = TDAuthTextField(type: .repeatPassword)
-  fileprivate let phoneTextField = TDAuthTextField(type: .phone)
-  fileprivate let OTPCodeTextField = TDAuthTextField(type: .otp)
+  private let emailTextField = TDAuthTextField(type: .email)
+  private let passwordTextField = TDAuthTextField(type: .password)
+  private let repeatPasswordTextField = TDAuthTextField(type: .repeatPassword)
+  private let phoneTextField = TDAuthTextField(type: .phone)
+  private let OTPCodeTextField = TDAuthTextField(type: .otp)
 
-  fileprivate let resetPasswordButton: UIButton = {
+  private let resetPasswordButton: UIButton = {
     let button = UIButton(type: .system)
     button.setTitle("Забыли пароль?\nОтправить письмо для восстановления пароля", for: .normal)
     button.setTitleColor(Palette.SingleColors.SantasGray, for: .normal)
@@ -88,7 +88,7 @@ class LoginViewController: UIViewController {
     return button
   }()
 
-  fileprivate let sendOTPCodeButton: UIButton = {
+  private let sendOTPCodeButton: UIButton = {
     let button = UIButton(type: .system)
     button.setTitle("Отправить код повторно", for: .normal)
     button.setTitleColor(Palette.SingleColors.SantasGray, for: .normal)
@@ -97,26 +97,26 @@ class LoginViewController: UIViewController {
     return button
   }()
 
-  fileprivate let nextButton: UIButton = {
+  private let nextButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 48 / 2
     button.setTitle("Далее", for: .normal)
     return button
   }()
 
-  fileprivate let backButton: UIButton = {
+  private let backButton: UIButton = {
     let button = UIButton(type: .custom)
     button.setImage(Icon.arrowLeft.image.template, for: .normal)
     button.tintColor = Style.App.text
     return button
   }()
 
-  fileprivate let leftDividerView: UIView = {
+  private let leftDividerView: UIView = {
     let view = UIView()
     return view
   }()
 
-  fileprivate let rightDividerView: UIView = {
+  private let rightDividerView: UIView = {
     let view = UIView()
     return view
   }()

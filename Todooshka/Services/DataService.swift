@@ -22,7 +22,6 @@ protocol HasDataService {
 }
 
 class DataService {
-  // MARK: - Properties
   // core data
   let appDelegate = UIApplication.shared.delegate as? AppDelegate
 

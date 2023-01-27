@@ -69,7 +69,7 @@ class TabBarFlow: Flow {
 
   private func navigateToTabBar() -> FlowContributors {
     let funFlow = FunFlow(withServices: self.services)
-    let taskListFlow = TaskListFlow(withServices: self.services)
+    let workplaceFlow = WorkplaceFlow(withServices: self.services)
     let profileFlow = ProfileFlow(withServices: self.services)
     let emptyFlow = EmptyFlow()
 
@@ -79,7 +79,7 @@ class TabBarFlow: Flow {
 
     Flows.use(
       funFlow,
-      taskListFlow,
+      workplaceFlow,
       profileFlow,
       emptyFlow,
       when: .created
@@ -107,8 +107,7 @@ class TabBarFlow: Flow {
     return .multiple(flowContributors: [
       .contribute(withNextPresentable: self, withNextStepper: viewModel),
       .contribute(withNextPresentable: funFlow, withNextStepper: OneStepper(withSingleStep: AppStep.funIsRequired)),
-      .contribute(withNextPresentable: taskListFlow, withNextStepper: OneStepper(withSingleStep: AppStep.mainTaskListIsRequired)),
-      //.contribute(withNextPresentable: taskListFlow, withNextStepper: <#T##Stepper#>)
+      .contribute(withNextPresentable: workplaceFlow, withNextStepper: OneStepper(withSingleStep: AppStep.workplaceIsRequired)),
       .contribute(withNextPresentable: profileFlow, withNextStepper: OneStepper(withSingleStep: AppStep.profileIsRequired)),
       .contribute(withNextPresentable: emptyFlow, withNextStepper: OneStepper(withSingleStep: AppStep.navigateBack))
     ])

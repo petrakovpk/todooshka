@@ -12,11 +12,17 @@ import RxDataSources
 import Lottie
 import RxGesture
 
-class TaskViewController: TDViewController {
-  // MARK: - Propertie
-  public var viewModel: TaskViewModel!
-  private let disposeBag = DisposeBag()
+enum BottomButtonsMode {
+  case create
+  case complete
+  case publish
+}
 
+class TaskViewController: TDViewController {
+  public var viewModel: TaskViewModel!
+  
+  private let disposeBag = DisposeBag()
+  
   // MARK: - UI Elements - NAME
   private let nameTextField: TDTaskTextField = {
     let textField = TDTaskTextField(placeholder: "Введите название задачи")
@@ -36,7 +42,7 @@ class TaskViewController: TDViewController {
     button.tintColor = .black
     return button
   }()
-
+  
   // MARK: - UI Elements - EXPECTED DATETIME
   private let expectedDateTimelabel: UILabel = {
     let label = UILabel(text: "Срок")
@@ -146,14 +152,14 @@ class TaskViewController: TDViewController {
     label.textAlignment = .left
     return label
   }()
-
+  
   private let kindOfTaskSettingsButton: UIButton = {
     let button = UIButton(type: .system)
     button.setImage(Icon.settingsGear.image.template, for: .normal)
     button.tintColor = Style.Buttons.RoundButton.tint
     return button
   }()
-
+  
   private var collectionView: UICollectionView!
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskSection>!
   
@@ -164,7 +170,7 @@ class TaskViewController: TDViewController {
     label.textAlignment = .left
     return label
   }()
-
+  
   private let descriptionTextView: UITextView = {
     let textView = UITextView()
     textView.borderWidth = 0
@@ -179,13 +185,13 @@ class TaskViewController: TDViewController {
     button.tintColor = .black
     return button
   }()
-
+  
   private let dividerView: UIView = {
     let view = UIView()
     view.backgroundColor = UIColor(red: 0.094, green: 0.105, blue: 0.233, alpha: 1)
     return view
   }()
-
+  
   // MARK: - UI Elements - RESULT
   private let resultPhotoLabel: UILabel = {
     let label = UILabel(text: "Фото результата:")
@@ -200,15 +206,22 @@ class TaskViewController: TDViewController {
     imageView.backgroundColor = .white
     return imageView
   }()
-
+  
   // MARK: - UI Elements - BOTTOM BUTTONS
-  private let addTaskButton: UIButton = {
+  private let bottomButtonsStackView: UIStackView = {
+    let stackView = UIStackView()
+    stackView.axis = .horizontal
+    stackView.spacing = 8
+    return stackView
+  }()
+  
+  private let saveTaskButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 8
     button.setTitle("Создать!", for: .normal)
     button.setTitleColor(.white, for: .normal)
     button.backgroundColor = Palette.SingleColors.BlueRibbon
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
     return button
   }()
   
@@ -218,7 +231,7 @@ class TaskViewController: TDViewController {
     button.setTitle("Выполнено!", for: .normal)
     button.setTitleColor(.white, for: .normal)
     button.backgroundColor = UIColor(red: 0.349, green: 0.851, blue: 0.639, alpha: 1)
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
     return button
   }()
   
@@ -230,7 +243,37 @@ class TaskViewController: TDViewController {
     button.tintColor = .white
     return button
   }()
-
+  
+  private let closeButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 8
+    button.setTitle("Зарыть!", for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    button.backgroundColor = UIColor(hexString: "#D6D7EC")
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+    return button
+  }()
+  
+  private let publishButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 8
+    button.setTitle("Опубликовать!", for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    button.backgroundColor = Palette.SingleColors.BlueRibbon
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+    return button
+  }()
+  
+  // MARK: - UI ELEMENTS
+  private let animationView: AnimationView = {
+    let animationView = AnimationView(name: "taskDone1")
+    animationView.contentMode = .scaleAspectFill
+    animationView.loopMode = .repeat(1.0)
+    animationView.animationSpeed = 1.0
+    animationView.isUserInteractionEnabled = false 
+    return animationView
+  }()
+  
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -238,13 +281,13 @@ class TaskViewController: TDViewController {
     configureDataSource()
     bindViewModel()
   }
-
+  
   // MARK: - Configure UI
   private func configureUI() {
-    titleLabel.text = "Задача"
-
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
-
+    
+    titleLabel.text = "Задача"
+    
     // adding 1 order
     view.addSubviews([
       nameTextField,
@@ -261,9 +304,8 @@ class TaskViewController: TDViewController {
       dividerView,
       resultPhotoLabel,
       resultImageView,
-      addTaskButton,
-      completeButton,
-      getPhotoButton
+      bottomButtonsStackView,
+      animationView
     ])
     
     // adding 2 order
@@ -368,7 +410,7 @@ class TaskViewController: TDViewController {
       widthConstant: expectedTimePicker.bounds.width / 2 - 4,
       heightConstant: 40
     )
-
+    
     kindOfTaskLabel.anchor(
       top: expectedDateButton.bottomAnchor,
       left: view.leftAnchor,
@@ -377,13 +419,13 @@ class TaskViewController: TDViewController {
       leftConstant: 16,
       rightConstant: 16
     )
-
+    
     kindOfTaskSettingsButton.centerYAnchor.constraint(equalTo: kindOfTaskLabel.centerYAnchor).isActive = true
     kindOfTaskSettingsButton.anchor(
       right: view.rightAnchor,
       rightConstant: 16
     )
-
+    
     collectionView.backgroundColor = UIColor.clear
     collectionView.clipsToBounds = false
     collectionView.isScrollEnabled = false
@@ -396,7 +438,7 @@ class TaskViewController: TDViewController {
       leftConstant: 16,
       heightConstant: Sizes.Views.KindsOfTaskCollectionView.height
     )
-
+    
     descriptionLabel.anchor(
       top: collectionView.bottomAnchor,
       left: view.leftAnchor,
@@ -423,7 +465,7 @@ class TaskViewController: TDViewController {
       rightConstant: 16,
       heightConstant: Sizes.TextViews.TaskDescriptionTextView.height
     )
-
+    
     dividerView.anchor(
       left: descriptionTextView.leftAnchor,
       bottom: descriptionTextView.bottomAnchor,
@@ -446,43 +488,39 @@ class TaskViewController: TDViewController {
       heightConstant: 100
     )
     
-    addTaskButton.anchor(
+    getPhotoButton.anchor(
+      widthConstant: Sizes.Buttons.AppButton.height
+    )
+    
+    closeButton.anchor(
+      widthConstant: (UIScreen.main.bounds.width - 2 * 16 - Sizes.Buttons.AppButton.height - 8 * 2) / 2
+    )
+    
+    bottomButtonsStackView.addArrangedSubviews([saveTaskButton, closeButton, publishButton, completeButton, getPhotoButton])
+    bottomButtonsStackView.anchor(
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
       right: view.rightAnchor,
       leftConstant: 16,
       bottomConstant: 16,
       rightConstant: 8,
-      heightConstant: Sizes.Buttons.AppButton.height
-    )
-
-    getPhotoButton.anchor(
-      bottom: view.safeAreaLayoutGuide.bottomAnchor,
-      right: view.rightAnchor,
-      bottomConstant: 16,
-      rightConstant: 16,
-      widthConstant: Sizes.Buttons.AppButton.height,
       heightConstant: Sizes.Buttons.AppButton.height
     )
     
-    completeButton.anchor(
+    animationView.anchor(
+      top: view.topAnchor,
       left: view.leftAnchor,
-      bottom: view.safeAreaLayoutGuide.bottomAnchor,
-      right: getPhotoButton.leftAnchor,
-      leftConstant: 16,
-      bottomConstant: 16,
-      rightConstant: 8,
-      heightConstant: Sizes.Buttons.AppButton.height
-    )
+      bottom: view.bottomAnchor,
+      right: view.rightAnchor)
   }
-
+  
   // MARK: - CollectionView
   private func createCompositionalLayout() -> UICollectionViewLayout {
     return UICollectionViewCompositionalLayout { _, _ -> NSCollectionLayoutSection? in
       return self.section()
     }
   }
-
+  
   private func section() -> NSCollectionLayoutSection {
     let itemSize = NSCollectionLayoutSize(
       widthDimension: .absolute(Sizes.Cells.KindOfTaskCell.width),
@@ -498,7 +536,7 @@ class TaskViewController: TDViewController {
     section.orthogonalScrollingBehavior = .continuous
     return section
   }
-
+  
   // MARK: - Bind
   func bindViewModel() {
     
@@ -533,18 +571,22 @@ class TaskViewController: TDViewController {
       // imageView
       resultImageViewClickTrigger: resultImageView.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
       // bottom buttons
-      addTaskButtonClickTrigger: addTaskButton.rx.tap.asDriver(),
+      addTaskButtonClickTrigger: saveTaskButton.rx.tap.asDriver(),
       completeButtonClickTrigger: completeButton.rx.tap.asDriver(),
-      getPhotoButtonClickTrigger: getPhotoButton.rx.tap.asDriver()
+      getPhotoButtonClickTrigger: getPhotoButton.rx.tap.asDriver(),
+      closeButtonClickTrigger: closeButton.rx.tap.asDriver(),
+      publishButtonClickTrigger: publishButton.rx.tap.asDriver()
     )
-
+    
     let outputs = viewModel.transform(input: input)
-
+    
     [
       // INIT
       outputs.initData.drive(initDataBinder),
       outputs.taskIsNew.drive(taskIsNewBinder),
       outputs.isModal.drive(isModalBinder),
+      // MODE
+      outputs.bottomButtonsMode.drive(bottomButtonsModeBinder),
       // BACK
       outputs.navigateBack.drive(),
       // TEXT
@@ -572,13 +614,15 @@ class TaskViewController: TDViewController {
       // COMPLETE TASK
       outputs.completeTask.drive(),
       // CLOSE VIEW CONTROLLER
-      outputs.dismissViewController.drive()
+      outputs.dismissViewController.drive(),
+      // ANIMATION
+      outputs.playAnimationViewTrigger.drive(playAnimationViewBinder)
       // yandex
-   //   outputs.yandexMetrika.drive()
+      //   outputs.yandexMetrika.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }
-
+  
   // MARK: - INIT BINERS
   var initDataBinder: Binder<Task> {
     return Binder(self, binding: { vc, task in
@@ -594,19 +638,38 @@ class TaskViewController: TDViewController {
   var taskIsNewBinder: Binder<Bool> {
     return Binder(self, binding: { vc, isNew in
       if isNew {
-        vc.addTaskButton.isHidden = false
-        vc.completeButton.isHidden = true
-        vc.getPhotoButton.isHidden = true
+        vc.nameTextField.becomeFirstResponder()
         vc.resultPhotoLabel.isHidden = true
         vc.resultImageView.isHidden = true
-        vc.nameTextField.becomeFirstResponder()
       } else {
-        vc.addTaskButton.isHidden = true
-        vc.completeButton.isHidden = false
-        vc.getPhotoButton.isHidden = false
+        vc.hideKeyboardWhenTappedAround()
         vc.resultPhotoLabel.isHidden = false
         vc.resultImageView.isHidden = false
-        vc.hideKeyboardWhenTappedAround()
+      }
+    })
+  }
+  
+  var bottomButtonsModeBinder: Binder<BottomButtonsMode> {
+    return Binder(self, binding: { vc, mode in
+      switch mode {
+      case .create:
+        vc.saveTaskButton.isHidden = false
+        vc.completeButton.isHidden = true
+        vc.getPhotoButton.isHidden = true
+        vc.closeButton.isHidden = true
+        vc.publishButton.isHidden = true
+      case .complete:
+        vc.saveTaskButton.isHidden = true
+        vc.completeButton.isHidden = false
+        vc.getPhotoButton.isHidden = false
+        vc.closeButton.isHidden = true
+        vc.publishButton.isHidden = true
+      case .publish:
+        vc.saveTaskButton.isHidden = true
+        vc.completeButton.isHidden = true
+        vc.getPhotoButton.isHidden = false
+        vc.closeButton.isHidden = false
+        vc.publishButton.isHidden = false
       }
     })
   }
@@ -678,7 +741,7 @@ class TaskViewController: TDViewController {
       vc.expectedTimePickerClearButton.isHidden = true
     })
   }
-
+  
   // MARK: - TEXT AND DESCRIPTION BINDERS
   var hideDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
@@ -686,16 +749,22 @@ class TaskViewController: TDViewController {
       vc.descriptionTextView.clear()
     })
   }
-
+  
   var showDescriptionPlaceholderBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
       vc.descriptionTextView.textColor = Style.App.placeholder
       vc.descriptionTextView.text = "Напишите комментарий"
     })
   }
-
   
-
+  // MARK: - ANIMATION BINDERS
+  var playAnimationViewBinder: Binder<Void> {
+    return Binder(self, binding: { (vc, _) in
+      vc.animationView.play()
+    })
+  }
+  
+  // MARK: - Configure Data Source
   func configureDataSource() {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskSection>(

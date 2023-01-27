@@ -62,7 +62,8 @@ class UserProfileViewModel: Stepper {
     let birthday = dict
       .compactMap { $0["birthday"] as? Double }
       .map { Date(timeIntervalSince1970: $0) }
-      .map { self.services.preferencesService.formatter.string(from: $0) }
+      .map { $0.string() }
+     // .map { self.services.preferencesService.formatter.string(from: $0) }
       .startWith("")
 
     let gender = dict

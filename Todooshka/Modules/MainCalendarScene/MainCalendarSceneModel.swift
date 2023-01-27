@@ -10,11 +10,11 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-class BranchSceneModel: Stepper {
-  // MARK: - Properties
-  let steps = PublishRelay<Step>()
-  let services: AppServices
-  let willShow = BehaviorRelay<Void?>(value: nil)
+class MainCalendarSceneModel: Stepper {
+  public let steps = PublishRelay<Step>()
+  
+  private let services: AppServices
+  private let willShow = BehaviorRelay<Void?>(value: nil)
 
   struct Input {
   }

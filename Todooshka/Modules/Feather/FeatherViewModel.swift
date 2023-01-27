@@ -53,7 +53,8 @@ class FeatherViewModel: Stepper {
           .init(grouping: $0, by: { $0.task.completed!.startOfDay })
           .sorted(by: { $0.key > $1.key })
           .map { key, value in
-            TaskListSection(header: self.services.preferencesService.formatter.string(from: key), mode: .empty, items: value)
+            TaskListSection(header: key.string(), mode: .empty, items: value)
+            //TaskListSection(header: self.services.preferencesService.formatter.string(from: key), mode: .empty, items: value)
           }
       }
 

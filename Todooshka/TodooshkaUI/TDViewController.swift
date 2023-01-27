@@ -89,16 +89,17 @@ class TDViewController: UIViewController {
 
   // MARK: - Configure
   private func configureHeader() {
-    // adding
+    //let safeAreaTopInset = isModal ? 0 : UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0
+    
+    navigationItem.setHidesBackButton(true, animated: false)
+    
     view.addSubviews([
       safeAreaHeaderView,
       headerView
     ])
 
-    // view
     view.backgroundColor = Style.App.background
 
-    // headerView
     headerView.addSubviews([
       backButton,
       titleLabel,
@@ -110,21 +111,19 @@ class TDViewController: UIViewController {
       dividerView
     ])
 
-    // safeAreaHeaderView
     safeAreaHeaderView.anchor(
       top: view.topAnchor,
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.topAnchor,
-      right: view.rightAnchor)
-
-    // headerView
+      right: view.rightAnchor
+    )
+  
     headerView.anchor(
       top: view.safeAreaLayoutGuide.topAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
       heightConstant: Sizes.Views.Header.height)
 
-    // backButton
     backButton.anchor(
       top: headerView.topAnchor,
       left: headerView.leftAnchor,
@@ -133,7 +132,6 @@ class TDViewController: UIViewController {
       widthConstant: UIScreen.main.bounds.width / 12
     )
 
-    // addButton
     addButton.anchor(
       top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
@@ -142,7 +140,6 @@ class TDViewController: UIViewController {
       widthConstant: UIScreen.main.bounds.width / 12
     )
     
-    // saveButton
     saveButton.anchor(
       top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
@@ -151,7 +148,6 @@ class TDViewController: UIViewController {
       widthConstant: UIScreen.main.bounds.width / 12
     )
     
-    // settingsButton
     settingsButton.anchor(
       top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
@@ -160,7 +156,6 @@ class TDViewController: UIViewController {
       widthConstant: UIScreen.main.bounds.width / 12
     )
 
-    // refreshButton
     refreshButton.anchor(
       top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
@@ -169,7 +164,6 @@ class TDViewController: UIViewController {
       widthConstant: UIScreen.main.bounds.width / 12
     )
 
-    // removeAllButton
     removeAllButton.anchor(
       top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
@@ -178,7 +172,6 @@ class TDViewController: UIViewController {
       widthConstant: UIScreen.main.bounds.width / 12
     )
 
-    // titleLabel
     titleLabel.anchorCenterXToSuperview()
     titleLabel.anchor(
       left: headerView.leftAnchor,
@@ -189,7 +182,6 @@ class TDViewController: UIViewController {
       rightConstant: UIScreen.main.bounds.width / 6
     )
 
-    // dividerView
     dividerView.anchor(
       left: headerView.leftAnchor,
       bottom: headerView.bottomAnchor,

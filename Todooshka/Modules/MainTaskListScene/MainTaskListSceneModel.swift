@@ -10,12 +10,11 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-class NestSceneModel: Stepper {
-  // MARK: - Properties
-  let steps = PublishRelay<Step>()
-  let services: AppServices
-
-  let willShow = BehaviorRelay<Void?>(value: nil)
+class MainTaskListSceneModel: Stepper {
+  public let steps = PublishRelay<Step>()
+  
+  private let services: AppServices
+  private let willShow = BehaviorRelay<Void?>(value: nil)
 
   struct Input {
   }
@@ -34,19 +33,16 @@ class NestSceneModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    // timer
+    let birds = services.dataService.birds
+    let dataSource = services.dataService.nestDataSource
+    
     let timer = Driver<Int>
       .interval(RxTimeInterval.seconds(5))
 
-    // background
     let backgroundImage = timer
       .map { _ in self.getBackgroundImage(date: Date()) }
       .startWith(self.getBackgroundImage(date: Date()))
       .distinctUntilChanged()
-
-    let birds = services.dataService.birds
-
-    let dataSource = services.dataService.nestDataSource
 
     let forceNestUpdate = services.actionService.forceNestSceneTrigger
       .compactMap { $0 }
@@ -61,7 +57,6 @@ class NestSceneModel: Stepper {
 
     return Output(
       backgroundImage: backgroundImage,
-     // backgroundBottomImage: backgroundBottomImage,
       birds: birds,
       dataSource: dataSource,
       forceNestUpdate: forceNestUpdate,

@@ -14,7 +14,7 @@ enum AppStep: Step {
   case authWithEmailOrPhoneInIsRequired
 
   // Tab Bar
-  case calendarIsRequired
+  case mainCalendarIsRequired
   case tabBarIsRequired
 
   // Changing
@@ -28,6 +28,8 @@ enum AppStep: Step {
   // Fun
   case funIsRequired
 
+  case workplaceIsRequired
+  
   // Task List
   case mainTaskListIsRequired
   case overduedTaskListIsRequired

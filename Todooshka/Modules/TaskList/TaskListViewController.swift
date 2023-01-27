@@ -12,14 +12,13 @@ import RxDataSources
 import SwipeCellKit
 
 class TaskListViewController: TDViewController {
-  // MARK: - Properties
-  let disposeBag = DisposeBag()
+  public var viewModel: TaskListViewModel!
 
-  var collectionView: UICollectionView!
-  var viewModel: TaskListViewModel!
-  var dataSource: [TaskListSection] = []
+  private let disposeBag = DisposeBag()
 
-  // alert
+  private var collectionView: UICollectionView!
+  private var dataSource: [TaskListSection] = []
+
   private let alertView: UIView = {
     let view = UIView()
     view.backgroundColor = .black.withAlphaComponent(0.5)
@@ -72,15 +71,12 @@ class TaskListViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-    // header
     backButton.isHidden = false
     
-    // collection view
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
 
     view.addSubview(collectionView)
 
-    // collectionView
     collectionView.register(
       TaskCell.self,
       forCellWithReuseIdentifier: TaskCell.reuseID)
@@ -119,7 +115,6 @@ class TaskListViewController: TDViewController {
       alertCancelButton
     ])
 
-    // alertView
     alertView.anchor(
       top: view.topAnchor,
       left: view.leftAnchor,
@@ -127,22 +122,18 @@ class TaskListViewController: TDViewController {
       right: view.rightAnchor
     )
 
-    // alertSubView
     alertSubView.anchorCenterXToSuperview()
     alertSubView.anchorCenterYToSuperview()
     alertSubView.anchor(widthConstant: Sizes.Views.AlertDeleteView.width, heightConstant: Sizes.Views.AlertDeleteView.height)
     
-    // alertLabel
     alertLabel.anchorCenterXToSuperview()
     alertLabel.anchorCenterYToSuperview(constant: -1 * Sizes.Views.AlertDeleteView.height / 4)
 
-    // alertDeleteButton
     alertDeleteButton.anchorCenterXToSuperview()
     alertDeleteButton.anchorCenterYToSuperview(constant: 15)
     alertDeleteButton.anchor(widthConstant: Sizes.Buttons.AlertOkButton.width, heightConstant: Sizes.Buttons.AlertOkButton.height)
     alertDeleteButton.cornerRadius = Sizes.Buttons.AlertOkButton.height / 2
 
-    // alertCancelButton
     alertCancelButton.anchorCenterXToSuperview()
     alertCancelButton.anchor(top: alertDeleteButton.bottomAnchor, topConstant: 10)
   }
@@ -261,7 +252,7 @@ class TaskListViewController: TDViewController {
   var repeatButtonBinder: Binder<IndexPath?> {
     return Binder(self, binding: { vc, indexPath in
       guard let indexPath = indexPath else { return }
-      vc.viewModel.changeStatus(indexPath: indexPath, status: .inProgress, completed: nil)
+      vc.viewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .inProgress))
     })
   }
 }
@@ -312,13 +303,6 @@ extension TaskListViewController: UICollectionViewDataSource {
 }
 
 extension TaskListViewController: SwipeCollectionViewCellDelegate {
-  func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
-    viewModel.editingIndexPath = indexPath
-  }
-
-  func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
-    viewModel.editingIndexPath = nil
-  }
 
   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
     guard orientation == .right else { return nil }
@@ -326,13 +310,13 @@ extension TaskListViewController: SwipeCollectionViewCellDelegate {
     let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      self.viewModel.changeStatus(indexPath: indexPath, status: .deleted, completed: nil)
+      self.viewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .deleted))
     }
 
     let ideaBoxAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      self.viewModel.changeStatus(indexPath: indexPath, status: .idea, completed: nil)
+      self.viewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .idea))
     }
 
     configure(action: deleteAction, with: .trash)

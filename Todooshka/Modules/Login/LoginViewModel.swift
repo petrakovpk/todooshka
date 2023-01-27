@@ -22,14 +22,11 @@ struct SignUpWithPhoneAttr {
 }
 
 class LoginViewModel: Stepper {
-  // MARK: - Properties
-//  let isNewUser: Bool
   let services: AppServices
   let steps = PublishRelay<Step>()
 
   let loginViewControllerStyle = BehaviorRelay<LoginViewControllerStyle>(value: .email)
 
-  // MARK: - Input
   struct Input {
     // prop
     let emailTextFieldText: Driver<String>

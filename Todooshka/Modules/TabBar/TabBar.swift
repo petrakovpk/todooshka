@@ -4,21 +4,24 @@
 //
 //  Created by Петраков Павел Константинович on 28.07.2021.
 //
-import UIKit
 
 import RxSwift
 import RxCocoa
 import RxGesture
+import UIKit
+
 
 class TabBar: UITabBar {
-  // MARK: - Properties
+  public let addTaskButton = TDAddTaskButton(type: .system)
   public let tabBarItem1 = UIImageView(image: Icon.crown.image.template)
   public let tabBarItem2 = UIImageView(image: Icon.clipboardTick.image.template)
   public let tabBarItem3 = UIImageView(image: Icon.userSquare.image.template)
 
-  public let addTaskButton = TDAddTaskButton(type: .system)
-
-  private var oldLayer: CALayer?
+  private let shapeLayer = CAShapeLayer()
+  private let gradientLayer = CAGradientLayer()
+  private let backgroundLayer = CALayer()
+  
+  private var oldBackgroundLayer: CALayer?
 
   override var selectedItem: UITabBarItem? {
     didSet {
@@ -41,12 +44,10 @@ class TabBar: UITabBar {
 
     }
   }
-  // ipad - 49, 83
-  // MARK: - Lifecycle
+  
   override func layoutSubviews() {
     super.layoutSubviews()
 
-    // adding
     addSubviews([
       addTaskButton,
       tabBarItem1,
@@ -54,26 +55,22 @@ class TabBar: UITabBar {
       tabBarItem3
     ])
 
-    // tabBar
+    backgroundColor = Style.App.background
     itemPositioning = .automatic
     layer.masksToBounds = false
 
-    // tabBarItem1
     tabBarItem1.anchor(widthConstant: 24, heightConstant: 24)
     tabBarItem1.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + bounds.width / 8 )
     tabBarItem1.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
 
-    // tabBarItem2
     tabBarItem2.anchor(widthConstant: 24, heightConstant: 24)
     tabBarItem2.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 3 * bounds.width / 8 )
     tabBarItem2.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
 
-    // tabBarItem3
     tabBarItem3.anchor(widthConstant: 24, heightConstant: 24)
     tabBarItem3.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 5 * bounds.width / 8 )
     tabBarItem3.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
     
-    // addTaskButton
     addTaskButton.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 7 * bounds.width / 8 )
     addTaskButton.anchorCenterYToSuperview(constant: -22)
     addTaskButton.anchor(
@@ -86,16 +83,9 @@ class TabBar: UITabBar {
     traitCollection.userInterfaceStyle == .dark ? drawDarkMode() : drawLightMode()
   }
 
-  // MARK: - Configure UI
   private func drawDarkMode() {
-    let shapeLayer = CAShapeLayer()
-    let gradientLayer = CAGradientLayer()
-    let backgroundLayer = CALayer()
-
-    // shapeLayer
     shapeLayer.path = createPath()
 
-    // gradientLayer
     gradientLayer.locations = [0, 1]
     gradientLayer.startPoint = CGPoint(x: 0, y: 0)
     gradientLayer.endPoint = CGPoint(x: 0, y: 1)
@@ -106,44 +96,36 @@ class TabBar: UITabBar {
       Style.TabBar.Background!.withAlphaComponent(0).cgColor
     ]
 
-    // backgroundLayer
     backgroundLayer.frame = bounds
     backgroundLayer.mask = shapeLayer
     backgroundLayer.addSublayer(gradientLayer)
     backgroundLayer.backgroundColor = UIColor.clear.cgColor
 
-    if let oldLayer = oldLayer {
+    if let oldLayer = oldBackgroundLayer {
       layer.replaceSublayer(oldLayer, with: backgroundLayer)
     } else {
       layer.insertSublayer(backgroundLayer, at: 0)
     }
 
-    oldLayer = backgroundLayer
+    oldBackgroundLayer = backgroundLayer
   }
 
   func drawLightMode() {
-    // adding
-    let shapeLayer = CAShapeLayer()
-    let backgroundLayer = CALayer()
-
-    // shapeLayer
     shapeLayer.path = createPath()
 
-    // backgroundLayer
     backgroundLayer.frame = bounds
     backgroundLayer.mask = shapeLayer
     backgroundLayer.backgroundColor = Style.TabBar.Background?.cgColor
 
-    if let oldLayer = oldLayer {
+    if let oldLayer = oldBackgroundLayer {
       layer.replaceSublayer(oldLayer, with: backgroundLayer)
     } else {
       layer.insertSublayer(backgroundLayer, at: 0)
     }
 
-    oldLayer = backgroundLayer
+    oldBackgroundLayer = backgroundLayer
   }
 
-  // MARK: - Core Graph
   func createPath() -> CGPath {
     let plusButtonRadius: CGFloat = 30.0
     let path = UIBezierPath()

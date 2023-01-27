@@ -26,15 +26,13 @@ struct ChangeStatus {
 class TaskListViewModel: Stepper {
   // MARK: - Properties
   public let steps = PublishRelay<Step>()
-  public var editingIndexPath: IndexPath?
+  public let changeStatusTrigger = PublishRelay<ChangeStatus>()
   
- 
   private let services: AppServices
-  private let changeStatusTrigger = BehaviorRelay<ChangeStatus?>(value: nil)
   private let mode: TaskListMode
   private let reloadData = BehaviorRelay<Void>(value: ())
-  
   private let appDelegate = UIApplication.shared.delegate as! AppDelegate
+  
   private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
   
   struct Input {
@@ -52,21 +50,19 @@ class TaskListViewModel: Stepper {
   }
 
   struct Output {
-    // HEADER
-    let title: Driver<String>
+    // INIT
+    let mode: Driver<TaskListMode>
     // NAVIGATE BACK
     let navigateBack: Driver<Void>
-    // MODE
-    let mode: Driver<TaskListMode>
+    // TITLE
+    let title: Driver<String>
     // ADD TASK
     let addTask: Driver<Void>
-   // let addTaskButtonIsHidden: Driver<Bool>
     // REMOVE ALL TASKS
     let removeAllTasks: Driver<Result<Void, Error>>
-  //  let removeAllTasksButtonIsHidden: Driver<Bool>
     // DATASOURCE
     let dataSource: Driver<[TaskListSection]>
-    let reloadItems: Driver<[IndexPath]>
+   // let reloadItems: Driver<[IndexPath]>
     let hideCellWhenAlertClosed: Driver<IndexPath>
     // TASK
     let openTask: Driver<Void>
@@ -96,52 +92,8 @@ class TaskListViewModel: Stepper {
       .map { self.steps.accept(AppStep.taskListIsCompleted) }
     
     // MARK: - DATASOURCE MAIN
-    let mainListTasks = tasks
-      .map { tasks -> [Task] in
-        tasks.filter { task -> Bool in
-          guard
-            case .main = self.mode
-          else { return false }
-          
-          return task.status == .inProgress &&
-          task.planned.startOfDay >= Date().startOfDay &&
-          task.planned.endOfDay <= Date().endOfDay
-        }
-        .sorted { prevTask, nextTask -> Bool in
-          (prevTask.planned == nextTask.planned) ? (prevTask.created < nextTask.created) : (prevTask.planned < nextTask.planned)
-        }
-      }
-      
-    let mainListItems = Driver
-      .combineLatest(mainListTasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
-        tasks.map { task -> TaskListSectionItem in
-          TaskListSectionItem(
-            task: task,
-            kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
-          )
-        }
-      }
-
-    let mainListSectionWithTime = mainListItems
-      .compactMap { $0.filter { $0.task.planned != Date().endOfDay } }
-      .map {
-        TaskListSection(
-          header: "Внимание, время:",
-          mode: .redLineAndTime,
-          items: $0
-        )
-      }
     
-    let mainListSectionWithoutTime = mainListItems
-      .compactMap { $0.filter { $0.task.planned == Date().endOfDay } }
-      .map {
-        TaskListSection(
-          header: "В течении дня:",
-          mode: .blueLine,
-          items: $0
-        )
-      }
-
+    
     // MARK: - DATASOURCE OVERDUED
     let overduedListTasks = tasks
       .map { tasks -> [Task] in
@@ -329,36 +281,31 @@ class TaskListViewModel: Stepper {
     // MARK: - DATASOURCE
     let dataSource = Driver
       .combineLatest(
-        mainListSectionWithTime,
-        mainListSectionWithoutTime,
         overduedListSectionWithRepeatButton,
         ideaListSectionWithRepeatButton,
         completedListSectionWithRepeatButton,
         plannedListSectionWithRepeatButton,
         deletedListItemsWithRepeatButton )
     {
-      mainListItemsWithTime,
-      mainListItemsWithoutTime,
       overduedListTasksWithRepeatButton,
       ideaListTasksWithRepeatButton,
       completedListItemsWithRepeatButton,
       plannedListItemsWithRepeatButton,
       deletedListItemsWithRepeatButton -> [TaskListSection] in
       [
-        mainListItemsWithTime,
-        mainListItemsWithoutTime,
         overduedListTasksWithRepeatButton,
         ideaListTasksWithRepeatButton,
         completedListItemsWithRepeatButton,
         plannedListItemsWithRepeatButton,
         deletedListItemsWithRepeatButton
       ]
-        .filter { !$0.items.isEmpty }
+    }.map {
+      $0.filter { !$0.items.isEmpty }
     }
 
     // MARK: - Swipe
     let changeStatus = changeStatusTrigger
-      .asDriver()
+      .asDriverOnErrorJustComplete()
       .compactMap { $0 }
 
     let changeToIdea = changeStatus
@@ -489,35 +436,22 @@ class TaskListViewModel: Stepper {
     let removeAllTasksButtonIsHidden = Driver.of(self.mode)
       .map { $0 == .deleted }
 
-    let timer = Observable<Int>
-      .timer(.seconds(0), period: .seconds(60), scheduler: MainScheduler.instance)
-      .asDriver(onErrorJustReturn: 0)
-
-    let reloadItems = timer
-      .withLatestFrom(dataSource) { _, dataSource -> [IndexPath] in
-        dataSource.enumerated().flatMap { sectionIndex, section -> [IndexPath] in
-          section.items.enumerated().compactMap { itemIndex, item -> IndexPath? in
-            (IndexPath(item: itemIndex, section: sectionIndex) == self.editingIndexPath) ? nil : IndexPath(item: itemIndex, section: sectionIndex)
-          }
-        }
-      }
+    
 
     return Output(
-      // HEADER
-      title: title,
-      // NAVIGATE BACK
-      navigateBack: navigateBack,
       // MODE
       mode: mode,
+      // NAVIGATE BACK
+      navigateBack: navigateBack,
+      // HEADER
+      title: title,
       // ADD TASK
       addTask: addTask,
-  //   addTaskButtonIsHidden: addTaskButtonIsHidden,
       // REMOVE ALL TASKS
       removeAllTasks: removeAllTasks,
-   //   removeAllTasksButtonIsHidden: removeAllTasksButtonIsHidden,
       // DATASOURCE
       dataSource: dataSource,
-      reloadItems: reloadItems,
+     // reloadItems: reloadItems,
       hideCellWhenAlertClosed: hideCellWhenAlertClosed,
       // TASK
       openTask: openTask,
@@ -554,7 +488,7 @@ class TaskListViewModel: Stepper {
     }
   }
 
-  func changeStatus(indexPath: IndexPath, status: TaskStatus, completed: Date?) {
-    changeStatusTrigger.accept(ChangeStatus(completed: completed, indexPath: indexPath, status: status))
-  }
+//  func changeStatus(indexPath: IndexPath, status: TaskStatus, completed: Date?) {
+//    changeStatusTrigger.accept(ChangeStatus(completed: completed, indexPath: indexPath, status: status))
+//  }
 }

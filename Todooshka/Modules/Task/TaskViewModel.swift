@@ -13,7 +13,6 @@ import RxSwift
 import YandexMobileMetrica
 
 class TaskViewModel: Stepper {
-  
   public let steps = PublishRelay<Step>()
   
   private let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -57,6 +56,8 @@ class TaskViewModel: Stepper {
     let addTaskButtonClickTrigger: Driver<Void>
     let completeButtonClickTrigger: Driver<Void>
     let getPhotoButtonClickTrigger: Driver<Void>
+    let closeButtonClickTrigger: Driver<Void>
+    let publishButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
@@ -64,6 +65,8 @@ class TaskViewModel: Stepper {
     let initData: Driver<Task>
     let taskIsNew: Driver<Bool>
     let isModal: Driver<Bool>
+    // MODE
+    let bottomButtonsMode: Driver<BottomButtonsMode>
     // BACK
     let navigateBack: Driver<Void>
     // TEXT
@@ -92,7 +95,8 @@ class TaskViewModel: Stepper {
     let completeTask: Driver<Result<Void, Error>>
     // CLOSE VIEW CONTROLLER
     let dismissViewController: Driver<Void>
-    //
+    // ANIMATION
+    let playAnimationViewTrigger: Driver<Void>
     // yandex
     // let yandexMetrika: Driver<Void>
   }
@@ -109,7 +113,7 @@ class TaskViewModel: Stepper {
     let initData = Driver.just(self.task)
     let tasks = services.dataService.tasks
     let isModal = Driver.just(self.isModal)
-    
+
     let taskIsNew = tasks
       .map { tasks -> Bool in
         !tasks.contains { $0.UID == self.task.UID }
@@ -117,17 +121,31 @@ class TaskViewModel: Stepper {
       .asObservable()
       .take(1)
       .asDriverOnErrorJustComplete()
-    
+
     let task = tasks
       .compactMap { $0.first { $0.UID == self.task.UID } }
       .startWith(self.task)
     
+    let bottomButtonsMode = task
+      .withLatestFrom(taskIsNew) { task, taskIsNew -> BottomButtonsMode in
+        switch (task.status, taskIsNew) {
+        case (.inProgress, true):
+          return .create
+        case (.completed, _):
+          return .publish
+        default:
+          return .complete
+        }
+      }
+
     let kindsOfTask = services.dataService
       .kindsOfTask
       .map { $0.filter { $0.status == .active } }
     
     // MARK: - BACK
-    let navigateBack = input.backButtonClickTrigger
+    let navigateBack = Driver
+      .of(input.backButtonClickTrigger, input.closeButtonClickTrigger)
+      .merge()
       .do { _ in self.steps.accept(AppStep.navigateBack) }
     
     // MARK: - TEXT
@@ -313,14 +331,19 @@ class TaskViewModel: Stepper {
       .filter { $0 }
       .mapToVoid()
       .do { _ in
-        self.isModal ? self.steps.accept(AppStep.dismiss) :  self.steps.accept(AppStep.navigateBack)
+        self.isModal ? self.steps.accept(AppStep.dismiss) : self.steps.accept(AppStep.navigateBack)
       }
 
+    // MARK: - ANIMATION
+    let playAnimationViewTrigger = input.completeButtonClickTrigger
+    
     return Output(
       // INIT
       initData: initData,
       taskIsNew: taskIsNew,
       isModal: isModal,
+      // MODE
+      bottomButtonsMode: bottomButtonsMode,
       // BACK
       navigateBack: navigateBack,
       // TEXT
@@ -348,7 +371,9 @@ class TaskViewModel: Stepper {
       // COMPLETE TASK
       completeTask: completeTask,
       // CLOSE VIEW CONTROLLER
-      dismissViewController: dismissViewController
+      dismissViewController: dismissViewController,
+      // animation
+      playAnimationViewTrigger: playAnimationViewTrigger
     )
   }
 }

@@ -165,7 +165,7 @@ class CalendarViewModel: Stepper {
           AppStep.createTaskIsRequired(
             task: Task(
               UID: UUID().uuidString,
-              status:  selectedDate.startOfDay <= Date().startOfDay ? .completed : .inProgress,
+              status: .inProgress,
               planned: selectedDate.endOfDay,
               completed: selectedDate.startOfDay <= Date().startOfDay ? selectedDate : nil),
             isModal: true

@@ -8,7 +8,7 @@
 import UIKit
 import SpriteKit
 
-class BranchScene: SKScene {
+class MainCalendarScene: SKScene {
   private var actions: [BirdActionType] = [.create, .create, .create, .create, .create, .create, .create]
   private var SKBirdNodes: [SKBirdNode] = []
 
@@ -24,7 +24,6 @@ class BranchScene: SKScene {
   // MARK: - Lifecycle
   override func didMove(to view: SKView) {
     if let scene = scene {
-      scene.position = view.frame.origin
       scene.size = view.size
       scene.backgroundColor = .clear
 

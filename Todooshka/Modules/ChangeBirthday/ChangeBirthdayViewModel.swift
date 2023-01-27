@@ -59,7 +59,8 @@ class ChangeBirthdayViewModel: Stepper {
       .asDriver()
 
     let dateText = birthday
-      .map { self.services.preferencesService.formatter.string(from: $0) }
+      .map { $0.string() }
+     // .map { self.services.preferencesService.formatter.string(from: $0) }
 
     let datePickerValue = birthday
 

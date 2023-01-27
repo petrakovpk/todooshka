@@ -25,21 +25,21 @@ class TabBarViewModel: Stepper {
     self.services = services
   }
 
-  func selectedItem(item: UITabBarItem) {
-    switch item.tag {
-    case 1:
-      services.tabBarService.selectedItem.accept(.fun)
-    case 2:
-      services.tabBarService.selectedItem.accept(.taskList)
-    case 3:
-      if services.tabBarService.selectedItem.value == .userProfile {
-        services.preferencesService.scrollToCurrentMonthTrigger.accept((true, true))
-      }
-      services.tabBarService.selectedItem.accept(.userProfile)
-    default:
-      return
-    }
-  }
+//  func selectedItem(item: UITabBarItem) {
+//    switch item.tag {
+//    case 1:
+//      services.tabBarService.selectedItem.accept(.fun)
+//    case 2:
+//      services.tabBarService.selectedItem.accept(.taskList)
+//    case 3:
+//      if services.tabBarService.selectedItem.value == .userProfile {
+//       // services.preferencesService.scrollToCurrentMonthTrigger.accept((true, true))
+//      }
+//      services.tabBarService.selectedItem.accept(.userProfile)
+//    default:
+//      return
+//    }
+//  }
 
   func transform(input: Input) -> Output {
     let createTask = input.createTaskButtonClickTrigger

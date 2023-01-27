@@ -10,21 +10,17 @@ import RxSwift
 import RxCocoa
 
 class TabBarController: UITabBarController, UITabBarControllerDelegate {
-  // MARK: - Properties
-  let customTabBar = TabBar()
-  let disposeBag = DisposeBag()
-  var viewModel: TabBarViewModel!
-
+  public var viewModel: TabBarViewModel!
+  
+  private let customTabBar = TabBar()
+  private let disposeBag = DisposeBag()
+  
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     setValue(customTabBar, forKey: "tabBar")
   }
-
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-  }
-
+  
   // MARK: - Bind
   func bindViewModel() {
     let input = TabBarViewModel.Input(
@@ -36,12 +32,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     [
       outputs.createTask.drive()
     ]
-      .forEach({ $0.disposed(by: disposeBag) })
-  }
-
-  override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-    if item.tag != 4 {
-      viewModel.selectedItem(item: item)
-    }
+      .forEach { $0.disposed(by: disposeBag) }
   }
 }
