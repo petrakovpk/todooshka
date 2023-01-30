@@ -213,6 +213,11 @@ class MainCalendarViewController: UIViewController {
     bindViewModel()
   }
   
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    scene?.reloadData()
+  }
+  
   // MARK: - Configure UI
   func configureUI() {
     calendarNavigateButtonsStackView = UIStackView(arrangedSubviews: [monthLabelSpacerLeftView, monthLabel, changeCalendarModeButton])
@@ -447,7 +452,8 @@ class MainCalendarViewController: UIViewController {
       outputs.calendarTaskListLabel.drive(dayTasksLabel.rx.text),
       outputs.calendarTaskListDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.openCalendarTask.drive(),
-      outputs.changeCalendarTaskStatus.drive()
+      outputs.changeTaskStatusToIdea.drive(),
+      outputs.changeTaskStatusToDeleted.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }
@@ -602,13 +608,13 @@ extension MainCalendarViewController: SwipeCollectionViewCellDelegate {
     let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      self.viewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .deleted))
+      self.viewModel.swipeDeleteButtonClickTrigger.accept(indexPath)
     }
 
     let ideaBoxAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      self.viewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .idea))
+      self.viewModel.swipeIdeaButtonClickTrigger.accept(indexPath)
     }
 
     configure(action: deleteAction, with: .trash)

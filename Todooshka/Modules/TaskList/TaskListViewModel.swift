@@ -17,16 +17,11 @@ enum RemoveMode: Equatable {
   case all(tasks: [Task])
 }
 
-struct ChangeStatus {
-  let completed: Date?
-  let indexPath: IndexPath
-  let status: TaskStatus
-}
-
 class TaskListViewModel: Stepper {
-  // MARK: - Properties
   public let steps = PublishRelay<Step>()
-  public let changeStatusTrigger = PublishRelay<ChangeStatus>()
+  public let inProgressButtonClickTrigger = PublishRelay<IndexPath>()
+  public let swipeDeleteButtonClickTrigger = PublishRelay<IndexPath>()
+  public let swipeIdeaButtonClickTrigger = PublishRelay<IndexPath>()
   
   private let services: AppServices
   private let mode: TaskListMode
@@ -66,8 +61,9 @@ class TaskListViewModel: Stepper {
     let hideCellWhenAlertClosed: Driver<IndexPath>
     // TASK
     let openTask: Driver<Void>
-    let changeTaskStatus: Driver<Result<Void, Error>>
-    let removeTask: Driver<Result<Void, Error>>
+    let changeTaskStatusToIdea: Driver<Result<Void, Error>>
+    let changeTaskStatusToDeleted: Driver<Result<Void, Error>>
+    let changeTaskStatusToInProgress: Driver<Result<Void, Error>>
     // ALERT
     let alertText: Driver<String>
     let showAlert: Driver<Void>
@@ -84,8 +80,10 @@ class TaskListViewModel: Stepper {
     // MARK: - INIT
     let tasks = services.dataService.tasks.asDriver()
     let kindsOfTask = services.dataService.kindsOfTask.asDriver()
-    
     let mode = Driver<TaskListMode>.of(self.mode)
+    let swipeIdeaButtonClickTrigger = swipeIdeaButtonClickTrigger.asDriverOnErrorJustComplete()
+    let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
+    let inProgressButtonClickTrigger = inProgressButtonClickTrigger.asDriverOnErrorJustComplete()
     
     // MARK: - BACK
     let navigateBack = input.backButtonClickTrigger
@@ -303,54 +301,32 @@ class TaskListViewModel: Stepper {
       $0.filter { !$0.items.isEmpty }
     }
 
-    // MARK: - Swipe
-    let changeStatus = changeStatusTrigger
-      .asDriverOnErrorJustComplete()
-      .compactMap { $0 }
-
-    let changeToIdea = changeStatus
-      .filter { $0.status == .idea }
-      .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
-        dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
-      }
-      .change(status: .idea)
-      .change(planned: Date().adding(.year, value: 1))
-      .asObservable()
-      .flatMapLatest { self.managedContext.rx.update($0) }
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let changeToInProgress = changeStatus
-      .filter { $0.status == .inProgress }
-      .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
-        dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
+    // MARK: - Change STATUS
+    let changeTaskStatusToInProgress = inProgressButtonClickTrigger
+      .withLatestFrom(dataSource) { indexPath, dataSource -> Task in
+        dataSource[indexPath.section].items[indexPath.item].task
       }
       .change(status: .inProgress)
-      .change(planned: Date())
       .change(created: Date())
       .asObservable()
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let changeToCompleted = changeStatus
-      .filter { $0.status == .completed }
-      .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
-        var task = dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
-        task.status = .completed
-        task.completed = changeStatus.completed
-        return task
+    
+    let changeTaskStatusToIdea = swipeIdeaButtonClickTrigger
+      .withLatestFrom(dataSource) { indexPath, dataSource -> Task in
+        dataSource[indexPath.section].items[indexPath.item].task
       }
+      .change(status: .idea)
       .asObservable()
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
-    let changeToRemove = changeStatus
-      .filter { $0.status == .deleted }
-
-    let changeTaskStatus = Driver
-      .of(changeToIdea, changeToInProgress, changeToCompleted)
-      .merge()
-      .do { _ in self.reloadData.accept(()) }
-
+    let removeModeOne = swipeDeleteButtonClickTrigger
+      .withLatestFrom(dataSource) { indexPath, dataSource -> Task in
+        dataSource[indexPath.section].items[indexPath.item].task
+      }
+      .map { RemoveMode.one(task: $0) }
+    
     // selection
     let openTask = input.selection
       .withLatestFrom(dataSource) { indexPath, dataSource -> TaskListSectionItem in
@@ -358,13 +334,8 @@ class TaskListViewModel: Stepper {
       }
       .map { self.steps.accept(AppStep.showTaskIsRequired(task: $0.task )) }
 
-    let removeModeOne = changeToRemove
-      .withLatestFrom(dataSource) { changeStatus, dataSource -> Task in
-        dataSource[changeStatus.indexPath.section].items[changeStatus.indexPath.item].task
-      }.map { RemoveMode.one(task: $0) }
-
     let removeModeAll = input.removeAllButtonClickTrigger
-      .withLatestFrom(tasks) { $1 }
+      .withLatestFrom(tasks)
       .map { RemoveMode.all(tasks: $0) }
 
     let removeMode = Driver
@@ -383,13 +354,20 @@ class TaskListViewModel: Stepper {
     let hideAlert = Driver
       .of(input.alertCancelButtonClick, input.alertDeleteButtonClick)
       .merge()
+    
+    let changingIndexPath = Driver.of(
+      swipeIdeaButtonClickTrigger,
+      swipeDeleteButtonClickTrigger,
+      inProgressButtonClickTrigger
+    )
+      .merge()
 
     let hideCellWhenAlertClosed = hideAlert
-      .withLatestFrom(changeStatus) { $1.indexPath }
+      .withLatestFrom(changingIndexPath)
       .compactMap { $0 }
 
-    let removeTask = input.alertDeleteButtonClick
-      .withLatestFrom(removeMode) { $1 }
+    let changeTaskStatusToDeleted = input.alertDeleteButtonClick
+      .withLatestFrom(removeMode)
       .compactMap { removeMode -> Task? in
         guard case .one(let task) = removeMode else { return nil }
         return task
@@ -455,8 +433,9 @@ class TaskListViewModel: Stepper {
       hideCellWhenAlertClosed: hideCellWhenAlertClosed,
       // TASK
       openTask: openTask,
-      changeTaskStatus: changeTaskStatus,
-      removeTask: removeTask,
+      changeTaskStatusToIdea: changeTaskStatusToIdea,
+      changeTaskStatusToDeleted: changeTaskStatusToDeleted,
+      changeTaskStatusToInProgress: changeTaskStatusToInProgress,
       // ALERT
       alertText: alertText,
       showAlert: showAlert,

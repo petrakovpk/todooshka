@@ -198,8 +198,9 @@ class TaskListViewController: TDViewController {
       outputs.hideCellWhenAlertClosed.drive(hideCellBinder),
       // TASK
       outputs.openTask.drive(),
-      outputs.changeTaskStatus.drive(),
-      outputs.removeTask.drive(),
+      outputs.changeTaskStatusToIdea.drive(),
+      outputs.changeTaskStatusToDeleted.drive(),
+      outputs.changeTaskStatusToInProgress.drive(),
       // ALERT
       outputs.alertText.drive(alertLabel.rx.text),
       outputs.showAlert.drive(showAlertBinder),
@@ -252,7 +253,7 @@ class TaskListViewController: TDViewController {
   var repeatButtonBinder: Binder<IndexPath?> {
     return Binder(self, binding: { vc, indexPath in
       guard let indexPath = indexPath else { return }
-      vc.viewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .inProgress))
+      vc.viewModel.inProgressButtonClickTrigger.accept(indexPath)
     })
   }
 }
@@ -310,13 +311,13 @@ extension TaskListViewController: SwipeCollectionViewCellDelegate {
     let deleteAction = SwipeAction(style: .destructive, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      self.viewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .deleted))
+      self.viewModel.swipeDeleteButtonClickTrigger.accept(indexPath)
     }
 
     let ideaBoxAction = SwipeAction(style: .default, title: nil) { [weak self] action, indexPath in
       guard let self = self else { return }
       action.fulfill(with: .reset)
-      self.viewModel.changeStatusTrigger.accept(ChangeStatus(completed: nil, indexPath: indexPath, status: .idea))
+      self.viewModel.swipeIdeaButtonClickTrigger.accept(indexPath)
     }
 
     configure(action: deleteAction, with: .trash)

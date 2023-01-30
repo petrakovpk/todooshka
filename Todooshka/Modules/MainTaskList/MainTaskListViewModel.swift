@@ -172,8 +172,6 @@ class MainTaskListViewModel: Stepper {
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
                       
-                      
-
     return Output(
       openOverduedTasklist: openOverduedTaskList,
       openIdeaTaskList: openIdeaTaskList,

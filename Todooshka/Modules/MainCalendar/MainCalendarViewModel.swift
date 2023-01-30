@@ -11,11 +11,11 @@ import RxSwift
 import RxCocoa
 
 class MainCalendarViewModel: Stepper {
-  
   public let steps = PublishRelay<Step>()
   public let selectedDate = BehaviorRelay<Date>(value: Date())
   public let displayDate = BehaviorRelay<Date>(value: Date())
-  public let changeStatusTrigger = PublishRelay<ChangeStatus>()
+  public let swipeDeleteButtonClickTrigger = PublishRelay<IndexPath>()
+  public let swipeIdeaButtonClickTrigger = PublishRelay<IndexPath>()
   
   private let services: AppServices
   private let minMonthIndex = BehaviorRelay<Int>(value: -2)
@@ -49,7 +49,8 @@ class MainCalendarViewModel: Stepper {
     let calendarTaskListLabel: Driver<String>
     let calendarTaskListDataSource: Driver<[TaskListSection]>
     let openCalendarTask: Driver<Task>
-    let changeCalendarTaskStatus: Driver<Result<Void, Error>>
+    let changeTaskStatusToIdea: Driver<Result<Void, Error>>
+    let changeTaskStatusToDeleted: Driver<Result<Void, Error>>
   }
 
   // MARK: - Init
@@ -60,6 +61,8 @@ class MainCalendarViewModel: Stepper {
   // MARK: - Transform
   func transform(input: Input) -> Output {
     // MARK: - INIT
+    let swipeIdeaButtonClickTrigger = swipeIdeaButtonClickTrigger.asDriverOnErrorJustComplete()
+    let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
     let minMonthIndex = minMonthIndex.asDriver()
     let maxMonthIndex = maxMonthIndex.asDriver()
     let displayDate = displayDate.asDriver()
@@ -279,18 +282,25 @@ class MainCalendarViewModel: Stepper {
         self.steps.accept(AppStep.showTaskIsRequired(task: task))
       }
     
-    let changeCalendarTaskStatus = changeStatusTrigger
-      .withLatestFrom(calendarTaskListDataSource) { changeStatus, dataSource -> Task in
-        let indexPath = changeStatus.indexPath
-        var task = dataSource[indexPath.section].items[indexPath.item].task
-        task.status = changeStatus.status
-        task.completed = changeStatus.completed
-        return task
+    let changeTaskStatusToIdea = swipeIdeaButtonClickTrigger
+      .withLatestFrom(calendarTaskListDataSource) { indexPath, dataSource -> Task in
+        dataSource[indexPath.section].items[indexPath.item].task
       }
+      .change(status: .idea)
       .asObservable()
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
     
+    let changeTaskStatusToDeleted = swipeDeleteButtonClickTrigger
+      .withLatestFrom(calendarTaskListDataSource) { indexPath, dataSource -> Task in
+        dataSource[indexPath.section].items[indexPath.item].task
+      }
+      .change(status: .deleted)
+      .asObservable()
+      .flatMapLatest { self.managedContext.rx.update($0) }
+      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+    
+
     return Output(
       openMainTaskList: openMainTaskList,
       isCalendarInShortMode: isCalendarInShortMode,
@@ -303,7 +313,8 @@ class MainCalendarViewModel: Stepper {
       calendarTaskListLabel: calendarTaskListLabel,
       calendarTaskListDataSource: calendarTaskListDataSource,
       openCalendarTask: openCalendarTask,
-      changeCalendarTaskStatus: changeCalendarTaskStatus
+      changeTaskStatusToIdea: changeTaskStatusToIdea,
+      changeTaskStatusToDeleted: changeTaskStatusToDeleted
     )
   }
 

@@ -89,8 +89,6 @@ class TDViewController: UIViewController {
 
   // MARK: - Configure
   private func configureHeader() {
-    //let safeAreaTopInset = isModal ? 0 : UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0
-    
     navigationItem.setHidesBackButton(true, animated: false)
     
     view.addSubviews([

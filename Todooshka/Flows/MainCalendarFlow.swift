@@ -31,6 +31,9 @@ class MainCalendarFlow: Flow {
     switch step {
     case .mainCalendarIsRequired:
       return navigateToMainCalendar()
+      
+    case .showTaskIsRequired(let task):
+      return navigateToTask(task: task)
     
     case .shopIsRequired:
       return navigateToShop()
@@ -50,7 +53,18 @@ class MainCalendarFlow: Flow {
     let sceneModel = MainCalendarSceneModel(services: services)
     viewController.viewModel = viewModel
     viewController.sceneModel = sceneModel
+    rootViewController.navigationBar.isHidden = true
+    rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.pushViewController(viewController, animated: false)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToTask(task: Task) -> FlowContributors {
+    let viewController = TaskViewController()
+    let viewModel = TaskViewModel(services: services, task: task, isModal: false)
+    viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   

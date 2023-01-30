@@ -41,7 +41,6 @@ class WorklplaceViewController: UIViewController {
       right: view.rightAnchor
     )
     
-    pageViewController.didMove(toParent: self)
     if let firstVC = nestedViewControllers.first {
       pageViewController.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
     }

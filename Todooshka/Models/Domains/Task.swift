@@ -10,23 +10,18 @@ import Firebase
 import RxDataSources
 
 struct Task: IdentifiableType, Equatable {
-  // MARK: - Properites
   var identity: String { UID }
-  var UID: String { willSet { lastModified = Date()}}
-
+ 
+  let UID: String
   var text: String = "" { willSet { lastModified = Date()}}
   var description: String = "" { willSet { lastModified = Date()}}
-
   var status: TaskStatus { willSet { lastModified = Date()}}
   var index: Int = 0 { willSet { lastModified = Date()}}
-
   var created = Date() { willSet { lastModified = Date()}}
   var planned = Date().endOfDay { willSet { lastModified = Date()}}
   var completed: Date? { willSet { lastModified = Date()}}
-
   var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { willSet { lastModified = Date()}}
   var userUID: String? = Auth.auth().currentUser?.uid { willSet { lastModified = Date()}}
-
   var lastModified = Date()
 
   // MARK: - Calculated Propertie
@@ -46,25 +41,6 @@ struct Task: IdentifiableType, Equatable {
     self.planned = planned
     self.completed = completed
   }
-  
-//  init(UID: String, text: String, description: String, status: TaskStatus, created: Date) {
-//    self.UID = UID
-//    self.text = text
-//    self.description = description
-//    self.status = status
-//    self.created = created
-//  }
-//
-//  init(UID: String, text: String, description: String, kindOfTaskUID: String, status: TaskStatus, created: Date, closed: Date?, planned: Date) {
-//    self.UID = UID
-//    self.text = text
-//    self.description = description
-//    self.status = status
-//    self.created = created
-//    self.kindOfTaskUID = kindOfTaskUID
-//    self.completed = closed
-//    self.planned = planned
-//  }
 
   // MARK: - Equatable
   static func == (lhs: Task, rhs: Task) -> Bool {
@@ -101,7 +77,6 @@ extension Task {
   }
 
   init?(snapshot: D) {
-    // check
     guard let dict = snapshot.value as? NSDictionary,
           let text = dict.value(forKey: "text") as? String,
           let description = dict.value(forKey: "desc") as? String,
@@ -113,7 +88,6 @@ extension Task {
           let lastModifiedTimeInterval = dict.value(forKey: "lastModified") as? TimeInterval
     else { return nil }
 
-    // init
     self.UID = snapshot.key
     self.text = text
     self.description = description
@@ -127,6 +101,7 @@ extension Task {
     if let closedTimeInterval = dict.value(forKey: "closed") as? TimeInterval {
       self.completed = Date(timeIntervalSince1970: closedTimeInterval)
     }
+    
     if let plannedTimeInterval = dict.value(forKey: "planned") as? TimeInterval {
       self.planned = Date(timeIntervalSince1970: plannedTimeInterval)
     }
@@ -138,7 +113,6 @@ extension Task: Persistable {
   typealias T = NSManagedObject
 
   static var entityName: String { "Task" }
-
   static var primaryAttributeName: String { "uid" }
 
   init?(entity: T) {
