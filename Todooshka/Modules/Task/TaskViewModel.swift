@@ -20,9 +20,9 @@ class TaskViewModel: Stepper {
   private let services: AppServices
   private let isModal: Bool
 
-  private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
   private var task: Task
   private var isDescriptionPlaceholderEnabled = false
+  private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
 
   struct Input {
     // back
@@ -92,7 +92,10 @@ class TaskViewModel: Stepper {
     let saveDescriptionTextViewButtonIsHidden: Driver<Bool>
     let saveDescription: Driver<Result<Void, Error>>
     // COMPLETE
+    let addPhoto: Driver<Task>
     let completeTask: Driver<Result<Void, Error>>
+    // IMAGE
+    let image: Driver<UIImage>
     // CLOSE VIEW CONTROLLER
     let dismissViewController: Driver<Void>
     // ANIMATION
@@ -311,6 +314,12 @@ class TaskViewModel: Stepper {
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     // MARK: - COMPLETE
+    let addPhoto = input.getPhotoButtonClickTrigger
+      .withLatestFrom(task)
+      .do { task in
+        self.steps.accept(AppStep.addPhotoIsRequired(task: task))
+      }
+    
     let completeTask = input.completeButtonClickTrigger
       .withLatestFrom(task) { _, task -> Task in
         var task = task
@@ -333,6 +342,13 @@ class TaskViewModel: Stepper {
       .do { _ in
         self.isModal ? self.steps.accept(AppStep.dismiss) : self.steps.accept(AppStep.navigateBack)
       }
+    
+    // MARK: - Image
+    let image = task
+      .compactMap { task -> UIImage? in
+        task.image
+      }
+      .debug()
 
     // MARK: - ANIMATION
     let playAnimationViewTrigger = input.completeButtonClickTrigger
@@ -369,7 +385,10 @@ class TaskViewModel: Stepper {
       saveDescriptionTextViewButtonIsHidden: saveDescriptionTextViewButtonIsHidden,
       saveDescription: saveDescription,
       // COMPLETE TASK
+      addPhoto: addPhoto,
       completeTask: completeTask,
+      // IMAGE:
+      image: image,
       // CLOSE VIEW CONTROLLER
       dismissViewController: dismissViewController,
       // animation

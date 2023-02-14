@@ -11,6 +11,7 @@ import RxCocoa
 import RxDataSources
 import Lottie
 import RxGesture
+import YPImagePicker
 
 enum BottomButtonsMode {
   case create
@@ -202,8 +203,10 @@ class TaskViewController: TDViewController {
   
   private let resultImageView: UIImageView = {
     let imageView = UIImageView()
-    imageView.cornerRadius = 8
     imageView.backgroundColor = .white
+    imageView.contentMode = .scaleToFill
+    imageView.cornerRadius = 8
+    imageView.clipsToBounds = true
     return imageView
   }()
   
@@ -264,7 +267,7 @@ class TaskViewController: TDViewController {
     return button
   }()
   
-  // MARK: - UI ELEMENTS
+  // MARK: - UI Elements - Animation
   private let animationView: AnimationView = {
     let animationView = AnimationView(name: "taskDone1")
     animationView.contentMode = .scaleAspectFill
@@ -273,7 +276,7 @@ class TaskViewController: TDViewController {
     animationView.isUserInteractionEnabled = false 
     return animationView
   }()
-  
+
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -612,9 +615,14 @@ class TaskViewController: TDViewController {
       outputs.saveDescriptionTextViewButtonIsHidden.drive(saveDescriptionTextViewButton.rx.isHidden),
       outputs.saveDescription.drive(),
       // COMPLETE TASK
+      outputs.addPhoto.drive(),
       outputs.completeTask.drive(),
+      // IMAGE
+      outputs.image.drive(imageBinder),
       // CLOSE VIEW CONTROLLER
       outputs.dismissViewController.drive(),
+      // ADD PHOTO
+      outputs.addPhoto.drive(),
       // ANIMATION
       outputs.playAnimationViewTrigger.drive(playAnimationViewBinder)
       // yandex
@@ -764,6 +772,14 @@ class TaskViewController: TDViewController {
     })
   }
   
+  // MARK: - PHOTO
+  var imageBinder: Binder<UIImage> {
+    return Binder(self, binding: { (vc, image) in
+      vc.resultImageView.backgroundColor = .clear
+      vc.resultImageView.image = image
+    })
+  }
+  
   // MARK: - Configure Data Source
   func configureDataSource() {
     collectionView.dataSource = nil
@@ -778,3 +794,5 @@ class TaskViewController: TDViewController {
       })
   }
 }
+
+

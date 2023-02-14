@@ -95,28 +95,41 @@ class CalendarCell: JTACDayCell {
     
   }
   
-  func configure(cellState: CellState, selectedDate: Date, completedTasksCount: Int, plannedTasksCount: Int) {
+  func clear() {
+    isHidden = true
+    backgroundColor = .clear
+    
+    dateLabel.textColor = Style.App.text
+    dateLabel.text = ""
+    
+    imageView.image = nil
+    
+    leftDot.isHidden = true
+    centralDot.isHidden = true
+    rightDot.isHidden = true
+  }
+  
+  func configure(cellState: CellState, isSelected: Bool, completedTasksCount: Int, plannedTasksCount: Int) {
     dateLabel.text = cellState.text
     imageView.image = getImage(count: completedTasksCount)
-    
-    if cellState.date.startOfDay == selectedDate.startOfDay {
-      backgroundColor = Style.Cells.Calendar.Selected
-      dateLabel.textColor = completedTasksCount == 0 ? .white : Style.App.text
+
+    if cellState.dateBelongsTo == .thisMonth {
+      if isSelected {
+        backgroundColor = Style.Cells.Calendar.Selected
+        dateLabel.textColor = completedTasksCount == 0 ? .white : Style.App.text
+      } else {
+        backgroundColor = .clear
+        dateLabel.textColor = Style.App.text
+      }
     } else {
       backgroundColor = .clear
-      dateLabel.textColor = Style.App.text
+      dateLabel.textColor = .lightGray
     }
-
+    
     if cellState.date.startOfDay == Date().startOfDay {
       contentView.borderWidth = 1.0
     } else {
       contentView.borderWidth = 0
-    }
-    
-    if cellState.dateBelongsTo == .thisMonth {
-      isHidden = false
-    } else {
-      isHidden = true
     }
     
     if cellState.date.startOfDay <= Date().startOfDay {

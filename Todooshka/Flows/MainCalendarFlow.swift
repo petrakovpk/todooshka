@@ -32,8 +32,12 @@ class MainCalendarFlow: Flow {
     case .mainCalendarIsRequired:
       return navigateToMainCalendar()
       
+    case .createTaskIsRequired(let task, let isModal):
+      return navigateToTask(task: task, isModal: isModal)
     case .showTaskIsRequired(let task):
-      return navigateToTask(task: task)
+      return navigateToTask(task: task, isModal: false)
+    case .addPhotoIsRequired(let task):
+      return navigateToImagePickerFlow(task: task)
     
     case .shopIsRequired:
       return navigateToShop()
@@ -59,15 +63,20 @@ class MainCalendarFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToTask(task: Task) -> FlowContributors {
+  private func navigateToTask(task: Task, isModal: Bool) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, task: task, isModal: false)
+    let viewModel = TaskViewModel(services: services, task: task, isModal: isModal)
     viewController.viewModel = viewModel
-    rootViewController.tabBarController?.tabBar.isHidden = true
-    rootViewController.pushViewController(viewController, animated: true)
+    if isModal {
+      rootViewController.tabBarController?.tabBar.isHidden = false
+      rootViewController.present(viewController, animated: true)
+    } else {
+      rootViewController.tabBarController?.tabBar.isHidden = true
+      rootViewController.pushViewController(viewController, animated: true)
+    }
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-  
+
   private func navigateToShop() -> FlowContributors {
     let viewController = ShopViewController()
     let viewModel = ShopViewModel(services: services)
@@ -84,6 +93,26 @@ class MainCalendarFlow: Flow {
       rootViewController.pushViewController(viewController, animated: true)
       return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
     }
+  
+  private func navigateToImagePickerFlow(task: Task) -> FlowContributors {
+    let pickerFlow = ImagePickerFlow(withServices: services)
+    
+    Flows.use(pickerFlow, when: .created) { [unowned self] root in
+      DispatchQueue.main.async {
+        root.modalPresentationStyle = .automatic
+        rootViewController.present(root, animated: true)
+      }
+    }
+    
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: pickerFlow,
+        withNextStepper: OneStepper(
+          withSingleStep: AppStep.addPhotoIsRequired(task: task)
+        )
+      )
+    )
+  }
   
   private func navigateBack() -> FlowContributors {
     rootViewController.popViewController(animated: true)

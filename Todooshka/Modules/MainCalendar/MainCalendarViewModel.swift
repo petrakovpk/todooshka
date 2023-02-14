@@ -10,6 +10,11 @@ import RxFlow
 import RxSwift
 import RxCocoa
 
+enum CalendarMode {
+  case short
+  case long
+}
+
 class MainCalendarViewModel: Stepper {
   public let steps = PublishRelay<Step>()
   public let selectedDate = BehaviorRelay<Date>(value: Date())
@@ -20,11 +25,10 @@ class MainCalendarViewModel: Stepper {
   private let services: AppServices
   private let minMonthIndex = BehaviorRelay<Int>(value: -2)
   private let maxMonthIndex = BehaviorRelay<Int>(value: 2)
-  
+
   private let appDelegate = UIApplication.shared.delegate as! AppDelegate
   private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
-  
-  private var isCalendarInShortMode = false
+  private var calendarMode: CalendarMode = .long
   
   struct Input {
     let taskListButtonClickTrigger: Driver<Void>
@@ -39,10 +43,10 @@ class MainCalendarViewModel: Stepper {
 
   struct Output {
     let openMainTaskList: Driver<Void>
-    let isCalendarInShortMode: Driver<Bool>
+    let calendarMode: Driver<CalendarMode>
     let openShop: Driver<Void>
     let calendarAddMonths: Driver<Void>
-    let calendarDataSource: Driver<[CalendarSection]>
+    let calendarDataSource: Driver<Dictionary<Date, CalendarItem>>
     let scrollToDate: Driver<Date>
     let monthButtonTitle: Driver<String>
     let addTask: Driver<Void>
@@ -65,6 +69,7 @@ class MainCalendarViewModel: Stepper {
     let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
     let minMonthIndex = minMonthIndex.asDriver()
     let maxMonthIndex = maxMonthIndex.asDriver()
+   // let calendarMode = calendarMode.asDriver()
     let displayDate = displayDate.asDriver()
     let tasks = services.dataService.tasks
     let kindsOfTask = services.dataService.kindsOfTask.asDriver()
@@ -80,16 +85,20 @@ class MainCalendarViewModel: Stepper {
       .do { _ in self.steps.accept(AppStep.shopIsRequired) }
     
     // MARK: - CALENDAR
-    let isCalendarInShortMode = input
-      .changeCalendarModeButtonClickTrigger
-      .map { _ -> Bool in
-        return !self.isCalendarInShortMode
+    let calendarMode = input.changeCalendarModeButtonClickTrigger
+      .map { _ -> CalendarMode in
+        switch self.calendarMode {
+        case .short:
+          return .long
+        case .long:
+          return .short
+        }
       }
-      .startWith(false)
-      .do { isCalendarInShortMode in
-        self.isCalendarInShortMode = isCalendarInShortMode
+      .do { calendarMode in
+        self.calendarMode = calendarMode
       }
-    
+      .startWith(self.calendarMode)
+
     // MARK: - DATASOURCE
     let calendarAddPreviousMonth = displayDate
       .withLatestFrom(minMonthIndex) { displayDate, minMonthIndex in
@@ -109,59 +118,67 @@ class MainCalendarViewModel: Stepper {
       .of(calendarAddPreviousMonth, calendarAddNextMonth)
       .merge()
     
-    let calendarDataSource = Driver.combineLatest(tasks, minMonthIndex, maxMonthIndex)
-    { tasks, minMonthIndex, maxMonthIndex -> [CalendarSection] in
+    let calendarDataSource = Driver.combineLatest(tasks, minMonthIndex, maxMonthIndex, selectedDate)
+    { tasks, minMonthIndex, maxMonthIndex, selectedDate -> Dictionary<Date, CalendarItem> in
       (minMonthIndex ... maxMonthIndex)
         .map { monthIndex -> Date in
           Date().adding(.month, value: monthIndex).startOfMonth
         }
-        .map { startOfMonth -> CalendarSection in
-          CalendarSection(
-            year: startOfMonth.year,
-            month: startOfMonth.month,
-            items:
-              Calendar.current
-              .numberOfDaysInMonth(for: startOfMonth)
-              .countableRange
-              .compactMap { dayIndex -> Date in
-                startOfMonth.adding(.day, value: dayIndex)
-              }
-              .map { date -> CalendarItem in
-                CalendarItem(
-                  date: date,
-                  isSelected: false,
-                  completedTasksCount:
-                    tasks
-                    .filter { task -> Bool in
-                      guard let completed = task.completed else { return false }
-                      return task.status == .completed
-                      && completed.startOfDay == date.startOfDay
-                    }.count,
-                  plannedTasksCount:
-                    tasks
-                    .filter { task -> Bool in
-                      task.status == .inProgress
-                      && task.planned.startOfDay == date.startOfDay
-                    }.count
-                )
-              }
-          )
+        .flatMap { startOfMonth -> [CalendarItem] in
+          Calendar.current
+            .numberOfDaysInMonth(for: startOfMonth)
+            .countableRange
+            .compactMap { dayIndex -> Date in
+              startOfMonth.adding(.day, value: dayIndex)
+            }
+            .map { date -> CalendarItem in
+              CalendarItem(
+                date: date,
+                isSelected: selectedDate == date,
+                completedTasksCount:
+                  tasks
+                  .filter { task -> Bool in
+                    guard let completed = task.completed else { return false }
+                    return task.status == .completed
+                    && completed.startOfDay == date.startOfDay
+                  }.count,
+                plannedTasksCount:
+                  tasks
+                  .filter { task -> Bool in
+                    task.status == .inProgress
+                    && task.planned.startOfDay == date.startOfDay
+                  }.count
+              )
+            }
+        }
+        .reduce(into: [Date: CalendarItem]()) { partialResult, item in
+          partialResult[item.date] = item
         }
     }
-    
+
     let scrollToCurrentDate = input.monthLabelClickTrigger
       .map { Date() }
     
     let scrollToPreviousPeriod = input.scrollToPreviousPeriodButtonClickTrigger
       .withLatestFrom(displayDate)
-      .withLatestFrom(isCalendarInShortMode) { displayDate, isCalendarInShortMode -> Date in
-        displayDate.adding(isCalendarInShortMode ? .weekOfMonth : .month, value: -1)
+      .map { displayDate -> Date in
+        switch self.calendarMode {
+        case .short:
+          return displayDate.adding(.weekOfMonth, value: -1)
+        case .long:
+          return displayDate.adding(.month, value: -1)
+        }
       }
     
     let scrollToNextPeriod = input.scrollToNextPeriodButtonClickTrigger
       .withLatestFrom(displayDate)
-      .withLatestFrom(isCalendarInShortMode) { displayDate, isCalendarInShortMode -> Date in
-        displayDate.adding(isCalendarInShortMode ? .weekOfMonth : .month, value: 1)
+      .map { displayDate -> Date in
+        switch self.calendarMode {
+        case .short:
+          return displayDate.adding(.weekOfMonth, value: 1)
+        case .long:
+          return displayDate.adding(.month, value: 1)
+        }
       }
     
     let scrollToDate = Driver
@@ -184,7 +201,7 @@ class MainCalendarViewModel: Stepper {
               status: .inProgress,
               planned: selectedDate.endOfDay,
               completed: selectedDate.startOfDay <= Date().startOfDay ? selectedDate : nil),
-            isModal: true
+            isModal: false
           ))
       }
     
@@ -303,7 +320,7 @@ class MainCalendarViewModel: Stepper {
 
     return Output(
       openMainTaskList: openMainTaskList,
-      isCalendarInShortMode: isCalendarInShortMode,
+      calendarMode: calendarMode,
       openShop: openShop,
       calendarAddMonths: calendarAddMonths,
       calendarDataSource: calendarDataSource,

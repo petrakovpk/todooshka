@@ -23,6 +23,7 @@ struct Task: IdentifiableType, Equatable {
   var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { willSet { lastModified = Date()}}
   var userUID: String? = Auth.auth().currentUser?.uid { willSet { lastModified = Date()}}
   var lastModified = Date()
+  var image: UIImage?
 
   // MARK: - Calculated Propertie
   var secondsLeft: Double {
@@ -55,6 +56,7 @@ struct Task: IdentifiableType, Equatable {
     && lhs.index == rhs.index
     && lhs.userUID == rhs.userUID
     && lhs.lastModified == rhs.lastModified
+    && lhs.image == rhs.image
   }
 }
 
@@ -140,6 +142,11 @@ extension Task: Persistable {
     self.description = description
     self.planned = planned
     self.userUID = entity.value(forKey: "userUID") as? String
+    
+    if let data = entity.value(forKey: "image") as? Data,
+       let image = UIImage(data: data) {
+      self.image = image
+    }
   }
 
   func update(_ entity: T) {
@@ -154,6 +161,10 @@ extension Task: Persistable {
     entity.setValue(text, forKey: "text")
     entity.setValue(userUID, forKey: "userUID")
     entity.setValue(lastModified, forKey: "lastModified")
+    
+    if let data = image?.pngData() {
+      entity.setValue(data, forKey: "image")
+    }
   }
 
   func save(_ entity: T) {

@@ -71,9 +71,9 @@ class MarketplaceFlow: Flow {
     let viewController = ThemeSettingsViewController()
     let viewModel = ThemeSettingsViewModel(services: services, theme: theme)
     viewController.viewModel = viewModel
-    if let sheet = viewController.sheetPresentationController {
-      sheet.detents = [.medium()]
-    }
+//    if let sheet = viewController.sheetPresentationController {
+//      sheet.detents = [.medium()]
+//    }
     rootViewController.present(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }

@@ -20,10 +20,12 @@ class MainCalendarViewController: UIViewController {
   private let disposeBag = DisposeBag()
   
   private var isCalendarAnimationRunning: Bool = false
-  private var isCalendarInShortMode: Bool = false
-  private var selectedDate: Date = Date()
+  private var calendarMode: CalendarMode = .long
   private var displayDate: Date = Date()
-  private var calendarDataSource: [CalendarSection] = []
+  
+  private var calendarData: Dictionary<Date, CalendarItem> = [
+    Date().startOfDay: CalendarItem(date: Date(), isSelected: false, completedTasksCount: 2, plannedTasksCount: 0)
+  ]
   
   // MARK: - UI Elements - Scene
   private let scene: MainCalendarScene? = {
@@ -305,18 +307,32 @@ class MainCalendarViewController: UIViewController {
 
     calendarView.calendarDataSource = self
     calendarView.calendarDelegate = self
-    configureCalendarUISecondStep(isShortMode: self.isCalendarInShortMode)
+    configureCalendarUISecondStep(calendarMode: .long)
   }
   
-  private func configureCalendarUISecondStep(isShortMode: Bool) {
+  func configureCalendarUISecondStep(calendarMode: CalendarMode) {
+    let nomberOfRows: Int
+    let changeCalendarModeButtonImage: UIImage
+    
+    switch calendarMode{
+    case .short:
+      nomberOfRows = 1
+      changeCalendarModeButtonImage = Icon.arrowBottom.image.template
+    case .long:
+      nomberOfRows = 6
+      changeCalendarModeButtonImage = Icon.arrowTop.image.template
+    }
+    
     calendarView.removeAllConstraints()
     calendarView.anchorCenterXToSuperview()
     calendarView.anchor(
       top: calendarDayNamesStackView.bottomAnchor,
       widthConstant: 7 * Sizes.Cells.CalendarCell.size,
-      heightConstant: (isShortMode ? 1 : 6 ) * Sizes.Cells.CalendarCell.size
+      heightConstant: nomberOfRows.cgFloat * Sizes.Cells.CalendarCell.size
     )
     
+    changeCalendarModeButton.setImage(changeCalendarModeButtonImage, for: .normal)
+
     scrollToPreviousPeriodButton.anchor(
       top: calendarDayNamesStackView.topAnchor,
       left: view.leftAnchor,
@@ -442,7 +458,7 @@ class MainCalendarViewController: UIViewController {
 
     [
       outputs.openMainTaskList.drive(),
-      outputs.isCalendarInShortMode.drive(isCalendarInShortModeBinder),
+      outputs.calendarMode.drive(calendarModeBinder),
       outputs.openShop.drive(),
       outputs.calendarAddMonths.drive(),
       outputs.calendarDataSource.drive(calendarDataSourceBinder),
@@ -479,27 +495,23 @@ class MainCalendarViewController: UIViewController {
   }
   
   // MARK: - Calendar Binders
-  var isCalendarInShortModeBinder: Binder<Bool> {
-    return Binder(self, binding: { vc, isCalendarInShortMode in
+  var calendarModeBinder: Binder<CalendarMode> {
+    return Binder(self, binding: { vc, calendarMode in
       UIView.animate(withDuration: 0.5) {
-        self.isCalendarAnimationRunning = true
-        vc.isCalendarInShortMode = isCalendarInShortMode
-        vc.configureCalendarUISecondStep(isShortMode: isCalendarInShortMode)
-        vc.changeCalendarModeButton.setImage(
-          isCalendarInShortMode ? Icon.arrowBottom.image.template : Icon.arrowTop.image.template,
-          for: .normal)
+        vc.isCalendarAnimationRunning = true
+        vc.calendarMode = calendarMode
+        vc.configureCalendarUISecondStep(calendarMode: calendarMode)
       } completion: { _ in
-        self.isCalendarAnimationRunning = false
+        vc.isCalendarAnimationRunning = false
         vc.calendarView.reloadData()
-        vc.calendarView.scrollToDate(self.selectedDate, animateScroll: false)
+        vc.calendarView.scrollToDate(vc.displayDate, animateScroll: false)
       }
     })
   }
-  
-  
-  var calendarDataSourceBinder: Binder<[CalendarSection]> {
+
+  var calendarDataSourceBinder: Binder<Dictionary<Date, CalendarItem>> {
     return Binder(self, binding: { vc, dataSource in
-      vc.calendarDataSource = dataSource
+      vc.calendarData = dataSource
       vc.calendarView.reloadData()
       vc.calendarView.scrollToDate(self.displayDate, animateScroll: false)
     })
@@ -516,12 +528,23 @@ class MainCalendarViewController: UIViewController {
 // MARK: - JTAppleCalendarViewDataSource
 extension MainCalendarViewController: JTACMonthViewDataSource {
   func configureCalendar(_ calendar: JTACMonthView) -> ConfigurationParameters {
-    let startDate = calendarDataSource.first?.startDate ?? Date().startOfMonth
-    let endDate = calendarDataSource.last?.endDate ?? Date().endOfMonth
+    let startDate = calendarData.keys.sorted { $0 < $1 }.first ?? Date().startOfMonth
+    let endDate = calendarData.keys.sorted { $0 < $1 }.last ?? Date().endOfMonth
+    let nomberOfRows: Int
+    
+    switch self.calendarMode {
+    case .short:
+      nomberOfRows = 1
+    case .long:
+      nomberOfRows = 6
+    }
+    
     return ConfigurationParameters(
       startDate: startDate,
       endDate: endDate,
-      numberOfRows: self.isCalendarInShortMode ? 1 : 6
+      numberOfRows: nomberOfRows,
+      calendar: Calendar.current,
+      firstDayOfWeek: .monday
     )
   }
 }
@@ -530,65 +553,58 @@ extension MainCalendarViewController: JTACMonthViewDataSource {
 extension MainCalendarViewController: JTACMonthViewDelegate {
   func calendar(_ calendar: JTAppleCalendar.JTACMonthView, cellForItemAt date: Date, cellState: JTAppleCalendar.CellState, indexPath: IndexPath) -> JTAppleCalendar.JTACDayCell {
     let cell = calendar.dequeueReusableJTAppleCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
-    guard let section = calendarDataSource[safe: indexPath.section],
-          let item = section.items[safe: indexPath.item] else {
+    
+    if let item = calendarData[date] {
       cell.configure(
         cellState: cellState,
-        selectedDate: self.selectedDate,
+        isSelected: item.isSelected,
+        completedTasksCount: item.completedTasksCount,
+        plannedTasksCount: item.plannedTasksCount
+      )
+    } else {
+      cell.configure(
+        cellState: cellState,
+        isSelected: false,
         completedTasksCount: 0,
-        plannedTasksCount: 0)
-      return cell
+        plannedTasksCount: 0
+      )
     }
-    
-    cell.configure(
-      cellState: cellState,
-      selectedDate: self.selectedDate,
-      completedTasksCount: item.completedTasksCount,
-      plannedTasksCount: item.plannedTasksCount)
     return cell
   }
 
   func calendar(_ calendar: JTAppleCalendar.JTACMonthView, willDisplay cell: JTAppleCalendar.JTACDayCell, forItemAt date: Date, cellState: JTAppleCalendar.CellState, indexPath: IndexPath) {
     let cell = cell as! CalendarCell
     
-    if let section = calendarDataSource[safe: indexPath.section],
-      let item = section.items[safe: indexPath.item] {
+    if let item = calendarData[date] {
       cell.configure(
         cellState: cellState,
-        selectedDate: self.selectedDate,
+        isSelected: item.isSelected,
         completedTasksCount: item.completedTasksCount,
-        plannedTasksCount: item.plannedTasksCount)
-      return
+        plannedTasksCount: item.plannedTasksCount
+      )
+    } else {
+      cell.configure(
+        cellState: cellState,
+        isSelected: false,
+        completedTasksCount: 0,
+        plannedTasksCount: 0
+      )
     }
-    
-    cell.configure(
-      cellState: cellState,
-      selectedDate: self.selectedDate,
-      completedTasksCount: 0,
-      plannedTasksCount: 0)
   }
   
   func calendar(_ calendar: JTACMonthView, didSelectDate date: Date, cell: JTACDayCell?, cellState: CellState, indexPath: IndexPath) {
-    if let cell = cell as? CalendarCell {
-      selectedDate = date
+    if cellState.dateBelongsTo == .thisMonth {
       viewModel.selectedDate.accept(date)
-      cell.backgroundColor = Style.Cells.Calendar.Selected
-      
-      guard
-        let section = calendarDataSource[safe: indexPath.section],
-        let item = section.items[safe: indexPath.item]
-      else {
-        cell.dateLabel.textColor = .white
-        return
-      }
-      cell.dateLabel.textColor = item.completedTasksCount == 0 ? .white : Style.App.text
     }
   }
   
   func calendar(_ calendar: JTACMonthView, didDeselectDate date: Date, cell: JTACDayCell?, cellState: CellState, indexPath: IndexPath) {
-    if let cell = cell as? CalendarCell {
-      cell.backgroundColor = .clear
-      cell.dateLabel.textColor = Style.App.text
+    if let cell = cell as? CalendarCell, let item = calendarData[date] {
+      cell.configure(
+        cellState: cellState,
+        isSelected: item.isSelected,
+        completedTasksCount: item.completedTasksCount,
+        plannedTasksCount: item.plannedTasksCount)
     }
   }
   

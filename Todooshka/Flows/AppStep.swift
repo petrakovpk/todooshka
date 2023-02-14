@@ -14,9 +14,21 @@ enum AppStep: Step {
   case authWithEmailOrPhoneInIsRequired
 
   // Tab Bar
-  case mainCalendarIsRequired
   case tabBarIsRequired
-
+  case funIsRequired
+  case workplaceIsRequired
+  case userProfileIsRequired
+  
+  // workplace
+  case mainCalendarIsRequired
+  case mainTaskListIsRequired
+  
+  // Task
+  case createTaskIsRequired(task: Task, isModal: Bool)
+  case showTaskIsRequired(task: Task)
+  case addPhotoIsRequired(task: Task)
+  case taskProcessingIsCompleted
+  
   // Changing
   case changingNameIsRequired
   case changingGenderIsRequired
@@ -24,14 +36,9 @@ enum AppStep: Step {
   case changingPhoneIsRequired
   case changingEmailIsRequired
   case changingPasswordIsRequired
-  
-  // Fun
-  case funIsRequired
 
-  case workplaceIsRequired
   
   // Task List
-  case mainTaskListIsRequired
   case overduedTaskListIsRequired
   case ideaTaskListIsRequired
   case plannedTaskListIsRequired(date: Date)
@@ -43,10 +50,7 @@ enum AppStep: Step {
   case createKindOfTaskIsRequired
   case showKindOfTaskIsRequired(kindOfTask: KindOfTask)
 
-  // Task
-  case createTaskIsRequired(task: Task, isModal: Bool)
-  case showTaskIsRequired(task: Task)
-  case taskProcessingIsCompleted
+ 
 
   // Deleted Task Type List
   case deletedTaskTypeListIsRequired
@@ -112,6 +116,4 @@ enum AppStep: Step {
   case themeTaskIsRequired(themeTaskUID: String, openViewControllerMode: OpenViewControllerMode)
   case themeProcessingIsCompleted
 
-  // UserProfile
-  case userProfileIsRequired
 }

@@ -150,6 +150,7 @@
 		9D3BBC4C28F05C2C00B352E3 /* CoreDataTask+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BBC4A28F05C2C00B352E3 /* CoreDataTask+CoreDataClass.swift */; };
 		9D3BBC4D28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BBC4B28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift */; };
 		9D3BBC4F28F4059000B352E3 /* CoreDataTaskTypeToKindOfTaskV1toV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BBC4E28F4059000B352E3 /* CoreDataTaskTypeToKindOfTaskV1toV2.swift */; };
+		9D3BEDB5298C3A74001464CD /* ImagePickerFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BEDB4298C3A74001464CD /* ImagePickerFlow.swift */; };
 		9D42BF49289A82DB008F624F /* SKEggNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF48289A82DB008F624F /* SKEggNode.swift */; };
 		9D42BF4C289AABEF008F624F /* SKBirdNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF4B289AABEF008F624F /* SKBirdNode.swift */; };
 		9D42BF4F28BF8466008F624F /* TabBarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF4E28BF8466008F624F /* TabBarService.swift */; };
@@ -209,6 +210,8 @@
 		9D6193F828F42CF600C526A7 /* CoreDataTaskType+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6193F728F42CF600C526A7 /* CoreDataTaskType+CoreDataProperties.swift */; };
 		9D6193FA28F42E6800C526A7 /* MigrationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6193F928F42E6800C526A7 /* MigrationService.swift */; };
 		9D6193FC28F6060F00C526A7 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6193FB28F6060F00C526A7 /* App.swift */; };
+		9D68011D2987CF9E0072CBB3 /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D68011C2987CF9E0072CBB3 /* ImagePickerController.swift */; };
+		9D68011F2987D1490072CBB3 /* ImagePickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D68011E2987D1490072CBB3 /* ImagePickerViewModel.swift */; };
 		9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */; };
 		9D6B6B12284FEC46000ABAE7 /* MainCalendarSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B11284FEC46000ABAE7 /* MainCalendarSceneModel.swift */; };
 		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
@@ -446,6 +449,7 @@
 		9D3BBC4A28F05C2C00B352E3 /* CoreDataTask+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataTask+CoreDataClass.swift"; sourceTree = "<group>"; };
 		9D3BBC4B28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataTask+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		9D3BBC4E28F4059000B352E3 /* CoreDataTaskTypeToKindOfTaskV1toV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTaskTypeToKindOfTaskV1toV2.swift; sourceTree = "<group>"; };
+		9D3BEDB4298C3A74001464CD /* ImagePickerFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerFlow.swift; sourceTree = "<group>"; };
 		9D42BF48289A82DB008F624F /* SKEggNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKEggNode.swift; sourceTree = "<group>"; };
 		9D42BF4B289AABEF008F624F /* SKBirdNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKBirdNode.swift; sourceTree = "<group>"; };
 		9D42BF4E28BF8466008F624F /* TabBarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarService.swift; sourceTree = "<group>"; };
@@ -504,6 +508,8 @@
 		9D6193F728F42CF600C526A7 /* CoreDataTaskType+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataTaskType+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		9D6193F928F42E6800C526A7 /* MigrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationService.swift; sourceTree = "<group>"; };
 		9D6193FB28F6060F00C526A7 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		9D68011C2987CF9E0072CBB3 /* ImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
+		9D68011E2987D1490072CBB3 /* ImagePickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerViewModel.swift; sourceTree = "<group>"; };
 		9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		9D6B6B11284FEC46000ABAE7 /* MainCalendarSceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCalendarSceneModel.swift; sourceTree = "<group>"; };
 		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
@@ -947,6 +953,7 @@
 				6067D99D26B1EEF300F0FB72 /* TabBar */,
 				60855BD8265905F700079D75 /* Task */,
 				605823A926C2F33800F79155 /* TaskCell */,
+				9D68011B2987CF7E0072CBB3 /* ImagePicker */,
 				602591C82679CF0800E2BBF8 /* TaskList */,
 				9DB13111296EC9A8007A0D37 /* TaskWithImageCell */,
 				9D9733D129192F7E00733C45 /* Theme */,
@@ -971,6 +978,7 @@
 				9D42BF6128C75F0C008F624F /* AuthFlow.swift */,
 				9D97340A2928C02000733C45 /* EmptyFlow.swift */,
 				9D9734082928BF1200733C45 /* FunFlow.swift */,
+				9D3BEDB4298C3A74001464CD /* ImagePickerFlow.swift */,
 				60AE9DDD2652FF4200E51531 /* MainCalendarFlow.swift */,
 				9DCDECD32983C62A00FA6AA0 /* MainTaskListFlow.swift */,
 				9D0A821A29100871006D777C /* MarketplaceFlow.swift */,
@@ -1329,6 +1337,15 @@
 				6069AE3D26E7AE830098B25E /* KindOfTaskIconSection.swift */,
 			);
 			path = KindOfTaskIconCell;
+			sourceTree = "<group>";
+		};
+		9D68011B2987CF7E0072CBB3 /* ImagePicker */ = {
+			isa = PBXGroup;
+			children = (
+				9D68011C2987CF9E0072CBB3 /* ImagePickerController.swift */,
+				9D68011E2987D1490072CBB3 /* ImagePickerViewModel.swift */,
+			);
+			path = ImagePicker;
 			sourceTree = "<group>";
 		};
 		9D6B6B0E284FEA0F000ABAE7 /* Typealias */ = {
@@ -1741,6 +1758,7 @@
 				9D0A820C290FEAFC006D777C /* MarketplaceViewController.swift in Sources */,
 				60E970362823F13700577484 /* BirdActionType.swift in Sources */,
 				9DCDECBC2983A8D200FA6AA0 /* WorklplaceViewController.swift in Sources */,
+				9D68011D2987CF9E0072CBB3 /* ImagePickerController.swift in Sources */,
 				9D17D46D288FE65200D3E304 /* CalendarView.swift in Sources */,
 				60E816B528116C20003F28DC /* Style.swift in Sources */,
 				9D17D44128899D4200D3E304 /* CalendarYearCell.swift in Sources */,
@@ -1822,6 +1840,7 @@
 				60AE9DB02652F5B600E51531 /* AppFlow.swift in Sources */,
 				9D44C0C328E06A300022148C /* KindOfTaskListCellMode.swift in Sources */,
 				9D42C05F28CF5427008F624F /* SetEmailViewController.swift in Sources */,
+				9D3BEDB5298C3A74001464CD /* ImagePickerFlow.swift in Sources */,
 				604257672677AAA0005A518C /* SettingsViewController.swift in Sources */,
 				9D42C04E28CF3338008F624F /* ChangeGenderSectionModel.swift in Sources */,
 				607BCB6226E62E59000A8248 /* KindOfTaskViewModel.swift in Sources */,
@@ -1942,6 +1961,7 @@
 				6045FEBB284D4B64002C9C24 /* KindOfTaskIForBirdSection.swift in Sources */,
 				9D42C03628CF0FA8008F624F /* UserProfileItem.swift in Sources */,
 				60E9704928284B5F00577484 /* ActionService.swift in Sources */,
+				9D68011F2987D1490072CBB3 /* ImagePickerViewModel.swift in Sources */,
 				9D0A8229291657FA006D777C /* LoginViewControllerStyle.swift in Sources */,
 				60855BDC2659064200079D75 /* TaskViewModel.swift in Sources */,
 				609ADE3D2750F40F00E81FBF /* MainCalendarScene.swift in Sources */,
@@ -2117,7 +2137,7 @@
 				INFOPLIST_FILE = Todooshka/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DragoDo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2147,7 +2167,7 @@
 				INFOPLIST_FILE = Todooshka/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DragoDo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

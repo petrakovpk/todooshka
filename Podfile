@@ -22,5 +22,7 @@ pod 'FirebaseFirestore'
 pod 'FirebaseDatabase'
 pod 'GoogleSignIn'
 pod 'JTAppleCalendar'
+pod 'ImagePicker', :git => 'https://github.com/hyperoslo/ImagePicker.git'
+pod 'YPImagePicker'
 
 end

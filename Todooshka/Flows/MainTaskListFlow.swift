@@ -9,6 +9,9 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import UIKit
+import PhotosUI
+import ImagePicker
+import YPImagePicker
 
 class MainTaskListFlow: Flow {
   var root: Presentable {
@@ -42,6 +45,8 @@ class MainTaskListFlow: Flow {
       return navigateToTask(task: task, isModal: isModal)
     case .showTaskIsRequired(let task):
       return navigateToTask(task: task, isModal: false )
+    case .addPhotoIsRequired(let task):
+      return navigateToImagePickerFlow(task: task)
       
       // KIND OF TASK LIST
     case .kindsOfTaskListIsRequired:
@@ -96,6 +101,26 @@ class MainTaskListFlow: Flow {
       rootViewController.pushViewController(viewController, animated: true)
     }
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToImagePickerFlow(task: Task) -> FlowContributors {
+    let pickerFlow = ImagePickerFlow(withServices: services)
+    
+    Flows.use(pickerFlow, when: .created) { [unowned self] root in
+      DispatchQueue.main.async {
+        root.modalPresentationStyle = .automatic
+        rootViewController.present(root, animated: true)
+      }
+    }
+    
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: pickerFlow,
+        withNextStepper: OneStepper(
+          withSingleStep: AppStep.addPhotoIsRequired(task: task)
+        )
+      )
+    )
   }
   
   private func navigateToTaskList(mode: TaskListMode) -> FlowContributors {
