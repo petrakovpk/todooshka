@@ -16,17 +16,14 @@ enum AppStep: Step {
   // Tab Bar
   case tabBarIsRequired
   case funIsRequired
-  case workplaceIsRequired
-  case userProfileIsRequired
-  
-  // workplace
-  case mainCalendarIsRequired
   case mainTaskListIsRequired
-  
+  case calendarIsRequired
+
   // Task
   case createTaskIsRequired(task: Task, isModal: Bool)
   case showTaskIsRequired(task: Task)
   case addPhotoIsRequired(task: Task)
+  case resultPreviewIsRequired(task: Task)
   case taskProcessingIsCompleted
   
   // Changing
@@ -37,7 +34,6 @@ enum AppStep: Step {
   case changingEmailIsRequired
   case changingPasswordIsRequired
 
-  
   // Task List
   case overduedTaskListIsRequired
   case ideaTaskListIsRequired
@@ -50,12 +46,13 @@ enum AppStep: Step {
   case createKindOfTaskIsRequired
   case showKindOfTaskIsRequired(kindOfTask: KindOfTask)
 
- 
+ // User Profile
+  case userProfileIsRequired
 
   // Deleted Task Type List
   case deletedTaskTypeListIsRequired
 
-  // DeleteAccount
+  // Delete Account
   case deleteAccountIsRequired
 
   // Diamond

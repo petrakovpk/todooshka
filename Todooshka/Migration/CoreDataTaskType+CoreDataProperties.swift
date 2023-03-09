@@ -11,7 +11,7 @@ import CoreData
 
 extension CoreDataTaskType {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<CoreDataTaskType> {
-        return NSFetchRequest<CoreDataTaskType>(entityName: "CoreDataTaskType")
+        NSFetchRequest<CoreDataTaskType>(entityName: "CoreDataTaskType")
     }
 
     @NSManaged public var imageColorHex: String?

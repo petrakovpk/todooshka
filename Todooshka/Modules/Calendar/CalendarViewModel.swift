@@ -15,7 +15,7 @@ enum CalendarMode {
   case long
 }
 
-class MainCalendarViewModel: Stepper {
+class CalendarViewModel: Stepper {
   public let steps = PublishRelay<Step>()
   public let selectedDate = BehaviorRelay<Date>(value: Date())
   public let displayDate = BehaviorRelay<Date>(value: Date())
@@ -31,10 +31,10 @@ class MainCalendarViewModel: Stepper {
   private var calendarMode: CalendarMode = .long
   
   struct Input {
-    let taskListButtonClickTrigger: Driver<Void>
     let monthLabelClickTrigger: Driver<Void>
     let changeCalendarModeButtonClickTrigger: Driver<Void>
     let shopButtonClickTrigger: Driver<Void>
+    let settingsButtonClickTrigger: Driver<Void>
     let scrollToPreviousPeriodButtonClickTrigger: Driver<Void>
     let scrollToNextPeriodButtonClickTrigger: Driver<Void>
     let addTaskButtonClickTrigger: Driver<Void>
@@ -42,9 +42,9 @@ class MainCalendarViewModel: Stepper {
   }
 
   struct Output {
-    let openMainTaskList: Driver<Void>
     let calendarMode: Driver<CalendarMode>
     let openShop: Driver<Void>
+    let openSettings: Driver<Void>
     let calendarAddMonths: Driver<Void>
     let calendarDataSource: Driver<Dictionary<Date, CalendarItem>>
     let scrollToDate: Driver<Date>
@@ -69,7 +69,6 @@ class MainCalendarViewModel: Stepper {
     let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
     let minMonthIndex = minMonthIndex.asDriver()
     let maxMonthIndex = maxMonthIndex.asDriver()
-   // let calendarMode = calendarMode.asDriver()
     let displayDate = displayDate.asDriver()
     let tasks = services.dataService.tasks
     let kindsOfTask = services.dataService.kindsOfTask.asDriver()
@@ -78,11 +77,11 @@ class MainCalendarViewModel: Stepper {
         self.services.dataService.selectedDate.accept(date)
       }
     
-    let openMainTaskList = input.taskListButtonClickTrigger
-      .do { _ in self.services.preferencesService.workplaceScrollToPageIndex.accept(0) }
-    
     let openShop = input.shopButtonClickTrigger
       .do { _ in self.steps.accept(AppStep.shopIsRequired) }
+    
+    let openSettings = input.settingsButtonClickTrigger
+      .do { _ in self.steps.accept(AppStep.settingsIsRequired) }
     
     // MARK: - CALENDAR
     let calendarMode = input.changeCalendarModeButtonClickTrigger
@@ -138,15 +137,14 @@ class MainCalendarViewModel: Stepper {
                 completedTasksCount:
                   tasks
                   .filter { task -> Bool in
-                    guard let completed = task.completed else { return false }
-                    return task.status == .completed
-                    && completed.startOfDay == date.startOfDay
+                    (task.status == .completed || task.status == .published) &&
+                    (task.completed ?? Date()).startOfDay == date.startOfDay
                   }.count,
                 plannedTasksCount:
                   tasks
                   .filter { task -> Bool in
-                    task.status == .inProgress
-                    && task.planned.startOfDay == date.startOfDay
+                    task.status == .inProgress &&
+                    task.planned.startOfDay == date.startOfDay
                   }.count
               )
             }
@@ -211,21 +209,16 @@ class MainCalendarViewModel: Stepper {
       }
     
     // MARK: - DATASOURCE COMPLETED
-    let completedListSections = Driver
+    let completedItems = Driver
       .combineLatest(selectedDate, tasks, kindsOfTask) { selectedDate, tasks, kindsOfTask -> [TaskListSectionItem] in
         tasks
           .filter { task -> Bool in
-            guard let completed = task.completed else { return false }
-            return task.status == .completed &&
-            completed.startOfDay >= selectedDate.startOfDay &&
-            completed.endOfDay <= selectedDate.endOfDay
+            (task.status == .completed || task.status == .published) &&
+            (task.completed ?? Date()).startOfDay >= selectedDate.startOfDay &&
+            (task.completed ?? Date()).endOfDay <= selectedDate.endOfDay
           }
           .sorted { prevTask, nextTask -> Bool in
-            guard
-              let prevTaskCompleted = prevTask.completed,
-              let nextTaskCompleted = nextTask.completed
-            else { return false }
-            return prevTaskCompleted < nextTaskCompleted
+            prevTask.completed ?? Date() < nextTask.completed ?? Date()
           }
           .map { task -> TaskListSectionItem in
             TaskListSectionItem(
@@ -234,18 +227,33 @@ class MainCalendarViewModel: Stepper {
             )
           }
       }
-      .withLatestFrom(selectedDate) { items, selectedDate -> [TaskListSection] in
-        [
-          TaskListSection(
-            header: "Выполнено:",
-            mode: .empty,
-            items: items
-          )
-        ]
+    
+    let publishedSection = completedItems
+      .map { items -> TaskListSection in
+        TaskListSection(
+          header: "Опубликовано:",
+          mode: .likes,
+          items: items
+            .filter { item -> Bool in
+              item.task.status == .published
+            }
+        )
+      }
+    
+    let completedSection = completedItems
+      .map { items -> TaskListSection in
+        TaskListSection(
+          header: "Выполнено:",
+          mode: .empty,
+          items: items
+            .filter { item -> Bool in
+              item.task.status == .completed
+            }
+        )
       }
     
     // MARK: - DATASOURCE PLANNED
-    let plannedListSections = Driver<[TaskListSectionItem]>
+    let plannedListItems = Driver<[TaskListSectionItem]>
       .combineLatest(selectedDate, tasks, kindsOfTask) { selectedDate, tasks, kindsOfTask -> [TaskListSectionItem] in
         tasks
           .filter { task -> Bool in
@@ -263,32 +271,34 @@ class MainCalendarViewModel: Stepper {
             prevItem.task.created < nextItem.task.created
           }
       }
-      .withLatestFrom(selectedDate) { items, selectedDate -> [TaskListSection] in
-        [
-          TaskListSection(
-            header: "Запланировано ко времени:",
-            mode: .time,
-            items: items
-              .filter { item -> Bool in
-                item.task.planned.roundToTheBottomMinute != selectedDate.endOfDay.roundToTheBottomMinute
-              }),
-          TaskListSection(
-            header: "Запланировано в течении дня:",
-            mode: .empty,
-            items: items
-              .filter { item -> Bool in
-                item.task.planned.roundToTheBottomMinute == selectedDate.endOfDay.roundToTheBottomMinute
-              })
-        ]
-          
+    
+    let plannedToTimeSection = plannedListItems
+      .withLatestFrom(selectedDate) { items, selectedDate -> TaskListSection in
+        TaskListSection(
+          header: "Запланировано ко времени:",
+          mode: .time,
+          items: items
+            .filter { item -> Bool in
+              item.task.planned.roundToTheBottomMinute != selectedDate.endOfDay.roundToTheBottomMinute
+            })
+      }
+    
+    let plannedAllDaySection = plannedListItems
+      .withLatestFrom(selectedDate) { items, selectedDate -> TaskListSection in
+        TaskListSection(
+          header: "Запланировано в течении дня:",
+          mode: .empty,
+          items: items
+            .filter { item -> Bool in
+              item.task.planned.roundToTheBottomMinute == selectedDate.endOfDay.roundToTheBottomMinute
+            })
       }
     
     // MARK: - DATASOURCE
     let calendarTaskListDataSource = Driver
-      .zip(completedListSections, plannedListSections) { completedListSections, plannedListSections -> [TaskListSection] in
-        (completedListSections + plannedListSections).filter { section -> Bool in
-          !section.items.isEmpty
-        }
+      .zip(publishedSection, completedSection, plannedToTimeSection, plannedAllDaySection) { publishedSection, completedSection, plannedToTimeSection, plannedAllDaySection -> [TaskListSection] in
+        [publishedSection, completedSection, plannedToTimeSection, plannedAllDaySection]
+          .filter { !$0.items.isEmpty }
       }
     
     let openCalendarTask = input.calendarTaskListSelection
@@ -319,9 +329,9 @@ class MainCalendarViewModel: Stepper {
     
 
     return Output(
-      openMainTaskList: openMainTaskList,
       calendarMode: calendarMode,
       openShop: openShop,
+      openSettings: openSettings,
       calendarAddMonths: calendarAddMonths,
       calendarDataSource: calendarDataSource,
       scrollToDate: scrollToDate,

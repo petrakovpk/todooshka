@@ -13,8 +13,8 @@ import SpriteKit
 import SwipeCellKit
 import JTAppleCalendar
 
-class MainCalendarViewController: UIViewController {
-  public var viewModel: MainCalendarViewModel!
+class CalendarViewController: UIViewController {
+  public var viewModel: CalendarViewModel!
   public var sceneModel: MainCalendarSceneModel!
   
   private let disposeBag = DisposeBag()
@@ -22,11 +22,8 @@ class MainCalendarViewController: UIViewController {
   private var isCalendarAnimationRunning: Bool = false
   private var calendarMode: CalendarMode = .long
   private var displayDate: Date = Date()
-  
-  private var calendarData: Dictionary<Date, CalendarItem> = [
-    Date().startOfDay: CalendarItem(date: Date(), isSelected: false, completedTasksCount: 2, plannedTasksCount: 0)
-  ]
-  
+  private var calendarData: Dictionary<Date, CalendarItem> = [:]
+
   // MARK: - UI Elements - Scene
   private let scene: MainCalendarScene? = {
     let scene = SKScene(fileNamed: "MainCalendarScene") as? MainCalendarScene
@@ -35,12 +32,22 @@ class MainCalendarViewController: UIViewController {
   }()
   
   // MARK: - UI Elements - Calendar
-  private let taskListButton: UIButton = {
+  private let shopButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
+    button.cornerRadius = 8
+    button.imageView?.contentMode = .scaleAspectFit
+    button.tintColor = Style.App.text
+    button.setTitle("7", for: .normal)
+    return button
+  }()
+  
+  private let settingsButton: UIButton = {
     let button = UIButton(type: .system)
     button.backgroundColor = .clear
     button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
     button.cornerRadius = 8
-    button.setImage(Icon.taskListSquare.image.template, for: .normal)
+    button.setImage(Icon.settingsGear.image.template, for: .normal)
     button.tintColor = Style.App.text
     return button
   }()
@@ -70,16 +77,6 @@ class MainCalendarViewController: UIViewController {
     button.setImage(Icon.arrowTop.image.template, for: .normal)
     button.cornerRadius = 8
     button.layer.maskedCorners = [.layerMaxXMinYCorner]
-    return button
-  }()
-  
-  private let shopButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
-    button.cornerRadius = 8
-    button.imageView?.contentMode = .scaleAspectFit
-    button.tintColor = Style.App.text
-    button.setTitle("7", for: .normal)
     return button
   }()
 
@@ -218,6 +215,7 @@ class MainCalendarViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     scene?.reloadData()
+    navigationController?.tabBarController?.tabBar.isHidden = false
   }
   
   // MARK: - Configure UI
@@ -239,8 +237,8 @@ class MainCalendarViewController: UIViewController {
     
     view.addSubviews([
       sceneView,
-      taskListButton,
       shopButton,
+      settingsButton,
       calendarNavigateButtonsStackView,
       calendarDayNamesStackView,
       calendarView,
@@ -259,7 +257,7 @@ class MainCalendarViewController: UIViewController {
       heightConstant: sceneView.frame.height
     )
     
-    taskListButton.anchor(
+    shopButton.anchor(
       top: sceneView.bottomAnchor,
       left: view.leftAnchor,
       topConstant: 16,
@@ -289,7 +287,7 @@ class MainCalendarViewController: UIViewController {
       heightConstant: Sizes.Cells.CalendarCell.size
     )
     
-    shopButton.anchor(
+    settingsButton.anchor(
       top: sceneView.bottomAnchor,
       right: view.rightAnchor,
       topConstant: 16,
@@ -442,12 +440,12 @@ class MainCalendarViewController: UIViewController {
   }
   
   func bindViewModel() {
-    let input = MainCalendarViewModel.Input(
-      taskListButtonClickTrigger: taskListButton.rx.tap.asDriver(),
+    let input = CalendarViewModel.Input(
       monthLabelClickTrigger: monthLabel.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
       changeCalendarModeButtonClickTrigger: changeCalendarModeButton.rx.tap
         .filter { _ in !self.isCalendarAnimationRunning }.mapToVoid().asDriverOnErrorJustComplete(),
       shopButtonClickTrigger: shopButton.rx.tap.asDriver(),
+      settingsButtonClickTrigger: settingsButton.rx.tap.asDriver(),
       scrollToPreviousPeriodButtonClickTrigger: scrollToPreviousPeriodButton.rx.tap.asDriver(),
       scrollToNextPeriodButtonClickTrigger: scrollToNextPeriodButton.rx.tap.asDriver(),
       addTaskButtonClickTrigger: addTaskButton.rx.tap.asDriver(),
@@ -457,9 +455,9 @@ class MainCalendarViewController: UIViewController {
     let outputs = viewModel.transform(input: input)
 
     [
-      outputs.openMainTaskList.drive(),
       outputs.calendarMode.drive(calendarModeBinder),
       outputs.openShop.drive(),
+      outputs.openSettings.drive(),
       outputs.calendarAddMonths.drive(),
       outputs.calendarDataSource.drive(calendarDataSourceBinder),
       outputs.scrollToDate.drive(scrollToDateBinder),
@@ -526,7 +524,7 @@ class MainCalendarViewController: UIViewController {
 }
 
 // MARK: - JTAppleCalendarViewDataSource
-extension MainCalendarViewController: JTACMonthViewDataSource {
+extension CalendarViewController: JTACMonthViewDataSource {
   func configureCalendar(_ calendar: JTACMonthView) -> ConfigurationParameters {
     let startDate = calendarData.keys.sorted { $0 < $1 }.first ?? Date().startOfMonth
     let endDate = calendarData.keys.sorted { $0 < $1 }.last ?? Date().endOfMonth
@@ -550,7 +548,7 @@ extension MainCalendarViewController: JTACMonthViewDataSource {
 }
 
 // MARK: - JTACMonthViewDelegate
-extension MainCalendarViewController: JTACMonthViewDelegate {
+extension CalendarViewController: JTACMonthViewDelegate {
   func calendar(_ calendar: JTAppleCalendar.JTACMonthView, cellForItemAt date: Date, cellState: JTAppleCalendar.CellState, indexPath: IndexPath) -> JTAppleCalendar.JTACDayCell {
     let cell = calendar.dequeueReusableJTAppleCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
     
@@ -617,7 +615,7 @@ extension MainCalendarViewController: JTACMonthViewDelegate {
 }
 
 // MARK: - SwipeCollectionViewCellDelegate
-extension MainCalendarViewController: SwipeCollectionViewCellDelegate {
+extension CalendarViewController: SwipeCollectionViewCellDelegate {
   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
     guard orientation == .right else { return nil }
 

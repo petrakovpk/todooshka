@@ -12,7 +12,7 @@ import FirebaseDatabase
 
 public typealias PreviousSiblingKeyDataSnapshot = (snapshot: DataSnapshot, prevKey: String?)
 
-extension Reactive where Base: DatabaseQuery {
+public extension Reactive where Base: DatabaseQuery {
   /**
    * observeEventType:withBlock: is used to listen for data changes at a particular location.
    * This is the primary way to read data from the Firebase Database. Your block will be triggered

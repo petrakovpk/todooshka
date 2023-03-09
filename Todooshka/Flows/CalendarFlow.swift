@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-class MainCalendarFlow: Flow {
+class CalendarFlow: Flow {
   var root: Presentable {
     self.rootViewController
   }
@@ -29,8 +29,8 @@ class MainCalendarFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-    case .mainCalendarIsRequired:
-      return navigateToMainCalendar()
+    case .calendarIsRequired:
+      return navigateToCalendar()
       
     case .createTaskIsRequired(let task, let isModal):
       return navigateToTask(task: task, isModal: isModal)
@@ -38,11 +38,16 @@ class MainCalendarFlow: Flow {
       return navigateToTask(task: task, isModal: false)
     case .addPhotoIsRequired(let task):
       return navigateToImagePickerFlow(task: task)
-    
+    case .resultPreviewIsRequired(let task):
+      return navigateToResultPreview(task: task)
+      
     case .shopIsRequired:
       return navigateToShop()
     case .showBirdIsRequired(let bird):
       return navigateToBird(bird: bird)
+      
+    case .settingsIsRequired:
+      return navigateToSettings()
       
     case .navigateBack:
       return navigateBack()
@@ -51,14 +56,13 @@ class MainCalendarFlow: Flow {
     }
   }
 
-  private func navigateToMainCalendar() -> FlowContributors {
-    let viewController = MainCalendarViewController()
-    let viewModel = MainCalendarViewModel(services: services)
+  private func navigateToCalendar() -> FlowContributors {
+    let viewController = CalendarViewController()
+    let viewModel = CalendarViewModel(services: services)
     let sceneModel = MainCalendarSceneModel(services: services)
     viewController.viewModel = viewModel
     viewController.sceneModel = sceneModel
     rootViewController.navigationBar.isHidden = true
-    rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.pushViewController(viewController, animated: false)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
@@ -77,22 +81,37 @@ class MainCalendarFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateToShop() -> FlowContributors {
-    let viewController = ShopViewController()
-    let viewModel = ShopViewModel(services: services)
+  private func navigateToResultPreview(task: Task) -> FlowContributors {
+    let viewController = ResultPreviewViewController()
+    let viewModel = ResultPreviewViewModel(services: services, task: task)
     viewController.viewModel = viewModel
-    rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-    private func navigateToBird(bird: Bird) -> FlowContributors {
-      let viewController = BirdViewController()
-      let viewModel = BirdViewModel(birdUID: bird.UID, services: services)
-      viewController.viewModel = viewModel
-      rootViewController.pushViewController(viewController, animated: true)
-      return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-    }
+  private func navigateToShop() -> FlowContributors {
+    let viewController = ShopViewController()
+    let viewModel = ShopViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToSettings() -> FlowContributors {
+    let viewController = SettingsViewController()
+    let viewModel = SettingsViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToBird(bird: Bird) -> FlowContributors {
+    let viewController = BirdViewController()
+    let viewModel = BirdViewModel(birdUID: bird.UID, services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
   
   private func navigateToImagePickerFlow(task: Task) -> FlowContributors {
     let pickerFlow = ImagePickerFlow(withServices: services)

@@ -69,8 +69,8 @@ class TabBarFlow: Flow {
 
   private func navigateToTabBar() -> FlowContributors {
     let funFlow = FunFlow(withServices: self.services)
-    let workplaceFlow = WorkplaceFlow(withServices: self.services)
-    let profileFlow = ProfileFlow(withServices: self.services)
+    let mainTaskListFlow = MainTaskListFlow(withServices: self.services)
+    let calendarFlow = CalendarFlow(withServices: self.services)
     let emptyFlow = EmptyFlow()
 
     let viewModel = TabBarViewModel(services: services)
@@ -79,8 +79,8 @@ class TabBarFlow: Flow {
 
     Flows.use(
       funFlow,
-      workplaceFlow,
-      profileFlow,
+      mainTaskListFlow,
+      calendarFlow,
       emptyFlow,
       when: .created
     ) { [unowned self] ( root1: UINavigationController, root2: UINavigationController, root3: UINavigationController, root4: UINavigationController ) in
@@ -107,8 +107,8 @@ class TabBarFlow: Flow {
     return .multiple(flowContributors: [
       .contribute(withNextPresentable: self, withNextStepper: viewModel),
       .contribute(withNextPresentable: funFlow, withNextStepper: OneStepper(withSingleStep: AppStep.funIsRequired)),
-      .contribute(withNextPresentable: workplaceFlow, withNextStepper: OneStepper(withSingleStep: AppStep.workplaceIsRequired)),
-      .contribute(withNextPresentable: profileFlow, withNextStepper: OneStepper(withSingleStep: AppStep.profileIsRequired)),
+      .contribute(withNextPresentable: mainTaskListFlow, withNextStepper: OneStepper(withSingleStep: AppStep.mainTaskListIsRequired)),
+      .contribute(withNextPresentable: calendarFlow, withNextStepper: OneStepper(withSingleStep: AppStep.calendarIsRequired)),
       .contribute(withNextPresentable: emptyFlow, withNextStepper: OneStepper(withSingleStep: AppStep.navigateBack))
     ])
   }

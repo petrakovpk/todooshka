@@ -11,6 +11,7 @@ enum TaskStatus: String {
   case inProgress
   case idea
   case completed
+  case published
   case deleted
   case archive
 }

@@ -6,6 +6,7 @@
 //
 
 import Firebase
+import FirebaseStorage
 
 // MARK: Global constants
 typealias DatabaseCompletion = ((Error?, DatabaseReference) -> Void)
@@ -14,6 +15,5 @@ typealias AuthCompletion = ((AuthDataResult?, Error?) -> Void)
 
 // MARK: - Root References
 let dbRef = Database.database().reference()
-
-// MARK: - DB Childs
 let dbUserRef = dbRef.child("USERS")
+let storageRef = Storage.storage().reference()

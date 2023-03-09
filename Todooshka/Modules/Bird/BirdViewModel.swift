@@ -12,10 +12,9 @@ import RxCocoa
 import UIKit
 
 class BirdViewModel: Stepper {
-  // MARK: - Properties
   // context
-  let appDelegate = UIApplication.shared.delegate as? AppDelegate
-  var managedContext: NSManagedObjectContext? { appDelegate?.persistentContainer.viewContext }
+  let appDelegate = UIApplication.shared.delegate as! AppDelegate
+  var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
   // rx
   let steps = PublishRelay<Step>()
   let services: AppServices
@@ -180,13 +179,9 @@ class BirdViewModel: Stepper {
       }
       .asObservable()
       .flatMapLatest { bird -> Observable<Result<Void, Error>> in
-        if let managedContext = self.managedContext {
-          return managedContext.rx.update(bird)
-        } else {
-          return Observable.of(.failure(ErrorType.managedContextNotFound))
-        }
+        self.managedContext.rx.update(bird)
       }
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+      .asDriverOnErrorJustComplete()
 
     let buySuccess = buy
       .compactMap { result -> Void? in

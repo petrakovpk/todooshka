@@ -17,6 +17,7 @@ enum BottomButtonsMode {
   case create
   case complete
   case publish
+  case unpublish
 }
 
 class TaskViewController: TDViewController {
@@ -267,6 +268,16 @@ class TaskViewController: TDViewController {
     return button
   }()
   
+  private let unpublishButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.cornerRadius = 8
+    button.setTitle("Снять с публикации.", for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    button.backgroundColor = Palette.SingleColors.BlueRibbon
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+    return button
+  }()
+  
   // MARK: - UI Elements - Animation
   private let animationView: AnimationView = {
     let animationView = AnimationView(name: "taskDone1")
@@ -499,7 +510,14 @@ class TaskViewController: TDViewController {
       widthConstant: (UIScreen.main.bounds.width - 2 * 16 - Sizes.Buttons.AppButton.height - 8 * 2) / 2
     )
     
-    bottomButtonsStackView.addArrangedSubviews([saveTaskButton, closeButton, publishButton, completeButton, getPhotoButton])
+    bottomButtonsStackView.addArrangedSubviews([
+      saveTaskButton,
+      closeButton,
+      publishButton,
+      unpublishButton,
+      completeButton,
+      getPhotoButton])
+    
     bottomButtonsStackView.anchor(
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
@@ -578,7 +596,8 @@ class TaskViewController: TDViewController {
       completeButtonClickTrigger: completeButton.rx.tap.asDriver(),
       getPhotoButtonClickTrigger: getPhotoButton.rx.tap.asDriver(),
       closeButtonClickTrigger: closeButton.rx.tap.asDriver(),
-      publishButtonClickTrigger: publishButton.rx.tap.asDriver()
+      publishButtonClickTrigger: publishButton.rx.tap.asDriver(),
+      unpublishButtonClickTrigger: unpublishButton.rx.tap.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
@@ -618,11 +637,16 @@ class TaskViewController: TDViewController {
       outputs.addPhoto.drive(),
       outputs.completeTask.drive(),
       // IMAGE
+      outputs.openResultPreview.drive(),
       outputs.image.drive(imageBinder),
       // CLOSE VIEW CONTROLLER
       outputs.dismissViewController.drive(),
       // ADD PHOTO
       outputs.addPhoto.drive(),
+      // PUBLISH
+      outputs.saveTaskStatus.drive(),
+      outputs.publishTask.drive(),
+      outputs.publishImage.drive(),
       // ANIMATION
       outputs.playAnimationViewTrigger.drive(playAnimationViewBinder)
       // yandex
@@ -631,7 +655,7 @@ class TaskViewController: TDViewController {
       .forEach { $0.disposed(by: disposeBag) }
   }
   
-  // MARK: - INIT BINERS
+  // MARK: - INIT BINDERS
   var initDataBinder: Binder<Task> {
     return Binder(self, binding: { vc, task in
       vc.nameTextField.insertText(task.text)
@@ -657,6 +681,7 @@ class TaskViewController: TDViewController {
     })
   }
   
+  // MARK: - OTHER BINDERS
   var bottomButtonsModeBinder: Binder<BottomButtonsMode> {
     return Binder(self, binding: { vc, mode in
       switch mode {
@@ -666,18 +691,28 @@ class TaskViewController: TDViewController {
         vc.getPhotoButton.isHidden = true
         vc.closeButton.isHidden = true
         vc.publishButton.isHidden = true
+        vc.unpublishButton.isHidden = true
       case .complete:
         vc.saveTaskButton.isHidden = true
         vc.completeButton.isHidden = false
         vc.getPhotoButton.isHidden = false
         vc.closeButton.isHidden = true
         vc.publishButton.isHidden = true
+        vc.unpublishButton.isHidden = true
       case .publish:
         vc.saveTaskButton.isHidden = true
         vc.completeButton.isHidden = true
         vc.getPhotoButton.isHidden = false
         vc.closeButton.isHidden = false
         vc.publishButton.isHidden = false
+        vc.unpublishButton.isHidden = true
+      case .unpublish:
+        vc.saveTaskButton.isHidden = true
+        vc.completeButton.isHidden = true
+        vc.getPhotoButton.isHidden = false
+        vc.closeButton.isHidden = false
+        vc.publishButton.isHidden = true
+        vc.unpublishButton.isHidden = false
       }
     })
   }

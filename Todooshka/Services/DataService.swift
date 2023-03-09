@@ -22,9 +22,8 @@ protocol HasDataService {
 }
 
 class DataService {
-  // core data
-  let appDelegate = UIApplication.shared.delegate as? AppDelegate
-
+  // context
+  let appDelegate = UIApplication.shared.delegate as! AppDelegate
   // rx
   let disposeBag = DisposeBag()
   // data
@@ -49,8 +48,9 @@ class DataService {
 
   // MARK: - Init
   init() {
-    let managedContext = appDelegate!.persistentContainer.viewContext
-
+   
+    let managedContext = appDelegate.persistentContainer.viewContext
+    
     // MARK: - Const
     colors = Driver<[UIColor]>.of([
       Palette.SingleColors.Amethyst,
@@ -90,16 +90,6 @@ class DataService {
       .weight
     ])
 
-//    themes = Driver<[Theme]>.of([
-//      Theme(uid: UUID().uuidString, description: "", name: "Как я победил страх", status: .notStarted),
-//      Theme(uid: UUID().uuidString, description: "", name: "Отказываемся от сахара", status: .notStarted),
-//      Theme(uid: UUID().uuidString, description: "", name: "Рано ложимся спать", status: .notStarted),
-//      Theme(uid: UUID().uuidString, description: "", name: "Начинаем программировать", status: .notStarted),
-//      Theme(uid: UUID().uuidString, description: "", name: "Бросаем курить", status: .notStarted),
-//      Theme(uid: UUID().uuidString, description: "", name: "Начинаем отжиматься", status: .notStarted),
-//      Theme(uid: UUID().uuidString, description: "", name: "Читаем по одной книге в неделю", status: .notStarted)
-//    ])
-
     let allBirds = managedContext
       .rx
       .entities(Bird.self)
@@ -108,7 +98,6 @@ class DataService {
     let allTasks = managedContext
       .rx
       .entities(Task.self)
-      //.map { $0.sorted { $0.created < $1.created }}
       .asDriver(onErrorJustReturn: [])
 
     let allKindsOfTask = managedContext
@@ -197,23 +186,6 @@ class DataService {
 
     // при открытии проверяем и делаем все плановые задачи с плановой датой выполнения == сегодня задачи в работе
     let checkPlannedTasksTrigger = checkPlannedTasksTrigger.asDriver()
-//
-//    Driver
-//      .combineLatest(tasks, checkPlannedTasksTrigger) { tasks, _ in tasks }
-//      .map { $0.filter { $0.status == .inProgress } }
-//      .map { $0.filter { $0.planned.startOfDay <= Date().startOfDay } }
-//      .asObservable()
-//      .flatMapLatest({ Observable.from($0) })
-//      .map { task -> Task in
-//        var task = task
-//        task.status = .inProgress
-//        task.created = Date().startOfDay
-//        return task
-//      }
-//      .flatMapLatest({ managedContext.rx.update($0) })
-//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-//      .drive()
-//      .disposed(by: disposeBag)
 
     // MARK: - Bird
     let openedBirds = birds
@@ -223,25 +195,6 @@ class DataService {
     let openedBirdSum = birds
       .map { $0.filter { $0.isBought } }
       .map { $0.map { $0.price }.sum() }
-
-//    Driver
-//      .combineLatest(goldTasks, openedBirdSum) { goldTasks, openedBirdSum -> Bool in
-//        openedBirdSum > goldTasks.count
-//      }
-//      .filter { $0 }
-//      .withLatestFrom(openedBirds) { $1 }
-//      .compactMap { $0.max { $0.price < $1.price }}
-//      .compactMap { $0 }
-//      .map { bird -> Bird in
-//        var bird = bird
-//        bird.isBought = false
-//        return bird
-//      }
-//      .asObservable()
-//      .flatMapLatest({ managedContext.rx.update($0) })
-//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-//      .drive()
-//      .disposed(by: disposeBag)
 
     // MARK: - Nest DataSource
     let completedTasks = tasks
@@ -378,7 +331,6 @@ class DataService {
       .distinctUntilChanged()
 
     // MARK: - Firebase
-    // скачиваем из облака когда пользователь заходит в аккаунт
     Auth.auth().addStateDidChangeListener { [weak self] _, user in
       guard let self = self else { return }
       if let user = user {
@@ -421,7 +373,7 @@ class DataService {
       }
     }
 
-    // MARK: - Sync Tasks
+    // MARK: - Load Tasks to Firebase
     // проставляем userUID при первом входе в аккаунт всем пустым задачам
     let tasksEmptyUser = allTasks
       .map { $0.filter { $0.userUID == nil } }
@@ -442,7 +394,7 @@ class DataService {
       .drive()
       .disposed(by: disposeBag)
 
-    // Tasks: Core Data -> Firebase
+    // loading
     Driver
       .combineLatest(tasks, firebaseTasks) { tasks, firebaseTasks -> [Task] in
         tasks.filter { task -> Bool in
@@ -470,7 +422,7 @@ class DataService {
       .drive()
       .disposed(by: disposeBag)
 
-    // Tasks: Firebase -> Core Data
+    // MARK: - Download Tasks from Firebase
     Driver
       .combineLatest(firebaseTasks, tasks) { firebaseTasks, tasks -> [Task] in
         firebaseTasks?.filter { firebaseTask -> Bool in
@@ -597,8 +549,10 @@ class DataService {
       }
       .filter { !$0.isEmpty }
       .asObservable()
-      .flatMapLatest { managedContext.rx.batchUpdate($0) }
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+      .flatMapLatest { kindsOfTask -> Observable<Result<Void, Error>> in
+        managedContext.rx.batchUpdate(kindsOfTask)
+      }
+      .asDriverOnErrorJustComplete()
       .drive()
       .disposed(by: disposeBag)
 

@@ -20,7 +20,7 @@ class WorklplaceViewModel: Stepper {
   }
 
   struct Output {
-    let scrollToPage: Driver<Int>
+    
   }
 
   // MARK: - Init
@@ -30,12 +30,10 @@ class WorklplaceViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    let scrollToPage = services.preferencesService
-      .workplaceScrollToPageIndex
-      .asDriverOnErrorJustComplete()
+    
     
     return Output(
-      scrollToPage: scrollToPage
+      
     )
   }
 

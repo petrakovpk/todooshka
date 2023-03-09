@@ -23,7 +23,7 @@ struct Task: IdentifiableType, Equatable {
   var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { willSet { lastModified = Date()}}
   var userUID: String? = Auth.auth().currentUser?.uid { willSet { lastModified = Date()}}
   var lastModified = Date()
-  var image: UIImage?
+  var imageUID: String?
 
   // MARK: - Calculated Propertie
   var secondsLeft: Double {
@@ -56,12 +56,12 @@ struct Task: IdentifiableType, Equatable {
     && lhs.index == rhs.index
     && lhs.userUID == rhs.userUID
     && lhs.lastModified == rhs.lastModified
-    && lhs.image == rhs.image
+    && lhs.imageUID == rhs.imageUID
   }
 }
 
 // MARK: - Firebase
-extension Task {
+extension Task: Firebasable {
   typealias D = DataSnapshot
 
   var data: [String: Any] {
@@ -74,7 +74,24 @@ extension Task {
         "closed": completed?.timeIntervalSince1970,
         "planned": planned.timeIntervalSince1970,
         "index": index,
-        "lastModified": lastModified.timeIntervalSince1970
+        "lastModified": lastModified.timeIntervalSince1970,
+        "imageUID": imageUID
+    ]
+  }
+  
+  var publishData: [String: Any] {
+    [
+        "text": text,
+        "desc": description,
+        "status": status.rawValue,
+        "kindOfTaskUID": kindOfTaskUID,
+        "created": created.timeIntervalSince1970,
+        "closed": completed?.timeIntervalSince1970,
+        "planned": planned.timeIntervalSince1970,
+        "index": index,
+        "lastModified": lastModified.timeIntervalSince1970,
+        "userUID": userUID,
+        "imageUID": imageUID
     ]
   }
 
@@ -97,8 +114,9 @@ extension Task {
     self.kindOfTaskUID = kindOfTaskUID
     self.created = Date(timeIntervalSince1970: createdTimeInterval)
     self.index = index
-    self.userUID = Auth.auth().currentUser?.uid
+    self.userUID = dict.value(forKey: "userUID") as? String
     self.lastModified = Date(timeIntervalSince1970: lastModifiedTimeInterval)
+    self.imageUID = dict.value(forKey: "imageUID") as? String
 
     if let closedTimeInterval = dict.value(forKey: "closed") as? TimeInterval {
       self.completed = Date(timeIntervalSince1970: closedTimeInterval)
@@ -142,11 +160,7 @@ extension Task: Persistable {
     self.description = description
     self.planned = planned
     self.userUID = entity.value(forKey: "userUID") as? String
-    
-    if let data = entity.value(forKey: "image") as? Data,
-       let image = UIImage(data: data) {
-      self.image = image
-    }
+    self.imageUID = entity.value(forKey: "imageUID") as? String
   }
 
   func update(_ entity: T) {
@@ -161,10 +175,7 @@ extension Task: Persistable {
     entity.setValue(text, forKey: "text")
     entity.setValue(userUID, forKey: "userUID")
     entity.setValue(lastModified, forKey: "lastModified")
-    
-    if let data = image?.pngData() {
-      entity.setValue(data, forKey: "image")
-    }
+    entity.setValue(imageUID, forKey: "imageUID")
   }
 
   func save(_ entity: T) {

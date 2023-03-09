@@ -51,10 +51,10 @@ class WorklplaceViewController: UIViewController {
     
     let outputs = viewModel.transform(input: input)
     
-    [
-      outputs.scrollToPage.drive(scrollToPageBinder)
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+//    [
+//     
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
   }
   
   // MARK: - Binders

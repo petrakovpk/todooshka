@@ -28,7 +28,7 @@ class MainTaskListViewModel: Stepper {
   struct Input {
     let overduedButtonClickTrigger: Driver<Void>
     let ideaButtonClickTrigger: Driver<Void>
-    let calendarButtonClickTrigger: Driver<Void>
+  //  let calendarButtonClickTrigger: Driver<Void>
     let selection: Driver<IndexPath>
     let alertDeleteButtonClick: Driver<Void>
     let alertCancelButtonClick: Driver<Void>
@@ -38,7 +38,7 @@ class MainTaskListViewModel: Stepper {
     // BUTTONS
     let openOverduedTasklist: Driver<Void>
     let openIdeaTaskList: Driver<Void>
-    let openCalendar: Driver<Void>
+ //   let openCalendar: Driver<Void>
     // COLLECTION VIEW
     let dataSource: Driver<[TaskListSection]>
     let reloadItems: Driver<[IndexPath]>
@@ -69,11 +69,6 @@ class MainTaskListViewModel: Stepper {
     
     let openIdeaTaskList = input.ideaButtonClickTrigger
       .do { _ in self.steps.accept(AppStep.ideaTaskListIsRequired) }
-    
-    let openCalendar = input.calendarButtonClickTrigger
-      .do { _ in
-        self.services.preferencesService.workplaceScrollToPageIndex.accept(1)
-      }
 
     // MARK: - DATASOURCE
     let dataSource = Driver
@@ -175,7 +170,6 @@ class MainTaskListViewModel: Stepper {
     return Output(
       openOverduedTasklist: openOverduedTaskList,
       openIdeaTaskList: openIdeaTaskList,
-      openCalendar: openCalendar,
       dataSource: dataSource,
       reloadItems: reloadItems,
       hideCellWhenAlertClosed: hideCellWhenAlertClosed,

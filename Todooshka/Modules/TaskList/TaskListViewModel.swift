@@ -57,7 +57,6 @@ class TaskListViewModel: Stepper {
     let removeAllTasks: Driver<Result<Void, Error>>
     // DATASOURCE
     let dataSource: Driver<[TaskListSection]>
-   // let reloadItems: Driver<[IndexPath]>
     let hideCellWhenAlertClosed: Driver<IndexPath>
     // TASK
     let openTask: Driver<Void>
@@ -78,29 +77,37 @@ class TaskListViewModel: Stepper {
 
   func transform(input: Input) -> Output {
     // MARK: - INIT
-    let tasks = services.dataService.tasks.asDriver()
-    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
+    let tasks = managedContext
+      .rx
+      .entities(Task.self)
+      .asDriverOnErrorJustComplete()
+    
+    let kindsOfTask = managedContext
+      .rx
+      .entities(KindOfTask.self)
+      .asDriverOnErrorJustComplete()
+    
     let mode = Driver<TaskListMode>.of(self.mode)
-    let swipeIdeaButtonClickTrigger = swipeIdeaButtonClickTrigger.asDriverOnErrorJustComplete()
-    let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
-    let inProgressButtonClickTrigger = inProgressButtonClickTrigger.asDriverOnErrorJustComplete()
+    
+    let swipeIdeaButtonClickTrigger = swipeIdeaButtonClickTrigger
+      .asDriverOnErrorJustComplete()
+    
+    let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger
+      .asDriverOnErrorJustComplete()
+    
+    let inProgressButtonClickTrigger = inProgressButtonClickTrigger
+      .asDriverOnErrorJustComplete()
     
     // MARK: - BACK
     let navigateBack = input.backButtonClickTrigger
       .map { self.steps.accept(AppStep.taskListIsCompleted) }
     
-    // MARK: - DATASOURCE MAIN
-    
-    
     // MARK: - DATASOURCE OVERDUED
     let overduedListTasks = tasks
       .map { tasks -> [Task] in
         tasks.filter { task -> Bool in
-          guard
-            case .overdued = self.mode
-          else { return false }
-          
-          return task.status == .inProgress &&
+          self.mode == .overdued &&
+          task.status == .inProgress &&
           task.planned.startOfDay < Date().startOfDay
         }
         .sorted { prevTask, nextTask -> Bool in
@@ -130,11 +137,8 @@ class TaskListViewModel: Stepper {
     let ideaListTasks = tasks
       .map { tasks -> [Task] in
         tasks.filter { task -> Bool in
-          guard
-            case .idea = self.mode
-          else { return false }
-          
-          return task.status == .idea
+          self.mode == .idea &&
+          task.status == .idea
         }
       }
     
@@ -144,7 +148,7 @@ class TaskListViewModel: Stepper {
           .sorted { prevTask, nextTask -> Bool in
             guard
               let prevIndex = kindsOfTask.first { $0.UID == prevTask.kindOfTaskUID }?.index,
-            let nextIndex = kindsOfTask.first { $0.UID == nextTask.kindOfTaskUID }?.index
+              let nextIndex = kindsOfTask.first { $0.UID == nextTask.kindOfTaskUID }?.index
             else { return false }
             
             return (prevIndex == nextIndex) ? (prevTask.text < nextTask.text) : (prevIndex < nextIndex)
@@ -176,7 +180,7 @@ class TaskListViewModel: Stepper {
               let completed = task.completed
             else { return false }
             
-            return task.status == .completed &&
+            return (task.status == .completed || task.status == .published) &&
             completed.startOfDay >= completedDate.startOfDay &&
             completed.endOfDay <= completedDate.endOfDay
           }

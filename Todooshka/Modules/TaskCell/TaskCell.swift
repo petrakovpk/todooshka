@@ -75,6 +75,38 @@ class TaskCell: SwipeCollectionViewCell {
     return label
   }()
   
+  private let chartImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.image = Icon.chart.image.template
+    imageView.tintColor = Style.App.text
+    return imageView
+  }()
+  
+  private let chartLabel: UILabel = {
+    let label = UILabel()
+    label.textAlignment = .left
+    label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+    label.tintColor = Style.App.text
+    label.text = "56"
+    return label
+  }()
+  
+  private let heartImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.image = Icon.heart.image.template
+    imageView.tintColor = Style.App.text
+    return imageView
+  }()
+  
+  private let heartLabel: UILabel = {
+    let label = UILabel()
+    label.textAlignment = .left
+    label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+    label.tintColor = Style.App.text
+    label.text = "140"
+    return label
+  }()
+  
   // MARK: - Lifecycle
   override func prepareForReuse() {
     super.prepareForReuse()
@@ -146,7 +178,11 @@ class TaskCell: SwipeCollectionViewCell {
       taskTypeImageView,
       stackView,
       timeView,
-      repeatButton
+      repeatButton,
+      chartImageView,
+      chartLabel,
+      heartImageView,
+      heartLabel
     ])
     
     timeView.addSubviews([
@@ -195,6 +231,38 @@ class TaskCell: SwipeCollectionViewCell {
       rightConstant: 8,
       widthConstant: 110,
       heightConstant: 30)
+    
+    heartLabel.anchorCenterYToSuperview()
+    heartLabel.anchor(
+      right: contentView.rightAnchor,
+      rightConstant: 8,
+      widthConstant: 30,
+      heightConstant: 20
+    )
+    
+    heartImageView.anchorCenterYToSuperview()
+    heartImageView.anchor(
+      right: heartLabel.leftAnchor,
+      rightConstant: 4,
+      widthConstant: 15,
+      heightConstant: 15
+    )
+    
+    chartLabel.anchorCenterYToSuperview()
+    chartLabel.anchor(
+      right: heartImageView.leftAnchor,
+      rightConstant: 4,
+      widthConstant: 30,
+      heightConstant: 20
+    )
+    
+    chartImageView.anchorCenterYToSuperview()
+    chartImageView.anchor(
+      right: chartLabel.leftAnchor,
+      rightConstant: 4,
+      widthConstant: 15,
+      heightConstant: 15
+    )
   }
   
   func configure(mode: TaskCellMode, task: Task, kindOfTask: KindOfTask) {
@@ -207,23 +275,50 @@ class TaskCell: SwipeCollectionViewCell {
       timeView.backgroundColor = task.planned < Date() ? UIColor(hexString: "FA5123") : Style.Cells.TaskList.TimeLeftViewBackground
       timeView.isHidden = false
       repeatButton.isHidden = true
+      chartImageView.isHidden = true
+      chartLabel.isHidden = true
+      heartImageView.isHidden = true
+      heartLabel.isHidden = true
     case .time:
       timeLabel.text = task.planned.string(withFormat: "HH:mm")
       timeView.backgroundColor = task.planned < Date() ? UIColor(hexString: "FA5123") : Style.Cells.TaskList.TimeLeftViewBackground
       timeView.isHidden = false
       repeatButton.isHidden = true
+      chartImageView.isHidden = true
+      chartLabel.isHidden = true
+      heartImageView.isHidden = true
+      heartLabel.isHidden = true
     case .blueLine:
       configureLineLayout(
         percent: max((task.planned.timeIntervalSince1970 - Date().timeIntervalSince1970) / (24 * 60 * 60), 0),
         color: Palette.SingleColors.BlueRibbon)
       timeView.isHidden = true
       repeatButton.isHidden = true
+      chartImageView.isHidden = true
+      chartLabel.isHidden = true
+      heartImageView.isHidden = true
+      heartLabel.isHidden = true
     case .repeatButton:
       timeView.isHidden = true
       repeatButton.isHidden = false
+      chartImageView.isHidden = true
+      chartLabel.isHidden = true
+      heartImageView.isHidden = true
+      heartLabel.isHidden = true
+    case .likes:
+      timeView.isHidden = true
+      repeatButton.isHidden = true
+      chartImageView.isHidden = false
+      chartLabel.isHidden = false
+      heartImageView.isHidden = false
+      heartLabel.isHidden = false
     case .empty:
       timeView.isHidden = true
       repeatButton.isHidden = true
+      chartImageView.isHidden = true
+      chartLabel.isHidden = true
+      heartImageView.isHidden = true
+      heartLabel.isHidden = true
     }
     
     taskTypeImageView.image = kindOfTask.icon.image.template

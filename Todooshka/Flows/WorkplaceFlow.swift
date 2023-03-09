@@ -46,7 +46,7 @@ class WorkplaceFlow: Flow {
     rootViewController.pushViewController(viewController, animated: true)
     
     let mainTaskListFlow = MainTaskListFlow(withServices: self.services)
-    let mainCalendarFlow = MainCalendarFlow(withServices: self.services)
+    let mainCalendarFlow = CalendarFlow(withServices: self.services)
     
     Flows.use(mainTaskListFlow, mainCalendarFlow, when: .ready) { mainTaskListRoot, mainCalendarRoot in
       viewController.nestedViewControllers = [mainTaskListRoot, mainCalendarRoot]
@@ -58,7 +58,7 @@ class WorkplaceFlow: Flow {
                     withNextStepper: OneStepper(withSingleStep: AppStep.mainTaskListIsRequired),
                     allowStepWhenDismissed: true),
         .contribute(withNextPresentable: mainCalendarFlow,
-                    withNextStepper: OneStepper(withSingleStep: AppStep.mainCalendarIsRequired),
+                    withNextStepper: OneStepper(withSingleStep: AppStep.calendarIsRequired),
                     allowStepWhenDismissed: true)])
   }
   

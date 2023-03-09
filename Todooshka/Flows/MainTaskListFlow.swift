@@ -47,6 +47,8 @@ class MainTaskListFlow: Flow {
       return navigateToTask(task: task, isModal: false )
     case .addPhotoIsRequired(let task):
       return navigateToImagePickerFlow(task: task)
+    case .resultPreviewIsRequired(let task):
+      return navigateToResultPreview(task: task)
       
       // KIND OF TASK LIST
     case .kindsOfTaskListIsRequired:
@@ -121,6 +123,14 @@ class MainTaskListFlow: Flow {
         )
       )
     )
+  }
+  
+  private func navigateToResultPreview(task: Task) -> FlowContributors {
+    let viewController = ResultPreviewViewController()
+    let viewModel = ResultPreviewViewModel(services: services, task: task)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
   private func navigateToTaskList(mode: TaskListMode) -> FlowContributors {

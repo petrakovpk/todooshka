@@ -42,7 +42,8 @@ class ChangeGenderViewModel: Stepper {
       .asObservable()
       .flatMapLatest { user in
         dbUserRef.child(user.uid).child("PERSONAL").rx.observeSingleEvent(.value)
-      }.compactMap { snapshot -> NSDictionary? in
+      }
+      .compactMap { snapshot -> NSDictionary? in
         snapshot.value as? NSDictionary
       }
 

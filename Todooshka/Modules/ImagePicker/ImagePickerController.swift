@@ -30,7 +30,8 @@ class ImagePickerController: UIImagePickerController {
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.addPhoto.drive(),
+      outputs.saveImage.drive(),
+      outputs.updateTask.drive(),
       outputs.dismiss.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
@@ -43,9 +44,7 @@ extension ImagePickerController: UIImagePickerControllerDelegate {
   func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
     viewModel.cancelButtonClickTrigger.accept(())
   }
-  
-  
-  
+
   func imagePickerController(_ picker: UIImagePickerController,
                              didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     viewModel.imageButtonClickTrigger.accept(info)

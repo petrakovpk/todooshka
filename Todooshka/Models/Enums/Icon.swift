@@ -28,6 +28,7 @@ enum Icon: String {
   case calendar
   case call
   case camera
+  case chart
   case clipboardTick
   case crown
   case dumbbell
@@ -35,8 +36,10 @@ enum Icon: String {
   case editWithSquare
   case emojiHappy
   case gasStation
+  case heart
   case home
   case home2
+  case like
   case lampCharge
   case lampChargeCustom
   case lock

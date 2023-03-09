@@ -40,6 +40,8 @@ class TaskFlow: Flow {
       return navigateToCreateKindOfTask()
     case .showKindOfTaskIsRequired(let kindOfTask):
       return navigateToShowTaskType(kindOfTask: kindOfTask)
+    case .resultPreviewIsRequired(let task):
+      return navigateToResultPreview(task: task)
     case .navigateBack:
       return navigateBack()
     case .dismiss:
@@ -55,6 +57,14 @@ class TaskFlow: Flow {
     viewController.viewModel = viewModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: false)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToResultPreview(task: Task) -> FlowContributors {
+    let viewController = ResultPreviewViewController()
+    let viewModel = ResultPreviewViewModel(services: services, task: task)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 

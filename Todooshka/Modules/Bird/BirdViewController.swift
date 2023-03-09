@@ -320,7 +320,7 @@ class BirdViewController: TDViewController {
       outputs.price.drive(priceLabel.rx.text),
       outputs.title.drive(titleLabel.rx.text)
     ]
-      .forEach({ $0.disposed(by: disposeBag) })
+      .forEach { $0.disposed(by: disposeBag) }
   }
 
   var alertViewHideBinder: Binder<Void> {

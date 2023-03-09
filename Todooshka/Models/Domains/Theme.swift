@@ -19,7 +19,7 @@ struct Theme: Equatable {
   let uid: String
 }
 
-// MARKL - Strtic
+// MARKL - Static
 extension Theme {
   static let empty = Theme(authorUID: Auth.auth().currentUser?.uid, description: "", image: nil, name: "", status: .draft, type: .empty, uid: UUID().uuidString)
 }

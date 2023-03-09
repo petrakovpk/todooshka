@@ -38,7 +38,6 @@ class MainTaskListViewController: UIViewController {
     return view
   }()
   
- 
   // MARK: - UI Elements - Task List
   private let overduedTasksButton: UIButton = {
     let button = UIButton(type: .system)
@@ -57,16 +56,6 @@ class MainTaskListViewController: UIViewController {
     button.setTitle("Ящик идей", for: .normal)
     button.setTitleColor(Style.App.text, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-    return button
-  }()
-  
-  private let calendarButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.backgroundColor = .clear
-    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
-    button.cornerRadius = 8
-    button.setImage(Icon.calendar.image.template, for: .normal)
-    button.tintColor = Style.App.text
     return button
   }()
   
@@ -153,7 +142,6 @@ class MainTaskListViewController: UIViewController {
       dragonContainerView,
       overduedTasksButton,
       ideaTasksButton,
-      calendarButton,
       collectionView,
       alertContainerView
     ])
@@ -187,26 +175,17 @@ class MainTaskListViewController: UIViewController {
       left: view.leftAnchor,
       topConstant: 16,
       leftConstant: 16,
-      widthConstant: (UIScreen.main.bounds.width - 2 * 16 - 30) / 2 - 8,
-      heightConstant: 30
-    )
-    
-    calendarButton.anchor(
-      top: sceneView.bottomAnchor,
-      right: view.rightAnchor,
-      topConstant: 16,
-      rightConstant: 16,
-      widthConstant: 30,
+      widthConstant: (UIScreen.main.bounds.width - 2 * 16) / 2 - 8,
       heightConstant: 30
     )
 
     ideaTasksButton.anchor(
       top: sceneView.bottomAnchor,
       left: overduedTasksButton.rightAnchor,
-      right: calendarButton.leftAnchor,
+      right: view.rightAnchor,
       topConstant: 16,
       leftConstant: 8,
-      rightConstant: 8,
+      rightConstant: 16,
       heightConstant: 30
     )
 
@@ -332,7 +311,6 @@ class MainTaskListViewController: UIViewController {
     let input = MainTaskListViewModel.Input(
       overduedButtonClickTrigger: overduedTasksButton.rx.tap.asDriver(),
       ideaButtonClickTrigger: ideaTasksButton.rx.tap.asDriver(),
-      calendarButtonClickTrigger: calendarButton.rx.tap.asDriver(),
       selection: collectionView.rx.itemSelected.asDriver(),
       alertDeleteButtonClick: alertDeleteButton.rx.tap.asDriver(),
       alertCancelButtonClick: alertCancelButton.rx.tap.asDriver()
@@ -343,7 +321,6 @@ class MainTaskListViewController: UIViewController {
     [
       outputs.openOverduedTasklist.drive(),
       outputs.openIdeaTaskList.drive(),
-      outputs.openCalendar.drive(),
       outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
       outputs.dataSource.drive(dataSourceBinder),
       outputs.reloadItems.drive(reloadItemsBinder),

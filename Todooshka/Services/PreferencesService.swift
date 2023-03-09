@@ -15,9 +15,7 @@ protocol HasPreferencesService {
 }
 
 class PreferencesService {
-  
-  public let workplaceScrollToPageIndex = PublishRelay<Int>()
-  
+
   public var applicationDocumentsDirectory: URL {
     FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
   }

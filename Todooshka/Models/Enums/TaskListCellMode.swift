@@ -13,4 +13,5 @@ enum TaskCellMode: String {
   case redLineAndTime
   case time
   case repeatButton
+  case likes
 }

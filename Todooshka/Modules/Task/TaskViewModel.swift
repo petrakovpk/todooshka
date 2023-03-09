@@ -6,6 +6,8 @@
 //
 
 import CoreData
+import Firebase
+import FirebaseStorage
 import RxFlow
 import RxGesture
 import RxCocoa
@@ -58,6 +60,7 @@ class TaskViewModel: Stepper {
     let getPhotoButtonClickTrigger: Driver<Void>
     let closeButtonClickTrigger: Driver<Void>
     let publishButtonClickTrigger: Driver<Void>
+    let unpublishButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
@@ -95,7 +98,12 @@ class TaskViewModel: Stepper {
     let addPhoto: Driver<Task>
     let completeTask: Driver<Result<Void, Error>>
     // IMAGE
+    let openResultPreview: Driver<Void>
     let image: Driver<UIImage>
+    // PUBLISH
+    let saveTaskStatus: Driver<Void>
+    let publishTask: Driver<Void>
+    let publishImage: Driver<Void>
     // CLOSE VIEW CONTROLLER
     let dismissViewController: Driver<Void>
     // ANIMATION
@@ -114,36 +122,57 @@ class TaskViewModel: Stepper {
   // MARK: - Transform
   func transform(input: Input) -> Output {
     let initData = Driver.just(self.task)
-    let tasks = services.dataService.tasks
     let isModal = Driver.just(self.isModal)
 
-    let taskIsNew = tasks
-      .map { tasks -> Bool in
-        !tasks.contains { $0.UID == self.task.UID }
-      }
-      .asObservable()
-      .take(1)
+    let kindsOfTask = managedContext
+      .rx
+      .entities(KindOfTask.self, predicate: NSPredicate(format: "statusRawValue == %@", KindOfTaskStatus.active.rawValue))
+      .map { $0.sorted { $0.index < $1.index }}
       .asDriverOnErrorJustComplete()
-
+    
+    let tasks = managedContext
+      .rx
+      .entities(Task.self, predicate: NSPredicate(format: "uid == %@", task.UID))
+      .asDriverOnErrorJustComplete()
+    
     let task = tasks
-      .compactMap { $0.first { $0.UID == self.task.UID } }
+      .compactMap { $0.first }
+      .do { task in
+        self.task = task
+      }
       .startWith(self.task)
     
-    let bottomButtonsMode = task
-      .withLatestFrom(taskIsNew) { task, taskIsNew -> BottomButtonsMode in
-        switch (task.status, taskIsNew) {
-        case (.inProgress, true):
-          return .create
-        case (.completed, _):
-          return .publish
-        default:
-          return .complete
-        }
-      }
+    let taskIsNew = tasks
+      .asObservable()
+      .take(1)
+      .map { $0.isEmpty }
+      .asDriverOnErrorJustComplete()
 
-    let kindsOfTask = services.dataService
-      .kindsOfTask
-      .map { $0.filter { $0.status == .active } }
+    let tdImage = task
+      .asObservable()
+      .flatMapLatest { task -> Observable<[TDImage]> in
+        self.managedContext.rx.entities(
+          TDImage.self,
+          predicate: NSPredicate(format: "uid == %@", task.imageUID ?? ""))
+      }
+      .compactMap { $0.first }
+      .asDriverOnErrorJustComplete()
+    
+    let image = tdImage
+      .map { $0.image }
+    
+    let bottomButtonsMode = Driver.combineLatest(task, taskIsNew) { task, taskIsNew -> BottomButtonsMode in
+      switch (task.status, taskIsNew) {
+      case (.inProgress, true):
+        return .create
+      case (.published, _):
+        return .unpublish
+      case (.completed, _):
+        return .publish
+      default:
+        return .complete
+      }
+    }
     
     // MARK: - BACK
     let navigateBack = Driver
@@ -313,6 +342,10 @@ class TaskViewModel: Stepper {
       .flatMapLatest { self.managedContext.rx.update($0) }
       .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
+    let openResultPreview = input.resultImageViewClickTrigger
+      .withLatestFrom(task)
+      .map { self.steps.accept(AppStep.resultPreviewIsRequired(task: $0)) }
+    
     // MARK: - COMPLETE
     let addPhoto = input.getPhotoButtonClickTrigger
       .withLatestFrom(task)
@@ -343,13 +376,51 @@ class TaskViewModel: Stepper {
         self.isModal ? self.steps.accept(AppStep.dismiss) : self.steps.accept(AppStep.navigateBack)
       }
     
-    // MARK: - Image
-    let image = task
-      .compactMap { task -> UIImage? in
-        task.image
+    let changeTaskStatusToPublished = input.publishButtonClickTrigger
+      .withLatestFrom(task)
+      .map { task -> Task in
+        var task = task
+        task.status = .published
+        return task
       }
-      .debug()
-
+    
+    let changeTaskStatusToCompleted = input.unpublishButtonClickTrigger
+      .withLatestFrom(task)
+      .map { task -> Task in
+        var task = task
+        task.status = .completed
+        return task
+      }
+    
+    let taskWithUpdatedStatus = Driver
+      .of(changeTaskStatusToPublished, changeTaskStatusToCompleted)
+      .merge()
+    
+    let saveTaskStatus = taskWithUpdatedStatus
+      .asObservable()
+      .flatMapLatest { task -> Observable<Result<Void, Error>>  in
+        self.managedContext.rx.update(task)
+      }
+      .mapToVoid()
+      .asDriverOnErrorJustComplete()
+    
+    let publishTask = taskWithUpdatedStatus
+      .asObservable()
+      .flatMapLatest { task -> Observable<Result<DatabaseReference, Error>> in
+        dbRef.child("PUBLISHED_TASKS").child(task.identity).rx.updateChildValues(task.publishData)
+      }
+      .mapToVoid()
+      .asDriverOnErrorJustComplete()
+    
+    let publishImage = input.publishButtonClickTrigger
+      .withLatestFrom(tdImage)
+      .asObservable()
+      .flatMapLatest { tdImage -> Observable<StorageMetadata> in
+        storageRef.child("PUBLISHED_TASKS").child(tdImage.UID).rx.putData(tdImage.data)
+      }
+      .mapToVoid()
+      .asDriverOnErrorJustComplete()
+    
     // MARK: - ANIMATION
     let playAnimationViewTrigger = input.completeButtonClickTrigger
     
@@ -388,7 +459,12 @@ class TaskViewModel: Stepper {
       addPhoto: addPhoto,
       completeTask: completeTask,
       // IMAGE:
+      openResultPreview: openResultPreview,
       image: image,
+      // PUBLISH
+      saveTaskStatus: saveTaskStatus,
+      publishTask: publishTask,
+      publishImage: publishImage,
       // CLOSE VIEW CONTROLLER
       dismissViewController: dismissViewController,
       // animation
