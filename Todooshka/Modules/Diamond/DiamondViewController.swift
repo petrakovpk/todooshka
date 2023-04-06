@@ -186,14 +186,14 @@ class DiamondViewController: TDViewController {
 
     let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.hideAlertTrigger.drive(hideAlertBinder),
-      outputs.navigateBack.drive(),
-      outputs.offerSelected.drive(offerSelectedBinder),
-      outputs.sendOffer.drive(),
-      outputs.showAlertTrigger.drive(showAlertBinder)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      outputs.hideAlertTrigger.drive(hideAlertBinder),
+//      outputs.navigateBack.drive(),
+//      outputs.offerSelected.drive(offerSelectedBinder),
+//      outputs.sendOffer.drive(),
+//      outputs.showAlertTrigger.drive(showAlertBinder)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   var hideAlertBinder: Binder<Void> {

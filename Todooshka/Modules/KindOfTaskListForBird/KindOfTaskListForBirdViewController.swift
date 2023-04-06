@@ -176,17 +176,17 @@ class KindOfTaskListForBirdViewController: TDViewController {
       backButtonClickTrigger: backButton.rx.tap.asDriver()
     )
 
-    let outputs = viewModel.transform(input: input)
+ //   let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.add.drive(),
-      outputs.alertTitleLabel.drive(textViewTextBinder),
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.hideAlert.drive(hideAlertBinder),
-      outputs.navigateBack.drive(),
-      outputs.showAlert.drive(showAlertBinder)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      outputs.add.drive(),
+//      outputs.alertTitleLabel.drive(textViewTextBinder),
+//      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+//      outputs.hideAlert.drive(hideAlertBinder),
+//      outputs.navigateBack.drive(),
+//      outputs.showAlert.drive(showAlertBinder)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   // MARK: - Binders

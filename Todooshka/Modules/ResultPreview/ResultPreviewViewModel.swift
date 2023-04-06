@@ -42,7 +42,7 @@ class ResultPreviewViewModel: Stepper {
     let task = managedContext.rx
       .entities(
         Task.self,
-        predicate: NSPredicate(format: "uid == %@", task.UID))
+        predicate: NSPredicate(format: "uuid == %@", task.uuid.uuidString))
       .compactMap { $0.first }
       .asDriverOnErrorJustComplete()
       .startWith(self.task)
@@ -55,7 +55,7 @@ class ResultPreviewViewModel: Stepper {
       .flatMapLatest { task -> Observable<[TDImage]> in
         self.managedContext.rx.entities(
           TDImage.self,
-          predicate: NSPredicate(format: "uid == %@", task.imageUID ?? ""))
+          predicate: NSPredicate(format: "uuid == %@", task.imageUUID?.uuidString ?? ""))
       }
       .compactMap { $0.first }
       .map { $0.image }

@@ -8,7 +8,7 @@ import CoreData
 import UIKit
 
 struct TDImage {
-  let UID: String
+  let uuid: UUID
   var data: Data
   
   var image: UIImage {
@@ -19,7 +19,7 @@ struct TDImage {
 // MARK: Ext - Equatable
 extension TDImage: Equatable {
   static func == (lhs: TDImage, rhs: TDImage) -> Bool {
-    return lhs.UID == rhs.UID
+    return lhs.uuid == rhs.uuid
     && lhs.data == rhs.data
   }
 }
@@ -33,25 +33,25 @@ extension TDImage: Persistable {
   }
   
   static var primaryAttributeName: String {
-    "uid"
+    "uuid"
   }
   
   var identity: String {
-    self.UID
+    self.uuid.uuidString
   }
   
   init?(entity: NSManagedObject) {
     guard
-      let UID = entity.value(forKey: "uid") as? String,
+      let uuid = entity.value(forKey: "uuid") as? UUID,
       let data = entity.value(forKey: "data") as? Data
     else { return nil }
     
-    self.UID = UID
+    self.uuid = uuid
     self.data = data
   }
   
   func update(_ entity: NSManagedObject) {
-    entity.setValue(UID, forKey: "uid")
+    entity.setValue(uuid, forKey: "uuid")
     entity.setValue(data, forKey: "data")
   }
   

@@ -203,6 +203,8 @@
 		9D44C0D128E0708E0022148C /* KindOfTaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0CE28E0708E0022148C /* KindOfTaskItem.swift */; };
 		9D44C0D228E0708E0022148C /* KindOfTaskSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0CF28E0708E0022148C /* KindOfTaskSection.swift */; };
 		9D44C0D328E0708E0022148C /* KindOfTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0D028E0708E0022148C /* KindOfTaskCell.swift */; };
+		9D49767129D2FD21001273CF /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D49767029D2FD21001273CF /* AuthService.swift */; };
+		9D5EC0A629C32D1300280384 /* Onlineable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5EC0A529C32D1300280384 /* Onlineable.swift */; };
 		9D6193F628F42CE400C526A7 /* CoreDataTaskType+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6193F528F42CE400C526A7 /* CoreDataTaskType+CoreDataClass.swift */; };
 		9D6193F828F42CF600C526A7 /* CoreDataTaskType+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6193F728F42CF600C526A7 /* CoreDataTaskType+CoreDataProperties.swift */; };
 		9D6193FA28F42E6800C526A7 /* MigrationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6193F928F42E6800C526A7 /* MigrationService.swift */; };
@@ -217,6 +219,12 @@
 		9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */; };
 		9D6B6B12284FEC46000ABAE7 /* MainCalendarSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B11284FEC46000ABAE7 /* MainCalendarSceneModel.swift */; };
 		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
+		9D86591E29D6E91F001AAEF8 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86591D29D6E91F001AAEF8 /* APIManager.swift */; };
+		9D86592029DD80DB001AAEF8 /* TaskAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86591F29DD80DB001AAEF8 /* TaskAPIService.swift */; };
+		9D86592329DD82C3001AAEF8 /* UserAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592229DD82C3001AAEF8 /* UserAPIService.swift */; };
+		9D86592529DD82CD001AAEF8 /* KindOfTaskAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592429DD82CD001AAEF8 /* KindOfTaskAPIService.swift */; };
+		9D86592729DD8343001AAEF8 /* APIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592629DD8343001AAEF8 /* APIConfig.swift */; };
+		9D86592929DDA634001AAEF8 /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592829DDA634001AAEF8 /* Author.swift */; };
 		9D9733C629165A0900733C45 /* KindOfTaskListItemType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733C529165A0900733C45 /* KindOfTaskListItemType.swift */; };
 		9D9733D02919165A00733C45 /* ThemeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733CF2919165A00733C45 /* ThemeHeader.swift */; };
 		9D9733D329192F8E00733C45 /* ThemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733D229192F8E00733C45 /* ThemeViewController.swift */; };
@@ -276,7 +284,7 @@
 		9DCDECD42983C62A00FA6AA0 /* MainTaskListFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCDECD32983C62A00FA6AA0 /* MainTaskListFlow.swift */; };
 		9DE2EA5829B5D3990029D026 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5729B5D3990029D026 /* Reaction.swift */; };
 		9DE2EA5A29B621D60029D026 /* FunSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5929B621D60029D026 /* FunSection.swift */; };
-		9DE2EA5C29B622270029D026 /* FunSectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5B29B622270029D026 /* FunSectionItem.swift */; };
+		9DE2EA5C29B622270029D026 /* FunItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5B29B622270029D026 /* FunItem.swift */; };
 		9DE2EA5E29B623B80029D026 /* FunSectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5D29B623B80029D026 /* FunSectionCell.swift */; };
 		9DE2EA6029B9BA7E0029D026 /* FIRCollectionReference+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5F29B9BA7E0029D026 /* FIRCollectionReference+Rx.swift */; };
 		9DE2EA6329B9BA990029D026 /* FIRDocumentReference+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA6229B9BA990029D026 /* FIRDocumentReference+Rx.swift */; };
@@ -512,6 +520,8 @@
 		9D44C0CE28E0708E0022148C /* KindOfTaskItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskItem.swift; sourceTree = "<group>"; };
 		9D44C0CF28E0708E0022148C /* KindOfTaskSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskSection.swift; sourceTree = "<group>"; };
 		9D44C0D028E0708E0022148C /* KindOfTaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskCell.swift; sourceTree = "<group>"; };
+		9D49767029D2FD21001273CF /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		9D5EC0A529C32D1300280384 /* Onlineable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onlineable.swift; sourceTree = "<group>"; };
 		9D6193F528F42CE400C526A7 /* CoreDataTaskType+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataTaskType+CoreDataClass.swift"; sourceTree = "<group>"; };
 		9D6193F728F42CF600C526A7 /* CoreDataTaskType+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataTaskType+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		9D6193F928F42E6800C526A7 /* MigrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationService.swift; sourceTree = "<group>"; };
@@ -526,6 +536,13 @@
 		9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		9D6B6B11284FEC46000ABAE7 /* MainCalendarSceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCalendarSceneModel.swift; sourceTree = "<group>"; };
 		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
+		9D86591D29D6E91F001AAEF8 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
+		9D86591F29DD80DB001AAEF8 /* TaskAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAPIService.swift; sourceTree = "<group>"; };
+		9D86592229DD82C3001AAEF8 /* UserAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAPIService.swift; sourceTree = "<group>"; };
+		9D86592429DD82CD001AAEF8 /* KindOfTaskAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskAPIService.swift; sourceTree = "<group>"; };
+		9D86592629DD8343001AAEF8 /* APIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfig.swift; sourceTree = "<group>"; };
+		9D86592829DDA634001AAEF8 /* Author.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
+		9D86592A29DEDEAB001AAEF8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		9D9733C529165A0900733C45 /* KindOfTaskListItemType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListItemType.swift; sourceTree = "<group>"; };
 		9D9733CE2916DE2700733C45 /* TodooshkaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodooshkaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D9733CF2919165A00733C45 /* ThemeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeHeader.swift; sourceTree = "<group>"; };
@@ -585,7 +602,7 @@
 		9DCDECD32983C62A00FA6AA0 /* MainTaskListFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTaskListFlow.swift; sourceTree = "<group>"; };
 		9DE2EA5729B5D3990029D026 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		9DE2EA5929B621D60029D026 /* FunSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunSection.swift; sourceTree = "<group>"; };
-		9DE2EA5B29B622270029D026 /* FunSectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunSectionItem.swift; sourceTree = "<group>"; };
+		9DE2EA5B29B622270029D026 /* FunItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunItem.swift; sourceTree = "<group>"; };
 		9DE2EA5D29B623B80029D026 /* FunSectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunSectionCell.swift; sourceTree = "<group>"; };
 		9DE2EA5F29B9BA7E0029D026 /* FIRCollectionReference+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FIRCollectionReference+Rx.swift"; sourceTree = "<group>"; };
 		9DE2EA6229B9BA990029D026 /* FIRDocumentReference+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FIRDocumentReference+Rx.swift"; sourceTree = "<group>"; };
@@ -713,6 +730,7 @@
 				6096ABA72683E9E100285AA7 /* UITextView.swift */,
 				602D0958266B779D00946D1D /* UIVIew.swift */,
 				6055D192267104E800316BB4 /* UIViewController.swift */,
+				9D5EC0A529C32D1300280384 /* Onlineable.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -878,6 +896,7 @@
 		60AE9D562652E5AA00E51531 = {
 			isa = PBXGroup;
 			children = (
+				9D86592A29DEDEAB001AAEF8 /* .gitignore */,
 				9D0A82232913AE1F006D777C /* .swiftlint.yml */,
 				9DE7C49128E35103001F5C55 /* DragoDo.app */,
 				8C9A133C03866BF91C5572D0 /* Pods */,
@@ -891,9 +910,9 @@
 		60AE9D612652E5AA00E51531 /* Todooshka */ = {
 			isa = PBXGroup;
 			children = (
-				6049C4EA27EC541D005A7150 /* Constants */,
 				60ABAE1526C07267000B07C0 /* Animations */,
 				60BCBA7E275D26E0007EF465 /* Assets.xcassets */,
+				6049C4EA27EC541D005A7150 /* Constants */,
 				602D0957266B778800946D1D /* Extensions */,
 				60AE9DAE2652F54000E51531 /* Flows */,
 				9D42BFB028C78FE3008F624F /* GoogleService-Info.plist */,
@@ -902,6 +921,7 @@
 				9D3BBC4728F046C700B352E3 /* Migration */,
 				60EB113D2656A30000992BF8 /* Models */,
 				60AE9DAD2652F53B00E51531 /* Modules */,
+				9D86591C29D6E8FD001AAEF8 /* Network */,
 				60AE9D6D2652E5AD00E51531 /* Preview Content */,
 				60AE9DB32652F69000E51531 /* Services */,
 				60EB113C2656850C00992BF8 /* Todooshka.entitlements */,
@@ -1013,11 +1033,13 @@
 			children = (
 				60E9704828284B5F00577484 /* ActionService.swift */,
 				60AE9DB42652F6C800E51531 /* AppServices.swift */,
+				9D49767029D2FD21001273CF /* AuthService.swift */,
 				60227A0727AD299200DA7572 /* DataService.swift */,
 				9D6193F928F42E6800C526A7 /* MigrationService.swift */,
 				9D9733F32924E0EE00733C45 /* NetworkService.swift */,
 				60AE9DB62652F72C00E51531 /* PreferencesService.swift */,
 				9D42BF4E28BF8466008F624F /* TabBarService.swift */,
+				9D86592129DD80E0001AAEF8 /* ApiServices */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -1134,6 +1156,7 @@
 		60ED958C27B58486005ACC33 /* Domains */ = {
 			isa = PBXGroup;
 			children = (
+				9D86592829DDA634001AAEF8 /* Author.swift */,
 				6006F82C27AA6E7100E5AE9E /* Bird.swift */,
 				9DF7CA7328E4F121000AE2B6 /* BirdFirebase.swift */,
 				9DC65D5028D883F400221ED2 /* Diamond.swift */,
@@ -1383,6 +1406,25 @@
 			path = Typealias;
 			sourceTree = "<group>";
 		};
+		9D86591C29D6E8FD001AAEF8 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				9D86591D29D6E91F001AAEF8 /* APIManager.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		9D86592129DD80E0001AAEF8 /* ApiServices */ = {
+			isa = PBXGroup;
+			children = (
+				9D86592629DD8343001AAEF8 /* APIConfig.swift */,
+				9D86592429DD82CD001AAEF8 /* KindOfTaskAPIService.swift */,
+				9D86591F29DD80DB001AAEF8 /* TaskAPIService.swift */,
+				9D86592229DD82C3001AAEF8 /* UserAPIService.swift */,
+			);
+			path = ApiServices;
+			sourceTree = "<group>";
+		};
 		9D9733D129192F7E00733C45 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
@@ -1425,7 +1467,7 @@
 			children = (
 				9DE2EA5929B621D60029D026 /* FunSection.swift */,
 				9DE2EA5D29B623B80029D026 /* FunSectionCell.swift */,
-				9DE2EA5B29B622270029D026 /* FunSectionItem.swift */,
+				9DE2EA5B29B622270029D026 /* FunItem.swift */,
 				9D9734042927B4D100733C45 /* FunViewController.swift */,
 				9D9734062927B4D900733C45 /* FunViewModel.swift */,
 			);
@@ -1822,6 +1864,7 @@
 				60F0719C26DA77B70048AB71 /* TDAddTaskButton.swift in Sources */,
 				9D42C02128CB4272008F624F /* UserProfileViewModel.swift in Sources */,
 				9D9733D529192F9800733C45 /* ThemeViewModel.swift in Sources */,
+				9D86592529DD82CD001AAEF8 /* KindOfTaskAPIService.swift in Sources */,
 				9D42BF6928C76A38008F624F /* AuthSectionModel.swift in Sources */,
 				60E970472827025B00577484 /* SceneActionType.swift in Sources */,
 				9D44C0D328E0708E0022148C /* KindOfTaskCell.swift in Sources */,
@@ -1892,13 +1935,14 @@
 				60AE9DB52652F6C800E51531 /* AppServices.swift in Sources */,
 				9D44C0BC28DA271B0022148C /* RangeReplaceableCollection.swift in Sources */,
 				6055D193267104E800316BB4 /* UIViewController.swift in Sources */,
+				9D49767129D2FD21001273CF /* AuthService.swift in Sources */,
 				600935662804227A0028C9AA /* SceneAction.swift in Sources */,
 				9D42BF5328C090FB008F624F /* EggActionType.swift in Sources */,
 				9DC65D4E28D5DA5B00221ED2 /* UIColor.swift in Sources */,
 				9D17D43F28881ED400D3E304 /* DiamondPackageType.swift in Sources */,
 				6075496227EDC5B400B96D20 /* CrackType.swift in Sources */,
 				9DE2EA6A29B9BAF30029D026 /* FIRWriteBatch+Rx.swift in Sources */,
-				9DE2EA5C29B622270029D026 /* FunSectionItem.swift in Sources */,
+				9DE2EA5C29B622270029D026 /* FunItem.swift in Sources */,
 				9D632F2529AE1FD600431F31 /* CalendarItem.swift in Sources */,
 				9D9733D8291D231D00733C45 /* ThemeWeek.swift in Sources */,
 				9D42C04428CF2874008F624F /* ChangeGenderViewModel.swift in Sources */,
@@ -1916,6 +1960,7 @@
 				9D42BF6A28C76A38008F624F /* AuthViewModel.swift in Sources */,
 				9D42C04228CF2866008F624F /* ChangeGenderViewController.swift in Sources */,
 				9DB1311D296EFEF4007A0D37 /* TaskSectionItem.swift in Sources */,
+				9D86592029DD80DB001AAEF8 /* TaskAPIService.swift in Sources */,
 				9DF7CA7C28EB0C2E000AE2B6 /* DeleteAccountViewController.swift in Sources */,
 				9DB13113296ED4D3007A0D37 /* TaskWithImageCell.swift in Sources */,
 				9D42C01728CA1495008F624F /* FIRDatabaseQuery+Rx.swift in Sources */,
@@ -1969,6 +2014,7 @@
 				608FD86B2688827200819D68 /* KindOfTask.swift in Sources */,
 				6053F86A2822B1F30047C204 /* KindOfTaskForBirdItem.swift in Sources */,
 				60D5662426CC1AB600D865DD /* OnboardingViewController.swift in Sources */,
+				9D5EC0A629C32D1300280384 /* Onlineable.swift in Sources */,
 				9D9734072927B4D900733C45 /* FunViewModel.swift in Sources */,
 				9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */,
 				9D42C03828CF2269008F624F /* Gender.swift in Sources */,
@@ -1981,6 +2027,7 @@
 				6024B30926B1871900876DC6 /* TabBarController.swift in Sources */,
 				6053F85A282025D30047C204 /* AlertBuyView.swift in Sources */,
 				9D42BF6228C75F0C008F624F /* AuthFlow.swift in Sources */,
+				9D86592729DD8343001AAEF8 /* APIConfig.swift in Sources */,
 				9D97341C293B8DE800733C45 /* ThemeSettingsViewModel.swift in Sources */,
 				60D5662826CC202B00D865DD /* OnboardingSectionModel.swift in Sources */,
 				9DE2EA5829B5D3990029D026 /* Reaction.swift in Sources */,
@@ -1991,10 +2038,12 @@
 				602EA05A274E944A00525D6C /* MainTaskListScene.swift in Sources */,
 				60AE65D727F5BFB100CFE7BB /* Result.swift in Sources */,
 				9D9733FE292620DE00733C45 /* ActionDescriptor.swift in Sources */,
+				9D86591E29D6E91F001AAEF8 /* APIManager.swift in Sources */,
 				60B82FF12655078B00BF5F94 /* TabBarFlow.swift in Sources */,
 				60EB11412656A9B000992BF8 /* TaskCell.swift in Sources */,
 				9D42BF49289A82DB008F624F /* SKEggNode.swift in Sources */,
 				9D42C05B28CF4FD9008F624F /* ChangePasswordViewController.swift in Sources */,
+				9D86592929DDA634001AAEF8 /* Author.swift in Sources */,
 				9DB1310E296EC1C7007A0D37 /* ProfileViewController.swift in Sources */,
 				9DC65D4B28D3AF8100221ED2 /* Task+Rx.swift in Sources */,
 				9D9733F82925403B00733C45 /* ThemeType.swift in Sources */,
@@ -2002,6 +2051,7 @@
 				9D9733D02919165A00733C45 /* ThemeHeader.swift in Sources */,
 				9D97341729335C2F00733C45 /* TDContentView.swift in Sources */,
 				9D42BF4F28BF8466008F624F /* TabBarService.swift in Sources */,
+				9D86592329DD82C3001AAEF8 /* UserAPIService.swift in Sources */,
 				9D0A82252913AEE4006D777C /* TabBarItemSelected.swift in Sources */,
 				9D42C01D28CA3A9B008F624F /* FIRPhoneAuthProvider+Rx.swift in Sources */,
 				9D6193FC28F6060F00C526A7 /* App.swift in Sources */,

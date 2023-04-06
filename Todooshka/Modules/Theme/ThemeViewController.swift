@@ -285,17 +285,17 @@ class ThemeViewController: TDViewController {
     
     let outputs = viewModel.transform(input: input)
     
-    [
-      outputs.initData.drive(initBinder),
-      outputs.navigateBack.drive(),
-      outputs.openSettings.drive(),
-      outputs.saveTheme.drive(),
-      outputs.title.drive(titleLabel.rx.text),
-      outputs.stepsDataSource.drive(stepsCollectionView.rx.items(dataSource: stepsDataSource)),
-      outputs.addStep.drive(),
-      outputs.openStep.drive(),
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+//    [
+//      outputs.initData.drive(initBinder),
+//      outputs.navigateBack.drive(),
+//      outputs.openSettings.drive(),
+//      outputs.saveTheme.drive(),
+//      outputs.title.drive(titleLabel.rx.text),
+//      outputs.stepsDataSource.drive(stepsCollectionView.rx.items(dataSource: stepsDataSource)),
+//      outputs.addStep.drive(),
+//      outputs.openStep.drive(),
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
     
   }
   

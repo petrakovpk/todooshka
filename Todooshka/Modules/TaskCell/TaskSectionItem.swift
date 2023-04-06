@@ -17,7 +17,7 @@ struct TaskSectionItem: IdentifiableType, Equatable {
   let type: TaskCellItemType
   let task: Task
 
-  var identity: String { task.UID }
+  var identity: String { task.uuid.uuidString }
 
   static func == (lhs: TaskSectionItem, rhs: TaskSectionItem) -> Bool {
     lhs.task == rhs.task

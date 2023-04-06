@@ -25,5 +25,7 @@ pod 'GoogleSignIn'
 pod 'JTAppleCalendar'
 pod 'ImagePicker', :git => 'https://github.com/hyperoslo/ImagePicker.git'
 pod 'YPImagePicker'
+pod 'RxAlamofire'
+pod 'SkeletonView'
 
 end

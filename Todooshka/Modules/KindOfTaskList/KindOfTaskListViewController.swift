@@ -158,19 +158,19 @@ class KindOfTaskListViewController: TDViewController {
       selection: collectionView.rx.itemSelected.asDriver()
     )
 
-    let outputs = viewModel.transform(input: input)
+  //  let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.addTask.drive(),
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.hideAlert.drive(hideAlertBinder),
-      outputs.navigateBack.drive(),
-      outputs.moving.drive(),
-      outputs.openKindOfTask.drive(),
-      outputs.removeKindOfTask.drive(),
-      outputs.showAlert.drive(showAlertBinder)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      outputs.addTask.drive(),
+//      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+//      outputs.hideAlert.drive(hideAlertBinder),
+//      outputs.navigateBack.drive(),
+//      outputs.moving.drive(),
+//      outputs.openKindOfTask.drive(),
+//      outputs.removeKindOfTask.drive(),
+//      outputs.showAlert.drive(showAlertBinder)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   // MARK: - Binders

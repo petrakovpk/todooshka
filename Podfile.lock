@@ -596,6 +596,7 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
+  - Alamofire (5.6.4)
   - AppAuth (1.6.0):
     - AppAuth/Core (= 1.6.0)
     - AppAuth/ExternalUserAgent (= 1.6.0)
@@ -790,6 +791,11 @@ PODS:
   - nanopb/encode (2.30909.0)
   - PromisesObjC (2.2.0)
   - PryntTrimmerView (4.0.2)
+  - RxAlamofire (6.1.1):
+    - RxAlamofire/Core (= 6.1.1)
+  - RxAlamofire/Core (6.1.1):
+    - Alamofire (~> 5.4)
+    - RxSwift (~> 6.0)
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
@@ -809,6 +815,7 @@ PODS:
   - RxRelay (6.5.0):
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
+  - SkeletonView (1.30.4)
   - SteviaLayout (4.7.3)
   - SwifterSwift (5.2.0):
     - SwifterSwift/AppKit (= 5.2.0)
@@ -850,12 +857,14 @@ DEPENDENCIES:
   - GoogleSignIn
   - ImagePicker (from `https://github.com/hyperoslo/ImagePicker.git`)
   - JTAppleCalendar
+  - RxAlamofire
   - RxCocoa
   - RxDataSources
   - RxFlow
   - RxGesture
   - RxOptional
   - RxSwift
+  - SkeletonView
   - SwifterSwift
   - SwipeCellKit
   - YPImagePicker
@@ -863,6 +872,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - abseil
+    - Alamofire
     - AppAuth
     - BoringSSL-GRPC
     - Differentiator
@@ -891,6 +901,7 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - PryntTrimmerView
+    - RxAlamofire
     - RxCocoa
     - RxDataSources
     - RxFlow
@@ -898,6 +909,7 @@ SPEC REPOS:
     - RxOptional
     - RxRelay
     - RxSwift
+    - SkeletonView
     - SteviaLayout
     - SwifterSwift
     - SwipeCellKit
@@ -914,6 +926,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
+  Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
@@ -943,6 +956,7 @@ SPEC CHECKSUMS:
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   PryntTrimmerView: 6a43cc90df5d99addeabd33d4ba09b1365322130
+  RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxDataSources: aa47cc1ed6c500fa0dfecac5c979b723542d79cf
   RxFlow: 52f6f6379918392c1ea8cb62d8dcf2df9a5463dd
@@ -950,11 +964,12 @@ SPEC CHECKSUMS:
   RxOptional: 3664964c96b69dd20c9cf78bdfe546615e26eca8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
+  SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
   SteviaLayout: c2ecdcff57d44e38fd2f65e54ad52aeae28ca0c4
   SwifterSwift: 334181863c416882d97b7a60c05054d9e4d799e2
   SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
   YPImagePicker: f36043210c10b0783034eb1947d6e06e31c461e4
 
-PODFILE CHECKSUM: 678dc32da6fa0fe7acec5af172fc06bb9e61506f
+PODFILE CHECKSUM: f04a4fcdb36877de5930da8e96c75c4265ec391a
 
 COCOAPODS: 1.11.3

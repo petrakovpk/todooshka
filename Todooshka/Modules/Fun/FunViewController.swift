@@ -13,11 +13,19 @@ import RxGesture
 
 class FunViewController: TDViewController {
   private let disposeBag = DisposeBag()
+  private var isLoading: Bool = true
   public var viewModel: FunViewModel!
   
   // MARK: - UI Elements
-  private var tableView: UITableView!
-  private var dataSource: RxTableViewSectionedReloadDataSource<FunSection>!
+  private let tableView: UITableView = {
+    let tableView = UITableView(frame: .zero)
+    tableView.isPagingEnabled = true
+    tableView.showsVerticalScrollIndicator = false
+    tableView.backgroundColor = .clear
+    tableView.separatorStyle = .none
+    tableView.contentInsetAdjustmentBehavior = .never
+    return tableView
+  }()
   
   private let badButton: UIButton = {
     let button = UIButton(type: .system)
@@ -39,6 +47,8 @@ class FunViewController: TDViewController {
     return button
   }()
   
+  private var dataSource: RxTableViewSectionedReloadDataSource<FunSection>!
+  
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -46,26 +56,28 @@ class FunViewController: TDViewController {
     configureDataSource()
     bindViewModel()
   }
-
+  
   // MARK: - Configure UI
-  func configureUI() {
-    tableView = UITableView(frame: .zero)
-    
+  private func configureUI() {
     headerView.layer.zPosition = 2
     titleLabel.text = "It's fun"
     
-    view.addSubviews([
-      tableView,
-      badButton,
-      goodButton
-    ])
-
+    view.addSubviews([tableView, badButton, goodButton])
+    
+    setupLayout()
+    tableView.delegate = self
+    tableView.register(FunSectionCell.self, forCellReuseIdentifier: FunSectionCell.reuseID)
+  }
+  
+  private func setupLayout() {
+    let screenWidth = UIScreen.main.bounds.width
+    
     badButton.anchor(
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
       leftConstant: 16,
       bottomConstant: 16,
-      widthConstant: UIScreen.main.bounds.width / 2 - 16 - 8,
+      widthConstant: screenWidth / 2 - 16 - 8,
       heightConstant: 50
     )
     
@@ -74,20 +86,10 @@ class FunViewController: TDViewController {
       right: view.rightAnchor,
       bottomConstant: 16,
       rightConstant: 16,
-      widthConstant: UIScreen.main.bounds.width / 2 - 16 - 8,
+      widthConstant: screenWidth / 2 - 16 - 8,
       heightConstant: 50
     )
     
-    tableView.delegate = self
-    tableView.isPagingEnabled = true
-    tableView.showsVerticalScrollIndicator = false
-    tableView.backgroundColor = .clear
-    tableView.separatorStyle = .none
-    tableView.translatesAutoresizingMaskIntoConstraints = false  // Enable Auto Layout
-    tableView.contentInsetAdjustmentBehavior = .never
-    tableView.register(
-      FunSectionCell.self,
-      forCellReuseIdentifier: FunSectionCell.reuseID)
     tableView.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
@@ -99,29 +101,19 @@ class FunViewController: TDViewController {
       rightConstant: 0
     )
   }
-
+  
   // MARK: - Bind ViewModel
-  func bindViewModel() {
+  private func bindViewModel() {
     let input = FunViewModel.Input(
-//      authorImageClickTrigger: authorImageView.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
-//      authorNameClickTrigger: authorNameLabel.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
-//      taskTextClickTrigger: taskTextLabel.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
-      badButtonClickTrigger: badButton.rx.tap.asDriver(),
-      goodButtonClickTrigger: goodButton.rx.tap.asDriver()
+      viewDidLoad: rx.sentMessage(#selector(UIViewController.viewWillAppear(_:))).mapToVoid()
     )
-
+    
     let outputs = viewModel.transform(input: input)
-
-    [
-  //    outputs.nextTask.drive(nextTaskBinder),
-     // outputs.nextTaskImage.drive(contentImageView.rx.image),
-      outputs.handleReaction.drive(),
-      outputs.dataSource.drive(tableView.rx.items(dataSource: dataSource))
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+    outputs.dataSource.drive(tableView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
   }
   
-  func configureDataSource() {
+  // MARK: - Configure DataSource
+  private func configureDataSource() {
     tableView.dataSource = nil
     dataSource = RxTableViewSectionedReloadDataSource<FunSection>(configureCell: { dataSource, tableView, indexPath, item in
       guard let cell = tableView.dequeueReusableCell(
@@ -132,18 +124,12 @@ class FunViewController: TDViewController {
       return cell
     })
   }
-  
-//  var nextTaskBinder: Binder<Task> {
-//    return Binder(self, binding: { vc, task in
-//      vc.taskTextLabel.text = task.text
-//    })
-//  }
-  
 }
 
-
+// MARK: - UITableViewDelegate
 extension FunViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    tableView.height
+    tableView.frame.height
   }
 }
+

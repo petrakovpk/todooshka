@@ -32,14 +32,17 @@ class CalendarFlow: Flow {
     case .calendarIsRequired:
       return navigateToCalendar()
       
-    case .createTaskIsRequired(let task, let isModal):
-      return navigateToTask(task: task, isModal: isModal)
-    case .showTaskIsRequired(let task):
-      return navigateToTask(task: task, isModal: false)
-    case .addPhotoIsRequired(let task):
-      return navigateToImagePickerFlow(task: task)
-    case .resultPreviewIsRequired(let task):
-      return navigateToResultPreview(task: task)
+    case .authIsRequired:
+      return navigateToAuthFlow()
+      
+//    case .createTaskIsRequired(let task, let isModal):
+//      return navigateToTask(task: task, isModal: isModal)
+//    case .openTaskIsRequired(let task):
+//      return navigateToTask(task: task, isModal: false)
+//    case .addPhotoIsRequired(let task):
+//      return navigateToImagePickerFlow(task: task)
+//    case .resultPreviewIsRequired(let task):
+//      return navigateToResultPreview(task: task)
       
     case .shopIsRequired:
       return navigateToShop()
@@ -54,6 +57,26 @@ class CalendarFlow: Flow {
     default:
       return .none
     }
+  }
+  
+  private func navigateToAuthFlow() -> FlowContributors {
+    let authFlow = AuthFlow(withServices: services)
+    
+    Flows.use(authFlow, when: .created) { [unowned self] root in
+      DispatchQueue.main.async {
+        root.modalPresentationStyle = .automatic
+        rootViewController.present(root, animated: true)
+      }
+    }
+    
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: authFlow,
+        withNextStepper: OneStepper(
+          withSingleStep: AppStep.authIsRequired
+        )
+      )
+    )
   }
 
   private func navigateToCalendar() -> FlowContributors {

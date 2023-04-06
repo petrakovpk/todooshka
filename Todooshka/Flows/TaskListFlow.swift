@@ -36,10 +36,10 @@ class TaskListFlow: Flow {
     case .overduedTaskListIsRequired:
       return navigateToTaskList(mode: .overdued)
       
-    case .createTaskIsRequired(let task, let isModal):
-      return navigateToTask(task: task, isModal: isModal)
-    case .showTaskIsRequired(let task):
-      return navigateToTask(task: task, isModal: false )
+//    case .createTaskIsRequired(let task, let isModal):
+//      return navigateToTask(task: task, isModal: isModal)
+//    case .openTaskIsRequired(let task):
+//      return navigateToTask(task: task, isModal: false )
       
     case .kindsOfTaskListIsRequired:
       return navigateToKindOfTaskList()

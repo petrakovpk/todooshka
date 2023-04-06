@@ -138,15 +138,15 @@ class DeleteAccountViewController: TDViewController {
       deleteAccountClickTrigger: removeAccountButton.rx.tap.asDriver()
     )
 
-    let outputs = viewModel.transform(input: input)
+ //   let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.navigateBack.drive(),
-      outputs.errorText.drive(errorLabel.rx.text),
-      outputs.deleteAccountButtonIsEnaled.drive(deleteBbuttonIsEnaledBinder),
-      outputs.sucessText.drive(successLabel.rx.text)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      outputs.navigateBack.drive(),
+//      outputs.errorText.drive(errorLabel.rx.text),
+//      outputs.deleteAccountButtonIsEnaled.drive(deleteBbuttonIsEnaledBinder),
+//      outputs.sucessText.drive(successLabel.rx.text)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   var deleteBbuttonIsEnaledBinder: Binder<Bool> {

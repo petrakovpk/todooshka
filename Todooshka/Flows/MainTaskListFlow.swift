@@ -41,14 +41,14 @@ class MainTaskListFlow: Flow {
       return navigateToTaskList(mode: .overdued)
       
       // TASK
-    case .createTaskIsRequired(let task, let isModal):
-      return navigateToTask(task: task, isModal: isModal)
-    case .showTaskIsRequired(let task):
-      return navigateToTask(task: task, isModal: false )
-    case .addPhotoIsRequired(let task):
-      return navigateToImagePickerFlow(task: task)
-    case .resultPreviewIsRequired(let task):
-      return navigateToResultPreview(task: task)
+//    case .createTaskIsRequired(let task, let isModal):
+//      return navigateToTask(task: task, isModal: isModal)
+//    case .openTaskIsRequired(let task):
+//      return navigateToTask(task: task, isModal: false )
+//    case .addPhotoIsRequired(let task):
+//      return navigateToImagePickerFlow(task: task)
+//    case .resultPreviewIsRequired(let task):
+//      return navigateToResultPreview(task: task)
       
       // KIND OF TASK LIST
     case .kindsOfTaskListIsRequired:

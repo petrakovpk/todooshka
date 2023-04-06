@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22C65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D68" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Bird" representedClassName="" syncable="YES">
         <attribute name="cladeRawValue" attributeType="String"/>
         <attribute name="currencyRawValue" attributeType="String"/>
@@ -56,19 +56,19 @@
         <attribute name="closed" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="desc" optional="YES" attributeType="String" elementID="longText"/>
-        <attribute name="imageUID" optional="YES" attributeType="String"/>
+        <attribute name="imageUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="index" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="kindOfTaskUID" attributeType="String"/>
         <attribute name="lastModified" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="planned" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="statusRawValue" attributeType="String"/>
         <attribute name="text" attributeType="String"/>
-        <attribute name="uid" attributeType="String"/>
         <attribute name="userUID" optional="YES" attributeType="String"/>
+        <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
     </entity>
     <entity name="TDImage" representedClassName="" syncable="YES">
         <attribute name="data" optional="YES" attributeType="Binary"/>
-        <attribute name="uid" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
     </entity>
     <entity name="Theme" representedClassName="Theme" syncable="YES">
         <attribute name="desc" attributeType="String"/>

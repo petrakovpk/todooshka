@@ -6,138 +6,94 @@
 //
 
 import CoreData
-import Firebase
+import FirebaseAuth
+import FirebaseFirestore
+import FirebaseDatabase
 import RxDataSources
 
-struct Task: IdentifiableType, Equatable {
-  var identity: String { UID }
- 
-  let UID: String
-  var text: String = "" { willSet { lastModified = Date()}}
-  var description: String = "" { willSet { lastModified = Date()}}
-  var status: TaskStatus { willSet { lastModified = Date()}}
-  var index: Int = 0 { willSet { lastModified = Date()}}
-  var created = Date() { willSet { lastModified = Date()}}
-  var planned = Date().endOfDay { willSet { lastModified = Date()}}
-  var completed: Date? { willSet { lastModified = Date()}}
-  var kindOfTaskUID: String = KindOfTask.Standart.Simple.UID { willSet { lastModified = Date()}}
-  var userUID: String? = Auth.auth().currentUser?.uid { willSet { lastModified = Date()}}
-  var lastModified = Date()
-  var imageUID: String?
-
-  // MARK: - Calculated Propertie
+struct Task {
+  let uuid: UUID
+  var text: String = ""
+  var description: String = ""
+  var status: TaskStatus
+  var index: Int = 0
+  var created = Date()
+  var planned = Date().endOfDay
+  var completed: Date?
+  var kindOfTaskUID: String?
+  var userUID: String? = Auth.auth().currentUser?.uid
+  var imageUUID: UUID?
+  
   var secondsLeft: Double {
     max(planned.timeIntervalSince1970 - Date().startOfDay.timeIntervalSince1970, 0)
   }
+}
 
-  // MARK: - init
-  init(UID: String, status: TaskStatus) {
-    self.UID = UID
-    self.status = status
+extension Task: Codable {
+  enum CodingKeys: String, CodingKey {
+    case uuid, text, description, status, index, created, planned, completed, kindOfTaskUID, userUID = "userUid", imageUUID = "imageUuid"
   }
   
-  init(UID: String, status: TaskStatus, planned: Date, completed: Date?) {
-    self.UID = UID
-    self.status = status
-    self.planned = planned
-    self.completed = completed
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    uuid = try container.decode(UUID.self, forKey: .uuid)
+    text = try container.decode(String.self, forKey: .text)
+    description = try container.decode(String.self, forKey: .description)
+    status = try container.decode(TaskStatus.self, forKey: .status)
+    index = try container.decode(Int.self, forKey: .index)
+    created = try container.decode(Date.self, forKey: .created)
+    planned = try container.decode(Date.self, forKey: .planned)
+    completed = try container.decodeIfPresent(Date.self, forKey: .completed)
+    kindOfTaskUID = try container.decodeIfPresent(String.self, forKey: .kindOfTaskUID)
+    userUID = try container.decodeIfPresent(String.self, forKey: .userUID)
+    imageUUID = try container.decodeIfPresent(UUID.self, forKey: .imageUUID)
   }
+  
+  func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(uuid, forKey: .uuid)
+    try container.encode(text, forKey: .text)
+    try container.encode(description, forKey: .description)
+    try container.encode(status, forKey: .status)
+    try container.encode(index, forKey: .index)
+    try container.encode(created, forKey: .created)
+    try container.encode(planned, forKey: .planned)
+    try container.encodeIfPresent(completed, forKey: .completed)
+    try container.encodeIfPresent(kindOfTaskUID, forKey: .kindOfTaskUID)
+    try container.encodeIfPresent(userUID, forKey: .userUID)
+    try container.encodeIfPresent(imageUUID, forKey: .imageUUID)
+  }
+}
 
-  // MARK: - Equatable
+extension Task: Equatable {
   static func == (lhs: Task, rhs: Task) -> Bool {
-    return lhs.UID == rhs.UID
-    && lhs.text == rhs.text
-    && lhs.description == rhs.description
-    && lhs.status == rhs.status
-    && lhs.kindOfTaskUID == rhs.kindOfTaskUID
-    && lhs.created == rhs.created
-    && lhs.completed == rhs.completed
-    && lhs.planned == rhs.planned
-    && lhs.index == rhs.index
-    && lhs.userUID == rhs.userUID
-    && lhs.lastModified == rhs.lastModified
-    && lhs.imageUID == rhs.imageUID
+    return lhs.uuid == rhs.uuid &&
+    lhs.text == rhs.text &&
+    lhs.description == rhs.description &&
+    lhs.status == rhs.status &&
+    lhs.kindOfTaskUID == rhs.kindOfTaskUID &&
+    lhs.created == rhs.created &&
+    lhs.completed == rhs.completed &&
+    lhs.planned == rhs.planned &&
+    lhs.index == rhs.index &&
+    lhs.userUID == rhs.userUID &&
+    lhs.imageUUID == rhs.imageUUID
   }
 }
 
-// MARK: - Firebase
-extension Task: Firebasable {
-  typealias D = DataSnapshot
-
-  var data: [String: Any] {
-    [
-        "text": text,
-        "desc": description,
-        "status": status.rawValue,
-        "kindOfTaskUID": kindOfTaskUID,
-        "created": created.timeIntervalSince1970,
-        "closed": completed?.timeIntervalSince1970,
-        "planned": planned.timeIntervalSince1970,
-        "index": index,
-        "lastModified": lastModified.timeIntervalSince1970,
-        "imageUID": imageUID
-    ]
-  }
-  
-  var publishData: [String: Any] {
-    [
-        "text": text,
-        "desc": description,
-        "status": status.rawValue,
-        "kindOfTaskUID": kindOfTaskUID,
-        "created": created.timeIntervalSince1970,
-        "closed": completed?.timeIntervalSince1970,
-        "planned": planned.timeIntervalSince1970,
-        "index": index,
-        "lastModified": lastModified.timeIntervalSince1970,
-        "userUID": userUID,
-        "imageUID": imageUID
-    ]
-  }
-
-  init?(snapshot: D) {
-    guard let dict = snapshot.value as? NSDictionary,
-          let text = dict.value(forKey: "text") as? String,
-          let description = dict.value(forKey: "desc") as? String,
-          let statusRawValue = dict.value(forKey: "status") as? String,
-          let status = TaskStatus(rawValue: statusRawValue),
-          let kindOfTaskUID = dict.value(forKey: "kindOfTaskUID") as? String,
-          let createdTimeInterval = dict.value(forKey: "created") as? TimeInterval,
-          let index = dict.value(forKey: "index") as? Int,
-          let lastModifiedTimeInterval = dict.value(forKey: "lastModified") as? TimeInterval
-    else { return nil }
-
-    self.UID = snapshot.key
-    self.text = text
-    self.description = description
-    self.status = status
-    self.kindOfTaskUID = kindOfTaskUID
-    self.created = Date(timeIntervalSince1970: createdTimeInterval)
-    self.index = index
-    self.userUID = dict.value(forKey: "userUID") as? String
-    self.lastModified = Date(timeIntervalSince1970: lastModifiedTimeInterval)
-    self.imageUID = dict.value(forKey: "imageUID") as? String
-
-    if let closedTimeInterval = dict.value(forKey: "closed") as? TimeInterval {
-      self.completed = Date(timeIntervalSince1970: closedTimeInterval)
-    }
-    
-    if let plannedTimeInterval = dict.value(forKey: "planned") as? TimeInterval {
-      self.planned = Date(timeIntervalSince1970: plannedTimeInterval)
-    }
-  }
+extension Task: IdentifiableType {
+  var identity: String { uuid.uuidString }
 }
 
-// MARK: - Persistable
 extension Task: Persistable {
   typealias T = NSManagedObject
-
+  
   static var entityName: String { "Task" }
-  static var primaryAttributeName: String { "uid" }
-
+  static var primaryAttributeName: String { "uuid" }
+  
   init?(entity: T) {
     guard
-      let UID = entity.value(forKey: "uid") as? String,
+      let uuid = entity.value(forKey: "uuid") as? UUID,
       let created = entity.value(forKey: "created") as? Date,
       let description = entity.value(forKey: "desc") as? String,
       let index = entity.value(forKey: "index") as? Int,
@@ -145,26 +101,24 @@ extension Task: Persistable {
       let statusRawValue = entity.value(forKey: "statusRawValue") as? String,
       let status = TaskStatus(rawValue: statusRawValue),
       let text = entity.value(forKey: "text") as? String,
-      let lastModified = entity.value(forKey: "lastModified") as? Date,
       let planned = entity.value(forKey: "planned") as? Date
     else { return nil }
-
-    self.UID = UID
+    
+    self.uuid = uuid
     self.created = created
     self.index = index
     self.kindOfTaskUID = kindOfTaskUID
     self.status = status
     self.text = text
-    self.lastModified = lastModified
     self.completed = entity.value(forKey: "closed") as? Date
     self.description = description
     self.planned = planned
     self.userUID = entity.value(forKey: "userUID") as? String
-    self.imageUID = entity.value(forKey: "imageUID") as? String
+    self.imageUUID = entity.value(forKey: "imageUUID") as? UUID
   }
-
+  
   func update(_ entity: T) {
-    entity.setValue(UID, forKey: "uid")
+    entity.setValue(uuid, forKey: "uuid")
     entity.setValue(completed, forKey: "closed")
     entity.setValue(created, forKey: "created")
     entity.setValue(description, forKey: "desc")
@@ -174,10 +128,9 @@ extension Task: Persistable {
     entity.setValue(status.rawValue, forKey: "statusRawValue")
     entity.setValue(text, forKey: "text")
     entity.setValue(userUID, forKey: "userUID")
-    entity.setValue(lastModified, forKey: "lastModified")
-    entity.setValue(imageUID, forKey: "imageUID")
+    entity.setValue(imageUUID, forKey: "imageUUID")
   }
-
+  
   func save(_ entity: T) {
     do {
       try entity.managedObjectContext?.save()

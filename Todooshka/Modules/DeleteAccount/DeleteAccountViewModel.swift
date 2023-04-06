@@ -20,10 +20,10 @@ class DeleteAccountViewModel: Stepper {
   }
 
   struct Output {
-    let deleteAccountButtonIsEnaled: Driver<Bool>
-    let errorText: Driver<String>
-    let navigateBack: Driver<Void>
-    let sucessText: Driver<String>
+//    let deleteAccountButtonIsEnaled: Driver<Bool>
+//    let errorText: Driver<String>
+//    let navigateBack: Driver<Void>
+//    let sucessText: Driver<String>
   }
 
   // MARK: - Init
@@ -32,48 +32,48 @@ class DeleteAccountViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let deleteAccountButtonIsEnaled = services.dataService.user
-      .map { $0 == nil ? false : true          }
-
-    let deleteAccount = input.deleteAccountClickTrigger
-      .withLatestFrom(services.dataService.compactUser) { $1 }
-      .asObservable()
-      .flatMapLatest { user in
-        user.rx.delete()
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let deleteAccountError = deleteAccount
-      .compactMap { result -> Error? in
-        guard case .failure(let error) = result else { return nil }
-        return error
-      }
-
-    let deleteAccountSuccess = deleteAccount
-      .compactMap { result -> Void? in
-        guard case .success = result else { return nil }
-        return ()
-      }
-
-    let errorText = deleteAccountError
-      .map { $0.localizedDescription }
-
-    let sucessText = deleteAccountSuccess
-      .map { _ in "Аккаунт удален!" }
-
-    let navigateBackTrigger = services.dataService.user
-      .filter { $0 == nil }
-      .map { _ in () }
-
-    let navigateBack = Driver
-      .of(navigateBackTrigger, input.backButtonClickTrigger)
-      .merge()
-      .map { _ in self.steps.accept(AppStep.navigateBack) }
+//    let deleteAccountButtonIsEnaled = services.dataService.user
+//      .map { $0 == nil ? false : true          }
+//
+//    let deleteAccount = input.deleteAccountClickTrigger
+//      .withLatestFrom(services.dataService.compactUser) { $1 }
+//      .asObservable()
+//      .flatMapLatest { user in
+//        user.rx.delete()
+//      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//
+//    let deleteAccountError = deleteAccount
+//      .compactMap { result -> Error? in
+//        guard case .failure(let error) = result else { return nil }
+//        return error
+//      }
+//
+//    let deleteAccountSuccess = deleteAccount
+//      .compactMap { result -> Void? in
+//        guard case .success = result else { return nil }
+//        return ()
+//      }
+//
+//    let errorText = deleteAccountError
+//      .map { $0.localizedDescription }
+//
+//    let sucessText = deleteAccountSuccess
+//      .map { _ in "Аккаунт удален!" }
+//
+//    let navigateBackTrigger = services.dataService.user
+//      .filter { $0 == nil }
+//      .map { _ in () }
+//
+//    let navigateBack = Driver
+//      .of(navigateBackTrigger, input.backButtonClickTrigger)
+//      .merge()
+//      .map { _ in self.steps.accept(AppStep.navigateBack) }
 
     return Output(
-      deleteAccountButtonIsEnaled: deleteAccountButtonIsEnaled,
-      errorText: errorText,
-      navigateBack: navigateBack,
-      sucessText: sucessText
+//      deleteAccountButtonIsEnaled: deleteAccountButtonIsEnaled,
+//      errorText: errorText,
+//      navigateBack: navigateBack,
+//      sucessText: sucessText
     )
   }
 }

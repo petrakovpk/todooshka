@@ -71,21 +71,36 @@ extension Reaction: Firebasable {
   
   var data: [String : Any] {
     [
+      "uid": UID,
       "userUID": userUID,
       "taskUID": taskUID,
       "type": type.rawValue
     ]
   }
   
-  init?(snapshot: DataSnapshot) {
-    guard let dict = snapshot.value as? NSDictionary,
+  init?(dataSnapshot: DataSnapshot) {
+    guard let dict = dataSnapshot.value as? NSDictionary,
           let userUID = dict.value(forKey: "userUID") as? String,
           let taskUID = dict.value(forKey: "taskUID") as? String,
           let typeRawValue = dict.value(forKey: "type") as? String,
           let type = ReactionType(rawValue: typeRawValue)
     else { return nil }
     
-    self.UID = snapshot.key
+    self.UID = dataSnapshot.key
+    self.userUID = userUID
+    self.taskUID = taskUID
+    self.type = type
+  }
+  
+  init?(documentSnapshot: QueryDocumentSnapshot) {
+    let data = documentSnapshot.data()
+    guard let userUID = data["userUID"] as? String,
+          let taskUID = data["taskUID"] as? String,
+          let typeRawValue = data["type"] as? String,
+          let type = ReactionType(rawValue: typeRawValue)
+    else { return nil }
+    
+    self.UID = documentSnapshot.documentID
     self.userUID = userUID
     self.taskUID = taskUID
     self.type = type

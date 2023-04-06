@@ -26,11 +26,11 @@ class DiamondViewModel: Stepper {
   }
 
   struct Output {
-    let hideAlertTrigger: Driver<Void>
-    let navigateBack: Driver<Void>
-    let offerSelected: Driver<DiamondPackageType>
-    let sendOffer: Driver<Void>
-    let showAlertTrigger: Driver<Void>
+//    let hideAlertTrigger: Driver<Void>
+//    let navigateBack: Driver<Void>
+//    let offerSelected: Driver<DiamondPackageType>
+//    let sendOffer: Driver<Void>
+//    let showAlertTrigger: Driver<Void>
   }
 
   // MARK: - Init
@@ -40,40 +40,40 @@ class DiamondViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    let compactUser = services.dataService.compactUser
-
-    // backButtonClickHandler
-    let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.navigateBack) }
-
-    // offerSelected
-    let smallOfferSelected = input.smallOfferBackgroundClickTrigger.map { DiamondPackageType.small }.asDriver()
-    let mediumOfferSelected = input.mediumOfferBackgroundClickTrigger.map { DiamondPackageType.medium }.asDriver()
-    let largeOfferSelected = input.largeOfferBackgroundClickTrigger.map { DiamondPackageType.large }.asDriver()
-
-    let offerSelected = Driver
-      .of(smallOfferSelected, mediumOfferSelected, largeOfferSelected)
-      .merge()
-      .startWith(.medium)
-
-    let hideAlertTrigger = input.alertOkButtonClickTrigger
-
-    let sendOffer = input.alertOkButtonClickTrigger
-      .withLatestFrom(offerSelected) { $1 }
-      .withLatestFrom(compactUser) { offer, user in
-        let params: [AnyHashable: Any] = ["offer": offer.rawValue]
-        YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: nil)
-        return dbUserRef.child(user.uid).child("BUY").child(Date().startOfDay.description).updateChildValues([Date().description: offer.rawValue])
-      }
-
-    let showAlertTrigger = input.buyButtonClickTrigger
+//    let compactUser = services.dataService.compactUser
+//
+//    // backButtonClickHandler
+//    let navigateBack = input.backButtonClickTrigger
+//      .map { self.steps.accept(AppStep.navigateBack) }
+//
+//    // offerSelected
+//    let smallOfferSelected = input.smallOfferBackgroundClickTrigger.map { DiamondPackageType.small }.asDriver()
+//    let mediumOfferSelected = input.mediumOfferBackgroundClickTrigger.map { DiamondPackageType.medium }.asDriver()
+//    let largeOfferSelected = input.largeOfferBackgroundClickTrigger.map { DiamondPackageType.large }.asDriver()
+//
+//    let offerSelected = Driver
+//      .of(smallOfferSelected, mediumOfferSelected, largeOfferSelected)
+//      .merge()
+//      .startWith(.medium)
+//
+//    let hideAlertTrigger = input.alertOkButtonClickTrigger
+//
+//    let sendOffer = input.alertOkButtonClickTrigger
+//      .withLatestFrom(offerSelected) { $1 }
+//      .withLatestFrom(compactUser) { offer, user in
+//        let params: [AnyHashable: Any] = ["offer": offer.rawValue]
+//        YMMYandexMetrica.reportEvent("EVENT", parameters: params, onFailure: nil)
+//        return dbUserRef.child(user.uid).child("BUY").child(Date().startOfDay.description).updateChildValues([Date().description: offer.rawValue])
+//      }
+//
+//    let showAlertTrigger = input.buyButtonClickTrigger
 
     return Output(
-      hideAlertTrigger: hideAlertTrigger,
-      navigateBack: navigateBack,
-      offerSelected: offerSelected,
-      sendOffer: sendOffer,
-      showAlertTrigger: showAlertTrigger
+//      hideAlertTrigger: hideAlertTrigger,
+//      navigateBack: navigateBack,
+//      offerSelected: offerSelected,
+//      sendOffer: sendOffer,
+//      showAlertTrigger: showAlertTrigger
     )
   }
 }

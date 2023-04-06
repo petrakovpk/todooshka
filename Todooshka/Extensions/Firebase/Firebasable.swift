@@ -12,5 +12,5 @@ public protocol Firebasable {
   var identity: String { get }
   var data: [String: Any] { get }
 
-  init?(snapshot: D)
+  init?(dataSnapshot: D)
 }

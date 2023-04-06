@@ -147,13 +147,13 @@ class FeatherViewController: TDViewController {
       backButtonClickTrigger: backButton.rx.tap.asDriver()
     )
 
-    let outputs = viewModel.transform(input: input)
+//    let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.navigateBack.drive()
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+//      outputs.navigateBack.drive()
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   // MARK: - Configure DataSource

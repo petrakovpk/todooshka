@@ -20,8 +20,7 @@ enum AppStep: Step {
   case calendarIsRequired
 
   // Task
-  case createTaskIsRequired(task: Task, isModal: Bool)
-  case showTaskIsRequired(task: Task)
+  case openTaskIsRequired(task: Task, isModal: Bool = false)
   case addPhotoIsRequired(task: Task)
   case resultPreviewIsRequired(task: Task)
   case taskProcessingIsCompleted

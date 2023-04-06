@@ -19,19 +19,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var coordinator = FlowCoordinator()
 
   // serrvices
-  let actionService = ActionService()
-  let dataService = DataService()
-  let migrationService = MigrationService()
-  let preferencesService = PreferencesService()
-  let tabBarService = TabBarService()
+//  let authService = AuthService()
+//  let actionService = ActionService()
+//  let dataService = DataService()
+//  let migrationService = MigrationService()
+//  let preferencesService = PreferencesService()
+//  let tabBarService = TabBarService()
+  
+  let taskAPIService = TaskAPIService()
+  let userAPIService = UserAPIService()
 
   lazy var appServices = {
     return AppServices(
-      actionService: actionService,
-      dataService: dataService,
-      migrationService: migrationService,
-      preferencesService: preferencesService,
-      tabBarService: tabBarService
+      taskAPIService: taskAPIService,
+      userAPIService: userAPIService
+//      authService: authService,
+//      actionService: actionService,
+//      dataService: dataService,
+//      migrationService: migrationService,
+//      preferencesService: preferencesService,
+//      tabBarService: tabBarService
     )
   }()
 

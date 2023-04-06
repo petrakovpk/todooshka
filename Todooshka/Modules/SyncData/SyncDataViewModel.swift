@@ -25,15 +25,15 @@ class SyncDataViewModel: Stepper {
   }
 
   struct Output {
-    let kindsOfTaskDeviceCountLabel: Driver<String>
-    let kindsOfTaskFirebaseCountLabel: Driver<String>
-    let kindsOfTaskSync: Driver<Result<Void, Error>>
-    let kindsOfTaskSyncButtonIsEnabled: Driver<Bool>
-    let navigateBack: Driver<Void>
-    let taskDeviceCountLabel: Driver<String>
-    let taskFirebaseCountLabel: Driver<String>
-    let taskSync: Driver<Result<Void, Error>>
-    let taskSyncButtonIsEnabled: Driver<Bool>
+//    let kindsOfTaskDeviceCountLabel: Driver<String>
+//    let kindsOfTaskFirebaseCountLabel: Driver<String>
+//    let kindsOfTaskSync: Driver<Result<Void, Error>>
+//    let kindsOfTaskSyncButtonIsEnabled: Driver<Bool>
+//    let navigateBack: Driver<Void>
+//    let taskDeviceCountLabel: Driver<String>
+//    let taskFirebaseCountLabel: Driver<String>
+//    let taskSync: Driver<Result<Void, Error>>
+//    let taskSyncButtonIsEnabled: Driver<Bool>
   }
 
   // MARK: - Init
@@ -42,89 +42,89 @@ class SyncDataViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let taskDeviceCount = services.dataService
-      .tasks
-      .map { $0.filter { $0.status != .archive } }
-      .map { $0.count }
-      .startWith(0)
-
-    let taskDeviceCountLabel = taskDeviceCount
-      .map { $0.string }
-
-    let firebaseTasks = services.dataService
-      .firebaseTasks
-      .asDriver()
-      .compactMap { $0 }
-      .map { $0.filter { $0.status != .archive } }
-
-    let taskFirebaseCount = firebaseTasks
-      .map { $0.count }
-      .startWith(0)
-
-    let taskFirebaseCountLabel = taskFirebaseCount
-      .map { $0.string }
-
-    let taskSyncButtonIsEnabled = Driver
-      .combineLatest(taskDeviceCount, taskFirebaseCount) { $0 < $1 }
-
-    let taskSync = Driver
-      .combineLatest(input.taskSyncButtonClickTrigger, firebaseTasks ) { $1 }
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .filter { $0.status != .archive }
-      .flatMapLatest({ task -> Observable<Result<Void, Error>> in
-        self.managedContext?.rx.update(task) ?? Observable.of(.failure(ErrorType.managedContextNotFound))
-      })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let kindsOfTaskDeviceCount = services.dataService
-      .kindsOfTask
-      .map { $0.filter { $0.status != .archive } }
-      .map { $0.count }
-      .startWith(0)
-
-    let firebaseKindsOfTask = services.dataService
-      .firebaseKindsOfTask
-      .asDriver()
-      .compactMap { $0 }
-      .map { $0.filter { $0.status != .archive } }
-
-    let kindsOfTaskDeviceCountLabel = kindsOfTaskDeviceCount
-      .map { $0.string }
-
-    let kindsOfTaskFirebaseCount = firebaseKindsOfTask
-      .map { $0.count }
-      .startWith(0)
-
-    let kindsOfTaskFirebaseCountLabel = kindsOfTaskFirebaseCount
-      .map { $0.string }
-
-    let kindsOfTaskSyncButtonIsEnabled = Driver
-      .combineLatest(kindsOfTaskDeviceCount, kindsOfTaskFirebaseCount) { $0 < $1 }
-
-    let kindsOfTaskSync = Driver
-      .combineLatest(input.kindsOfTaskSyncButtonClickTrigger, firebaseKindsOfTask ) { $1 }
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .filter { $0.status != .archive }
-      .flatMapLatest({ kindofTask -> Observable<Result<Void, Error>> in
-        self.managedContext?.rx.update(kindofTask) ?? Observable.of(.failure(ErrorType.managedContextNotFound))
-      })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.navigateBack) }
+//    let taskDeviceCount = services.dataService
+//      .tasks
+//      .map { $0.filter { $0.status != .archive } }
+//      .map { $0.count }
+//      .startWith(0)
+//
+//    let taskDeviceCountLabel = taskDeviceCount
+//      .map { $0.string }
+//
+//    let firebaseTasks = services.dataService
+//      .firebaseTasks
+//      .asDriver()
+//      .compactMap { $0 }
+//      .map { $0.filter { $0.status != .archive } }
+//
+//    let taskFirebaseCount = firebaseTasks
+//      .map { $0.count }
+//      .startWith(0)
+//
+//    let taskFirebaseCountLabel = taskFirebaseCount
+//      .map { $0.string }
+//
+//    let taskSyncButtonIsEnabled = Driver
+//      .combineLatest(taskDeviceCount, taskFirebaseCount) { $0 < $1 }
+//
+//    let taskSync = Driver
+//      .combineLatest(input.taskSyncButtonClickTrigger, firebaseTasks ) { $1 }
+//      .asObservable()
+//      .flatMapLatest({ Observable.from($0) })
+//      .filter { $0.status != .archive }
+//      .flatMapLatest({ task -> Observable<Result<Void, Error>> in
+//        self.managedContext?.rx.update(task) ?? Observable.of(.failure(ErrorType.managedContextNotFound))
+//      })
+//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//
+//    let kindsOfTaskDeviceCount = services.dataService
+//      .kindsOfTask
+//      .map { $0.filter { $0.status != .archive } }
+//      .map { $0.count }
+//      .startWith(0)
+//
+//    let firebaseKindsOfTask = services.dataService
+//      .firebaseKindsOfTask
+//      .asDriver()
+//      .compactMap { $0 }
+//      .map { $0.filter { $0.status != .archive } }
+//
+//    let kindsOfTaskDeviceCountLabel = kindsOfTaskDeviceCount
+//      .map { $0.string }
+//
+//    let kindsOfTaskFirebaseCount = firebaseKindsOfTask
+//      .map { $0.count }
+//      .startWith(0)
+//
+//    let kindsOfTaskFirebaseCountLabel = kindsOfTaskFirebaseCount
+//      .map { $0.string }
+//
+//    let kindsOfTaskSyncButtonIsEnabled = Driver
+//      .combineLatest(kindsOfTaskDeviceCount, kindsOfTaskFirebaseCount) { $0 < $1 }
+//
+//    let kindsOfTaskSync = Driver
+//      .combineLatest(input.kindsOfTaskSyncButtonClickTrigger, firebaseKindsOfTask ) { $1 }
+//      .asObservable()
+//      .flatMapLatest({ Observable.from($0) })
+//      .filter { $0.status != .archive }
+//      .flatMapLatest({ kindofTask -> Observable<Result<Void, Error>> in
+//        self.managedContext?.rx.update(kindofTask) ?? Observable.of(.failure(ErrorType.managedContextNotFound))
+//      })
+//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//
+//    let navigateBack = input.backButtonClickTrigger
+//      .map { self.steps.accept(AppStep.navigateBack) }
 
     return Output(
-      kindsOfTaskDeviceCountLabel: kindsOfTaskDeviceCountLabel,
-      kindsOfTaskFirebaseCountLabel: kindsOfTaskFirebaseCountLabel,
-      kindsOfTaskSync: kindsOfTaskSync,
-      kindsOfTaskSyncButtonIsEnabled: kindsOfTaskSyncButtonIsEnabled,
-      navigateBack: navigateBack,
-      taskDeviceCountLabel: taskDeviceCountLabel,
-      taskFirebaseCountLabel: taskFirebaseCountLabel,
-      taskSync: taskSync,
-      taskSyncButtonIsEnabled: taskSyncButtonIsEnabled
+//      kindsOfTaskDeviceCountLabel: kindsOfTaskDeviceCountLabel,
+//      kindsOfTaskFirebaseCountLabel: kindsOfTaskFirebaseCountLabel,
+//      kindsOfTaskSync: kindsOfTaskSync,
+//      kindsOfTaskSyncButtonIsEnabled: kindsOfTaskSyncButtonIsEnabled,
+//      navigateBack: navigateBack,
+//      taskDeviceCountLabel: taskDeviceCountLabel,
+//      taskFirebaseCountLabel: taskFirebaseCountLabel,
+//      taskSync: taskSync,
+//      taskSyncButtonIsEnabled: taskSyncButtonIsEnabled
     )
   }
 }

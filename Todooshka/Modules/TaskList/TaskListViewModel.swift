@@ -336,7 +336,7 @@ class TaskListViewModel: Stepper {
       .withLatestFrom(dataSource) { indexPath, dataSource -> TaskListSectionItem in
         dataSource[indexPath.section].items[indexPath.item]
       }
-      .map { self.steps.accept(AppStep.showTaskIsRequired(task: $0.task )) }
+      .map { self.steps.accept(AppStep.openTaskIsRequired(task: $0.task )) }
 
     let removeModeAll = input.removeAllButtonClickTrigger
       .withLatestFrom(tasks)
@@ -401,9 +401,9 @@ class TaskListViewModel: Stepper {
       .compactMap { _ -> AppStep? in
         switch self.mode {
         case .idea:
-          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .idea), isModal: false)
+          return AppStep.openTaskIsRequired(task: Task(uuid: UUID(), status: .idea), isModal: false)
         case .planned(let date):
-          return AppStep.createTaskIsRequired(task: Task(UID: UUID().uuidString, status: .inProgress, planned: date, completed: nil), isModal: false)
+          return AppStep.openTaskIsRequired(task: Task(uuid: UUID(), status: .inProgress, planned: date, completed: nil), isModal: false)
         default:
           return nil
         }

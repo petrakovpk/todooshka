@@ -646,7 +646,7 @@ class TaskViewController: TDViewController {
       // PUBLISH
       outputs.saveTaskStatus.drive(),
       outputs.publishTask.drive(),
-      outputs.publishImage.drive(),
+    //  outputs.publishImage.drive(),
       // ANIMATION
       outputs.playAnimationViewTrigger.drive(playAnimationViewBinder)
       // yandex

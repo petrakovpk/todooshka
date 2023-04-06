@@ -237,16 +237,16 @@ class KindOfTaskViewController: TDViewController {
 
     let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.navigateBack.drive(),
-      outputs.dataSourceColor.drive(colorCollecionView.rx.items(dataSource: colorDataSource)),
-      outputs.dataSourceIcon.drive(iconCollectionView.rx.items(dataSource: iconDataSource)),
-      outputs.text.drive(textField.rx.text),
-      outputs.save.drive(),
-      outputs.selectIcon.drive(taskTypeImageView.rx.image),
-      outputs.selectColor.drive(taskTypeImageView.rx.tintColor),
-      outputs.textLen.drive(textLenLabel.rx.text)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      outputs.navigateBack.drive(),
+//      outputs.dataSourceColor.drive(colorCollecionView.rx.items(dataSource: colorDataSource)),
+//      outputs.dataSourceIcon.drive(iconCollectionView.rx.items(dataSource: iconDataSource)),
+//      outputs.text.drive(textField.rx.text),
+//      outputs.save.drive(),
+//      outputs.selectIcon.drive(taskTypeImageView.rx.image),
+//      outputs.selectColor.drive(taskTypeImageView.rx.tintColor),
+//      outputs.textLen.drive(textLenLabel.rx.text)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 }

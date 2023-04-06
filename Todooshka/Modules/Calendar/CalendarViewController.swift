@@ -432,11 +432,11 @@ class CalendarViewController: UIViewController {
     let input = MainCalendarSceneModel.Input()
     let outputs = sceneModel.transform(input: input)
 
-    [
-      outputs.backgroundImage.drive(backgroundImageBinder),
-      outputs.dataSource.drive(sceneDataBinder)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      outputs.backgroundImage.drive(backgroundImageBinder),
+//      outputs.dataSource.drive(sceneDataBinder)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
   
   func bindViewModel() {
@@ -454,22 +454,22 @@ class CalendarViewController: UIViewController {
 
     let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.calendarMode.drive(calendarModeBinder),
-      outputs.openShop.drive(),
-      outputs.openSettings.drive(),
-      outputs.calendarAddMonths.drive(),
-      outputs.calendarDataSource.drive(calendarDataSourceBinder),
-      outputs.scrollToDate.drive(scrollToDateBinder),
-      outputs.monthButtonTitle.drive(monthLabel.rx.text),
-      outputs.addTask.drive(),
-      outputs.calendarTaskListLabel.drive(dayTasksLabel.rx.text),
-      outputs.calendarTaskListDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.openCalendarTask.drive(),
-      outputs.changeTaskStatusToIdea.drive(),
-      outputs.changeTaskStatusToDeleted.drive()
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+//    [
+//      outputs.calendarMode.drive(calendarModeBinder),
+//      outputs.openShop.drive(),
+//      outputs.openSettings.drive(),
+//      outputs.calendarAddMonths.drive(),
+//      outputs.calendarDataSource.drive(calendarDataSourceBinder),
+//      outputs.scrollToDate.drive(scrollToDateBinder),
+//      outputs.monthButtonTitle.drive(monthLabel.rx.text),
+//      outputs.addTask.drive(),
+//      outputs.calendarTaskListLabel.drive(dayTasksLabel.rx.text),
+//      outputs.calendarTaskListDataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+//      outputs.openCalendarTask.drive(),
+//      outputs.changeTaskStatusToIdea.drive(),
+//      outputs.changeTaskStatusToDeleted.drive()
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
   }
   
   // MARK: - Scene Binders

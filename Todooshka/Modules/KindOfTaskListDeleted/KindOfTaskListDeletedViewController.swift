@@ -156,17 +156,17 @@ class KindOfTaskListDeletedViewController: TDViewController {
       removeAllButtonClickTrigger: removeAllButton.rx.tap.asDriver()
     )
 
-    let outputs = viewModel.transform(input: input)
+  //  let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.hideAlert.drive(hideAlertBinder),
-      outputs.navigateBack.drive(),
-      outputs.removeAll.drive(),
-      outputs.repeatKindOfTask.drive(),
-      outputs.showAlert.drive(showAlertBinder)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+//      outputs.hideAlert.drive(hideAlertBinder),
+//      outputs.navigateBack.drive(),
+//      outputs.removeAll.drive(),
+//      outputs.repeatKindOfTask.drive(),
+//      outputs.showAlert.drive(showAlertBinder)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   // MARK: - Binders

@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:268120909804:ios:db891b6706f38cac0942c9</string>
+	<string>1:268120909804:ios:06a917e8987cc68a0942c9</string>
 	<key>DATABASE_URL</key>
 	<string>https://todooshka-7a48b-default-rtdb.europe-west1.firebasedatabase.app</string>
 </dict>

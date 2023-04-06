@@ -29,8 +29,8 @@ class TabBarViewModel: Stepper {
     let createTask = input.createTaskButtonClickTrigger
       .do { _ in
         self.steps.accept(
-          AppStep.createTaskIsRequired(
-            task: Task(UID: UUID().uuidString, status: .inProgress),
+          AppStep.openTaskIsRequired(
+            task: Task(uuid: UUID(), status: .inProgress),
             isModal: true
           ))
       }

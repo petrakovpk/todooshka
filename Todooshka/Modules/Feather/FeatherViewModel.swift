@@ -20,8 +20,8 @@ class FeatherViewModel: Stepper {
   }
 
   struct Output {
-    let dataSource: Driver<[TaskListSection]>
-    let navigateBack: Driver<Void>
+//    let dataSource: Driver<[TaskListSection]>
+//    let navigateBack: Driver<Void>
   }
 
   // MARK: - Init
@@ -31,40 +31,40 @@ class FeatherViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    // tasks
-    let tasks = services.dataService.goldTasks
-
-    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
-
-    let taskListSectionItems = Driver<[TaskListSectionItem]>
-      .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
-        tasks.map { task in
-          TaskListSectionItem(
-            task: task,
-            kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
-          )
-        }
-      }
-
-    // dataSource
-    let dataSource = taskListSectionItems
-      .map {
-        Dictionary
-          .init(grouping: $0, by: { $0.task.completed!.startOfDay })
-          .sorted(by: { $0.key > $1.key })
-          .map { key, value in
-            TaskListSection(header: key.string(), mode: .empty, items: value)
-            //TaskListSection(header: self.services.preferencesService.formatter.string(from: key), mode: .empty, items: value)
-          }
-      }
-
-    // backButtonClickHandler
-    let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.navigateBack) }
+//    // tasks
+//    let tasks = services.dataService.goldTasks
+//
+//    let kindsOfTask = services.dataService.kindsOfTask.asDriver()
+//
+//    let taskListSectionItems = Driver<[TaskListSectionItem]>
+//      .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
+//        tasks.map { task in
+//          TaskListSectionItem(
+//            task: task,
+//            kindOfTask: kindsOfTask.first(where: { $0.UID == task.kindOfTaskUID }) ?? KindOfTask.Standart.Simple
+//          )
+//        }
+//      }
+//
+//    // dataSource
+//    let dataSource = taskListSectionItems
+//      .map {
+//        Dictionary
+//          .init(grouping: $0, by: { $0.task.completed!.startOfDay })
+//          .sorted(by: { $0.key > $1.key })
+//          .map { key, value in
+//            TaskListSection(header: key.string(), mode: .empty, items: value)
+//            //TaskListSection(header: self.services.preferencesService.formatter.string(from: key), mode: .empty, items: value)
+//          }
+//      }
+//
+//    // backButtonClickHandler
+//    let navigateBack = input.backButtonClickTrigger
+//      .map { self.steps.accept(AppStep.navigateBack) }
 
     return Output(
-      dataSource: dataSource,
-      navigateBack: navigateBack
+//      dataSource: dataSource,
+//      navigateBack: navigateBack
     )
   }
 }

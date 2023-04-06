@@ -13,6 +13,7 @@ import RxGesture
 import RxCocoa
 import RxSwift
 import YandexMobileMetrica
+import RxAlamofire
 
 class TaskViewModel: Stepper {
   public let steps = PublishRelay<Step>()
@@ -103,7 +104,7 @@ class TaskViewModel: Stepper {
     // PUBLISH
     let saveTaskStatus: Driver<Void>
     let publishTask: Driver<Void>
-    let publishImage: Driver<Void>
+   // let publishImage: Driver<Void>
     // CLOSE VIEW CONTROLLER
     let dismissViewController: Driver<Void>
     // ANIMATION
@@ -132,7 +133,7 @@ class TaskViewModel: Stepper {
     
     let tasks = managedContext
       .rx
-      .entities(Task.self, predicate: NSPredicate(format: "uid == %@", task.UID))
+      .entities(Task.self, predicate: NSPredicate(format: "uuid == %@", task.uuid.uuidString))
       .asDriverOnErrorJustComplete()
     
     let task = tasks
@@ -153,7 +154,7 @@ class TaskViewModel: Stepper {
       .flatMapLatest { task -> Observable<[TDImage]> in
         self.managedContext.rx.entities(
           TDImage.self,
-          predicate: NSPredicate(format: "uid == %@", task.imageUID ?? ""))
+          predicate: NSPredicate(format: "uid == %@", task.imageUUID?.uuidString ?? ""))
       }
       .compactMap { $0.first }
       .asDriverOnErrorJustComplete()
@@ -403,23 +404,21 @@ class TaskViewModel: Stepper {
       }
       .mapToVoid()
       .asDriverOnErrorJustComplete()
-    
-    let publishTask = taskWithUpdatedStatus
+
+    let publishTask = input.publishButtonClickTrigger
+      .withLatestFrom(task) { $1 }
       .asObservable()
-      .flatMapLatest { task -> Observable<Result<DatabaseReference, Error>> in
-        dbRef.child("PUBLISHED_TASKS").child(task.identity).rx.updateChildValues(task.publishData)
+      .flatMapLatest { task in
+        RxAlamofire
+          .requestJSON(
+            .put,
+            serverURL + "test/task/\(task.uuid)",
+            parameters: [:])
       }
+      .debug()
       .mapToVoid()
-      .asDriverOnErrorJustComplete()
-    
-    let publishImage = input.publishButtonClickTrigger
-      .withLatestFrom(tdImage)
-      .asObservable()
-      .flatMapLatest { tdImage -> Observable<StorageMetadata> in
-        storageRef.child("PUBLISHED_TASKS").child(tdImage.UID).rx.putData(tdImage.data)
-      }
-      .mapToVoid()
-      .asDriverOnErrorJustComplete()
+      .asDriver(onErrorJustReturn: ())
+
     
     // MARK: - ANIMATION
     let playAnimationViewTrigger = input.completeButtonClickTrigger
@@ -464,7 +463,7 @@ class TaskViewModel: Stepper {
       // PUBLISH
       saveTaskStatus: saveTaskStatus,
       publishTask: publishTask,
-      publishImage: publishImage,
+     // publishImage: publishImage,
       // CLOSE VIEW CONTROLLER
       dismissViewController: dismissViewController,
       // animation

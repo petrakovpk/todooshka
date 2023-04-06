@@ -300,11 +300,11 @@ class MainTaskListViewController: UIViewController {
     let input = MainTaskListSceneModel.Input()
     let outputs = sceneModel.transform(input: input)
 
-    [
-      outputs.backgroundImage.drive(backgroundImageBinder),
-      outputs.dataSource.drive(sceneDataBinder)
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+//    [
+//      outputs.backgroundImage.drive(backgroundImageBinder),
+//      outputs.dataSource.drive(sceneDataBinder)
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
   }
   
   func bindViewModel() {
@@ -317,20 +317,20 @@ class MainTaskListViewController: UIViewController {
     )
 
     let outputs = viewModel.transform(input: input)
-    
-    [
-      outputs.openOverduedTasklist.drive(),
-      outputs.openIdeaTaskList.drive(),
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.dataSource.drive(dataSourceBinder),
-      outputs.reloadItems.drive(reloadItemsBinder),
-      outputs.hideCellWhenAlertClosed.drive(hideCellBinder),
-      outputs.openTask.drive(),
-      outputs.changeTaskStatusToIdea.drive(),
-      outputs.changeTaskStatusToDeleted.drive(),
-      outputs.alertIsHidden.drive(alertContainerView.rx.isHidden)
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+//    
+//    [
+//      outputs.openOverduedTasklist.drive(),
+//      outputs.openIdeaTaskList.drive(),
+//      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+//      outputs.dataSource.drive(dataSourceBinder),
+//      outputs.reloadItems.drive(reloadItemsBinder),
+//      outputs.hideCellWhenAlertClosed.drive(hideCellBinder),
+//      outputs.openTask.drive(),
+//      outputs.changeTaskStatusToIdea.drive(),
+//      outputs.changeTaskStatusToDeleted.drive(),
+//      outputs.alertIsHidden.drive(alertContainerView.rx.isHidden)
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
 
   }
   

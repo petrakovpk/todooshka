@@ -118,13 +118,13 @@ class ShopViewController: TDViewController {
       selection: collectionView.rx.itemSelected.asDriver()
     )
 
-    let output = viewModel.transform(input: input)
+ //   let output = viewModel.transform(input: input)
 
-    [
-      output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      output.navigateBack.drive(),
-      output.show.drive()
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      output.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+//      output.navigateBack.drive(),
+//      output.show.drive()
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 }

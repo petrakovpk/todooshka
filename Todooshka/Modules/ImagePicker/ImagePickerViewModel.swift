@@ -50,7 +50,7 @@ class ImagePickerViewModel: Stepper {
       }
       .map { image -> TDImage in
         TDImage(
-          UID: self.task.imageUID ?? UUID().uuidString,
+          uuid: self.task.imageUUID ?? UUID(),
           data: image.pngData()!)
       }
     
@@ -62,7 +62,7 @@ class ImagePickerViewModel: Stepper {
     let updateTask = selectedImage
       .map { image -> Task in
         var task = self.task
-        task.imageUID = image.UID
+        task.imageUUID = image.uuid
         return task
       }
       .asObservable()

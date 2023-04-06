@@ -30,14 +30,14 @@ class KindOfTaskListViewModel: Stepper {
   }
 
   struct Output {
-    let addTask: Driver<Void>
-    let dataSource: Driver<[KindOfTaskListSection]>
-    let hideAlert: Driver<Void>
-    let moving: Driver<Result<Void, Error>>
-    let navigateBack: Driver<Void>
-    let openKindOfTask: Driver<Void>
-    let removeKindOfTask: Driver<Result<Void, Error>>
-    let showAlert: Driver<Void>
+//    let addTask: Driver<Void>
+//    let dataSource: Driver<[KindOfTaskListSection]>
+//    let hideAlert: Driver<Void>
+//    let moving: Driver<Result<Void, Error>>
+//    let navigateBack: Driver<Void>
+//    let openKindOfTask: Driver<Void>
+//    let removeKindOfTask: Driver<Result<Void, Error>>
+//    let showAlert: Driver<Void>
   }
 
   // MARK: - Init
@@ -46,83 +46,83 @@ class KindOfTaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let addTask = input.addButtonClickTrigger
-      .map { self.steps.accept(AppStep.createKindOfTaskIsRequired) }
-
-    let kindsOfTask = services.dataService
-      .kindsOfTask
-      .map({ $0.filter { $0.status == .active } })
-
-    // dataSource
-    let dataSource = kindsOfTask
-      .map {[
-        KindOfTaskListSection(
-          header: "",
-          items: $0
-        )
-      ]
-      }.asDriver()
-
-    let openKindOfTask = input.selection
-      .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
-      .map { self.steps.accept(AppStep.showKindOfTaskIsRequired(kindOfTask: $0)) }
-
-    let moving = input.moving
-      .compactMap { $0 }
-      .withLatestFrom(kindsOfTask) { itemMovedEvent, kindsOfTask -> [KindOfTask] in
-        var kindsOfTask = kindsOfTask
-        let element = kindsOfTask.remove(at: itemMovedEvent.sourceIndex.row)
-        kindsOfTask.insert(element, at: itemMovedEvent.destinationIndex.row)
-        return kindsOfTask
-      }
-      .distinctUntilChanged()
-      .map { kindsOfTask -> [KindOfTask] in
-        var kindsOfTask = kindsOfTask
-        for (index, _) in kindsOfTask.enumerated() {
-          kindsOfTask[index].index = index
-        }
-        return kindsOfTask
-      }.asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let removeKindOfTaskIsRequired = removeKindOfTaskIsRequired
-      .asDriver()
-      .compactMap { $0 }
-
-    // alert
-    let showAlert = removeKindOfTaskIsRequired
-      .map { _ in () }
-
-    let hideAlert = Driver
-      .of(input.cancelAlertButtonClickTrigger, input.deleteAlertButtonClickTrigger)
-      .merge()
-
-    let removeKindOfTask = input.deleteAlertButtonClickTrigger
-      .withLatestFrom(removeKindOfTaskIsRequired) { $1 }
-      .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
-      .map { kindOfTask -> KindOfTask in
-        var kindOfTask = kindOfTask
-        kindOfTask.status = .deleted
-        return kindOfTask
-      }
-      .asObservable()
-      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.navigateBack) }
+//    let addTask = input.addButtonClickTrigger
+//      .map { self.steps.accept(AppStep.createKindOfTaskIsRequired) }
+//
+//    let kindsOfTask = services.dataService
+//      .kindsOfTask
+//      .map({ $0.filter { $0.status == .active } })
+//
+//    // dataSource
+//    let dataSource = kindsOfTask
+//      .map {[
+//        KindOfTaskListSection(
+//          header: "",
+//          items: $0
+//        )
+//      ]
+//      }.asDriver()
+//
+//    let openKindOfTask = input.selection
+//      .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
+//      .map { self.steps.accept(AppStep.showKindOfTaskIsRequired(kindOfTask: $0)) }
+//
+//    let moving = input.moving
+//      .compactMap { $0 }
+//      .withLatestFrom(kindsOfTask) { itemMovedEvent, kindsOfTask -> [KindOfTask] in
+//        var kindsOfTask = kindsOfTask
+//        let element = kindsOfTask.remove(at: itemMovedEvent.sourceIndex.row)
+//        kindsOfTask.insert(element, at: itemMovedEvent.destinationIndex.row)
+//        return kindsOfTask
+//      }
+//      .distinctUntilChanged()
+//      .map { kindsOfTask -> [KindOfTask] in
+//        var kindsOfTask = kindsOfTask
+//        for (index, _) in kindsOfTask.enumerated() {
+//          kindsOfTask[index].index = index
+//        }
+//        return kindsOfTask
+//      }.asObservable()
+//      .flatMapLatest({ Observable.from($0) })
+//      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
+//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//
+//    let removeKindOfTaskIsRequired = removeKindOfTaskIsRequired
+//      .asDriver()
+//      .compactMap { $0 }
+//
+//    // alert
+//    let showAlert = removeKindOfTaskIsRequired
+//      .map { _ in () }
+//
+//    let hideAlert = Driver
+//      .of(input.cancelAlertButtonClickTrigger, input.deleteAlertButtonClickTrigger)
+//      .merge()
+//
+//    let removeKindOfTask = input.deleteAlertButtonClickTrigger
+//      .withLatestFrom(removeKindOfTaskIsRequired) { $1 }
+//      .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
+//      .map { kindOfTask -> KindOfTask in
+//        var kindOfTask = kindOfTask
+//        kindOfTask.status = .deleted
+//        return kindOfTask
+//      }
+//      .asObservable()
+//      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
+//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//
+//    let navigateBack = input.backButtonClickTrigger
+//      .map { self.steps.accept(AppStep.navigateBack) }
 
     return Output(
-      addTask: addTask,
-      dataSource: dataSource,
-      hideAlert: hideAlert,
-      moving: moving,
-      navigateBack: navigateBack,
-      openKindOfTask: openKindOfTask,
-      removeKindOfTask: removeKindOfTask,
-      showAlert: showAlert
+//      addTask: addTask,
+//      dataSource: dataSource,
+//      hideAlert: hideAlert,
+//      moving: moving,
+//      navigateBack: navigateBack,
+//      openKindOfTask: openKindOfTask,
+//      removeKindOfTask: removeKindOfTask,
+//      showAlert: showAlert
     )
   }
 

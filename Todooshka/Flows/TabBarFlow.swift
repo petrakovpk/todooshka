@@ -37,14 +37,14 @@ class TabBarFlow: Flow {
     switch step {
     case .tabBarIsRequired:
       return navigateToTabBar()
-    case .createTaskIsRequired:
-      return navigateToTaskFlow()
+    case .openTaskIsRequired(let task, let isModal):
+      return navigateToTaskFlow(task: task, isModal: isModal)
     default:
       return .none
     }
   }
 
-  private func navigateToTaskFlow() -> FlowContributors {
+  private func navigateToTaskFlow(task: Task, isModal: Bool) -> FlowContributors {
     let taskFlow = TaskFlow(withServices: services)
 
     Flows.use(taskFlow, when: .created) { [unowned self] root in
@@ -58,9 +58,9 @@ class TabBarFlow: Flow {
       flowContributor: .contribute(
         withNextPresentable: taskFlow,
         withNextStepper: OneStepper(
-          withSingleStep: AppStep.createTaskIsRequired(
-            task: Task(UID: UUID().uuidString, status: .inProgress),
-            isModal: true
+          withSingleStep: AppStep.openTaskIsRequired(
+            task: task,
+            isModal: isModal
           )
         )
       )

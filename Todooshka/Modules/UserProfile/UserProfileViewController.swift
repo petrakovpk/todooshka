@@ -141,16 +141,16 @@ class UserProfileViewController: TDViewController {
     )
     let output = viewModel.transform(input: input)
 
-    [
-      output.dataSource.drive(tableView.rx.items(dataSource: dataSource)),
-      output.itemSelected.drive(),
-      output.hideLogOffAlert.drive(hideLogOffAlertBinder),
-      output.logOut.drive(),
-      output.navigateBack.drive(),
-      output.showLogOffAlert.drive(showAlerLogOffBinder),
-      output.title.drive(titleLabel.rx.text)
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+//    [
+//      output.dataSource.drive(tableView.rx.items(dataSource: dataSource)),
+//      output.itemSelected.drive(),
+//      output.hideLogOffAlert.drive(hideLogOffAlertBinder),
+//      output.logOut.drive(),
+//      output.navigateBack.drive(),
+//      output.showLogOffAlert.drive(showAlerLogOffBinder),
+//      output.title.drive(titleLabel.rx.text)
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
   }
 
   var hideLogOffAlertBinder: Binder<Void> {

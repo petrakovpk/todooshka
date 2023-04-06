@@ -159,20 +159,20 @@ class SyncDataViewController: TDViewController {
       taskSyncButtonClickTrigger: taskSyncButton.rx.tap.asDriver()
     )
 
-    let outputs = viewModel.transform(input: input)
+//    let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.kindsOfTaskDeviceCountLabel.drive(kindsOfTaskDeviceCountLabel.rx.text),
-      outputs.kindsOfTaskFirebaseCountLabel.drive(kindsOfTaskFirebaseCountLabel.rx.text),
-      outputs.kindsOfTaskSync.drive(),
-      outputs.kindsOfTaskSyncButtonIsEnabled.drive(kindsOfTaskSyncButtonIsEnabledBinder),
-      outputs.navigateBack.drive(),
-      outputs.taskDeviceCountLabel.drive(taskDeviceCountLabel.rx.text),
-      outputs.taskFirebaseCountLabel.drive(taskFirebaseCountLabel.rx.text),
-      outputs.taskSync.drive(),
-      outputs.taskSyncButtonIsEnabled.drive(taskSyncButtonIsEnabledBinder)
-    ]
-      .forEach({ $0.disposed(by: disposeBag) })
+//    [
+//      outputs.kindsOfTaskDeviceCountLabel.drive(kindsOfTaskDeviceCountLabel.rx.text),
+//      outputs.kindsOfTaskFirebaseCountLabel.drive(kindsOfTaskFirebaseCountLabel.rx.text),
+//      outputs.kindsOfTaskSync.drive(),
+//      outputs.kindsOfTaskSyncButtonIsEnabled.drive(kindsOfTaskSyncButtonIsEnabledBinder),
+//      outputs.navigateBack.drive(),
+//      outputs.taskDeviceCountLabel.drive(taskDeviceCountLabel.rx.text),
+//      outputs.taskFirebaseCountLabel.drive(taskFirebaseCountLabel.rx.text),
+//      outputs.taskSync.drive(),
+//      outputs.taskSyncButtonIsEnabled.drive(taskSyncButtonIsEnabledBinder)
+//    ]
+//      .forEach({ $0.disposed(by: disposeBag) })
   }
 
   var kindsOfTaskSyncButtonIsEnabledBinder: Binder<Bool> {

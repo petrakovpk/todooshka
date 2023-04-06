@@ -78,12 +78,12 @@ class MarketplaceViewController: TDViewController {
 
     let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.addTheme.drive(),
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.openTheme.drive()
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+//    [
+//      outputs.addTheme.drive(),
+//      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+//      outputs.openTheme.drive()
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
   }
 
   // MARK: - Configure Data Source

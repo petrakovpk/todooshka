@@ -33,12 +33,12 @@ class KindOfTaskListDeletedViewModel: Stepper {
   }
 
   struct Output {
-    let dataSource: Driver<[KindOfTaskListSection]>
-    let hideAlert: Driver<Void>
-    let navigateBack: Driver<Void>
-    let removeAll: Driver<Result<Void, Error>>
-    let repeatKindOfTask: Driver<Result<Void, Error>>
-    let showAlert: Driver<Void>
+//    let dataSource: Driver<[KindOfTaskListSection]>
+//    let hideAlert: Driver<Void>
+//    let navigateBack: Driver<Void>
+//    let removeAll: Driver<Result<Void, Error>>
+//    let repeatKindOfTask: Driver<Result<Void, Error>>
+//    let showAlert: Driver<Void>
   }
 
   // MARK: - Init
@@ -47,58 +47,58 @@ class KindOfTaskListDeletedViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let kindsOfTask = services.dataService
-      .kindsOfTask
-      .map { $0.filter { $0.status == .deleted } }
-
-    let dataSource = kindsOfTask
-      .map {[
-        KindOfTaskListSection(
-          header: "",
-          items: $0
-        )
-      ]
-      }
-
-    let hideAlert = Driver
-      .of(input.alertCancelButtonClickTrigger, input.alertDeleteButtonClickTrigger)
-      .merge()
-
-    let repeatKindOfTask = repeatKindOfTask
-      .compactMap { $0 }
-      .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
-      .map { kindOfTask -> KindOfTask in
-        var kindOfTask = kindOfTask
-        kindOfTask.status = .active
-        return kindOfTask
-      }
-      .flatMapLatest(({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) }))
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let showAlert = input.removeAllButtonClickTrigger
-
-    let navigateBack = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.navigateBack) }
-
-    let removeAll = input.alertDeleteButtonClickTrigger
-      .withLatestFrom(kindsOfTask) { $1 }
-      .asObservable()
-      .flatMapLatest({ Observable.from($0) })
-      .map { kindOfTask -> KindOfTask in
-        var kindOfTask = kindOfTask
-        kindOfTask.status = .archive
-        return kindOfTask
-      }
-      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//    let kindsOfTask = services.dataService
+//      .kindsOfTask
+//      .map { $0.filter { $0.status == .deleted } }
+//
+//    let dataSource = kindsOfTask
+//      .map {[
+//        KindOfTaskListSection(
+//          header: "",
+//          items: $0
+//        )
+//      ]
+//      }
+//
+//    let hideAlert = Driver
+//      .of(input.alertCancelButtonClickTrigger, input.alertDeleteButtonClickTrigger)
+//      .merge()
+//
+//    let repeatKindOfTask = repeatKindOfTask
+//      .compactMap { $0 }
+//      .withLatestFrom(dataSource) { $1[$0.section].items[$0.item] }
+//      .map { kindOfTask -> KindOfTask in
+//        var kindOfTask = kindOfTask
+//        kindOfTask.status = .active
+//        return kindOfTask
+//      }
+//      .flatMapLatest(({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) }))
+//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+//
+//    let showAlert = input.removeAllButtonClickTrigger
+//
+//    let navigateBack = input.backButtonClickTrigger
+//      .map { self.steps.accept(AppStep.navigateBack) }
+//
+//    let removeAll = input.alertDeleteButtonClickTrigger
+//      .withLatestFrom(kindsOfTask) { $1 }
+//      .asObservable()
+//      .flatMapLatest({ Observable.from($0) })
+//      .map { kindOfTask -> KindOfTask in
+//        var kindOfTask = kindOfTask
+//        kindOfTask.status = .archive
+//        return kindOfTask
+//      }
+//      .flatMapLatest({ self.managedContext?.rx.update($0) ?? Observable.of(.failure(ErrorType.managedContextNotFound)) })
+//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
 
     return Output(
-      dataSource: dataSource,
-      hideAlert: hideAlert,
-      navigateBack: navigateBack,
-      removeAll: removeAll,
-      repeatKindOfTask: repeatKindOfTask,
-      showAlert: showAlert
+//      dataSource: dataSource,
+//      hideAlert: hideAlert,
+//      navigateBack: navigateBack,
+//      removeAll: removeAll,
+//      repeatKindOfTask: repeatKindOfTask,
+//      showAlert: showAlert
     )
   }
 

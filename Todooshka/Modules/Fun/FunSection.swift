@@ -9,14 +9,14 @@ import RxDataSources
 
 struct FunSection {
     var header: String
-    var items: [FunSectionItem]
+    var items: [FunItem]
 
-    init(header: String, items: [FunSectionItem]) {
+    init(header: String, items: [FunItem]) {
         self.header = header
         self.items = items
     }
 
-    init(original: FunSection, items: [FunSectionItem]) {
+    init(original: FunSection, items: [FunItem]) {
         self = original
         self.items = items
     }

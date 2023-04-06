@@ -299,28 +299,28 @@ class BirdViewController: TDViewController {
       selection: collectionView.rx.itemSelected.asDriver()
     )
 
-    let outputs = viewModel.transform(input: input)
+  //  let outputs = viewModel.transform(input: input)
 
-    [
-      outputs.alertBuyButtonIsEnabled.drive(alertBuyView.buyButton.rx.isEnabled),
-      outputs.alertLabelText.drive(alertBuyView.label.rx.text),
-      outputs.alertViewHide.drive(alertViewHideBinder),
-      outputs.alertViewShow.drive(alertViewShowBinder),
-      outputs.birdImageView.drive(birdImageView.rx.image),
-      outputs.birdImageView.drive(alertBuyView.birdImageView.rx.image),
-      outputs.buyButtonIsHidden.drive(buyButton.rx.isHidden),
-      outputs.buyLabelIsHidden.drive(buyLabel.rx.isHidden),
-      outputs.currency.drive(currencyBinder),
-      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-      outputs.description.drive(descriptionTextView.rx.text),
-      outputs.eggImageView.drive(alertBuyView.eggImageView.rx.image),
-      outputs.kindOfTaskImageView.drive(kindOfTaskImageView.rx.image),
-      outputs.navigateBack.drive(),
-      outputs.plusButtonClickTrigger.drive(),
-      outputs.price.drive(priceLabel.rx.text),
-      outputs.title.drive(titleLabel.rx.text)
-    ]
-      .forEach { $0.disposed(by: disposeBag) }
+//    [
+//      outputs.alertBuyButtonIsEnabled.drive(alertBuyView.buyButton.rx.isEnabled),
+//      outputs.alertLabelText.drive(alertBuyView.label.rx.text),
+//      outputs.alertViewHide.drive(alertViewHideBinder),
+//      outputs.alertViewShow.drive(alertViewShowBinder),
+//      outputs.birdImageView.drive(birdImageView.rx.image),
+//      outputs.birdImageView.drive(alertBuyView.birdImageView.rx.image),
+//      outputs.buyButtonIsHidden.drive(buyButton.rx.isHidden),
+//      outputs.buyLabelIsHidden.drive(buyLabel.rx.isHidden),
+//      outputs.currency.drive(currencyBinder),
+//      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
+//      outputs.description.drive(descriptionTextView.rx.text),
+//      outputs.eggImageView.drive(alertBuyView.eggImageView.rx.image),
+//      outputs.kindOfTaskImageView.drive(kindOfTaskImageView.rx.image),
+//      outputs.navigateBack.drive(),
+//      outputs.plusButtonClickTrigger.drive(),
+//      outputs.price.drive(priceLabel.rx.text),
+//      outputs.title.drive(titleLabel.rx.text)
+//    ]
+//      .forEach { $0.disposed(by: disposeBag) }
   }
 
   var alertViewHideBinder: Binder<Void> {

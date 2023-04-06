@@ -24,16 +24,16 @@ class FunSectionCell: UITableViewCell {
     return label
   }()
   
-  private let customTextLabel: UILabel = {
+  private let taskTextLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
     label.lineBreakMode = .byWordWrapping
     label.numberOfLines = 2
-    label.text = "Помыть машину"
+    label.text = ""
     return label
   }()
   
-  private let customImageView: UIImageView = {
+  private let resultImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.layer.cornerRadius = 5
     imageView.backgroundColor = .black.withAlphaComponent(0.2)
@@ -48,8 +48,8 @@ class FunSectionCell: UITableViewCell {
     contentView.addSubviews([
       authorImageView,
       authorNameLabel,
-      customTextLabel,
-      customImageView
+      taskTextLabel,
+      resultImageView
     ])
     
     authorImageView.anchor(
@@ -70,7 +70,7 @@ class FunSectionCell: UITableViewCell {
       rightConstant: 16
     )
     
-    customTextLabel.anchor(
+    taskTextLabel.anchor(
       top: authorNameLabel.bottomAnchor,
       left: authorImageView.rightAnchor,
       right: contentView.rightAnchor,
@@ -79,7 +79,7 @@ class FunSectionCell: UITableViewCell {
       rightConstant: 16
     )
     
-    customImageView.anchor(
+    resultImageView.anchor(
       top: authorImageView.bottomAnchor,
       left: contentView.leftAnchor,
       bottom: contentView.bottomAnchor,
@@ -91,8 +91,9 @@ class FunSectionCell: UITableViewCell {
     )
   }
   
-  func configure(with item: FunSectionItem) {
-    
+  func configure(with item: FunItem) {
+    taskTextLabel.text = item.task.text
+    resultImageView.image = item.image
   }
 }
 

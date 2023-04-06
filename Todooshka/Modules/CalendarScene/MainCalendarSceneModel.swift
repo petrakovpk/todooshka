@@ -20,11 +20,11 @@ class MainCalendarSceneModel: Stepper {
   }
 
   struct Output {
-    let backgroundImage: Driver<UIImage?>
-    let birds: Driver<[Bird]>
-    let dataSource: Driver<[BirdActionType]>
-    let forceNestUpdate: Driver<Void>
-    let forceBranchUpdate: Driver<Void>
+//    let backgroundImage: Driver<UIImage?>
+//    let birds: Driver<[Bird]>
+//    let dataSource: Driver<[BirdActionType]>
+//    let forceNestUpdate: Driver<Void>
+//    let forceBranchUpdate: Driver<Void>
   }
 
   // MARK: - Init
@@ -33,32 +33,32 @@ class MainCalendarSceneModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let birds = services.dataService.birds
-    let dataSource = services.dataService.branchDataSource
-    
-    let forceNestUpdate = willShow
-      .compactMap { $0 }
-      .asDriver(onErrorJustReturn: ())
-      .map { self.services.actionService.forceNestSceneTrigger.accept(()) }
-
-    let forceBranchUpdate = services.actionService.forceBranchSceneTrigger
-      .compactMap { $0 }
-      .asDriver(onErrorJustReturn: ())
-
-    let timer = Driver<Int>
-      .interval(RxTimeInterval.seconds(5))
-
-    let backgroundImage = timer
-      .map { _ in self.getBackgroundImage(date: Date()) }
-      .startWith(self.getBackgroundImage(date: Date()))
-      .distinctUntilChanged()
+//    let birds = services.dataService.birds
+//    let dataSource = services.dataService.branchDataSource
+//
+//    let forceNestUpdate = willShow
+//      .compactMap { $0 }
+//      .asDriver(onErrorJustReturn: ())
+//      .map { self.services.actionService.forceNestSceneTrigger.accept(()) }
+//
+//    let forceBranchUpdate = services.actionService.forceBranchSceneTrigger
+//      .compactMap { $0 }
+//      .asDriver(onErrorJustReturn: ())
+//
+//    let timer = Driver<Int>
+//      .interval(RxTimeInterval.seconds(5))
+//
+//    let backgroundImage = timer
+//      .map { _ in self.getBackgroundImage(date: Date()) }
+//      .startWith(self.getBackgroundImage(date: Date()))
+//      .distinctUntilChanged()
 
     return Output(
-      backgroundImage: backgroundImage,
-      birds: birds,
-      dataSource: dataSource,
-      forceNestUpdate: forceNestUpdate,
-      forceBranchUpdate: forceBranchUpdate
+//      backgroundImage: backgroundImage,
+//      birds: birds,
+//      dataSource: dataSource,
+//      forceNestUpdate: forceNestUpdate,
+//      forceBranchUpdate: forceBranchUpdate
     )
   }
 

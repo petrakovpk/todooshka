@@ -20,11 +20,11 @@ class MainTaskListSceneModel: Stepper {
   }
 
   struct Output {
-    let backgroundImage: Driver<UIImage?>
-    let birds: Driver<[Bird]>
-    let dataSource: Driver<[EggActionType]>
-    let forceNestUpdate: Driver<Void>
-    let forceBranchUpdate: Driver<Void>
+//    let backgroundImage: Driver<UIImage?>
+//    let birds: Driver<[Bird]>
+//    let dataSource: Driver<[EggActionType]>
+//    let forceNestUpdate: Driver<Void>
+//    let forceBranchUpdate: Driver<Void>
   }
 
   // MARK: - Init
@@ -33,34 +33,34 @@ class MainTaskListSceneModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let birds = services.dataService.birds
-    let dataSource = services.dataService.nestDataSource
-    
-    let timer = Driver<Int>
-      .interval(RxTimeInterval.seconds(5))
-
-    let backgroundImage = timer
-      .map { _ in self.getBackgroundImage(date: Date()) }
-      .startWith(self.getBackgroundImage(date: Date()))
-      .distinctUntilChanged()
-
-    let forceNestUpdate = services.actionService.forceNestSceneTrigger
-      .compactMap { $0 }
-      .asDriver(onErrorJustReturn: ())
-
-    let forceBranchUpdate = willShow
-      .compactMap { $0 }
-      .asDriver(onErrorJustReturn: ())
-      .do { _ in
-        self.services.actionService.forceBranchSceneTrigger.accept(())
-      }
+//    let birds = services.dataService.birds
+//    let dataSource = services.dataService.nestDataSource
+//
+//    let timer = Driver<Int>
+//      .interval(RxTimeInterval.seconds(5))
+//
+//    let backgroundImage = timer
+//      .map { _ in self.getBackgroundImage(date: Date()) }
+//      .startWith(self.getBackgroundImage(date: Date()))
+//      .distinctUntilChanged()
+//
+//    let forceNestUpdate = services.actionService.forceNestSceneTrigger
+//      .compactMap { $0 }
+//      .asDriver(onErrorJustReturn: ())
+//
+//    let forceBranchUpdate = willShow
+//      .compactMap { $0 }
+//      .asDriver(onErrorJustReturn: ())
+//      .do { _ in
+//        self.services.actionService.forceBranchSceneTrigger.accept(())
+//      }
 
     return Output(
-      backgroundImage: backgroundImage,
-      birds: birds,
-      dataSource: dataSource,
-      forceNestUpdate: forceNestUpdate,
-      forceBranchUpdate: forceBranchUpdate
+//      backgroundImage: backgroundImage,
+//      birds: birds,
+//      dataSource: dataSource,
+//      forceNestUpdate: forceNestUpdate,
+//      forceBranchUpdate: forceBranchUpdate
     )
   }
 
