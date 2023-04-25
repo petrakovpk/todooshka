@@ -22,7 +22,7 @@ extension DateFormatter {
     return formatter
   }()
   
-  static let monthAndYear: DateFormatter = {
+  static let month: DateFormatter = {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ru_RU")
     formatter.dateFormat = "LLLL"

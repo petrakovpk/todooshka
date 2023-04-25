@@ -8,7 +8,7 @@
 import RxDataSources
 
 enum KindOfTaskForBirdItemType: Equatable {
-  case kindOfTask(kindOfTask: KindOfTask, isEnabled: Bool)
+  case kindOfTask(kindOfTask: Kind, isEnabled: Bool)
   case isPlusButton
 }
 
@@ -21,7 +21,7 @@ struct KindOfTaskForBirdItem: IdentifiableType, Equatable {
     case .isPlusButton:
       return "plus"
     case .kindOfTask(let kindOfTask, let isEnabled):
-      return kindOfTask.UID + isEnabled.string
+      return kindOfTask.uuid.uuidString + isEnabled.string
     }
   }
 

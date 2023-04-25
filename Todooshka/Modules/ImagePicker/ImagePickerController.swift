@@ -30,8 +30,8 @@ class ImagePickerController: UIImagePickerController {
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.saveImage.drive(),
-      outputs.updateTask.drive(),
+   //   outputs.saveImage.drive(),
+   //   outputs.updateTask.drive(),
       outputs.dismiss.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }

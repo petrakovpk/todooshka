@@ -9,45 +9,45 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxDataSources
-import RxGesture
+import SkeletonView
 
 class FunViewController: TDViewController {
   private let disposeBag = DisposeBag()
-  private var isLoading: Bool = true
   public var viewModel: FunViewModel!
   
   // MARK: - UI Elements
-  private let tableView: UITableView = {
-    let tableView = UITableView(frame: .zero)
-    tableView.isPagingEnabled = true
-    tableView.showsVerticalScrollIndicator = false
-    tableView.backgroundColor = .clear
-    tableView.separatorStyle = .none
-    tableView.contentInsetAdjustmentBehavior = .never
-    return tableView
-  }()
+  private var tableView: UITableView! {
+    didSet {
+      tableView.delegate = self
+      tableView.dataSource = nil
+      tableView.isPagingEnabled = true
+      tableView.showsVerticalScrollIndicator = false
+      tableView.backgroundColor = .clear
+      tableView.separatorStyle = .none
+      tableView.translatesAutoresizingMaskIntoConstraints = false
+      tableView.contentInsetAdjustmentBehavior = .never
+      tableView.register(FunItemNoMoreTasksCell.self, forCellReuseIdentifier: FunItemNoMoreTasksCell.reuseID)
+      tableView.register(FunItemTaskCell.self, forCellReuseIdentifier: FunItemTaskCell.reuseID)
+    }
+  }
   
-  private let badButton: UIButton = {
+  private var dataSource: RxTableViewSectionedAnimatedDataSource<FunSection>!
+  
+  private var upvoteButton: UIButton = {
     let button = UIButton(type: .system)
-    button.layer.cornerRadius = 5
-    button.backgroundColor = Palette.SingleColors.BrinkPink
-    button.setTitle("Не очень", for: .normal)
-    button.setTitleColor(UIColor.white, for: .normal)
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+    button.setTitle("Upvote", for: .normal)
+    button.setTitleColor(.systemGreen, for: .normal)
+    button.translatesAutoresizingMaskIntoConstraints = false
     return button
   }()
   
-  private let goodButton: UIButton = {
+  private var downvoteButton: UIButton = {
     let button = UIButton(type: .system)
-    button.layer.cornerRadius = 5
-    button.backgroundColor = Palette.SingleColors.Shamrock
-    button.setTitle("Одобряем", for: .normal)
-    button.setTitleColor(UIColor.white, for: .normal)
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+    button.setTitle("Downvote", for: .normal)
+    button.setTitleColor(.systemRed, for: .normal)
+    button.translatesAutoresizingMaskIntoConstraints = false
     return button
   }()
-  
-  private var dataSource: RxTableViewSectionedReloadDataSource<FunSection>!
   
   // MARK: - Lifecycle
   override func viewDidLoad() {
@@ -55,81 +55,149 @@ class FunViewController: TDViewController {
     configureUI()
     configureDataSource()
     bindViewModel()
+    viewModel.loadMoreItems()
   }
   
   // MARK: - Configure UI
-  private func configureUI() {
+  func configureUI() {
     headerView.layer.zPosition = 2
     titleLabel.text = "It's fun"
     
-    view.addSubviews([tableView, badButton, goodButton])
+    tableView = UITableView(frame: .zero)
     
-    setupLayout()
-    tableView.delegate = self
-    tableView.register(FunSectionCell.self, forCellReuseIdentifier: FunSectionCell.reuseID)
-  }
-  
-  private func setupLayout() {
-    let screenWidth = UIScreen.main.bounds.width
+    view.addSubviews([tableView, downvoteButton, upvoteButton])
     
-    badButton.anchor(
+    downvoteButton.anchor(
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
       leftConstant: 16,
       bottomConstant: 16,
-      widthConstant: screenWidth / 2 - 16 - 8,
-      heightConstant: 50
-    )
+      widthConstant: (UIScreen.main.bounds.width - 16 * 3) / 2)
     
-    goodButton.anchor(
+    upvoteButton.anchor(
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
       right: view.rightAnchor,
       bottomConstant: 16,
       rightConstant: 16,
-      widthConstant: screenWidth / 2 - 16 - 8,
-      heightConstant: 50
-    )
+      widthConstant: (UIScreen.main.bounds.width - 16 * 3) / 2)
     
     tableView.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
-      bottom: badButton.topAnchor,
+      bottom: downvoteButton.topAnchor,
       right: view.rightAnchor,
-      topConstant: 0,
-      leftConstant: 0,
-      bottomConstant: 0,
-      rightConstant: 0
+      leftConstant: 16,
+      bottomConstant: 8,
+      rightConstant: 16
     )
   }
   
+  
   // MARK: - Bind ViewModel
-  private func bindViewModel() {
+  func bindViewModel() {
     let input = FunViewModel.Input(
-      viewDidLoad: rx.sentMessage(#selector(UIViewController.viewWillAppear(_:))).mapToVoid()
+      downvoteButtonTap: downvoteButton.rx.tap.asDriver(),
+      upvoteButtonTap: upvoteButton.rx.tap.asDriver(),
+      scrollTrigger: tableView.rx.didEndDecelerating.asDriver()
     )
     
     let outputs = viewModel.transform(input: input)
-    outputs.dataSource.drive(tableView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
+    
+    [
+      outputs.dataSource.drive(tableView.rx.items(dataSource: dataSource)),
+      outputs.loadMoreData.drive(),
+      outputs.reaction.drive(),
+      outputs.scrollToNextSection.drive(buttonTappedBinder),
+      outputs.currentVisibleItem.compactMap { $0 }.drive(currentVisibleItemRelayBinder)
+    ]
+      .forEach { $0.disposed(by: disposeBag) }
   }
   
-  // MARK: - Configure DataSource
-  private func configureDataSource() {
-    tableView.dataSource = nil
-    dataSource = RxTableViewSectionedReloadDataSource<FunSection>(configureCell: { dataSource, tableView, indexPath, item in
-      guard let cell = tableView.dequeueReusableCell(
-        withIdentifier: FunSectionCell.reuseID,
-        for: indexPath
-      ) as? FunSectionCell else { return UITableViewCell() }
-      cell.configure(with: item)
-      return cell
+  var buttonTappedBinder: Binder<Void> {
+    return Binder(self, binding: { vc, _ in
+      let currentIndexPath = vc.tableView.indexPathsForVisibleRows?.first ?? IndexPath(row: 0, section: 0)
+      let nextSection = currentIndexPath.section + 1
+      
+      if nextSection < vc.dataSource.sectionModels.count {
+        let nextIndexPath = IndexPath(row: 0, section: nextSection)
+        vc.tableView.scrollToRow(at: nextIndexPath, at: .top, animated: true)
+      }
     })
   }
-}
-
-// MARK: - UITableViewDelegate
-extension FunViewController: UITableViewDelegate {
-  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    tableView.frame.height
+  
+  var currentVisibleItemRelayBinder: Binder<FunItemType> {
+    return Binder(self, binding: { vc, funItemType in
+      switch funItemType {
+      case .noMoreTasks:
+        self.upvoteButton.isSelected = false
+        self.downvoteButton.isSelected = false
+      case .task(let taskItem):
+        switch taskItem.reactionType {
+        case .upvote:
+          self.upvoteButton.isSelected = true
+          self.downvoteButton.isSelected = false
+        case .downvote:
+          self.upvoteButton.isSelected = false
+          self.downvoteButton.isSelected = true
+        case .skip:
+          self.upvoteButton.isSelected = true
+          self.downvoteButton.isSelected = true
+        case nil:
+          self.upvoteButton.isSelected = false
+          self.downvoteButton.isSelected = false
+        }
+      }
+    })
+  }
+  
+  func configureDataSource() {
+    dataSource = RxTableViewSectionedAnimatedDataSource<FunSection>(
+      configureCell: {_, tableView, indexPath, item in
+        switch item {
+        case .noMoreTasks:
+          let cell = tableView.dequeueReusableCell(withIdentifier: FunItemNoMoreTasksCell.reuseID, for: indexPath) as! FunItemNoMoreTasksCell
+          return cell
+        case .task(let funItemTask):
+          let cell = tableView.dequeueReusableCell(withIdentifier: FunItemTaskCell.reuseID, for: indexPath) as! FunItemTaskCell
+          cell.configure(with: funItemTask)
+          return cell
+        }
+      })
   }
 }
 
+
+extension FunViewController: UITableViewDelegate {
+  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    return tableView.bounds.height
+  }
+
+  func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    let currentIndexPath = tableView.indexPathsForVisibleRows?.first ?? IndexPath(row: 0, section: 0)
+    let visibleItem = dataSource[currentIndexPath.section].items[currentIndexPath.row]
+    
+    viewModel.updateCurrentVisibleItem(type: visibleItem)
+    
+
+  }
+  
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    let offsetY = scrollView.contentOffset.y
+    let contentHeight = scrollView.contentSize.height
+    let screenHeight = UIScreen.main.bounds.height
+    
+    if offsetY > contentHeight - 2 * screenHeight {
+      viewModel.loadMoreItems()
+    }
+  }
+  
+  func scrollToNextItem() {
+      let currentIndexPath = tableView.indexPathsForVisibleRows?.first ?? IndexPath(row: 0, section: 0)
+      let nextRow = currentIndexPath.row + 1
+      let nextIndexPath = IndexPath(row: nextRow, section: currentIndexPath.section)
+
+      if nextRow < self.dataSource[currentIndexPath.section].items.count {
+          self.tableView.scrollToRow(at: nextIndexPath, at: .top, animated: true)
+      }
+  }
+}

@@ -19,10 +19,7 @@ class CalendarViewController: UIViewController {
   
   private let disposeBag = DisposeBag()
   
-  private var isCalendarAnimationRunning: Bool = false
-  private var calendarMode: CalendarMode = .long
-  private var displayDate: Date = Date()
-  private var calendarData: Dictionary<Date, CalendarItem> = [:]
+  private var calendarSections: [CalendarSection] = []
 
   // MARK: - UI Elements - Scene
   private let scene: MainCalendarScene? = {
@@ -63,22 +60,22 @@ class CalendarViewController: UIViewController {
     return view
   }()
   
-  private let monthLabel: UILabel = {
+  private let calendarHeaderLabel: UILabel = {
     let label = UILabel()
     label.backgroundColor = Style.Buttons.OverduedOrIdea.Background
     label.tintColor = Style.App.text
     return label
   }()
   
-  private let changeCalendarModeButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
-    button.tintColor = Style.App.text
-    button.setImage(Icon.arrowTop.image.template, for: .normal)
-    button.cornerRadius = 8
-    button.layer.maskedCorners = [.layerMaxXMinYCorner]
-    return button
-  }()
+//  private let calendarChangeModeButton: UIButton = {
+//    let button = UIButton(type: .system)
+//    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
+//    button.tintColor = Style.App.text
+//    button.setImage(Icon.arrowTop.image.template, for: .normal)
+//    button.cornerRadius = 8
+//    button.layer.maskedCorners = [.layerMaxXMinYCorner]
+//    return button
+//  }()
 
   private let scrollToPreviousPeriodButton: UIButton = {
     let button = UIButton(type: .system)
@@ -176,18 +173,22 @@ class CalendarViewController: UIViewController {
     return calendarView
   }()
   
-  private let dayTasksLabel: UILabel = {
+  private let taskListLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
     return label
   }()
   
-  private let addTaskButton: UIButton = {
+  private let allTasksButton: UIButton = {
+    let attrString = NSAttributedString(
+      string: "К задачам",
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11, weight: .light)]
+    )
     let button = UIButton(type: .system)
-    button.backgroundColor = .clear
+    button.backgroundColor = Style.Buttons.OverduedOrIdea.Background
     button.cornerRadius = 8
-    button.setImage(Icon.addSquare.image.template, for: .normal)
     button.tintColor = Style.App.text
+    button.setAttributedTitle(attrString, for: .normal)
     return button
   }()
   
@@ -220,7 +221,7 @@ class CalendarViewController: UIViewController {
   
   // MARK: - Configure UI
   func configureUI() {
-    calendarNavigateButtonsStackView = UIStackView(arrangedSubviews: [monthLabelSpacerLeftView, monthLabel, changeCalendarModeButton])
+    calendarNavigateButtonsStackView = UIStackView(arrangedSubviews: [monthLabelSpacerLeftView, calendarHeaderLabel])
     calendarNavigateButtonsStackView.axis = .horizontal
     calendarNavigateButtonsStackView.distribution = .fillProportionally
     calendarNavigateButtonsStackView.spacing = 0
@@ -244,8 +245,8 @@ class CalendarViewController: UIViewController {
       calendarView,
       scrollToPreviousPeriodButton,
       scrollToNextPeriodButton,
-      dayTasksLabel,
-      addTaskButton,
+      taskListLabel,
+      allTasksButton,
       collectionView
     ])
     
@@ -270,12 +271,7 @@ class CalendarViewController: UIViewController {
       widthConstant: 10
     )
     
-    monthLabel.anchor(
-      heightConstant: 30
-    )
-    
-    changeCalendarModeButton.anchor(
-      widthConstant: 30,
+    calendarHeaderLabel.anchor(
       heightConstant: 30
     )
 
@@ -305,32 +301,13 @@ class CalendarViewController: UIViewController {
 
     calendarView.calendarDataSource = self
     calendarView.calendarDelegate = self
-    configureCalendarUISecondStep(calendarMode: .long)
-  }
-  
-  func configureCalendarUISecondStep(calendarMode: CalendarMode) {
-    let nomberOfRows: Int
-    let changeCalendarModeButtonImage: UIImage
-    
-    switch calendarMode{
-    case .short:
-      nomberOfRows = 1
-      changeCalendarModeButtonImage = Icon.arrowBottom.image.template
-    case .long:
-      nomberOfRows = 6
-      changeCalendarModeButtonImage = Icon.arrowTop.image.template
-    }
-    
-    calendarView.removeAllConstraints()
     calendarView.anchorCenterXToSuperview()
     calendarView.anchor(
       top: calendarDayNamesStackView.bottomAnchor,
       widthConstant: 7 * Sizes.Cells.CalendarCell.size,
-      heightConstant: nomberOfRows.cgFloat * Sizes.Cells.CalendarCell.size
+      heightConstant: 6.cgFloat * Sizes.Cells.CalendarCell.size
     )
     
-    changeCalendarModeButton.setImage(changeCalendarModeButtonImage, for: .normal)
-
     scrollToPreviousPeriodButton.anchor(
       top: calendarDayNamesStackView.topAnchor,
       left: view.leftAnchor,
@@ -349,29 +326,30 @@ class CalendarViewController: UIViewController {
       rightConstant: 16
     )
     
-    dayTasksLabel.anchor(
+    taskListLabel.anchor(
       top: calendarView.bottomAnchor,
       left: view.leftAnchor,
       topConstant: 16,
       leftConstant: 16
     )
     
-    addTaskButton.centerYAnchor.constraint(equalTo: dayTasksLabel.centerYAnchor).isActive = true
-    addTaskButton.anchor(
+    allTasksButton.centerYAnchor.constraint(equalTo: taskListLabel.centerYAnchor).isActive = true
+    allTasksButton.anchor(
       right: view.rightAnchor,
-      rightConstant: 16
+      rightConstant: 16,
+      widthConstant: 80
     )
     
-    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+    collectionView.register(TaskListCell.self, forCellWithReuseIdentifier: TaskListCell.reuseID)
     collectionView.register(
-      TaskReusableView.self,
+      TaskListReusableView.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-      withReuseIdentifier: TaskReusableView.reuseID)
+      withReuseIdentifier: TaskListReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.layer.masksToBounds = false
     collectionView.backgroundColor = .clear
     collectionView.anchor(
-      top: dayTasksLabel.bottomAnchor,
+      top: taskListLabel.bottomAnchor,
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
       right: view.rightAnchor,
@@ -409,18 +387,18 @@ class CalendarViewController: UIViewController {
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(
       configureCell: { dataSource, collectionView, indexPath, item in
         guard let cell = collectionView.dequeueReusableCell(
-          withReuseIdentifier: TaskCell.reuseID,
+          withReuseIdentifier: TaskListCell.reuseID,
           for: indexPath
-        ) as? TaskCell else { return UICollectionViewCell() }
-        cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
+        ) as? TaskListCell else { return UICollectionViewCell() }
+        cell.configure(with: item)
         cell.delegate = self
         return cell
       }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
         guard let header = collectionView.dequeueReusableSupplementaryView(
           ofKind: kind,
-          withReuseIdentifier: TaskReusableView.reuseID,
+          withReuseIdentifier: TaskListReusableView.reuseID,
           for: indexPath
-        ) as? TaskReusableView else { return UICollectionReusableView() }
+        ) as? TaskListReusableView else { return UICollectionReusableView() }
         header.configure(text: dataSource[indexPath.section].header)
         return header
       }
@@ -441,18 +419,35 @@ class CalendarViewController: UIViewController {
   
   func bindViewModel() {
     let input = CalendarViewModel.Input(
-      monthLabelClickTrigger: monthLabel.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
-      changeCalendarModeButtonClickTrigger: changeCalendarModeButton.rx.tap
-        .filter { _ in !self.isCalendarAnimationRunning }.mapToVoid().asDriverOnErrorJustComplete(),
+      // flow
       shopButtonClickTrigger: shopButton.rx.tap.asDriver(),
       settingsButtonClickTrigger: settingsButton.rx.tap.asDriver(),
-      scrollToPreviousPeriodButtonClickTrigger: scrollToPreviousPeriodButton.rx.tap.asDriver(),
-      scrollToNextPeriodButtonClickTrigger: scrollToNextPeriodButton.rx.tap.asDriver(),
-      addTaskButtonClickTrigger: addTaskButton.rx.tap.asDriver(),
-      calendarTaskListSelection: collectionView.rx.itemSelected.asDriver()
+      // calendar
+      calendarHeaderLabelClickTrigger: calendarHeaderLabel.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
+      calendarScrollToNextMonthButtonClickTrigger: scrollToNextPeriodButton.rx.tap.asDriver(),
+      calendarScrollToPreviousMonthButtonClickTrigger: scrollToPreviousPeriodButton.rx.tap.asDriver(),
+      // all tasks
+      allTasksButtonClickTrigger: allTasksButton.rx.tap.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
+    
+    [
+      // flow
+      outputs.openShop.drive(),
+      outputs.openSettings.drive(),
+      // calendar
+      outputs.calendarHeaderText.drive(calendarHeaderLabel.rx.text),
+      outputs.calendarSections.drive(calendarSectionsBinder),
+      outputs.calendarScrollToDate.drive(calendarScrollToDateBinder),
+      outputs.calendarAddMonths.drive(),
+      // open day task list
+      outputs.openDayTaskList.drive(),
+      // task list
+      outputs.taskListLabelText.drive(taskListLabel.rx.text),
+      outputs.taskListSections.drive(collectionView.rx.items(dataSource: dataSource))
+    ]
+      .forEach { $0.disposed(by: disposeBag) }
 
 //    [
 //      outputs.calendarMode.drive(calendarModeBinder),
@@ -469,7 +464,7 @@ class CalendarViewController: UIViewController {
 //      outputs.changeTaskStatusToIdea.drive(),
 //      outputs.changeTaskStatusToDeleted.drive()
 //    ]
-//      .forEach { $0.disposed(by: disposeBag) }
+//
   }
   
   // MARK: - Scene Binders
@@ -491,32 +486,17 @@ class CalendarViewController: UIViewController {
       }
     })
   }
-  
-  // MARK: - Calendar Binders
-  var calendarModeBinder: Binder<CalendarMode> {
-    return Binder(self, binding: { vc, calendarMode in
-      UIView.animate(withDuration: 0.5) {
-        vc.isCalendarAnimationRunning = true
-        vc.calendarMode = calendarMode
-        vc.configureCalendarUISecondStep(calendarMode: calendarMode)
-      } completion: { _ in
-        vc.isCalendarAnimationRunning = false
-        vc.calendarView.reloadData()
-        vc.calendarView.scrollToDate(vc.displayDate, animateScroll: false)
-      }
-    })
-  }
 
-  var calendarDataSourceBinder: Binder<Dictionary<Date, CalendarItem>> {
-    return Binder(self, binding: { vc, dataSource in
-      vc.calendarData = dataSource
+  var calendarSectionsBinder: Binder<[CalendarSection]> {
+    return Binder(self, binding: { vc, calendarSections in
+      vc.calendarSections = calendarSections
       vc.calendarView.reloadData()
-      vc.calendarView.scrollToDate(self.displayDate, animateScroll: false)
+      vc.calendarView.scrollToDate(vc.viewModel.calendarVisibleMonth.value, animateScroll: false)
     })
   }
   
   
-  var scrollToDateBinder: Binder<Date> {
+  var calendarScrollToDateBinder: Binder<Date> {
     return Binder(self, binding: { vc, date in
       vc.calendarView.scrollToDate(date)
     })
@@ -526,21 +506,13 @@ class CalendarViewController: UIViewController {
 // MARK: - JTAppleCalendarViewDataSource
 extension CalendarViewController: JTACMonthViewDataSource {
   func configureCalendar(_ calendar: JTACMonthView) -> ConfigurationParameters {
-    let startDate = calendarData.keys.sorted { $0 < $1 }.first ?? Date().startOfMonth
-    let endDate = calendarData.keys.sorted { $0 < $1 }.last ?? Date().endOfMonth
-    let nomberOfRows: Int
-    
-    switch self.calendarMode {
-    case .short:
-      nomberOfRows = 1
-    case .long:
-      nomberOfRows = 6
-    }
+    let startDate = calendarSections.min { $0.month < $1.month }?.month.startOfMonth ?? Date().startOfMonth
+    let endDate = calendarSections.max { $0.month < $1.month }?.month.endOfMonth ?? Date().endOfMonth
     
     return ConfigurationParameters(
       startDate: startDate,
       endDate: endDate,
-      numberOfRows: nomberOfRows,
+      numberOfRows: 6,
       calendar: Calendar.current,
       firstDayOfWeek: .monday
     )
@@ -551,8 +523,8 @@ extension CalendarViewController: JTACMonthViewDataSource {
 extension CalendarViewController: JTACMonthViewDelegate {
   func calendar(_ calendar: JTAppleCalendar.JTACMonthView, cellForItemAt date: Date, cellState: JTAppleCalendar.CellState, indexPath: IndexPath) -> JTAppleCalendar.JTACDayCell {
     let cell = calendar.dequeueReusableJTAppleCell(withReuseIdentifier: CalendarCell.reuseID, for: indexPath) as! CalendarCell
-    
-    if let item = calendarData[date] {
+
+    if let item = calendarSections[safe: indexPath.section]?.items.first { $0.date == date } {
       cell.configure(
         cellState: cellState,
         isSelected: item.isSelected,
@@ -567,13 +539,14 @@ extension CalendarViewController: JTACMonthViewDelegate {
         plannedTasksCount: 0
       )
     }
+    
     return cell
   }
 
   func calendar(_ calendar: JTAppleCalendar.JTACMonthView, willDisplay cell: JTAppleCalendar.JTACDayCell, forItemAt date: Date, cellState: JTAppleCalendar.CellState, indexPath: IndexPath) {
     let cell = cell as! CalendarCell
     
-    if let item = calendarData[date] {
+    if let item = calendarSections[safe: indexPath.section]?.items.first { $0.date == date } {
       cell.configure(
         cellState: cellState,
         isSelected: item.isSelected,
@@ -592,12 +565,13 @@ extension CalendarViewController: JTACMonthViewDelegate {
   
   func calendar(_ calendar: JTACMonthView, didSelectDate date: Date, cell: JTACDayCell?, cellState: CellState, indexPath: IndexPath) {
     if cellState.dateBelongsTo == .thisMonth {
-      viewModel.selectedDate.accept(date)
+      viewModel.calendarSelectedDate.accept(date)
     }
   }
   
   func calendar(_ calendar: JTACMonthView, didDeselectDate date: Date, cell: JTACDayCell?, cellState: CellState, indexPath: IndexPath) {
-    if let cell = cell as? CalendarCell, let item = calendarData[date] {
+    if let cell = cell as? CalendarCell,
+       let item = calendarSections[safe: indexPath.section]?.items.first { $0.date == date } {
       cell.configure(
         cellState: cellState,
         isSelected: item.isSelected,
@@ -608,8 +582,7 @@ extension CalendarViewController: JTACMonthViewDelegate {
   
   func calendar(_ calendar: JTACMonthView, didScrollToDateSegmentWith visibleDates: DateSegmentInfo) {
     if let firstItemOfMonth = visibleDates.monthDates.first {
-      displayDate = firstItemOfMonth.date
-      viewModel.displayDate.accept(firstItemOfMonth.date)
+      viewModel.calendarVisibleMonth.accept(firstItemOfMonth.date)
     }
   }
 }
@@ -650,7 +623,7 @@ extension CalendarViewController: SwipeCollectionViewCellDelegate {
 
   func configure(action: SwipeAction, with descriptor: ActionDescriptor) {
     let buttonDisplayMode: ButtonDisplayMode = .imageOnly
-    let buttonStyle: ButtonStyle = .circular
+    let buttonStyle: SwipeButtonStyle = .circular
 
     action.title = descriptor.title(forDisplayMode: buttonDisplayMode)
     action.image = descriptor.image(forStyle: buttonStyle, displayMode: buttonDisplayMode, size: CGSize(width: 35, height: 35))

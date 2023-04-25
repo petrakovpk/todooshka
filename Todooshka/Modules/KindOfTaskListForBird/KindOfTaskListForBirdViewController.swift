@@ -15,7 +15,7 @@ class KindOfTaskListForBirdViewController: TDViewController {
   // MARK: - Properties
   // Rx
   let disposeBag = DisposeBag()
-  var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>!
+  var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindListSection>!
 
   // MVVM
   var viewModel: KindOfTaskListForBirdViewModel!
@@ -87,7 +87,7 @@ class KindOfTaskListForBirdViewController: TDViewController {
     view.addSubview(collectionView)
 
     // collectionView
-    collectionView.register(KindOfTaskListCell.self, forCellWithReuseIdentifier: KindOfTaskListCell.reuseID)
+    collectionView.register(KindListCell.self, forCellWithReuseIdentifier: KindListCell.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
     collectionView.anchor(
@@ -211,12 +211,12 @@ class KindOfTaskListForBirdViewController: TDViewController {
 
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(configureCell: { _, collectionView, indexPath, kindOfTask in
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindListSection>(configureCell: { _, collectionView, indexPath, item in
       guard let cell = collectionView.dequeueReusableCell(
-        withReuseIdentifier: KindOfTaskListCell.reuseID,
+        withReuseIdentifier: KindListCell.reuseID,
         for: indexPath
-      ) as? KindOfTaskListCell else { return UICollectionViewCell() }
-      cell.configure(with: kindOfTask, mode: .withRightImage )
+      ) as? KindListCell else { return UICollectionViewCell() }
+      cell.configure(with: item)
       return cell
     })
   }

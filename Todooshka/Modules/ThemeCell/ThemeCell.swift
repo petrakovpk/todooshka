@@ -42,7 +42,7 @@ class ThemeCell: UICollectionViewCell {
 
   // MARK: - UI Elements
   func configure(with theme: Theme) {
-    contentView.backgroundColor = Style.Cells.KindOfTask.UnselectedBackground
+    contentView.backgroundColor = Style.Cells.Kind.UnselectedBackground
     nameLabel.text = theme.name
   }
 }

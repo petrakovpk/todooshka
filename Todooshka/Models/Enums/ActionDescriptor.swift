@@ -19,7 +19,7 @@ enum ActionDescriptor {
     }
   }
   
-  func image(forStyle style: ButtonStyle, displayMode: ButtonDisplayMode, size: CGSize) -> UIImage? {
+  func image(forStyle style: SwipeButtonStyle, displayMode: ButtonDisplayMode, size: CGSize) -> UIImage? {
     guard displayMode != .titleOnly else { return nil }
     
 #if canImport(Combine)
@@ -44,7 +44,7 @@ enum ActionDescriptor {
     return nil
   }
   
-  func color(forStyle style: ButtonStyle) -> UIColor {
+  func color(forStyle style: SwipeButtonStyle) -> UIColor {
     switch self {
     case .idea: return UIColor(red: 1, green: 0.36, blue: 0, alpha: 1)
     case .trash: return UIColor(red: 1, green: 0, blue: 0.36, alpha: 1)

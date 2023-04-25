@@ -46,7 +46,7 @@ class TaskAPIService {
   
   func updateTask(task: Task) -> Observable<Task> {
     return Observable.create { [unowned self] observer in
-      let urlString = "\(APIConfig.baseURL)/api/v1.0/task/\(task.uuid)"
+      let urlString = "\(APIConfig.baseURL)/task/\(task.uuid)"
       
       do {
         let jsonData = try JSONEncoder().encode(task)

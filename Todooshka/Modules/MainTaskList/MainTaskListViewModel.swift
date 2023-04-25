@@ -15,40 +15,34 @@ class MainTaskListViewModel: Stepper {
   public let steps = PublishRelay<Step>()
   public let swipeDeleteButtonClickTrigger = PublishRelay<IndexPath>()
   public let swipeIdeaButtonClickTrigger = PublishRelay<IndexPath>()
-  
-  public var editingIndexPath: IndexPath?
-  
+
   private let services: AppServices
   private let disposeBag = DisposeBag()
-  private let appDelegate = UIApplication.shared.delegate as! AppDelegate
-  
-  private var managedContext: NSManagedObjectContext { appDelegate.persistentContainer.viewContext }
-
 
   struct Input {
+    // overdued
     let overduedButtonClickTrigger: Driver<Void>
+    // idea
     let ideaButtonClickTrigger: Driver<Void>
-  //  let calendarButtonClickTrigger: Driver<Void>
-    let selection: Driver<IndexPath>
+    // task list
+    let taskSelected: Driver<IndexPath>
+    // alert
     let alertDeleteButtonClick: Driver<Void>
     let alertCancelButtonClick: Driver<Void>
   }
 
   struct Output {
-//    // BUTTONS
-//    let openOverduedTasklist: Driver<Void>
-//    let openIdeaTaskList: Driver<Void>
-// //   let openCalendar: Driver<Void>
-//    // COLLECTION VIEW
-//    let dataSource: Driver<[TaskListSection]>
-//    let reloadItems: Driver<[IndexPath]>
-//    let hideCellWhenAlertClosed: Driver<IndexPath>
-//    // TASK
-//    let openTask: Driver<Void>
-//    let changeTaskStatusToIdea: Driver<Result<Void, Error>>
-//    let changeTaskStatusToDeleted: Driver<Result<Void, Error>>
-//    // ALERT
-//    let alertIsHidden: Driver<Bool>
+    // overdued
+    let overduredTaskListOpen: Driver<Void>
+    // idea
+    let ideaTaskListOpen: Driver<Void>
+    // task sections
+    let taskListSections: Driver<[TaskListSection]>
+    let taskListOpenTask: Driver<AppStep>
+    // alert
+    let deleteAlertIsHidden: Driver<Bool>
+    // save task
+    let saveTask: Driver<Void>
   }
 
   // MARK: - Init
@@ -57,11 +51,122 @@ class MainTaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
+    let kinds = services.currentUserService.currentUserKinds
+    let tasks = services.currentUserService.currentUserTasks
+    let swipeIdeaButtonClickTrigger = swipeIdeaButtonClickTrigger.asDriverOnErrorJustComplete()
+    let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
+    
+    let allDayItems = Driver
+      .combineLatest(kinds, tasks) { kinds, tasks -> [TaskListSectionItem] in
+        tasks.filter { task -> Bool in
+          task.status == .inProgress &&
+          task.planned.roundToTheBottomMinute == Date().endOfDay.roundToTheBottomMinute
+        }
+        .map { task -> TaskListSectionItem in
+          TaskListSectionItem(
+            task: task,
+            kind: kinds.first { $0.uuid == task.kindUUID },
+            mode: .blueLine
+          )
+        }
+    }
+    
+    let inDayItems = Driver
+      .combineLatest(kinds, tasks) { kinds, tasks -> [TaskListSectionItem] in
+        tasks.filter { task -> Bool in
+          task.status == .inProgress &&
+          task.planned >= Date().startOfDay &&
+          task.planned.roundToTheBottomMinute < Date().endOfDay.roundToTheBottomMinute
+        }
+        .map { task -> TaskListSectionItem in
+          TaskListSectionItem(
+            task: task,
+            kind: kinds.first { $0.uuid == task.kindUUID },
+            mode: .redLineAndTime
+          )
+        }
+    }
+    
+    let taskListSections = Driver
+      .combineLatest(allDayItems, inDayItems) { allDayItems, inDayItems -> [TaskListSection] in
+        [
+          TaskListSection(header: "В течении дня:", items: allDayItems),
+          TaskListSection(header: "Внимание, время:", items: inDayItems)
+        ]
+          .filter { !$0.items.isEmpty }
+      }
+    
+    let overduredTaskListOpen = input.overduedButtonClickTrigger
+      .map { _ in AppStep.overduedTaskListIsRequired }
+      .do { step in self.steps.accept(step) }
+      .mapToVoid()
+    
+    let ideaTaskListOpen = input.ideaButtonClickTrigger
+      .map { _ in AppStep.ideaTaskListIsRequired }
+      .do { step in self.steps.accept(step) }
+      .mapToVoid()
+    
+    let taskListOpenTask = input.taskSelected
+      .withLatestFrom(taskListSections) { indexPath, sections -> TaskListSectionItem in
+        sections[indexPath.section].items[indexPath.item]
+      }
+      .map { item -> AppStep in
+        AppStep.openTaskIsRequired(task: item.task, taskListMode: .main)
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+    
+    let swipeDeleteButtonItem = swipeDeleteButtonClickTrigger
+      .withLatestFrom(taskListSections) { indexPath, sections -> TaskListSectionItem in
+        sections[indexPath.section].items[indexPath.item]
+      }
+    
+    let swipeIdeaButtonItem = swipeIdeaButtonClickTrigger
+      .withLatestFrom(taskListSections) { indexPath, sections -> TaskListSectionItem in
+        sections[indexPath.section].items[indexPath.item]
+      }
+    
+    let showDeleteAlert = swipeDeleteButtonItem.mapToVoid()
+    
+    let hideDeleteAlert = Driver
+      .of(input.alertDeleteButtonClick, input.alertCancelButtonClick)
+      .merge()
+    
+    let deleteAlertIsHidden = Driver.of(
+      showDeleteAlert.map { _ in false },
+      hideDeleteAlert.map { _ in true }
+    )
+      .merge()
+    
+    let taskChangeStatusToDeleted = input.alertDeleteButtonClick
+      .withLatestFrom(swipeDeleteButtonItem)
+      .map { item -> Task in
+        var task = item.task
+        task.status = .deleted
+        return task
+      }
+    
+    let taskChangeStatusToIdea = swipeIdeaButtonItem
+      .map { item -> Task in
+        var task = item.task
+        task.status = .idea
+        return task
+      }
+    
+    let saveTask = Driver
+      .of(taskChangeStatusToDeleted, taskChangeStatusToIdea)
+      .merge()
+      .asObservable()
+      .flatMapLatest { task -> Observable<Void> in
+        return task.updateToStorage()
+      }
+      .asDriver(onErrorJustReturn: ())
+    
 //    // MARK: - INIT
 //    let tasks = services.dataService.tasks
 //    let kindsOfTask = services.dataService.kindsOfTask
-//    let swipeIdeaButtonClickTrigger = swipeIdeaButtonClickTrigger.asDriverOnErrorJustComplete()
-//    let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
+
 //
 //    // MARK: - NAVIGATE
 //    let openOverduedTaskList = input.overduedButtonClickTrigger
@@ -168,9 +273,17 @@ class MainTaskListViewModel: Stepper {
 //      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
                       
     return Output(
-//      openOverduedTasklist: openOverduedTaskList,
-//      openIdeaTaskList: openIdeaTaskList,
-//      dataSource: dataSource,
+      // overdued
+      overduredTaskListOpen: overduredTaskListOpen,
+      // idea
+      ideaTaskListOpen: ideaTaskListOpen,
+      // task list
+      taskListSections: taskListSections,
+      taskListOpenTask: taskListOpenTask,
+      // alert
+      deleteAlertIsHidden: deleteAlertIsHidden,
+      // save task
+      saveTask: saveTask
 //      reloadItems: reloadItems,
 //      hideCellWhenAlertClosed: hideCellWhenAlertClosed,
 //      openTask: openTask,

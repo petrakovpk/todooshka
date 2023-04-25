@@ -15,27 +15,27 @@ protocol HasMigrationService {
 }
 
 class MigrationService {
-  let appDelegate = UIApplication.shared.delegate as? AppDelegate
-  var managedContext: NSManagedObjectContext? {
-    self.appDelegate?.persistentContainer.viewContext
-  }
+//  let appDelegate = UIApplication.shared.delegate as? AppDelegate
+//  var managedContext: NSManagedObjectContext? {
+//    self.appDelegate?.persistentContainer.viewContext
+//  }
 
   // MARK: - Properties
-  var kinfOfTaskNameToUID: [String: String] = [
-    "Работа": KindOfTask.Standart.Business.UID,
-    "Семья": KindOfTask.Standart.Cook.UID,
-    "Дом": KindOfTask.Standart.Home.UID,
-    "Вторая половинка": KindOfTask.Standart.Love.UID,
-    "Домашнее животное": KindOfTask.Standart.Pet.UID,
-    "Спорт": KindOfTask.Standart.Sport.UID
-  ]
-
-  var statusMapping: [String: String] = [
-    "completed": "Completed",
-    "deleted": "Deleted",
-    "idea": "Idea",
-    "inProgress": "InProgress"
-  ]
+//  var kinfOfTaskNameToUID: [String: String] = [
+//    "Работа": Kind.Standart.Business.UUID,
+//    "Семья": Kind.Standart.Cook.UUID,
+//    "Дом": Kind.Standart.Home.UUID,
+//    "Вторая половинка": Kind.Standart.Love.UUID,
+//    "Домашнее животное": Kind.Standart.Pet.UUID,
+//    "Спорт": Kind.Standart.Sport.UUID
+//  ]
+//
+//  var statusMapping: [String: String] = [
+//    "completed": "Completed",
+//    "deleted": "Deleted",
+//    "idea": "Idea",
+//    "inProgress": "InProgress"
+//  ]
 
   // MARK: - Init
   init() {

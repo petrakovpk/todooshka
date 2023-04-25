@@ -8,6 +8,7 @@
 import Foundation
 
 enum TaskStatus: String {
+  case draft
   case inProgress
   case idea
   case completed
@@ -23,6 +24,8 @@ extension TaskStatus: Codable {
     let statusString = try container.decode(String.self)
     
     switch statusString {
+    case "draft":
+      self = .draft
     case "in_progress":
       self = .inProgress
     case "idea":

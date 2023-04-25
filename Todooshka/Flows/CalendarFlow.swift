@@ -35,14 +35,10 @@ class CalendarFlow: Flow {
     case .authIsRequired:
       return navigateToAuthFlow()
       
-//    case .createTaskIsRequired(let task, let isModal):
-//      return navigateToTask(task: task, isModal: isModal)
-//    case .openTaskIsRequired(let task):
-//      return navigateToTask(task: task, isModal: false)
-//    case .addPhotoIsRequired(let task):
-//      return navigateToImagePickerFlow(task: task)
-//    case .resultPreviewIsRequired(let task):
-//      return navigateToResultPreview(task: task)
+    case .dayTaskListIsRequired(let date):
+      return navigateToDayTaskList(date: date)
+    case .openTaskIsRequired(let task, let taskListMode):
+      return navigateToTask(task: task, taskListMode: taskListMode)
       
     case .shopIsRequired:
       return navigateToShop()
@@ -90,24 +86,20 @@ class CalendarFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToTask(task: Task, isModal: Bool) -> FlowContributors {
-    let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, task: task, isModal: isModal)
+  private func navigateToDayTaskList(date: Date) -> FlowContributors {
+    let viewController = TaskListViewController()
+    let viewModel = TaskListViewModel(services: services, taskListMode: .day(date: date))
     viewController.viewModel = viewModel
-    if isModal {
-      rootViewController.tabBarController?.tabBar.isHidden = false
-      rootViewController.present(viewController, animated: true)
-    } else {
-      rootViewController.tabBarController?.tabBar.isHidden = true
-      rootViewController.pushViewController(viewController, animated: true)
-    }
+    rootViewController.tabBarController?.tabBar.isHidden = true
+    rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
-
-  private func navigateToResultPreview(task: Task) -> FlowContributors {
-    let viewController = ResultPreviewViewController()
-    let viewModel = ResultPreviewViewModel(services: services, task: task)
+  
+  private func navigateToTask(task: Task, taskListMode: TaskListMode) -> FlowContributors {
+    let viewController = TaskViewController()
+    let viewModel = TaskViewModel(services: services, task: task, taskListMode: taskListMode)
     viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
@@ -134,26 +126,6 @@ class CalendarFlow: Flow {
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
-  
-  private func navigateToImagePickerFlow(task: Task) -> FlowContributors {
-    let pickerFlow = ImagePickerFlow(withServices: services)
-    
-    Flows.use(pickerFlow, when: .created) { [unowned self] root in
-      DispatchQueue.main.async {
-        root.modalPresentationStyle = .automatic
-        rootViewController.present(root, animated: true)
-      }
-    }
-    
-    return .one(
-      flowContributor: .contribute(
-        withNextPresentable: pickerFlow,
-        withNextStepper: OneStepper(
-          withSingleStep: AppStep.addPhotoIsRequired(task: task)
-        )
-      )
-    )
   }
   
   private func navigateBack() -> FlowContributors {

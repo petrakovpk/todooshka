@@ -32,7 +32,7 @@ class BirdViewController: TDViewController {
     let imageView = UIImageView()
     imageView.layer.cornerRadius = 15
     imageView.contentMode = .scaleAspectFit
-    imageView.image = KindOfTask.Standart.Business.icon.image.template
+    //imageView.image = Kind.Standart.Business.icon.image.template
     imageView.tintColor = Palette.SingleColors.SantasGray
     return imageView
   }()

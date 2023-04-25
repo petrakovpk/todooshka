@@ -8,24 +8,10 @@
 import RxDataSources
 
 struct CalendarSection: AnimatableSectionModelType {
-  var year: Int
-  var month: Int
+  var month: Date
   var items: [CalendarItem]
-  
-  var identity: String {
-    year.string + month.string
-  }
-  
-  var startDate: Date {
-    Date(year: year, month: month, day: 1)!
-  }
-  
-  var endDate: Date {
-    startDate.endOfMonth
-  }
 
-  init(year: Int, month: Int, items: [CalendarItem]) {
-    self.year = year
+  init(month: Date, items: [CalendarItem]) {
     self.month = month
     self.items = items
   }
@@ -35,3 +21,10 @@ struct CalendarSection: AnimatableSectionModelType {
     self.items = items
   }
 }
+
+extension CalendarSection: IdentifiableType {
+  var identity: String {
+    return month.string()
+  }
+}
+

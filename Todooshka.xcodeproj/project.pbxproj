@@ -17,8 +17,8 @@
 		6006F83827AA8EEA00E5AE9E /* BirdViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006F83727AA8EEA00E5AE9E /* BirdViewModel.swift */; };
 		600718FA27BE9121006F2FEF /* GameCurrencyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600718F927BE9121006F2FEF /* GameCurrencyViewController.swift */; };
 		600718FC27BE912E006F2FEF /* GameCurrencyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600718FB27BE912E006F2FEF /* GameCurrencyViewModel.swift */; };
-		6008CFB42684C5B1006DBF1F /* KindOfTaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6008CFB32684C5B1006DBF1F /* KindOfTaskListViewController.swift */; };
-		6008CFB62684C8AF006DBF1F /* KindOfTaskListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6008CFB52684C8AF006DBF1F /* KindOfTaskListViewModel.swift */; };
+		6008CFB42684C5B1006DBF1F /* KindListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6008CFB32684C5B1006DBF1F /* KindListViewController.swift */; };
+		6008CFB62684C8AF006DBF1F /* KindListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6008CFB52684C8AF006DBF1F /* KindListViewModel.swift */; };
 		600935662804227A0028C9AA /* SceneAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600935652804227A0028C9AA /* SceneAction.swift */; };
 		600935682804708E0028C9AA /* BirdStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600935672804708E0028C9AA /* BirdStyle.swift */; };
 		600DA58B27FED471004A4634 /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600DA58A27FED471004A4634 /* Icon.swift */; };
@@ -34,14 +34,13 @@
 		602EA053274E67F000525D6C /* TDTaskTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602EA051274E67EF00525D6C /* TDTaskTextField.swift */; };
 		602EA058274E93E600525D6C /* MainTaskListScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 602EA057274E93E500525D6C /* MainTaskListScene.sks */; };
 		602EA05A274E944A00525D6C /* MainTaskListScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602EA059274E944A00525D6C /* MainTaskListScene.swift */; };
-		603C5CF626F21A060056729B /* KindOfTaskColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603C5CF526F21A060056729B /* KindOfTaskColorCell.swift */; };
+		603C5CF626F21A060056729B /* KindColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603C5CF526F21A060056729B /* KindColorCell.swift */; };
 		604257672677AAA0005A518C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604257662677AAA0005A518C /* SettingsViewController.swift */; };
 		604257692677AAAD005A518C /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604257682677AAAD005A518C /* SettingsViewModel.swift */; };
 		6042576B2677AB0D005A518C /* SettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6042576A2677AB0D005A518C /* SettingsCell.swift */; };
 		6042576F2677BE1C005A518C /* SettingsSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6042576E2677BE1C005A518C /* SettingsSectionModel.swift */; };
 		604257712677EC24005A518C /* UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604257702677EC24005A518C /* UIAlertController.swift */; };
 		6045FEB9284D4B56002C9C24 /* MainTaskListSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6045FEB8284D4B56002C9C24 /* MainTaskListSceneModel.swift */; };
-		6045FEBB284D4B64002C9C24 /* KindOfTaskIForBirdSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6045FEBA284D4B64002C9C24 /* KindOfTaskIForBirdSection.swift */; };
 		6049C4EE27EC7960005A7150 /* EggType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6049C4ED27EC7960005A7150 /* EggType.swift */; };
 		604D1F7D27ADB80500E05D09 /* KindOfTaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604D1F7C27ADB80500E05D09 /* KindOfTaskStatus.swift */; };
 		604D1F7F27ADC13C00E05D09 /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604D1F7E27ADC13B00E05D09 /* Currency.swift */; };
@@ -49,37 +48,32 @@
 		6053F85A282025D30047C204 /* AlertBuyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F859282025D30047C204 /* AlertBuyView.swift */; };
 		6053F85C2820347F0047C204 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F85B2820347E0047C204 /* Palette.swift */; };
 		6053F85E28206C060047C204 /* AlertBuyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F85D28206C060047C204 /* AlertBuyButton.swift */; };
-		6053F86528213BED0047C204 /* KindOfTaskListDeletedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F86328213BED0047C204 /* KindOfTaskListDeletedViewModel.swift */; };
-		6053F86628213BED0047C204 /* KindOfTaskListDeletedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F86428213BED0047C204 /* KindOfTaskListDeletedViewController.swift */; };
-		6053F86A2822B1F30047C204 /* KindOfTaskForBirdItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F8692822B1F30047C204 /* KindOfTaskForBirdItem.swift */; };
 		6053F86D2822DAE90047C204 /* BirdState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6053F86C2822DAE90047C204 /* BirdState.swift */; };
-		60559CA626E76F5300CCBD5F /* KindOfTaskColorSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60559CA526E76F5300CCBD5F /* KindOfTaskColorSection.swift */; };
+		60559CA626E76F5300CCBD5F /* KindColorSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60559CA526E76F5300CCBD5F /* KindColorSection.swift */; };
 		6055D193267104E800316BB4 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6055D192267104E800316BB4 /* UIViewController.swift */; };
 		6055D19B2672021200316BB4 /* CalendarSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6055D19A2672021200316BB4 /* CalendarSection.swift */; };
 		6055D19D26720B9E00316BB4 /* DatabaseReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6055D19C26720B9E00316BB4 /* DatabaseReference.swift */; };
 		6055D1A026723C6700316BB4 /* OldCalendarReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6055D19F26723C6700316BB4 /* OldCalendarReusableView.swift */; };
 		6055D1A2267245D100316BB4 /* TaskListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6055D1A1267245D100316BB4 /* TaskListSection.swift */; };
-		605823A826C2F18F00F79155 /* TaskReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605823A726C2F18F00F79155 /* TaskReusableView.swift */; };
+		605823A826C2F18F00F79155 /* TaskListReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605823A726C2F18F00F79155 /* TaskListReusableView.swift */; };
 		6067D99F26B1EF3A00F0FB72 /* TabBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6067D99E26B1EF3A00F0FB72 /* TabBarViewModel.swift */; };
 		6067D9A126B1EF7700F0FB72 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6067D9A026B1EF7700F0FB72 /* TabBar.swift */; };
-		6069AE3E26E7AE830098B25E /* KindOfTaskIconSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069AE3D26E7AE830098B25E /* KindOfTaskIconSection.swift */; };
-		6069AE4126E7E5890098B25E /* KindOfTaskIconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069AE4026E7E5890098B25E /* KindOfTaskIconCell.swift */; };
+		6069AE3E26E7AE830098B25E /* KindIconSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069AE3D26E7AE830098B25E /* KindIconSection.swift */; };
+		6069AE4126E7E5890098B25E /* KindIconCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6069AE4026E7E5890098B25E /* KindIconCell.swift */; };
 		606B03AD26C4619200F332C5 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606B03AC26C4619200F332C5 /* Date.swift */; };
 		606FB75127F728A400782E17 /* TaskListCellMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FB75027F728A400782E17 /* TaskListCellMode.swift */; };
 		6075496227EDC5B400B96D20 /* CrackType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6075496127EDC5B400B96D20 /* CrackType.swift */; };
-		607BCB6026E62E48000A8248 /* KindOfTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607BCB5F26E62E48000A8248 /* KindOfTaskViewController.swift */; };
-		607BCB6226E62E59000A8248 /* KindOfTaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607BCB6126E62E59000A8248 /* KindOfTaskViewModel.swift */; };
+		607BCB6026E62E48000A8248 /* KindViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607BCB5F26E62E48000A8248 /* KindViewController.swift */; };
+		607BCB6226E62E59000A8248 /* KindViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607BCB6126E62E59000A8248 /* KindViewModel.swift */; };
 		60819A172705A49F0067AF05 /* TDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60819A162705A49F0067AF05 /* TDViewController.swift */; };
 		60855BDA2659061200079D75 /* TaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60855BD92659061100079D75 /* TaskViewController.swift */; };
-		60855BDC2659064200079D75 /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60855BDB2659064200079D75 /* TaskViewModel.swift */; };
-		608FD86B2688827200819D68 /* KindOfTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608FD86A2688827200819D68 /* KindOfTask.swift */; };
+		608FD86B2688827200819D68 /* Kind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608FD86A2688827200819D68 /* Kind.swift */; };
 		6090C96126F398CF00B0EC73 /* taskDone1.json in Resources */ = {isa = PBXBuildFile; fileRef = 6090C96026F398CF00B0EC73 /* taskDone1.json */; };
 		6090C96526F3A58F00B0EC73 /* taskDone2.json in Resources */ = {isa = PBXBuildFile; fileRef = 6090C96426F3A58F00B0EC73 /* taskDone2.json */; };
-		6095696B280EA0B100AF1C34 /* KindOfTaskForBirdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6095696A280EA0B100AF1C34 /* KindOfTaskForBirdCell.swift */; };
 		6096ABA82683E9E100285AA7 /* UITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6096ABA72683E9E100285AA7 /* UITextView.swift */; };
 		609ADE3B2750F3BF00E81FBF /* MainCalendarScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 609ADE3A2750F3BF00E81FBF /* MainCalendarScene.sks */; };
 		609ADE3D2750F40F00E81FBF /* MainCalendarScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609ADE3C2750F40F00E81FBF /* MainCalendarScene.swift */; };
-		60A2F49426EE4E5B00C328C1 /* KindOfTaskListReusableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A2F49326EE4E5B00C328C1 /* KindOfTaskListReusableCell.swift */; };
+		60A2F49426EE4E5B00C328C1 /* KindListReusableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A2F49326EE4E5B00C328C1 /* KindListReusableCell.swift */; };
 		60A2F49926EE55BF00C328C1 /* AlertFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A2F49826EE55BF00C328C1 /* AlertFlow.swift */; };
 		60ABAE1926C072A0000B07C0 /* task_animation.json in Resources */ = {isa = PBXBuildFile; fileRef = 60ABAE1726C072A0000B07C0 /* task_animation.json */; };
 		60AE65D727F5BFB100CFE7BB /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AE65D627F5BFB100CFE7BB /* Result.swift */; };
@@ -101,8 +95,8 @@
 		60B82FF12655078B00BF5F94 /* TabBarFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B82FF02655078B00BF5F94 /* TabBarFlow.swift */; };
 		60BCBA7F275D26E0007EF465 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60BCBA7E275D26E0007EF465 /* Assets.xcassets */; };
 		60C00DA026B2F6E600AAD0E1 /* TaskListFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C00D9F26B2F6E600AAD0E1 /* TaskListFlow.swift */; };
-		60C1522926BC3A9E00F10284 /* KindOfTaskListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1522826BC3A9D00F10284 /* KindOfTaskListCell.swift */; };
-		60C1AC552817D52100C63404 /* KindOfTaskListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1AC542817D52100C63404 /* KindOfTaskListSection.swift */; };
+		60C1522926BC3A9E00F10284 /* KindListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1522826BC3A9D00F10284 /* KindListCell.swift */; };
+		60C1AC552817D52100C63404 /* KindListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1AC542817D52100C63404 /* KindListSection.swift */; };
 		60D5662426CC1AB600D865DD /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662326CC1AB600D865DD /* OnboardingViewController.swift */; };
 		60D5662626CC201400D865DD /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662526CC201400D865DD /* OnboardingViewModel.swift */; };
 		60D5662826CC202B00D865DD /* OnboardingSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D5662726CC202B00D865DD /* OnboardingSectionModel.swift */; };
@@ -115,7 +109,7 @@
 		60E970472827025B00577484 /* SceneActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E970462827025B00577484 /* SceneActionType.swift */; };
 		60E9704928284B5F00577484 /* ActionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E9704828284B5F00577484 /* ActionService.swift */; };
 		60EB113F2656A32500992BF8 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB113E2656A32400992BF8 /* Task.swift */; };
-		60EB11412656A9B000992BF8 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB11402656A9B000992BF8 /* TaskCell.swift */; };
+		60EB11412656A9B000992BF8 /* TaskListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EB11402656A9B000992BF8 /* TaskListCell.swift */; };
 		60ED956E27B520C1005ACC33 /* TaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60ED956D27B520C1005ACC33 /* TaskStatus.swift */; };
 		60ED958727B54927005ACC33 /* Todooshka.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 60ED957627B52C4B005ACC33 /* Todooshka.xcdatamodeld */; };
 		60F0719C26DA77B70048AB71 /* TDAddTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F0719B26DA77B70048AB71 /* TDAddTaskButton.swift */; };
@@ -125,6 +119,17 @@
 		60FB0F4027F61A9500430A23 /* TaskListMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FB0F3F27F61A9500430A23 /* TaskListMode.swift */; };
 		60FFF65727A9A5D800290331 /* ShopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FFF65627A9A5D700290331 /* ShopViewController.swift */; };
 		60FFF65927A9A5E300290331 /* ShopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FFF65827A9A5E300290331 /* ShopViewModel.swift */; };
+		9D059B6729E9811900D0880E /* Task+Persistable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B6629E9811900D0880E /* Task+Persistable.swift */; };
+		9D059B6A29E9829E00D0880E /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B6929E9829E00D0880E /* StorageManager.swift */; };
+		9D059B6D29E985A600D0880E /* Task+StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B6C29E985A600D0880E /* Task+StorageManager.swift */; };
+		9D059B7029E98B7E00D0880E /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B6F29E98B7E00D0880E /* Errors.swift */; };
+		9D059B7229E98D6000D0880E /* Kind+Persistable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B7129E98D6000D0880E /* Kind+Persistable.swift */; };
+		9D059B7429E98DE400D0880E /* Kind+StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B7329E98DE400D0880E /* Kind+StorageManager.swift */; };
+		9D059B7629E98FFE00D0880E /* User+StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B7529E98FFE00D0880E /* User+StorageManager.swift */; };
+		9D059B7829E992F500D0880E /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B7729E992F500D0880E /* TaskViewModel.swift */; };
+		9D059B7A29E9A4BC00D0880E /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B7929E9A4BC00D0880E /* PlaceholderTextView.swift */; };
+		9D059B7D29EAA4E400D0880E /* Task+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B7C29EAA4E400D0880E /* Task+Codable.swift */; };
+		9D059B7F29EBF96000D0880E /* InitialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D059B7E29EBF96000D0880E /* InitialData.swift */; };
 		9D08CDD928FB3EE100689427 /* Sizes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D08CDD828FB3EE100689427 /* Sizes.swift */; };
 		9D08CDE328FD7CB200689427 /* TodooshkaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D08CDE228FD7CB200689427 /* TodooshkaTests.swift */; };
 		9D08CDEB2901763D00689427 /* Array+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D08CDEA2901763C00689427 /* Array+Rx.swift */; };
@@ -138,6 +143,7 @@
 		9D0A82252913AEE4006D777C /* TabBarItemSelected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0A82242913AEE4006D777C /* TabBarItemSelected.swift */; };
 		9D0A82272913E3C4006D777C /* CalendarSectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0A82262913E3C4006D777C /* CalendarSectionType.swift */; };
 		9D0A8229291657FA006D777C /* LoginViewControllerStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0A8228291657FA006D777C /* LoginViewControllerStyle.swift */; };
+		9D0CAABA29E935D40032A6F2 /* Reaction+APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0CAAB929E935D40032A6F2 /* Reaction+APIManager.swift */; };
 		9D17D43D2886F3E400D3E304 /* TDDiamondOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D43C2886F3E400D3E304 /* TDDiamondOfferView.swift */; };
 		9D17D43F28881ED400D3E304 /* DiamondPackageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */; };
 		9D17D44128899D4200D3E304 /* CalendarYearCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D17D44028899D4200D3E304 /* CalendarYearCell.swift */; };
@@ -148,6 +154,11 @@
 		9D3BBC4D28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BBC4B28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift */; };
 		9D3BBC4F28F4059000B352E3 /* CoreDataTaskTypeToKindOfTaskV1toV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BBC4E28F4059000B352E3 /* CoreDataTaskTypeToKindOfTaskV1toV2.swift */; };
 		9D3BEDB5298C3A74001464CD /* ImagePickerFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3BEDB4298C3A74001464CD /* ImagePickerFlow.swift */; };
+		9D3F5D4429F3C3DC00C44DFC /* KindOfTaskListForBirdViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3F5D4229F3C3DC00C44DFC /* KindOfTaskListForBirdViewModel.swift */; };
+		9D3F5D4529F3C3DC00C44DFC /* KindOfTaskListForBirdViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3F5D4329F3C3DC00C44DFC /* KindOfTaskListForBirdViewController.swift */; };
+		9D3F5D4A29F3C41400C44DFC /* KindOfTaskForBirdCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3F5D4729F3C41400C44DFC /* KindOfTaskForBirdCell.swift */; };
+		9D3F5D4B29F3C41400C44DFC /* KindOfTaskForBirdItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3F5D4829F3C41400C44DFC /* KindOfTaskForBirdItem.swift */; };
+		9D3F5D4C29F3C41400C44DFC /* KindOfTaskIForBirdSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3F5D4929F3C41400C44DFC /* KindOfTaskIForBirdSection.swift */; };
 		9D42BF49289A82DB008F624F /* SKEggNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF48289A82DB008F624F /* SKEggNode.swift */; };
 		9D42BF4C289AABEF008F624F /* SKBirdNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF4B289AABEF008F624F /* SKBirdNode.swift */; };
 		9D42BF4F28BF8466008F624F /* TabBarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42BF4E28BF8466008F624F /* TabBarService.swift */; };
@@ -194,15 +205,12 @@
 		9D42C05F28CF5427008F624F /* SetEmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C05E28CF5427008F624F /* SetEmailViewController.swift */; };
 		9D42C06128D04E45008F624F /* AuthTextFieldType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D42C06028D04E45008F624F /* AuthTextFieldType.swift */; };
 		9D44C0BC28DA271B0022148C /* RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0BB28DA271B0022148C /* RangeReplaceableCollection.swift */; };
-		9D44C0BF28DC66830022148C /* KindOfTaskListForBirdViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0BE28DC66830022148C /* KindOfTaskListForBirdViewController.swift */; };
-		9D44C0C128DC668E0022148C /* KindOfTaskListForBirdViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C028DC668E0022148C /* KindOfTaskListForBirdViewModel.swift */; };
-		9D44C0C328E06A300022148C /* KindOfTaskListCellMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C228E06A300022148C /* KindOfTaskListCellMode.swift */; };
-		9D44C0C528E06F010022148C /* KindOfTaskListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C428E06F010022148C /* KindOfTaskListItem.swift */; };
-		9D44C0C728E06F4A0022148C /* KindOfTaskIconItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C628E06F4A0022148C /* KindOfTaskIconItem.swift */; };
-		9D44C0CA28E06F770022148C /* KindOfTaskColorItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C928E06F770022148C /* KindOfTaskColorItem.swift */; };
-		9D44C0D128E0708E0022148C /* KindOfTaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0CE28E0708E0022148C /* KindOfTaskItem.swift */; };
-		9D44C0D228E0708E0022148C /* KindOfTaskSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0CF28E0708E0022148C /* KindOfTaskSection.swift */; };
-		9D44C0D328E0708E0022148C /* KindOfTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0D028E0708E0022148C /* KindOfTaskCell.swift */; };
+		9D44C0C528E06F010022148C /* KindListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C428E06F010022148C /* KindListItem.swift */; };
+		9D44C0C728E06F4A0022148C /* KindIconItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C628E06F4A0022148C /* KindIconItem.swift */; };
+		9D44C0CA28E06F770022148C /* KindColorItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0C928E06F770022148C /* KindColorItem.swift */; };
+		9D44C0D128E0708E0022148C /* KindSectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0CE28E0708E0022148C /* KindSectionItem.swift */; };
+		9D44C0D228E0708E0022148C /* KindSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0CF28E0708E0022148C /* KindSection.swift */; };
+		9D44C0D328E0708E0022148C /* KindCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D44C0D028E0708E0022148C /* KindCell.swift */; };
 		9D49767129D2FD21001273CF /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D49767029D2FD21001273CF /* AuthService.swift */; };
 		9D5EC0A629C32D1300280384 /* Onlineable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5EC0A529C32D1300280384 /* Onlineable.swift */; };
 		9D6193F628F42CE400C526A7 /* CoreDataTaskType+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6193F528F42CE400C526A7 /* CoreDataTaskType+CoreDataClass.swift */; };
@@ -211,7 +219,7 @@
 		9D6193FC28F6060F00C526A7 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6193FB28F6060F00C526A7 /* App.swift */; };
 		9D632F2529AE1FD600431F31 /* CalendarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D632F2429AE1FD600431F31 /* CalendarItem.swift */; };
 		9D632F2729AE3CAF00431F31 /* FIRStorageReference+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D632F2629AE3CAF00431F31 /* FIRStorageReference+Rx.swift */; };
-		9D632F2929B083DC00431F31 /* TDImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D632F2829B083DC00431F31 /* TDImage.swift */; };
+		9D632F2929B083DC00431F31 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D632F2829B083DC00431F31 /* Image.swift */; };
 		9D632F2C29B0C35B00431F31 /* ResultPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D632F2B29B0C35B00431F31 /* ResultPreviewViewController.swift */; };
 		9D632F2E29B0C36500431F31 /* ResultPreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D632F2D29B0C36500431F31 /* ResultPreviewViewModel.swift */; };
 		9D68011D2987CF9E0072CBB3 /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D68011C2987CF9E0072CBB3 /* ImagePickerController.swift */; };
@@ -219,12 +227,14 @@
 		9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */; };
 		9D6B6B12284FEC46000ABAE7 /* MainCalendarSceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D6B6B11284FEC46000ABAE7 /* MainCalendarSceneModel.swift */; };
 		9D73C581284E7D20000ED5D9 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */; };
-		9D86591E29D6E91F001AAEF8 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86591D29D6E91F001AAEF8 /* APIManager.swift */; };
 		9D86592029DD80DB001AAEF8 /* TaskAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86591F29DD80DB001AAEF8 /* TaskAPIService.swift */; };
-		9D86592329DD82C3001AAEF8 /* UserAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592229DD82C3001AAEF8 /* UserAPIService.swift */; };
+		9D86592329DD82C3001AAEF8 /* CurrentUserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592229DD82C3001AAEF8 /* CurrentUserService.swift */; };
 		9D86592529DD82CD001AAEF8 /* KindOfTaskAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592429DD82CD001AAEF8 /* KindOfTaskAPIService.swift */; };
 		9D86592729DD8343001AAEF8 /* APIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592629DD8343001AAEF8 /* APIConfig.swift */; };
 		9D86592929DDA634001AAEF8 /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592829DDA634001AAEF8 /* Author.swift */; };
+		9D86592D29E0528B001AAEF8 /* ReactionAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592C29E0528B001AAEF8 /* ReactionAPIService.swift */; };
+		9D86592F29E18A32001AAEF8 /* ReactionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86592E29E18A32001AAEF8 /* ReactionType.swift */; };
+		9D86593129E18FB4001AAEF8 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D86593029E18FB4001AAEF8 /* APIManager.swift */; };
 		9D9733C629165A0900733C45 /* KindOfTaskListItemType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733C529165A0900733C45 /* KindOfTaskListItemType.swift */; };
 		9D9733D02919165A00733C45 /* ThemeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733CF2919165A00733C45 /* ThemeHeader.swift */; };
 		9D9733D329192F8E00733C45 /* ThemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733D229192F8E00733C45 /* ThemeViewController.swift */; };
@@ -245,7 +255,7 @@
 		9D9733FC2926203800733C45 /* Feather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733FB2926203800733C45 /* Feather.swift */; };
 		9D9733FE292620DE00733C45 /* ActionDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733FD292620DE00733C45 /* ActionDescriptor.swift */; };
 		9D9734002926210400733C45 /* ButtonDisplayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9733FF2926210400733C45 /* ButtonDisplayMode.swift */; };
-		9D9734022926210D00733C45 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734012926210D00733C45 /* ButtonStyle.swift */; };
+		9D9734022926210D00733C45 /* SwipeButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734012926210D00733C45 /* SwipeButtonStyle.swift */; };
 		9D9734052927B4D100733C45 /* FunViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734042927B4D100733C45 /* FunViewController.swift */; };
 		9D9734072927B4D900733C45 /* FunViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734062927B4D900733C45 /* FunViewModel.swift */; };
 		9D9734092928BF1200733C45 /* FunFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D9734082928BF1200733C45 /* FunFlow.swift */; };
@@ -263,8 +273,13 @@
 		9DB13113296ED4D3007A0D37 /* TaskWithImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB13112296ED4D3007A0D37 /* TaskWithImageCell.swift */; };
 		9DB13115296ED4DF007A0D37 /* TaskWithImageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB13114296ED4DF007A0D37 /* TaskWithImageHeader.swift */; };
 		9DB13119296EF952007A0D37 /* ProfileFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB13118296EF952007A0D37 /* ProfileFlow.swift */; };
-		9DB1311B296EFE9A007A0D37 /* TaskSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB1311A296EFE9A007A0D37 /* TaskSection.swift */; };
-		9DB1311D296EFEF4007A0D37 /* TaskSectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB1311C296EFEF4007A0D37 /* TaskSectionItem.swift */; };
+		9DC0C03129E2608B0082CF1B /* Author+APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0C03029E2608B0082CF1B /* Author+APIManager.swift */; };
+		9DC0C03429E745190082CF1B /* skeleton.json in Resources */ = {isa = PBXBuildFile; fileRef = 9DC0C03329E745190082CF1B /* skeleton.json */; };
+		9DC0C03629E7482F0082CF1B /* skeleton2.json in Resources */ = {isa = PBXBuildFile; fileRef = 9DC0C03529E7482F0082CF1B /* skeleton2.json */; };
+		9DC0C03829E7F9D40082CF1B /* FunItemType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0C03729E7F9D40082CF1B /* FunItemType.swift */; };
+		9DC0C03A29E7FA3D0082CF1B /* FunItemNoMoreTasksCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0C03929E7FA3D0082CF1B /* FunItemNoMoreTasksCell.swift */; };
+		9DC0F1D829E1953700ABE2B4 /* Task+APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F1D729E1953700ABE2B4 /* Task+APIManager.swift */; };
+		9DC0F1DC29E25C6C00ABE2B4 /* User+APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F1DB29E25C6C00ABE2B4 /* User+APIManager.swift */; };
 		9DC1AB76299BC0FD00C0D215 /* Firebasable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC1AB75299BC0FD00C0D215 /* Firebasable.swift */; };
 		9DC65D3C28D320B600221ED2 /* SyncDataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */; };
 		9DC65D3E28D320CA00221ED2 /* SyncDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */; };
@@ -284,8 +299,8 @@
 		9DCDECD42983C62A00FA6AA0 /* MainTaskListFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCDECD32983C62A00FA6AA0 /* MainTaskListFlow.swift */; };
 		9DE2EA5829B5D3990029D026 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5729B5D3990029D026 /* Reaction.swift */; };
 		9DE2EA5A29B621D60029D026 /* FunSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5929B621D60029D026 /* FunSection.swift */; };
-		9DE2EA5C29B622270029D026 /* FunItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5B29B622270029D026 /* FunItem.swift */; };
-		9DE2EA5E29B623B80029D026 /* FunSectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5D29B623B80029D026 /* FunSectionCell.swift */; };
+		9DE2EA5C29B622270029D026 /* FunItemTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5B29B622270029D026 /* FunItemTask.swift */; };
+		9DE2EA5E29B623B80029D026 /* FunItemTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5D29B623B80029D026 /* FunItemTaskCell.swift */; };
 		9DE2EA6029B9BA7E0029D026 /* FIRCollectionReference+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA5F29B9BA7E0029D026 /* FIRCollectionReference+Rx.swift */; };
 		9DE2EA6329B9BA990029D026 /* FIRDocumentReference+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA6229B9BA990029D026 /* FIRDocumentReference+Rx.swift */; };
 		9DE2EA6629B9BACB0029D026 /* FIRFirestore+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE2EA6529B9BACB0029D026 /* FIRFirestore+Rx.swift */; };
@@ -329,8 +344,8 @@
 		6006F83727AA8EEA00E5AE9E /* BirdViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdViewModel.swift; sourceTree = "<group>"; };
 		600718F927BE9121006F2FEF /* GameCurrencyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCurrencyViewController.swift; sourceTree = "<group>"; };
 		600718FB27BE912E006F2FEF /* GameCurrencyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCurrencyViewModel.swift; sourceTree = "<group>"; };
-		6008CFB32684C5B1006DBF1F /* KindOfTaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListViewController.swift; sourceTree = "<group>"; };
-		6008CFB52684C8AF006DBF1F /* KindOfTaskListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListViewModel.swift; sourceTree = "<group>"; };
+		6008CFB32684C5B1006DBF1F /* KindListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindListViewController.swift; sourceTree = "<group>"; };
+		6008CFB52684C8AF006DBF1F /* KindListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindListViewModel.swift; sourceTree = "<group>"; };
 		600935652804227A0028C9AA /* SceneAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneAction.swift; sourceTree = "<group>"; };
 		600935672804708E0028C9AA /* BirdStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdStyle.swift; sourceTree = "<group>"; };
 		600DA58A27FED471004A4634 /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
@@ -346,14 +361,13 @@
 		602EA051274E67EF00525D6C /* TDTaskTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TDTaskTextField.swift; path = Todooshka/TodooshkaUI/TDTaskTextField.swift; sourceTree = SOURCE_ROOT; };
 		602EA057274E93E500525D6C /* MainTaskListScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainTaskListScene.sks; sourceTree = "<group>"; };
 		602EA059274E944A00525D6C /* MainTaskListScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTaskListScene.swift; sourceTree = "<group>"; };
-		603C5CF526F21A060056729B /* KindOfTaskColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskColorCell.swift; sourceTree = "<group>"; };
+		603C5CF526F21A060056729B /* KindColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindColorCell.swift; sourceTree = "<group>"; };
 		604257662677AAA0005A518C /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		604257682677AAAD005A518C /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		6042576A2677AB0D005A518C /* SettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCell.swift; sourceTree = "<group>"; };
 		6042576E2677BE1C005A518C /* SettingsSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSectionModel.swift; sourceTree = "<group>"; };
 		604257702677EC24005A518C /* UIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIAlertController.swift; sourceTree = "<group>"; };
 		6045FEB8284D4B56002C9C24 /* MainTaskListSceneModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTaskListSceneModel.swift; sourceTree = "<group>"; };
-		6045FEBA284D4B64002C9C24 /* KindOfTaskIForBirdSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskIForBirdSection.swift; sourceTree = "<group>"; };
 		6049C4ED27EC7960005A7150 /* EggType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EggType.swift; sourceTree = "<group>"; };
 		604D1F7C27ADB80500E05D09 /* KindOfTaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskStatus.swift; sourceTree = "<group>"; };
 		604D1F7E27ADC13B00E05D09 /* Currency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Currency.swift; sourceTree = "<group>"; };
@@ -361,37 +375,32 @@
 		6053F859282025D30047C204 /* AlertBuyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertBuyView.swift; sourceTree = "<group>"; };
 		6053F85B2820347E0047C204 /* Palette.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
 		6053F85D28206C060047C204 /* AlertBuyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertBuyButton.swift; sourceTree = "<group>"; };
-		6053F86328213BED0047C204 /* KindOfTaskListDeletedViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskListDeletedViewModel.swift; sourceTree = "<group>"; };
-		6053F86428213BED0047C204 /* KindOfTaskListDeletedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskListDeletedViewController.swift; sourceTree = "<group>"; };
-		6053F8692822B1F30047C204 /* KindOfTaskForBirdItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskForBirdItem.swift; sourceTree = "<group>"; };
 		6053F86C2822DAE90047C204 /* BirdState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdState.swift; sourceTree = "<group>"; };
-		60559CA526E76F5300CCBD5F /* KindOfTaskColorSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskColorSection.swift; sourceTree = "<group>"; };
+		60559CA526E76F5300CCBD5F /* KindColorSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindColorSection.swift; sourceTree = "<group>"; };
 		6055D192267104E800316BB4 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		6055D19A2672021200316BB4 /* CalendarSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSection.swift; sourceTree = "<group>"; };
 		6055D19C26720B9E00316BB4 /* DatabaseReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseReference.swift; sourceTree = "<group>"; };
 		6055D19F26723C6700316BB4 /* OldCalendarReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OldCalendarReusableView.swift; sourceTree = "<group>"; };
 		6055D1A1267245D100316BB4 /* TaskListSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListSection.swift; sourceTree = "<group>"; };
-		605823A726C2F18F00F79155 /* TaskReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskReusableView.swift; sourceTree = "<group>"; };
+		605823A726C2F18F00F79155 /* TaskListReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListReusableView.swift; sourceTree = "<group>"; };
 		6067D99E26B1EF3A00F0FB72 /* TabBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewModel.swift; sourceTree = "<group>"; };
 		6067D9A026B1EF7700F0FB72 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
-		6069AE3D26E7AE830098B25E /* KindOfTaskIconSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskIconSection.swift; sourceTree = "<group>"; };
-		6069AE4026E7E5890098B25E /* KindOfTaskIconCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskIconCell.swift; sourceTree = "<group>"; };
+		6069AE3D26E7AE830098B25E /* KindIconSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindIconSection.swift; sourceTree = "<group>"; };
+		6069AE4026E7E5890098B25E /* KindIconCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindIconCell.swift; sourceTree = "<group>"; };
 		606B03AC26C4619200F332C5 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		606FB75027F728A400782E17 /* TaskListCellMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListCellMode.swift; sourceTree = "<group>"; };
 		6075496127EDC5B400B96D20 /* CrackType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrackType.swift; sourceTree = "<group>"; };
-		607BCB5F26E62E48000A8248 /* KindOfTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskViewController.swift; sourceTree = "<group>"; };
-		607BCB6126E62E59000A8248 /* KindOfTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskViewModel.swift; sourceTree = "<group>"; };
+		607BCB5F26E62E48000A8248 /* KindViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindViewController.swift; sourceTree = "<group>"; };
+		607BCB6126E62E59000A8248 /* KindViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindViewModel.swift; sourceTree = "<group>"; };
 		60819A162705A49F0067AF05 /* TDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDViewController.swift; sourceTree = "<group>"; };
 		60855BD92659061100079D75 /* TaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewController.swift; sourceTree = "<group>"; };
-		60855BDB2659064200079D75 /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
-		608FD86A2688827200819D68 /* KindOfTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTask.swift; sourceTree = "<group>"; };
+		608FD86A2688827200819D68 /* Kind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kind.swift; sourceTree = "<group>"; };
 		6090C96026F398CF00B0EC73 /* taskDone1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taskDone1.json; sourceTree = "<group>"; };
 		6090C96426F3A58F00B0EC73 /* taskDone2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taskDone2.json; sourceTree = "<group>"; };
-		6095696A280EA0B100AF1C34 /* KindOfTaskForBirdCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskForBirdCell.swift; sourceTree = "<group>"; };
 		6096ABA72683E9E100285AA7 /* UITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextView.swift; sourceTree = "<group>"; };
 		609ADE3A2750F3BF00E81FBF /* MainCalendarScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainCalendarScene.sks; sourceTree = "<group>"; };
 		609ADE3C2750F40F00E81FBF /* MainCalendarScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCalendarScene.swift; sourceTree = "<group>"; };
-		60A2F49326EE4E5B00C328C1 /* KindOfTaskListReusableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListReusableCell.swift; sourceTree = "<group>"; };
+		60A2F49326EE4E5B00C328C1 /* KindListReusableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindListReusableCell.swift; sourceTree = "<group>"; };
 		60A2F49826EE55BF00C328C1 /* AlertFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertFlow.swift; sourceTree = "<group>"; };
 		60ABAE1726C072A0000B07C0 /* task_animation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = task_animation.json; sourceTree = "<group>"; };
 		60AE65D627F5BFB100CFE7BB /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
@@ -414,8 +423,8 @@
 		60B82FF02655078B00BF5F94 /* TabBarFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarFlow.swift; sourceTree = "<group>"; };
 		60BCBA7E275D26E0007EF465 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		60C00D9F26B2F6E600AAD0E1 /* TaskListFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListFlow.swift; sourceTree = "<group>"; };
-		60C1522826BC3A9D00F10284 /* KindOfTaskListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListCell.swift; sourceTree = "<group>"; };
-		60C1AC542817D52100C63404 /* KindOfTaskListSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskListSection.swift; sourceTree = "<group>"; };
+		60C1522826BC3A9D00F10284 /* KindListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindListCell.swift; sourceTree = "<group>"; };
+		60C1AC542817D52100C63404 /* KindListSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindListSection.swift; sourceTree = "<group>"; };
 		60D5662326CC1AB600D865DD /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		60D5662526CC201400D865DD /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		60D5662726CC202B00D865DD /* OnboardingSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSectionModel.swift; sourceTree = "<group>"; };
@@ -429,7 +438,7 @@
 		60E9704828284B5F00577484 /* ActionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionService.swift; sourceTree = "<group>"; };
 		60EB113C2656850C00992BF8 /* Todooshka.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Todooshka.entitlements; sourceTree = "<group>"; };
 		60EB113E2656A32400992BF8 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
-		60EB11402656A9B000992BF8 /* TaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
+		60EB11402656A9B000992BF8 /* TaskListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListCell.swift; sourceTree = "<group>"; };
 		60ED956D27B520C1005ACC33 /* TaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStatus.swift; sourceTree = "<group>"; };
 		60ED957727B52C4B005ACC33 /* Todooshka v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Todooshka v2.xcdatamodel"; sourceTree = "<group>"; };
 		60ED957827B52C4B005ACC33 /* Todooshka.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Todooshka.xcdatamodel; sourceTree = "<group>"; };
@@ -441,6 +450,17 @@
 		60FFF65627A9A5D700290331 /* ShopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewController.swift; sourceTree = "<group>"; };
 		60FFF65827A9A5E300290331 /* ShopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewModel.swift; sourceTree = "<group>"; };
 		6DFC42E852EB88090E2C5F3F /* Pods_DragoDo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DragoDo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D059B6629E9811900D0880E /* Task+Persistable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+Persistable.swift"; sourceTree = "<group>"; };
+		9D059B6929E9829E00D0880E /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		9D059B6C29E985A600D0880E /* Task+StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+StorageManager.swift"; sourceTree = "<group>"; };
+		9D059B6F29E98B7E00D0880E /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		9D059B7129E98D6000D0880E /* Kind+Persistable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Kind+Persistable.swift"; sourceTree = "<group>"; };
+		9D059B7329E98DE400D0880E /* Kind+StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Kind+StorageManager.swift"; sourceTree = "<group>"; };
+		9D059B7529E98FFE00D0880E /* User+StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+StorageManager.swift"; sourceTree = "<group>"; };
+		9D059B7729E992F500D0880E /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
+		9D059B7929E9A4BC00D0880E /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
+		9D059B7C29EAA4E400D0880E /* Task+Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+Codable.swift"; sourceTree = "<group>"; };
+		9D059B7E29EBF96000D0880E /* InitialData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialData.swift; sourceTree = "<group>"; };
 		9D08CDD828FB3EE100689427 /* Sizes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sizes.swift; sourceTree = "<group>"; };
 		9D08CDE228FD7CB200689427 /* TodooshkaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodooshkaTests.swift; sourceTree = "<group>"; };
 		9D08CDE928FD7CFC00689427 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
@@ -456,6 +476,7 @@
 		9D0A82242913AEE4006D777C /* TabBarItemSelected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarItemSelected.swift; sourceTree = "<group>"; };
 		9D0A82262913E3C4006D777C /* CalendarSectionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSectionType.swift; sourceTree = "<group>"; };
 		9D0A8228291657FA006D777C /* LoginViewControllerStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewControllerStyle.swift; sourceTree = "<group>"; };
+		9D0CAAB929E935D40032A6F2 /* Reaction+APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Reaction+APIManager.swift"; sourceTree = "<group>"; };
 		9D17D43C2886F3E400D3E304 /* TDDiamondOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDDiamondOfferView.swift; sourceTree = "<group>"; };
 		9D17D43E28881ED400D3E304 /* DiamondPackageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiamondPackageType.swift; sourceTree = "<group>"; };
 		9D17D44028899D4200D3E304 /* CalendarYearCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarYearCell.swift; sourceTree = "<group>"; };
@@ -466,6 +487,11 @@
 		9D3BBC4B28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataTask+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		9D3BBC4E28F4059000B352E3 /* CoreDataTaskTypeToKindOfTaskV1toV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTaskTypeToKindOfTaskV1toV2.swift; sourceTree = "<group>"; };
 		9D3BEDB4298C3A74001464CD /* ImagePickerFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerFlow.swift; sourceTree = "<group>"; };
+		9D3F5D4229F3C3DC00C44DFC /* KindOfTaskListForBirdViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskListForBirdViewModel.swift; sourceTree = "<group>"; };
+		9D3F5D4329F3C3DC00C44DFC /* KindOfTaskListForBirdViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskListForBirdViewController.swift; sourceTree = "<group>"; };
+		9D3F5D4729F3C41400C44DFC /* KindOfTaskForBirdCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskForBirdCell.swift; sourceTree = "<group>"; };
+		9D3F5D4829F3C41400C44DFC /* KindOfTaskForBirdItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskForBirdItem.swift; sourceTree = "<group>"; };
+		9D3F5D4929F3C41400C44DFC /* KindOfTaskIForBirdSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskIForBirdSection.swift; sourceTree = "<group>"; };
 		9D42BF48289A82DB008F624F /* SKEggNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKEggNode.swift; sourceTree = "<group>"; };
 		9D42BF4B289AABEF008F624F /* SKBirdNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKBirdNode.swift; sourceTree = "<group>"; };
 		9D42BF4E28BF8466008F624F /* TabBarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarService.swift; sourceTree = "<group>"; };
@@ -511,15 +537,12 @@
 		9D42C05E28CF5427008F624F /* SetEmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetEmailViewController.swift; sourceTree = "<group>"; };
 		9D42C06028D04E45008F624F /* AuthTextFieldType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTextFieldType.swift; sourceTree = "<group>"; };
 		9D44C0BB28DA271B0022148C /* RangeReplaceableCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RangeReplaceableCollection.swift; sourceTree = "<group>"; };
-		9D44C0BE28DC66830022148C /* KindOfTaskListForBirdViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListForBirdViewController.swift; sourceTree = "<group>"; };
-		9D44C0C028DC668E0022148C /* KindOfTaskListForBirdViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListForBirdViewModel.swift; sourceTree = "<group>"; };
-		9D44C0C228E06A300022148C /* KindOfTaskListCellMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListCellMode.swift; sourceTree = "<group>"; };
-		9D44C0C428E06F010022148C /* KindOfTaskListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListItem.swift; sourceTree = "<group>"; };
-		9D44C0C628E06F4A0022148C /* KindOfTaskIconItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskIconItem.swift; sourceTree = "<group>"; };
-		9D44C0C928E06F770022148C /* KindOfTaskColorItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskColorItem.swift; sourceTree = "<group>"; };
-		9D44C0CE28E0708E0022148C /* KindOfTaskItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskItem.swift; sourceTree = "<group>"; };
-		9D44C0CF28E0708E0022148C /* KindOfTaskSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskSection.swift; sourceTree = "<group>"; };
-		9D44C0D028E0708E0022148C /* KindOfTaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindOfTaskCell.swift; sourceTree = "<group>"; };
+		9D44C0C428E06F010022148C /* KindListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindListItem.swift; sourceTree = "<group>"; };
+		9D44C0C628E06F4A0022148C /* KindIconItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindIconItem.swift; sourceTree = "<group>"; };
+		9D44C0C928E06F770022148C /* KindColorItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindColorItem.swift; sourceTree = "<group>"; };
+		9D44C0CE28E0708E0022148C /* KindSectionItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindSectionItem.swift; sourceTree = "<group>"; };
+		9D44C0CF28E0708E0022148C /* KindSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindSection.swift; sourceTree = "<group>"; };
+		9D44C0D028E0708E0022148C /* KindCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KindCell.swift; sourceTree = "<group>"; };
 		9D49767029D2FD21001273CF /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		9D5EC0A529C32D1300280384 /* Onlineable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onlineable.swift; sourceTree = "<group>"; };
 		9D6193F528F42CE400C526A7 /* CoreDataTaskType+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataTaskType+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -528,7 +551,7 @@
 		9D6193FB28F6060F00C526A7 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		9D632F2429AE1FD600431F31 /* CalendarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarItem.swift; sourceTree = "<group>"; };
 		9D632F2629AE3CAF00431F31 /* FIRStorageReference+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FIRStorageReference+Rx.swift"; sourceTree = "<group>"; };
-		9D632F2829B083DC00431F31 /* TDImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDImage.swift; sourceTree = "<group>"; };
+		9D632F2829B083DC00431F31 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		9D632F2B29B0C35B00431F31 /* ResultPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultPreviewViewController.swift; sourceTree = "<group>"; };
 		9D632F2D29B0C36500431F31 /* ResultPreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultPreviewViewModel.swift; sourceTree = "<group>"; };
 		9D68011C2987CF9E0072CBB3 /* ImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
@@ -536,13 +559,15 @@
 		9D6B6B0F284FEA2C000ABAE7 /* Typealias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typealias.swift; sourceTree = "<group>"; };
 		9D6B6B11284FEC46000ABAE7 /* MainCalendarSceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCalendarSceneModel.swift; sourceTree = "<group>"; };
 		9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
-		9D86591D29D6E91F001AAEF8 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		9D86591F29DD80DB001AAEF8 /* TaskAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAPIService.swift; sourceTree = "<group>"; };
-		9D86592229DD82C3001AAEF8 /* UserAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAPIService.swift; sourceTree = "<group>"; };
+		9D86592229DD82C3001AAEF8 /* CurrentUserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserService.swift; sourceTree = "<group>"; };
 		9D86592429DD82CD001AAEF8 /* KindOfTaskAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskAPIService.swift; sourceTree = "<group>"; };
 		9D86592629DD8343001AAEF8 /* APIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfig.swift; sourceTree = "<group>"; };
 		9D86592829DDA634001AAEF8 /* Author.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
 		9D86592A29DEDEAB001AAEF8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		9D86592C29E0528B001AAEF8 /* ReactionAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionAPIService.swift; sourceTree = "<group>"; };
+		9D86592E29E18A32001AAEF8 /* ReactionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionType.swift; sourceTree = "<group>"; };
+		9D86593029E18FB4001AAEF8 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = APIManager.swift; path = ../Services/ApiServices/APIManager.swift; sourceTree = "<group>"; };
 		9D9733C529165A0900733C45 /* KindOfTaskListItemType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindOfTaskListItemType.swift; sourceTree = "<group>"; };
 		9D9733CE2916DE2700733C45 /* TodooshkaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TodooshkaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D9733CF2919165A00733C45 /* ThemeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeHeader.swift; sourceTree = "<group>"; };
@@ -564,7 +589,7 @@
 		9D9733FB2926203800733C45 /* Feather.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feather.swift; sourceTree = "<group>"; };
 		9D9733FD292620DE00733C45 /* ActionDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDescriptor.swift; sourceTree = "<group>"; };
 		9D9733FF2926210400733C45 /* ButtonDisplayMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonDisplayMode.swift; sourceTree = "<group>"; };
-		9D9734012926210D00733C45 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
+		9D9734012926210D00733C45 /* SwipeButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeButtonStyle.swift; sourceTree = "<group>"; };
 		9D9734042927B4D100733C45 /* FunViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunViewController.swift; sourceTree = "<group>"; };
 		9D9734062927B4D900733C45 /* FunViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunViewModel.swift; sourceTree = "<group>"; };
 		9D9734082928BF1200733C45 /* FunFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunFlow.swift; sourceTree = "<group>"; };
@@ -582,8 +607,13 @@
 		9DB13112296ED4D3007A0D37 /* TaskWithImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskWithImageCell.swift; sourceTree = "<group>"; };
 		9DB13114296ED4DF007A0D37 /* TaskWithImageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskWithImageHeader.swift; sourceTree = "<group>"; };
 		9DB13118296EF952007A0D37 /* ProfileFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFlow.swift; sourceTree = "<group>"; };
-		9DB1311A296EFE9A007A0D37 /* TaskSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSection.swift; sourceTree = "<group>"; };
-		9DB1311C296EFEF4007A0D37 /* TaskSectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSectionItem.swift; sourceTree = "<group>"; };
+		9DC0C03029E2608B0082CF1B /* Author+APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Author+APIManager.swift"; sourceTree = "<group>"; };
+		9DC0C03329E745190082CF1B /* skeleton.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = skeleton.json; sourceTree = "<group>"; };
+		9DC0C03529E7482F0082CF1B /* skeleton2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = skeleton2.json; sourceTree = "<group>"; };
+		9DC0C03729E7F9D40082CF1B /* FunItemType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunItemType.swift; sourceTree = "<group>"; };
+		9DC0C03929E7FA3D0082CF1B /* FunItemNoMoreTasksCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunItemNoMoreTasksCell.swift; sourceTree = "<group>"; };
+		9DC0F1D729E1953700ABE2B4 /* Task+APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+APIManager.swift"; sourceTree = "<group>"; };
+		9DC0F1DB29E25C6C00ABE2B4 /* User+APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+APIManager.swift"; sourceTree = "<group>"; };
 		9DC1AB75299BC0FD00C0D215 /* Firebasable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebasable.swift; sourceTree = "<group>"; };
 		9DC65D3B28D320B600221ED2 /* SyncDataViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewController.swift; sourceTree = "<group>"; };
 		9DC65D3D28D320CA00221ED2 /* SyncDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncDataViewModel.swift; sourceTree = "<group>"; };
@@ -602,8 +632,8 @@
 		9DCDECD32983C62A00FA6AA0 /* MainTaskListFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTaskListFlow.swift; sourceTree = "<group>"; };
 		9DE2EA5729B5D3990029D026 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		9DE2EA5929B621D60029D026 /* FunSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunSection.swift; sourceTree = "<group>"; };
-		9DE2EA5B29B622270029D026 /* FunItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunItem.swift; sourceTree = "<group>"; };
-		9DE2EA5D29B623B80029D026 /* FunSectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunSectionCell.swift; sourceTree = "<group>"; };
+		9DE2EA5B29B622270029D026 /* FunItemTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunItemTask.swift; sourceTree = "<group>"; };
+		9DE2EA5D29B623B80029D026 /* FunItemTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunItemTaskCell.swift; sourceTree = "<group>"; };
 		9DE2EA5F29B9BA7E0029D026 /* FIRCollectionReference+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FIRCollectionReference+Rx.swift"; sourceTree = "<group>"; };
 		9DE2EA6229B9BA990029D026 /* FIRDocumentReference+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FIRDocumentReference+Rx.swift"; sourceTree = "<group>"; };
 		9DE2EA6529B9BACB0029D026 /* FIRFirestore+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FIRFirestore+Rx.swift"; sourceTree = "<group>"; };
@@ -677,13 +707,15 @@
 			path = GameCurrency;
 			sourceTree = "<group>";
 		};
-		6008CFB22684C4B2006DBF1F /* KindOfTaskList */ = {
+		6008CFB22684C4B2006DBF1F /* KindList */ = {
 			isa = PBXGroup;
 			children = (
-				6008CFB32684C5B1006DBF1F /* KindOfTaskListViewController.swift */,
-				6008CFB52684C8AF006DBF1F /* KindOfTaskListViewModel.swift */,
+				9D44C0C428E06F010022148C /* KindListItem.swift */,
+				60C1AC542817D52100C63404 /* KindListSection.swift */,
+				6008CFB32684C5B1006DBF1F /* KindListViewController.swift */,
+				6008CFB52684C8AF006DBF1F /* KindListViewModel.swift */,
 			);
-			path = KindOfTaskList;
+			path = KindList;
 			sourceTree = "<group>";
 		};
 		6022899C267B55F900E9429A /* Settings */ = {
@@ -698,8 +730,6 @@
 		602591C82679CF0800E2BBF8 /* TaskList */ = {
 			isa = PBXGroup;
 			children = (
-				6055D1A1267245D100316BB4 /* TaskListSection.swift */,
-				9D42BF5428C23CA0008F624F /* TaskListSectionItem.swift */,
 				9D73C580284E7D20000ED5D9 /* TaskListViewController.swift */,
 				60AE9DD52652FD1800E51531 /* TaskListViewModel.swift */,
 			);
@@ -709,7 +739,6 @@
 		602D0957266B778800946D1D /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				9DE2EA6429B9BAA00029D026 /* Firebase */,
 				9D6193FB28F6060F00C526A7 /* App.swift */,
 				9D08CDEA2901763C00689427 /* Array+Rx.swift */,
 				9D3B8190297FD80100A5F108 /* Calendar.swift */,
@@ -720,7 +749,7 @@
 				9DC65D4128D3512900221ED2 /* FetchedResultsControllerSectionObserver.swift */,
 				9DC65D3F28D3510000221ED2 /* NSManagedObjectContext+Rx.swift */,
 				60B3AE0327FD7CCD00B7E5BD /* Observable+Ext.swift */,
-				9DC65D4528D3517E00221ED2 /* Persistable.swift */,
+				9D5EC0A529C32D1300280384 /* Onlineable.swift */,
 				9D44C0BB28DA271B0022148C /* RangeReplaceableCollection.swift */,
 				60B299FD27CE3FF60072EE8E /* RxTask.swift */,
 				9DC65D4A28D3AF8100221ED2 /* Task+Rx.swift */,
@@ -730,7 +759,9 @@
 				6096ABA72683E9E100285AA7 /* UITextView.swift */,
 				602D0958266B779D00946D1D /* UIVIew.swift */,
 				6055D192267104E800316BB4 /* UIViewController.swift */,
-				9D5EC0A529C32D1300280384 /* Onlineable.swift */,
+				9D059B7B29EAA4D900D0880E /* Codable */,
+				9DE2EA6429B9BAA00029D026 /* Firebase */,
+				9D059B6529E980E300D0880E /* Persistable */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -745,16 +776,13 @@
 			path = CalendarScene;
 			sourceTree = "<group>";
 		};
-		603EC53926E8905A00B39FB7 /* KindOfTaskListCell */ = {
+		603EC53926E8905A00B39FB7 /* KindListCell */ = {
 			isa = PBXGroup;
 			children = (
-				60C1522826BC3A9D00F10284 /* KindOfTaskListCell.swift */,
-				9D44C0C228E06A300022148C /* KindOfTaskListCellMode.swift */,
-				9D44C0C428E06F010022148C /* KindOfTaskListItem.swift */,
-				60A2F49326EE4E5B00C328C1 /* KindOfTaskListReusableCell.swift */,
-				60C1AC542817D52100C63404 /* KindOfTaskListSection.swift */,
+				60C1522826BC3A9D00F10284 /* KindListCell.swift */,
+				60A2F49326EE4E5B00C328C1 /* KindListReusableCell.swift */,
 			);
-			path = KindOfTaskListCell;
+			path = KindListCell;
 			sourceTree = "<group>";
 		};
 		603EC53C26E8F2C100B39FB7 /* App */ = {
@@ -785,7 +813,7 @@
 				6053F86C2822DAE90047C204 /* BirdState.swift */,
 				600935672804708E0028C9AA /* BirdStyle.swift */,
 				9D9733FF2926210400733C45 /* ButtonDisplayMode.swift */,
-				9D9734012926210D00733C45 /* ButtonStyle.swift */,
+				9D9734012926210D00733C45 /* SwipeButtonStyle.swift */,
 				9D0A82262913E3C4006D777C /* CalendarSectionType.swift */,
 				6006F82E27AA701F00E5AE9E /* Clade.swift */,
 				6075496127EDC5B400B96D20 /* CrackType.swift */,
@@ -800,6 +828,7 @@
 				9D9733C529165A0900733C45 /* KindOfTaskListItemType.swift */,
 				604D1F7C27ADB80500E05D09 /* KindOfTaskStatus.swift */,
 				9D0A8228291657FA006D777C /* LoginViewControllerStyle.swift */,
+				9D86592E29E18A32001AAEF8 /* ReactionType.swift */,
 				60AE65D627F5BFB100CFE7BB /* Result.swift */,
 				60E970462827025B00577484 /* SceneActionType.swift */,
 				9DE9607E285E6D4A00E5981A /* SettingsType.swift */,
@@ -815,36 +844,6 @@
 			path = Enums;
 			sourceTree = "<group>";
 		};
-		6053F86228213BD00047C204 /* KindOfTaskListDeleted */ = {
-			isa = PBXGroup;
-			children = (
-				6053F86428213BED0047C204 /* KindOfTaskListDeletedViewController.swift */,
-				6053F86328213BED0047C204 /* KindOfTaskListDeletedViewModel.swift */,
-			);
-			path = KindOfTaskListDeleted;
-			sourceTree = "<group>";
-		};
-		6053F86B2822BA290047C204 /* KindOfTaskForBirdCell */ = {
-			isa = PBXGroup;
-			children = (
-				6095696A280EA0B100AF1C34 /* KindOfTaskForBirdCell.swift */,
-				6053F8692822B1F30047C204 /* KindOfTaskForBirdItem.swift */,
-				6045FEBA284D4B64002C9C24 /* KindOfTaskIForBirdSection.swift */,
-			);
-			path = KindOfTaskForBirdCell;
-			sourceTree = "<group>";
-		};
-		605823A926C2F33800F79155 /* TaskCell */ = {
-			isa = PBXGroup;
-			children = (
-				60EB11402656A9B000992BF8 /* TaskCell.swift */,
-				605823A726C2F18F00F79155 /* TaskReusableView.swift */,
-				9DB1311A296EFE9A007A0D37 /* TaskSection.swift */,
-				9DB1311C296EFEF4007A0D37 /* TaskSectionItem.swift */,
-			);
-			path = TaskCell;
-			sourceTree = "<group>";
-		};
 		6067D99D26B1EEF300F0FB72 /* TabBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -855,20 +854,20 @@
 			path = TabBar;
 			sourceTree = "<group>";
 		};
-		607BCB5E26E62E2F000A8248 /* KindOfTask */ = {
+		607BCB5E26E62E2F000A8248 /* Kind */ = {
 			isa = PBXGroup;
 			children = (
-				607BCB5F26E62E48000A8248 /* KindOfTaskViewController.swift */,
-				607BCB6126E62E59000A8248 /* KindOfTaskViewModel.swift */,
+				607BCB5F26E62E48000A8248 /* KindViewController.swift */,
+				607BCB6126E62E59000A8248 /* KindViewModel.swift */,
 			);
-			path = KindOfTask;
+			path = Kind;
 			sourceTree = "<group>";
 		};
 		60855BD8265905F700079D75 /* Task */ = {
 			isa = PBXGroup;
 			children = (
 				60855BD92659061100079D75 /* TaskViewController.swift */,
-				60855BDB2659064200079D75 /* TaskViewModel.swift */,
+				9D059B7729E992F500D0880E /* TaskViewModel.swift */,
 			);
 			path = Task;
 			sourceTree = "<group>";
@@ -886,6 +885,8 @@
 		60ABAE1526C07267000B07C0 /* Animations */ = {
 			isa = PBXGroup;
 			children = (
+				9DC0C03529E7482F0082CF1B /* skeleton2.json */,
+				9DC0C03329E745190082CF1B /* skeleton.json */,
 				60ABAE1726C072A0000B07C0 /* task_animation.json */,
 				6090C96026F398CF00B0EC73 /* taskDone1.json */,
 				6090C96426F3A58F00B0EC73 /* taskDone2.json */,
@@ -913,6 +914,7 @@
 				60ABAE1526C07267000B07C0 /* Animations */,
 				60BCBA7E275D26E0007EF465 /* Assets.xcassets */,
 				6049C4EA27EC541D005A7150 /* Constants */,
+				9D059B6E29E98B6900D0880E /* Errors */,
 				602D0957266B778800946D1D /* Extensions */,
 				60AE9DAE2652F54000E51531 /* Flows */,
 				9D42BFB028C78FE3008F624F /* GoogleService-Info.plist */,
@@ -924,6 +926,7 @@
 				9D86591C29D6E8FD001AAEF8 /* Network */,
 				60AE9D6D2652E5AD00E51531 /* Preview Content */,
 				60AE9DB32652F69000E51531 /* Services */,
+				9D059B6829E9829200D0880E /* Storage */,
 				60EB113C2656850C00992BF8 /* Todooshka.entitlements */,
 				60ED957627B52C4B005ACC33 /* Todooshka.xcdatamodeld */,
 				60AE9DE1265300AB00E51531 /* TodooshkaUI */,
@@ -963,15 +966,14 @@
 				9D9734032927B4C000733C45 /* Fun */,
 				600718F827BE8E2A006F2FEF /* GameCurrency */,
 				9D68011B2987CF7E0072CBB3 /* ImagePicker */,
-				607BCB5E26E62E2F000A8248 /* KindOfTask */,
-				9D44C0CD28E0708E0022148C /* KindOfTaskCell */,
-				9DC65D4F28D6EDF900221ED2 /* KindOfTaskColorCell */,
-				6053F86B2822BA290047C204 /* KindOfTaskForBirdCell */,
-				9D44C0D428E070C40022148C /* KindOfTaskIconCell */,
-				6008CFB22684C4B2006DBF1F /* KindOfTaskList */,
-				603EC53926E8905A00B39FB7 /* KindOfTaskListCell */,
-				6053F86228213BD00047C204 /* KindOfTaskListDeleted */,
-				9D44C0BD28DC663C0022148C /* KindOfTaskListForBird */,
+				607BCB5E26E62E2F000A8248 /* Kind */,
+				9D44C0CD28E0708E0022148C /* KindCell */,
+				9DC65D4F28D6EDF900221ED2 /* KindColorCell */,
+				9D44C0D428E070C40022148C /* KindIconCell */,
+				6008CFB22684C4B2006DBF1F /* KindList */,
+				603EC53926E8905A00B39FB7 /* KindListCell */,
+				9D3F5D4629F3C41400C44DFC /* KindOfTaskForBirdCell */,
+				9D3F5D4129F3C3DC00C44DFC /* KindOfTaskListForBird */,
 				9D42BF7128C76A5A008F624F /* Login */,
 				60AE9DC42652FC5300E51531 /* MainTaskList */,
 				60E970372823F28100577484 /* MainTaskListScene */,
@@ -990,8 +992,8 @@
 				9DC65D3A28D3209A00221ED2 /* SyncData */,
 				6067D99D26B1EEF300F0FB72 /* TabBar */,
 				60855BD8265905F700079D75 /* Task */,
-				605823A926C2F33800F79155 /* TaskCell */,
 				602591C82679CF0800E2BBF8 /* TaskList */,
+				9D7910C729F180E600B66DBB /* TaskListCell */,
 				9DB13111296EC9A8007A0D37 /* TaskWithImageCell */,
 				9D9733D129192F7E00733C45 /* Theme */,
 				9D0A8211290FEB20006D777C /* ThemeCell */,
@@ -1096,6 +1098,7 @@
 				602EA051274E67EF00525D6C /* TDTaskTextField.swift */,
 				60E4CE6C26DBB19200319730 /* TDTopRoundButton.swift */,
 				60819A162705A49F0067AF05 /* TDViewController.swift */,
+				9D059B7929E9A4BC00D0880E /* PlaceholderTextView.swift */,
 			);
 			path = TodooshkaUI;
 			sourceTree = "<group>";
@@ -1103,6 +1106,7 @@
 		60C8343A26D7FC4C006E4FBE /* CalendarCell */ = {
 			isa = PBXGroup;
 			children = (
+				9D632F2429AE1FD600431F31 /* CalendarItem.swift */,
 				9DF6673E297A7F2A0099367C /* CalendarCell.swift */,
 				9DA873AB297D5E1000F99D85 /* CalendarReusableView.swift */,
 				6055D19A2672021200316BB4 /* CalendarSection.swift */,
@@ -1146,14 +1150,15 @@
 			isa = PBXGroup;
 			children = (
 				603EC53C26E8F2C100B39FB7 /* App */,
-				60ED958C27B58486005ACC33 /* Domains */,
+				60ED958C27B58486005ACC33 /* Struct */,
 				604D1F7827ADB0E200E05D09 /* Enums */,
+				9D86593229E19137001AAEF8 /* Protocols */,
 				9D42BF4D289D01C8008F624F /* SKNodes */,
 			);
 			path = Models;
 			sourceTree = "<group>";
 		};
-		60ED958C27B58486005ACC33 /* Domains */ = {
+		60ED958C27B58486005ACC33 /* Struct */ = {
 			isa = PBXGroup;
 			children = (
 				9D86592829DDA634001AAEF8 /* Author.swift */,
@@ -1161,16 +1166,16 @@
 				9DF7CA7328E4F121000AE2B6 /* BirdFirebase.swift */,
 				9DC65D5028D883F400221ED2 /* Diamond.swift */,
 				9D9733FB2926203800733C45 /* Feather.swift */,
-				608FD86A2688827200819D68 /* KindOfTask.swift */,
+				9D632F2829B083DC00431F31 /* Image.swift */,
+				608FD86A2688827200819D68 /* Kind.swift */,
 				9DE2EA5729B5D3990029D026 /* Reaction.swift */,
 				600935652804227A0028C9AA /* SceneAction.swift */,
 				60EB113E2656A32400992BF8 /* Task.swift */,
-				9D632F2829B083DC00431F31 /* TDImage.swift */,
 				9D0A8218290FEC41006D777C /* Theme.swift */,
 				9D9733D9291D232400733C45 /* ThemeStep.swift */,
 				9D9733D7291D231D00733C45 /* ThemeWeek.swift */,
 			);
-			path = Domains;
+			path = Struct;
 			sourceTree = "<group>";
 		};
 		60FFF65527A9A5A800290331 /* Shop */ = {
@@ -1197,6 +1202,43 @@
 				3B89CC5A32F81DBA5650CE34 /* Pods-DragoDo.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		9D059B6529E980E300D0880E /* Persistable */ = {
+			isa = PBXGroup;
+			children = (
+				9D059B6629E9811900D0880E /* Task+Persistable.swift */,
+				9D059B7129E98D6000D0880E /* Kind+Persistable.swift */,
+			);
+			path = Persistable;
+			sourceTree = "<group>";
+		};
+		9D059B6829E9829200D0880E /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				9D059B6929E9829E00D0880E /* StorageManager.swift */,
+				9D059B7E29EBF96000D0880E /* InitialData.swift */,
+				9D059B7329E98DE400D0880E /* Kind+StorageManager.swift */,
+				9D059B6C29E985A600D0880E /* Task+StorageManager.swift */,
+				9D059B7529E98FFE00D0880E /* User+StorageManager.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		9D059B6E29E98B6900D0880E /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				9D059B6F29E98B7E00D0880E /* Errors.swift */,
+			);
+			path = Errors;
+			sourceTree = "<group>";
+		};
+		9D059B7B29EAA4D900D0880E /* Codable */ = {
+			isa = PBXGroup;
+			children = (
+				9D059B7C29EAA4E400D0880E /* Task+Codable.swift */,
+			);
+			path = Codable;
 			sourceTree = "<group>";
 		};
 		9D08CDE128FD7CB200689427 /* TodooshkaTests */ = {
@@ -1248,6 +1290,25 @@
 				9D3BBC4E28F4059000B352E3 /* CoreDataTaskTypeToKindOfTaskV1toV2.swift */,
 			);
 			path = Migration;
+			sourceTree = "<group>";
+		};
+		9D3F5D4129F3C3DC00C44DFC /* KindOfTaskListForBird */ = {
+			isa = PBXGroup;
+			children = (
+				9D3F5D4229F3C3DC00C44DFC /* KindOfTaskListForBirdViewModel.swift */,
+				9D3F5D4329F3C3DC00C44DFC /* KindOfTaskListForBirdViewController.swift */,
+			);
+			path = KindOfTaskListForBird;
+			sourceTree = "<group>";
+		};
+		9D3F5D4629F3C41400C44DFC /* KindOfTaskForBirdCell */ = {
+			isa = PBXGroup;
+			children = (
+				9D3F5D4729F3C41400C44DFC /* KindOfTaskForBirdCell.swift */,
+				9D3F5D4829F3C41400C44DFC /* KindOfTaskForBirdItem.swift */,
+				9D3F5D4929F3C41400C44DFC /* KindOfTaskIForBirdSection.swift */,
+			);
+			path = KindOfTaskForBirdCell;
 			sourceTree = "<group>";
 		};
 		9D42BF4D289D01C8008F624F /* SKNodes */ = {
@@ -1351,33 +1412,24 @@
 			path = ChangeGenderItem;
 			sourceTree = "<group>";
 		};
-		9D44C0BD28DC663C0022148C /* KindOfTaskListForBird */ = {
+		9D44C0CD28E0708E0022148C /* KindCell */ = {
 			isa = PBXGroup;
 			children = (
-				9D44C0BE28DC66830022148C /* KindOfTaskListForBirdViewController.swift */,
-				9D44C0C028DC668E0022148C /* KindOfTaskListForBirdViewModel.swift */,
+				9D44C0D028E0708E0022148C /* KindCell.swift */,
+				9D44C0CE28E0708E0022148C /* KindSectionItem.swift */,
+				9D44C0CF28E0708E0022148C /* KindSection.swift */,
 			);
-			path = KindOfTaskListForBird;
+			path = KindCell;
 			sourceTree = "<group>";
 		};
-		9D44C0CD28E0708E0022148C /* KindOfTaskCell */ = {
+		9D44C0D428E070C40022148C /* KindIconCell */ = {
 			isa = PBXGroup;
 			children = (
-				9D44C0D028E0708E0022148C /* KindOfTaskCell.swift */,
-				9D44C0CE28E0708E0022148C /* KindOfTaskItem.swift */,
-				9D44C0CF28E0708E0022148C /* KindOfTaskSection.swift */,
+				6069AE4026E7E5890098B25E /* KindIconCell.swift */,
+				9D44C0C628E06F4A0022148C /* KindIconItem.swift */,
+				6069AE3D26E7AE830098B25E /* KindIconSection.swift */,
 			);
-			path = KindOfTaskCell;
-			sourceTree = "<group>";
-		};
-		9D44C0D428E070C40022148C /* KindOfTaskIconCell */ = {
-			isa = PBXGroup;
-			children = (
-				6069AE4026E7E5890098B25E /* KindOfTaskIconCell.swift */,
-				9D44C0C628E06F4A0022148C /* KindOfTaskIconItem.swift */,
-				6069AE3D26E7AE830098B25E /* KindOfTaskIconSection.swift */,
-			);
-			path = KindOfTaskIconCell;
+			path = KindIconCell;
 			sourceTree = "<group>";
 		};
 		9D632F2A29B0C34300431F31 /* ResultPreview */ = {
@@ -1406,10 +1458,26 @@
 			path = Typealias;
 			sourceTree = "<group>";
 		};
+		9D7910C729F180E600B66DBB /* TaskListCell */ = {
+			isa = PBXGroup;
+			children = (
+				60EB11402656A9B000992BF8 /* TaskListCell.swift */,
+				605823A726C2F18F00F79155 /* TaskListReusableView.swift */,
+				6055D1A1267245D100316BB4 /* TaskListSection.swift */,
+				9D42BF5428C23CA0008F624F /* TaskListSectionItem.swift */,
+			);
+			path = TaskListCell;
+			sourceTree = "<group>";
+		};
 		9D86591C29D6E8FD001AAEF8 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				9D86591D29D6E91F001AAEF8 /* APIManager.swift */,
+				9D86592629DD8343001AAEF8 /* APIConfig.swift */,
+				9D86593029E18FB4001AAEF8 /* APIManager.swift */,
+				9DC0C03029E2608B0082CF1B /* Author+APIManager.swift */,
+				9D0CAAB929E935D40032A6F2 /* Reaction+APIManager.swift */,
+				9DC0F1D729E1953700ABE2B4 /* Task+APIManager.swift */,
+				9DC0F1DB29E25C6C00ABE2B4 /* User+APIManager.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -1417,12 +1485,20 @@
 		9D86592129DD80E0001AAEF8 /* ApiServices */ = {
 			isa = PBXGroup;
 			children = (
-				9D86592629DD8343001AAEF8 /* APIConfig.swift */,
 				9D86592429DD82CD001AAEF8 /* KindOfTaskAPIService.swift */,
+				9D86592C29E0528B001AAEF8 /* ReactionAPIService.swift */,
 				9D86591F29DD80DB001AAEF8 /* TaskAPIService.swift */,
-				9D86592229DD82C3001AAEF8 /* UserAPIService.swift */,
+				9D86592229DD82C3001AAEF8 /* CurrentUserService.swift */,
 			);
 			path = ApiServices;
+			sourceTree = "<group>";
+		};
+		9D86593229E19137001AAEF8 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				9DC65D4528D3517E00221ED2 /* Persistable.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		9D9733D129192F7E00733C45 /* Theme */ = {
@@ -1465,9 +1541,11 @@
 		9D9734032927B4C000733C45 /* Fun */ = {
 			isa = PBXGroup;
 			children = (
+				9DE2EA5B29B622270029D026 /* FunItemTask.swift */,
+				9DC0C03929E7FA3D0082CF1B /* FunItemNoMoreTasksCell.swift */,
+				9DE2EA5D29B623B80029D026 /* FunItemTaskCell.swift */,
+				9DC0C03729E7F9D40082CF1B /* FunItemType.swift */,
 				9DE2EA5929B621D60029D026 /* FunSection.swift */,
-				9DE2EA5D29B623B80029D026 /* FunSectionCell.swift */,
-				9DE2EA5B29B622270029D026 /* FunItem.swift */,
 				9D9734042927B4D100733C45 /* FunViewController.swift */,
 				9D9734062927B4D900733C45 /* FunViewModel.swift */,
 			);
@@ -1527,14 +1605,14 @@
 			path = SyncData;
 			sourceTree = "<group>";
 		};
-		9DC65D4F28D6EDF900221ED2 /* KindOfTaskColorCell */ = {
+		9DC65D4F28D6EDF900221ED2 /* KindColorCell */ = {
 			isa = PBXGroup;
 			children = (
-				603C5CF526F21A060056729B /* KindOfTaskColorCell.swift */,
-				9D44C0C928E06F770022148C /* KindOfTaskColorItem.swift */,
-				60559CA526E76F5300CCBD5F /* KindOfTaskColorSection.swift */,
+				603C5CF526F21A060056729B /* KindColorCell.swift */,
+				9D44C0C928E06F770022148C /* KindColorItem.swift */,
+				60559CA526E76F5300CCBD5F /* KindColorSection.swift */,
 			);
-			path = KindOfTaskColorCell;
+			path = KindColorCell;
 			sourceTree = "<group>";
 		};
 		9DCDECBA2983A8AE00FA6AA0 /* Worklplace */ = {
@@ -1549,7 +1627,6 @@
 		9DCDECCC2983BE0000FA6AA0 /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
-				9D632F2429AE1FD600431F31 /* CalendarItem.swift */,
 				9DCDECCD2983C02500FA6AA0 /* CalendarViewController.swift */,
 				9DCDECCF2983C13A00FA6AA0 /* CalendarViewModel.swift */,
 			);
@@ -1706,9 +1783,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DC0C03429E745190082CF1B /* skeleton.json in Resources */,
 				60AE9D722652E5AD00E51531 /* LaunchScreen.storyboard in Resources */,
 				60ABAE1926C072A0000B07C0 /* task_animation.json in Resources */,
 				9D42BFB128C78FE3008F624F /* GoogleService-Info.plist in Resources */,
+				9DC0C03629E7482F0082CF1B /* skeleton2.json in Resources */,
 				6090C96126F398CF00B0EC73 /* taskDone1.json in Resources */,
 				609ADE3B2750F3BF00E81FBF /* MainCalendarScene.sks in Resources */,
 				602EA058274E93E600525D6C /* MainTaskListScene.sks in Resources */,
@@ -1792,12 +1871,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D3BBC4928F046E300B352E3 /* CoreDataTaskToTaskV1toV2.swift in Sources */,
+				9DC0F1DC29E25C6C00ABE2B4 /* User+APIManager.swift in Sources */,
 				9D632F2729AE3CAF00431F31 /* FIRStorageReference+Rx.swift in Sources */,
-				60A2F49426EE4E5B00C328C1 /* KindOfTaskListReusableCell.swift in Sources */,
+				60A2F49426EE4E5B00C328C1 /* KindListReusableCell.swift in Sources */,
 				9DC65D4028D3510000221ED2 /* NSManagedObjectContext+Rx.swift in Sources */,
 				9D42C05928CF4F9B008F624F /* SetPhoneViewModel.swift in Sources */,
+				9D059B7429E98DE400D0880E /* Kind+StorageManager.swift in Sources */,
 				9D42C03228CF0E98008F624F /* UserProfileSection.swift in Sources */,
-				9DB1311B296EFE9A007A0D37 /* TaskSection.swift in Sources */,
+				9DC0C03829E7F9D40082CF1B /* FunItemType.swift in Sources */,
+				9D059B6729E9811900D0880E /* Task+Persistable.swift in Sources */,
 				9D42C03D28CF245F008F624F /* ChangeNameViewContoller.swift in Sources */,
 				9D08CDD928FB3EE100689427 /* Sizes.swift in Sources */,
 				600DA58B27FED471004A4634 /* Icon.swift in Sources */,
@@ -1806,19 +1888,21 @@
 				9DE2EA6329B9BA990029D026 /* FIRDocumentReference+Rx.swift in Sources */,
 				9DC65D4628D3517E00221ED2 /* Persistable.swift in Sources */,
 				9D0A82272913E3C4006D777C /* CalendarSectionType.swift in Sources */,
+				9D059B6A29E9829E00D0880E /* StorageManager.swift in Sources */,
 				60227A0827AD299200DA7572 /* DataService.swift in Sources */,
 				9DB13119296EF952007A0D37 /* ProfileFlow.swift in Sources */,
 				9D0A8213290FEB43006D777C /* ThemeItem.swift in Sources */,
+				9D3F5D4C29F3C41400C44DFC /* KindOfTaskIForBirdSection.swift in Sources */,
 				9D0A821B29100871006D777C /* MarketplaceFlow.swift in Sources */,
 				9D9733D329192F8E00733C45 /* ThemeViewController.swift in Sources */,
-				9D44C0D228E0708E0022148C /* KindOfTaskSection.swift in Sources */,
+				9D44C0D228E0708E0022148C /* KindSection.swift in Sources */,
 				60FA513F26D806BA007B3B36 /* ConfirmRemoveTaskViewController.swift in Sources */,
 				60FFF65727A9A5D800290331 /* ShopViewController.swift in Sources */,
 				9D210C7D293E1B77005FD7A8 /* ErrorTracker.swift in Sources */,
-				605823A826C2F18F00F79155 /* TaskReusableView.swift in Sources */,
+				605823A826C2F18F00F79155 /* TaskListReusableView.swift in Sources */,
 				60A2F49926EE55BF00C328C1 /* AlertFlow.swift in Sources */,
 				9D42C01F28CB426A008F624F /* UserProfileViewController.swift in Sources */,
-				9D44C0D128E0708E0022148C /* KindOfTaskItem.swift in Sources */,
+				9D44C0D128E0708E0022148C /* KindSectionItem.swift in Sources */,
 				9D973411292B76F000733C45 /* ThemeTypeCell.swift in Sources */,
 				9DC65D4228D3512900221ED2 /* FetchedResultsControllerSectionObserver.swift in Sources */,
 				9DE2EA5A29B621D60029D026 /* FunSection.swift in Sources */,
@@ -1827,7 +1911,7 @@
 				9D42C05D28CF4FFB008F624F /* SetPhoneViewController.swift in Sources */,
 				9D9733DA291D232400733C45 /* ThemeStep.swift in Sources */,
 				60819A172705A49F0067AF05 /* TDViewController.swift in Sources */,
-				9DE2EA5E29B623B80029D026 /* FunSectionCell.swift in Sources */,
+				9DE2EA5E29B623B80029D026 /* FunItemTaskCell.swift in Sources */,
 				60E4CE6D26DBB19200319730 /* TDTopRoundButton.swift in Sources */,
 				9D42C01B28CA37BC008F624F /* FIRUser+Rx.swift in Sources */,
 				9D42C04728CF29C8008F624F /* ChangeBirthdayViewController.swift in Sources */,
@@ -1835,11 +1919,13 @@
 				6067D9A126B1EF7700F0FB72 /* TabBar.swift in Sources */,
 				60B82FEF2655031100BF5F94 /* TaskStepper.swift in Sources */,
 				9D0A8210290FEB19006D777C /* ThemeCell.swift in Sources */,
-				6069AE3E26E7AE830098B25E /* KindOfTaskIconSection.swift in Sources */,
+				6069AE3E26E7AE830098B25E /* KindIconSection.swift in Sources */,
 				9D0A820E290FEB07006D777C /* MarketplaceViewModel.swift in Sources */,
 				60AE9DDE2652FF4200E51531 /* CalendarFlow.swift in Sources */,
 				60C00DA026B2F6E600AAD0E1 /* TaskListFlow.swift in Sources */,
-				6008CFB62684C8AF006DBF1F /* KindOfTaskListViewModel.swift in Sources */,
+				9D86593129E18FB4001AAEF8 /* APIManager.swift in Sources */,
+				9D3F5D4429F3C3DC00C44DFC /* KindOfTaskListForBirdViewModel.swift in Sources */,
+				6008CFB62684C8AF006DBF1F /* KindListViewModel.swift in Sources */,
 				60D5662626CC201400D865DD /* OnboardingViewModel.swift in Sources */,
 				9D42BFAF28C78A20008F624F /* Firebase.swift in Sources */,
 				9D0A820C290FEAFC006D777C /* MarketplaceViewController.swift in Sources */,
@@ -1856,6 +1942,8 @@
 				6067D99F26B1EF3A00F0FB72 /* TabBarViewModel.swift in Sources */,
 				9D9733E6291E4A4800733C45 /* ThemeStepHeader.swift in Sources */,
 				600DA59127FEFC6E004A4634 /* KindOfTaskFlowAction.swift in Sources */,
+				9D059B7829E992F500D0880E /* TaskViewModel.swift in Sources */,
+				9D0CAABA29E935D40032A6F2 /* Reaction+APIManager.swift in Sources */,
 				9D632F2C29B0C35B00431F31 /* ResultPreviewViewController.swift in Sources */,
 				9D6193F828F42CF600C526A7 /* CoreDataTaskType+CoreDataProperties.swift in Sources */,
 				604D1F7F27ADC13C00E05D09 /* Currency.swift in Sources */,
@@ -1867,23 +1955,27 @@
 				9D86592529DD82CD001AAEF8 /* KindOfTaskAPIService.swift in Sources */,
 				9D42BF6928C76A38008F624F /* AuthSectionModel.swift in Sources */,
 				60E970472827025B00577484 /* SceneActionType.swift in Sources */,
-				9D44C0D328E0708E0022148C /* KindOfTaskCell.swift in Sources */,
+				9D44C0D328E0708E0022148C /* KindCell.swift in Sources */,
 				9DF7CA7928EAF8EA000AE2B6 /* SupportViewModel.swift in Sources */,
 				602EA053274E67F000525D6C /* TDTaskTextField.swift in Sources */,
 				9D97340B2928C02000733C45 /* EmptyFlow.swift in Sources */,
+				9DC0C03A29E7FA3D0082CF1B /* FunItemNoMoreTasksCell.swift in Sources */,
 				60AE9DB22652F5C300E51531 /* AppStep.swift in Sources */,
 				606FB75127F728A400782E17 /* TaskListCellMode.swift in Sources */,
 				9D6B6B10284FEA2C000ABAE7 /* Typealias.swift in Sources */,
 				9D42C05728CF4F8B008F624F /* ChangePasswordViewModel.swift in Sources */,
+				9D059B7F29EBF96000D0880E /* InitialData.swift in Sources */,
+				9D059B7D29EAA4E400D0880E /* Task+Codable.swift in Sources */,
 				60AE9D632652E5AA00E51531 /* AppDelegate.swift in Sources */,
 				9D9733F0291E688E00733C45 /* ThemeTaskViewController.swift in Sources */,
 				60B299FE27CE3FF60072EE8E /* RxTask.swift in Sources */,
 				9D9733C629165A0900733C45 /* KindOfTaskListItemType.swift in Sources */,
-				6069AE4126E7E5890098B25E /* KindOfTaskIconCell.swift in Sources */,
+				9D3F5D4B29F3C41400C44DFC /* KindOfTaskForBirdItem.swift in Sources */,
+				6069AE4126E7E5890098B25E /* KindIconCell.swift in Sources */,
 				9D42C02D28CB68DF008F624F /* GIDSignIn+Rx.swift in Sources */,
-				607BCB6026E62E48000A8248 /* KindOfTaskViewController.swift in Sources */,
+				607BCB6026E62E48000A8248 /* KindViewController.swift in Sources */,
 				9D42C03028CF0E8A008F624F /* UserProfileCell.swift in Sources */,
-				6008CFB42684C5B1006DBF1F /* KindOfTaskListViewController.swift in Sources */,
+				6008CFB42684C5B1006DBF1F /* KindListViewController.swift in Sources */,
 				9D42C04928CF29D3008F624F /* ChangeBirthdayViewModel.swift in Sources */,
 				9DA873AC297D5E1000F99D85 /* CalendarReusableView.swift in Sources */,
 				9DE96087286106AB00E5981A /* FeatherViewModel.swift in Sources */,
@@ -1898,8 +1990,8 @@
 				6055D1A026723C6700316BB4 /* OldCalendarReusableView.swift in Sources */,
 				600718FA27BE9121006F2FEF /* GameCurrencyViewController.swift in Sources */,
 				9DCDECD22983C19F00FA6AA0 /* OldCalendarFlow.swift in Sources */,
-				603C5CF626F21A060056729B /* KindOfTaskColorCell.swift in Sources */,
-				9D44C0C528E06F010022148C /* KindOfTaskListItem.swift in Sources */,
+				603C5CF626F21A060056729B /* KindColorCell.swift in Sources */,
+				9D44C0C528E06F010022148C /* KindListItem.swift in Sources */,
 				9D973413292C07F700733C45 /* ThemeTypeItem.swift in Sources */,
 				9D9733F42924E0EE00733C45 /* NetworkService.swift in Sources */,
 				6006F82B27AA6C0200E5AE9E /* ShopCellHeader.swift in Sources */,
@@ -1911,27 +2003,29 @@
 				9D9734052927B4D100733C45 /* FunViewController.swift in Sources */,
 				9DE96089286106B600E5981A /* DiamondViewController.swift in Sources */,
 				602D1B3E26C1BBE600DAA711 /* TDTaskCommentTextView.swift in Sources */,
-				60C1AC552817D52100C63404 /* KindOfTaskListSection.swift in Sources */,
+				60C1AC552817D52100C63404 /* KindListSection.swift in Sources */,
 				9DE2EA6829B9BAE00029D026 /* FIRQuery+Rx.swift in Sources */,
 				9D9733E8291E4A5900733C45 /* ThemeStepSection.swift in Sources */,
 				9D42BF5528C23CA0008F624F /* TaskListSectionItem.swift in Sources */,
 				604257712677EC24005A518C /* UIAlertController.swift in Sources */,
-				6095696B280EA0B100AF1C34 /* KindOfTaskForBirdCell.swift in Sources */,
 				9DF7CA7428E4F121000AE2B6 /* BirdFirebase.swift in Sources */,
 				601AC970266F5D8800C2AE97 /* MainTaskListViewController.swift in Sources */,
 				6045FEB9284D4B56002C9C24 /* MainTaskListSceneModel.swift in Sources */,
 				9D42BF7828C76A5A008F624F /* LoginViewModel.swift in Sources */,
+				9D3F5D4A29F3C41400C44DFC /* KindOfTaskForBirdCell.swift in Sources */,
 				9DF6673F297A7F2A0099367C /* CalendarCell.swift in Sources */,
+				9D059B6D29E985A600D0880E /* Task+StorageManager.swift in Sources */,
 				60D5662D26CC2CBB00D865DD /* OnboardingCollectionViewCellModel.swift in Sources */,
 				9D42C05028CF33A0008F624F /* ChangeGenderItem.swift in Sources */,
+				9D059B7029E98B7E00D0880E /* Errors.swift in Sources */,
+				9D86592F29E18A32001AAEF8 /* ReactionType.swift in Sources */,
 				60AE9DB02652F5B600E51531 /* AppFlow.swift in Sources */,
-				9D44C0C328E06A300022148C /* KindOfTaskListCellMode.swift in Sources */,
 				9D42C05F28CF5427008F624F /* SetEmailViewController.swift in Sources */,
 				9D3BEDB5298C3A74001464CD /* ImagePickerFlow.swift in Sources */,
 				9DC1AB76299BC0FD00C0D215 /* Firebasable.swift in Sources */,
 				604257672677AAA0005A518C /* SettingsViewController.swift in Sources */,
 				9D42C04E28CF3338008F624F /* ChangeGenderSectionModel.swift in Sources */,
-				607BCB6226E62E59000A8248 /* KindOfTaskViewModel.swift in Sources */,
+				607BCB6226E62E59000A8248 /* KindViewModel.swift in Sources */,
 				60AE9DB52652F6C800E51531 /* AppServices.swift in Sources */,
 				9D44C0BC28DA271B0022148C /* RangeReplaceableCollection.swift in Sources */,
 				6055D193267104E800316BB4 /* UIViewController.swift in Sources */,
@@ -1939,14 +2033,16 @@
 				600935662804227A0028C9AA /* SceneAction.swift in Sources */,
 				9D42BF5328C090FB008F624F /* EggActionType.swift in Sources */,
 				9DC65D4E28D5DA5B00221ED2 /* UIColor.swift in Sources */,
+				9D059B7229E98D6000D0880E /* Kind+Persistable.swift in Sources */,
 				9D17D43F28881ED400D3E304 /* DiamondPackageType.swift in Sources */,
 				6075496227EDC5B400B96D20 /* CrackType.swift in Sources */,
 				9DE2EA6A29B9BAF30029D026 /* FIRWriteBatch+Rx.swift in Sources */,
-				9DE2EA5C29B622270029D026 /* FunItem.swift in Sources */,
+				9DE2EA5C29B622270029D026 /* FunItemTask.swift in Sources */,
 				9D632F2529AE1FD600431F31 /* CalendarItem.swift in Sources */,
 				9D9733D8291D231D00733C45 /* ThemeWeek.swift in Sources */,
 				9D42C04428CF2874008F624F /* ChangeGenderViewModel.swift in Sources */,
 				9D3BBC4D28F05C2C00B352E3 /* CoreDataTask+CoreDataProperties.swift in Sources */,
+				9D3F5D4529F3C3DC00C44DFC /* KindOfTaskListForBirdViewController.swift in Sources */,
 				9D9733F62925150A00733C45 /* ThemeStatus.swift in Sources */,
 				9D9733E4291E4A3F00733C45 /* ThemeStepCell.swift in Sources */,
 				60AE9DD62652FD1800E51531 /* TaskListViewModel.swift in Sources */,
@@ -1956,24 +2052,23 @@
 				9D9733F2291E689600733C45 /* ThemeTaskViewModel.swift in Sources */,
 				60AE9D652652E5AA00E51531 /* SceneDelegate.swift in Sources */,
 				9D97341A293B8DDE00733C45 /* ThemeSettingsViewController.swift in Sources */,
-				60C1522926BC3A9E00F10284 /* KindOfTaskListCell.swift in Sources */,
+				60C1522926BC3A9E00F10284 /* KindListCell.swift in Sources */,
 				9D42BF6A28C76A38008F624F /* AuthViewModel.swift in Sources */,
 				9D42C04228CF2866008F624F /* ChangeGenderViewController.swift in Sources */,
-				9DB1311D296EFEF4007A0D37 /* TaskSectionItem.swift in Sources */,
 				9D86592029DD80DB001AAEF8 /* TaskAPIService.swift in Sources */,
 				9DF7CA7C28EB0C2E000AE2B6 /* DeleteAccountViewController.swift in Sources */,
 				9DB13113296ED4D3007A0D37 /* TaskWithImageCell.swift in Sources */,
 				9D42C01728CA1495008F624F /* FIRDatabaseQuery+Rx.swift in Sources */,
 				9D42BF7928C76A5A008F624F /* LoginViewController.swift in Sources */,
+				9D059B7629E98FFE00D0880E /* User+StorageManager.swift in Sources */,
 				6006F82D27AA6E7100E5AE9E /* Bird.swift in Sources */,
 				9DE96085286106A000E5981A /* FeatherViewController.swift in Sources */,
 				60855BDA2659061200079D75 /* TaskViewController.swift in Sources */,
 				9DCDECCE2983C02500FA6AA0 /* CalendarViewController.swift in Sources */,
 				9DC65D3C28D320B600221ED2 /* SyncDataViewController.swift in Sources */,
-				6053F86628213BED0047C204 /* KindOfTaskListDeletedViewController.swift in Sources */,
 				9DE9608B286106BF00E5981A /* DiamondViewModel.swift in Sources */,
 				9D42BF4C289AABEF008F624F /* SKBirdNode.swift in Sources */,
-				9D44C0C728E06F4A0022148C /* KindOfTaskIconItem.swift in Sources */,
+				9D44C0C728E06F4A0022148C /* KindIconItem.swift in Sources */,
 				60AE9DBF2652F9CF00E51531 /* AppStepper.swift in Sources */,
 				60B82FED2654FCE100BF5F94 /* TaskFlow.swift in Sources */,
 				6006F83327AA74CE00E5AE9E /* ShopSection.swift in Sources */,
@@ -1988,7 +2083,6 @@
 				6096ABA82683E9E100285AA7 /* UITextView.swift in Sources */,
 				9D3B8191297FD80100A5F108 /* Calendar.swift in Sources */,
 				604257692677AAAD005A518C /* SettingsViewModel.swift in Sources */,
-				9D44C0BF28DC66830022148C /* KindOfTaskListForBirdViewController.swift in Sources */,
 				6042576F2677BE1C005A518C /* SettingsSectionModel.swift in Sources */,
 				9D632F2E29B0C36500431F31 /* ResultPreviewViewModel.swift in Sources */,
 				9DB13115296ED4DF007A0D37 /* TaskWithImageHeader.swift in Sources */,
@@ -1998,21 +2092,22 @@
 				9DC65D4428D3515100221ED2 /* FetchedResultsControllerControllerEntityObserver.swift .swift in Sources */,
 				9D6193F628F42CE400C526A7 /* CoreDataTaskType+CoreDataClass.swift in Sources */,
 				9D42C03428CF0EA5008F624F /* UserProfileCellType.swift in Sources */,
+				9D86592D29E0528B001AAEF8 /* ReactionAPIService.swift in Sources */,
 				6055D19B2672021200316BB4 /* CalendarSection.swift in Sources */,
 				9DE2EA6029B9BA7E0029D026 /* FIRCollectionReference+Rx.swift in Sources */,
-				9D632F2929B083DC00431F31 /* TDImage.swift in Sources */,
+				9D632F2929B083DC00431F31 /* Image.swift in Sources */,
 				9DC65D5128D883F400221ED2 /* Diamond.swift in Sources */,
-				60559CA626E76F5300CCBD5F /* KindOfTaskColorSection.swift in Sources */,
+				60559CA626E76F5300CCBD5F /* KindColorSection.swift in Sources */,
 				9D42BF6828C76A38008F624F /* AuthViewController.swift in Sources */,
 				604D1F7D27ADB80500E05D09 /* KindOfTaskStatus.swift in Sources */,
-				9D9734022926210D00733C45 /* ButtonStyle.swift in Sources */,
+				9D9734022926210D00733C45 /* SwipeButtonStyle.swift in Sources */,
 				600DA58D27FED7BB004A4634 /* TypeColor.swift in Sources */,
 				9D42BFB728C9F955008F624F /* FIRAuth+Rx.swift in Sources */,
+				9D059B7A29E9A4BC00D0880E /* PlaceholderTextView.swift in Sources */,
 				6055D1A2267245D100316BB4 /* TaskListSection.swift in Sources */,
-				9D44C0CA28E06F770022148C /* KindOfTaskColorItem.swift in Sources */,
+				9D44C0CA28E06F770022148C /* KindColorItem.swift in Sources */,
 				9D9734002926210400733C45 /* ButtonDisplayMode.swift in Sources */,
-				608FD86B2688827200819D68 /* KindOfTask.swift in Sources */,
-				6053F86A2822B1F30047C204 /* KindOfTaskForBirdItem.swift in Sources */,
+				608FD86B2688827200819D68 /* Kind.swift in Sources */,
 				60D5662426CC1AB600D865DD /* OnboardingViewController.swift in Sources */,
 				9D5EC0A629C32D1300280384 /* Onlineable.swift in Sources */,
 				9D9734072927B4D900733C45 /* FunViewModel.swift in Sources */,
@@ -2033,14 +2128,12 @@
 				9DE2EA5829B5D3990029D026 /* Reaction.swift in Sources */,
 				6055D19D26720B9E00316BB4 /* DatabaseReference.swift in Sources */,
 				9D0A8215290FEB4C006D777C /* ThemeSection.swift in Sources */,
-				9D44C0C128DC668E0022148C /* KindOfTaskListForBirdViewModel.swift in Sources */,
 				6053F86D2822DAE90047C204 /* BirdState.swift in Sources */,
 				602EA05A274E944A00525D6C /* MainTaskListScene.swift in Sources */,
 				60AE65D727F5BFB100CFE7BB /* Result.swift in Sources */,
 				9D9733FE292620DE00733C45 /* ActionDescriptor.swift in Sources */,
-				9D86591E29D6E91F001AAEF8 /* APIManager.swift in Sources */,
 				60B82FF12655078B00BF5F94 /* TabBarFlow.swift in Sources */,
-				60EB11412656A9B000992BF8 /* TaskCell.swift in Sources */,
+				60EB11412656A9B000992BF8 /* TaskListCell.swift in Sources */,
 				9D42BF49289A82DB008F624F /* SKEggNode.swift in Sources */,
 				9D42C05B28CF4FD9008F624F /* ChangePasswordViewController.swift in Sources */,
 				9D86592929DDA634001AAEF8 /* Author.swift in Sources */,
@@ -2051,24 +2144,23 @@
 				9D9733D02919165A00733C45 /* ThemeHeader.swift in Sources */,
 				9D97341729335C2F00733C45 /* TDContentView.swift in Sources */,
 				9D42BF4F28BF8466008F624F /* TabBarService.swift in Sources */,
-				9D86592329DD82C3001AAEF8 /* UserAPIService.swift in Sources */,
+				9D86592329DD82C3001AAEF8 /* CurrentUserService.swift in Sources */,
 				9D0A82252913AEE4006D777C /* TabBarItemSelected.swift in Sources */,
 				9D42C01D28CA3A9B008F624F /* FIRPhoneAuthProvider+Rx.swift in Sources */,
 				9D6193FC28F6060F00C526A7 /* App.swift in Sources */,
 				6042576B2677AB0D005A518C /* SettingsCell.swift in Sources */,
-				6053F86528213BED0047C204 /* KindOfTaskListDeletedViewModel.swift in Sources */,
 				9DE9607F285E6D4A00E5981A /* SettingsType.swift in Sources */,
 				9D6B6B12284FEC46000ABAE7 /* MainCalendarSceneModel.swift in Sources */,
 				9D42C01928CA14AA008F624F /* FIRDatabaseReference+Rx.swift in Sources */,
 				6006F83627AA8EDF00E5AE9E /* BirdViewController.swift in Sources */,
-				6045FEBB284D4B64002C9C24 /* KindOfTaskIForBirdSection.swift in Sources */,
 				9D42C03628CF0FA8008F624F /* UserProfileItem.swift in Sources */,
+				9DC0F1D829E1953700ABE2B4 /* Task+APIManager.swift in Sources */,
 				60E9704928284B5F00577484 /* ActionService.swift in Sources */,
 				9D68011F2987D1490072CBB3 /* ImagePickerViewModel.swift in Sources */,
 				9D0A8229291657FA006D777C /* LoginViewControllerStyle.swift in Sources */,
-				60855BDC2659064200079D75 /* TaskViewModel.swift in Sources */,
 				609ADE3D2750F40F00E81FBF /* MainCalendarScene.swift in Sources */,
 				60ED958727B54927005ACC33 /* Todooshka.xcdatamodeld in Sources */,
+				9DC0C03129E2608B0082CF1B /* Author+APIManager.swift in Sources */,
 				9D9733EB291E531A00733C45 /* ChallengeViewController.swift in Sources */,
 				60F9921726AD912300A2449A /* UIButton.swift in Sources */,
 				60FFF65927A9A5E300290331 /* ShopViewModel.swift in Sources */,

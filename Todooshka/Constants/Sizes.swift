@@ -77,7 +77,7 @@ struct Sizes {
       static let width = 62.adjustByHeight
       static let height = 62.adjustByHeight
     }
-    struct KindOfTaskCell {
+    struct KindCell {
       static let width = 90.adjustByHeight
       static let height = 91.adjustByHeight
     }

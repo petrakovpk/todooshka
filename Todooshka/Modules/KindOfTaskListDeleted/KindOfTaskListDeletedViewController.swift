@@ -13,7 +13,7 @@ import RxDataSources
 class KindOfTaskListDeletedViewController: TDViewController {
   // MARK: - Properties
   var collectionView: UICollectionView!
-  var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>!
+  var dataSource: RxCollectionViewSectionedAnimatedDataSource<KindListSection>!
   let disposeBag = DisposeBag()
   var viewModel: KindOfTaskListDeletedViewModel!
 
@@ -77,7 +77,7 @@ class KindOfTaskListDeletedViewController: TDViewController {
     view.backgroundColor = Style.App.background
 
     // collectionView
-    collectionView.register(KindOfTaskListCell.self, forCellWithReuseIdentifier: KindOfTaskListCell.reuseID)
+    collectionView.register(KindListCell.self, forCellWithReuseIdentifier: KindListCell.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
     collectionView.layer.masksToBounds = false
@@ -184,15 +184,13 @@ class KindOfTaskListDeletedViewController: TDViewController {
 
   func configureDataSource() {
     collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindOfTaskListSection>(configureCell: { _, collectionView, indexPath, kindOfTask in
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<KindListSection>(configureCell: { _, collectionView, indexPath, item in
       guard let cell = collectionView.dequeueReusableCell(
-        withReuseIdentifier: KindOfTaskListCell.reuseID,
+        withReuseIdentifier: KindListCell.reuseID,
         for: indexPath
-      ) as? KindOfTaskListCell else { return UICollectionViewCell() }
-      cell.configure(with: kindOfTask, mode: .withRepeatButton)
-      cell.repeatButton
-        .rx
-        .tap
+      ) as? KindListCell else { return UICollectionViewCell() }
+      cell.configure(with: item)
+      cell.repeatButton.rx.tap
         .map { _ -> IndexPath in indexPath }
         .asDriver(onErrorJustReturn: nil)
         .drive(self.repeatButtonBinder)

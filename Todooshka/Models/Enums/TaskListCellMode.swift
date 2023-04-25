@@ -7,11 +7,15 @@
 
 import Foundation
 
-enum TaskCellMode: String {
+enum ListCellMode: String {
+  // общие для task и kind
   case empty
+  case repeatButton
+  // для task
   case blueLine
   case redLineAndTime
   case time
-  case repeatButton
   case likes
+  // для kind
+  case withRightImage
 }

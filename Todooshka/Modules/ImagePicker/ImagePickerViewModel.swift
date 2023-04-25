@@ -29,8 +29,8 @@ class ImagePickerViewModel: Stepper {
   }
   
   struct Output {
-    let saveImage: Driver<Result<Void, any Error>>
-    let updateTask: Driver<Result<Void, any Error>>
+  //  let saveImage: Driver<Result<Void, any Error>>
+  //  let updateTask: Driver<Result<Void, any Error>>
     let dismiss: Driver<Void>
   }
 
@@ -48,38 +48,38 @@ class ImagePickerViewModel: Stepper {
       .compactMap { info -> UIImage? in
         info[UIImagePickerController.InfoKey.originalImage] as? UIImage
       }
-      .map { image -> TDImage in
-        TDImage(
-          uuid: self.task.imageUUID ?? UUID(),
-          data: image.pngData()!)
+      .map { image -> Image in
+        Image(
+          uuid: UUID(),
+          imageData: image.pngData()!)
       }
     
-    let saveImage = selectedImage
-      .asObservable()
-      .flatMapLatest { self.managedContext.rx.update($0) }
-      .asDriverOnErrorJustComplete()
+//    let saveImage = selectedImage
+//      .asObservable()
+//      .flatMapLatest { self.managedContext.rx.update($0) }
+//      .asDriverOnErrorJustComplete()
     
-    let updateTask = selectedImage
-      .map { image -> Task in
-        var task = self.task
-        task.imageUUID = image.uuid
-        return task
-      }
-      .asObservable()
-      .flatMapLatest { self.managedContext.rx.update($0) }
-      .asDriverOnErrorJustComplete()
+//    let updateTask = selectedImage
+//      .map { image -> Task in
+//        var task = self.task
+//        task.imageUUID = image.uuid
+//        return task
+//      }
+//      .asObservable()
+//      .flatMapLatest { self.managedContext.rx.update($0) }
+//      .asDriverOnErrorJustComplete()
 
-    let dismiss = Driver.of(
-      updateTask.mapToVoid(),
-      cancelButtonClickTrigger )
-      .merge()
+    let dismiss = //Driver.of(
+     // updateTask.mapToVoid(),
+      cancelButtonClickTrigger// )
+   //   .merge()
       .do { _ in
         self.steps.accept(AppStep.dismiss)
       }
     
     return Output(
-      saveImage: saveImage,
-      updateTask: updateTask,
+    //  saveImage: saveImage,
+     // updateTask: updateTask,
       dismiss: dismiss
     )
   }

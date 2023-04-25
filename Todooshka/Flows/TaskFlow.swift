@@ -11,7 +11,6 @@ import RxCocoa
 import UIKit
 
 class TaskFlow: Flow {
-  // MARK: - Properties
   var root: Presentable {
     return self.rootViewController
   }
@@ -19,7 +18,6 @@ class TaskFlow: Flow {
   private let rootViewController = UINavigationController()
   private let services: AppServices
 
-  // MARK: - Init
   init(withServices services: AppServices) {
     self.services = services
   }
@@ -28,18 +26,15 @@ class TaskFlow: Flow {
     print("\(type(of: self)): \(#function)")
   }
 
-  // MARK: - Flow Contributors
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-    case .openTaskIsRequired(let task, let isModal):
-      return navigateToTask(task: task, isModal: isModal)
-    case .kindsOfTaskListIsRequired:
-      return navigateToTaskTypesList()
-    case .createKindOfTaskIsRequired:
-      return navigateToCreateKindOfTask()
-    case .showKindOfTaskIsRequired(let kindOfTask):
-      return navigateToShowTaskType(kindOfTask: kindOfTask)
+    case .openTaskIsRequired(let task, let taskListMode):
+      return navigateToTask(task: task, taskListMode: taskListMode)
+    case .kindListIsRequired:
+      return navigateToKindList()
+    case .openKindIsRequired(let kind):
+      return navigateToOpenKind(kind: kind)
     case .resultPreviewIsRequired(let task):
       return navigateToResultPreview(task: task)
     case .navigateBack:
@@ -51,12 +46,13 @@ class TaskFlow: Flow {
     }
   }
 
-  private func navigateToTask(task: Task, isModal: Bool) -> FlowContributors {
+  private func navigateToTask(task: Task, taskListMode: TaskListMode) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, task: task, isModal: isModal)
+    let viewModel = TaskViewModel(services: services, task: task, taskListMode: taskListMode)
     viewController.viewModel = viewModel
     rootViewController.navigationBar.isHidden = true
-    rootViewController.pushViewController(viewController, animated: false)
+    rootViewController.setViewControllers([viewController], animated: true)
+ //   rootViewController.pushViewController(viewController, animated: false)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
@@ -68,26 +64,18 @@ class TaskFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateToTaskTypesList() -> FlowContributors {
-    let viewController = KindOfTaskListViewController()
-    let viewModel = KindOfTaskListViewModel(services: services)
+  private func navigateToKindList() -> FlowContributors {
+    let viewController = KindListViewController()
+    let viewModel = KindListViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateToCreateKindOfTask() -> FlowContributors {
-    let viewController = KindOfTaskViewController()
-    let viewModel = KindOfTaskViewModel(services: services, kindOfTaskUID: UUID().uuidString)
-    viewController.viewModel = viewModel
-    rootViewController.tabBarController?.tabBar.isHidden = true
-    rootViewController.pushViewController(viewController, animated: true)
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
 
-  private func navigateToShowTaskType(kindOfTask: KindOfTask) -> FlowContributors {
-    let viewController = KindOfTaskViewController()
-    let viewModel = KindOfTaskViewModel(services: services, kindOfTaskUID: kindOfTask.UID)
+  private func navigateToOpenKind(kind: Kind) -> FlowContributors {
+    let viewController = KindViewController()
+    let viewModel = KindViewModel(services: services, kind: kind)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)

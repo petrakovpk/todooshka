@@ -20,7 +20,7 @@ enum AppStep: Step {
   case calendarIsRequired
 
   // Task
-  case openTaskIsRequired(task: Task, isModal: Bool = false)
+  case openTaskIsRequired(task: Task, taskListMode: TaskListMode)
   case addPhotoIsRequired(task: Task)
   case resultPreviewIsRequired(task: Task)
   case taskProcessingIsCompleted
@@ -36,14 +36,13 @@ enum AppStep: Step {
   // Task List
   case overduedTaskListIsRequired
   case ideaTaskListIsRequired
-  case plannedTaskListIsRequired(date: Date)
-  case completedTaskListIsRequired(date: Date)
+  case dayTaskListIsRequired(date: Date)
+  //case completedTaskListIsRequired(date: Date)
   case deletedTaskListIsRequired
   case taskListIsCompleted
 
   // KindOfTask
-  case createKindOfTaskIsRequired
-  case showKindOfTaskIsRequired(kindOfTask: KindOfTask)
+  case openKindIsRequired(kind: Kind)
 
  // User Profile
   case userProfileIsRequired
@@ -64,7 +63,7 @@ enum AppStep: Step {
   case featherIsRequired
 
   // KindsOfTask
-  case kindsOfTaskListIsRequired
+  case kindListIsRequired
 
   // KindOfTaskWithBird
   case kindOfTaskWithBird(birdUID: String)
@@ -111,5 +110,7 @@ enum AppStep: Step {
   case themeStepIsRequired(themeStep: ThemeStep, openViewControllerMode: OpenViewControllerMode)
   case themeTaskIsRequired(themeTaskUID: String, openViewControllerMode: OpenViewControllerMode)
   case themeProcessingIsCompleted
+  
+  case empty
 
 }

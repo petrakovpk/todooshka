@@ -9,5 +9,5 @@ import Foundation
 
 enum KindOfTaskFlowAction {
   case create
-  case show(kindOfTask: KindOfTask)
+  case show(kindOfTask: Kind)
 }

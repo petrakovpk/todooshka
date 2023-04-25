@@ -127,6 +127,7 @@ class MainTaskListViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     scene?.reloadData()
+    collectionView.reloadData()
     navigationController?.tabBarController?.tabBar.isHidden = false
   }
 
@@ -189,11 +190,11 @@ class MainTaskListViewController: UIViewController {
       heightConstant: 30
     )
 
-    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+    collectionView.register(TaskListCell.self, forCellWithReuseIdentifier: TaskListCell.reuseID)
     collectionView.register(
-      TaskReusableView.self,
+      TaskListReusableView.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-      withReuseIdentifier: TaskReusableView.reuseID)
+      withReuseIdentifier: TaskListReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.layer.masksToBounds = false
     collectionView.backgroundColor = .clear
@@ -276,19 +277,19 @@ class MainTaskListViewController: UIViewController {
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(
       configureCell: { dataSource, collectionView, indexPath, item in
         guard let cell = collectionView.dequeueReusableCell(
-          withReuseIdentifier: TaskCell.reuseID,
+          withReuseIdentifier: TaskListCell.reuseID,
           for: indexPath
-        ) as? TaskCell else { return UICollectionViewCell() }
-        cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
+        ) as? TaskListCell else { return UICollectionViewCell() }
+        cell.configure(with: item)
         cell.delegate = self
         return cell
       },
       configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
         guard let header = collectionView.dequeueReusableSupplementaryView(
           ofKind: kind,
-          withReuseIdentifier: TaskReusableView.reuseID,
+          withReuseIdentifier: TaskListReusableView.reuseID,
           for: indexPath
-        ) as? TaskReusableView else { return UICollectionReusableView() }
+        ) as? TaskListReusableView else { return UICollectionReusableView() }
         header.configure(text: dataSource[indexPath.section].header)
         return header
       }
@@ -309,28 +310,33 @@ class MainTaskListViewController: UIViewController {
   
   func bindViewModel() {
     let input = MainTaskListViewModel.Input(
+      // overdued
       overduedButtonClickTrigger: overduedTasksButton.rx.tap.asDriver(),
+      // idea
       ideaButtonClickTrigger: ideaTasksButton.rx.tap.asDriver(),
-      selection: collectionView.rx.itemSelected.asDriver(),
+      // task list
+      taskSelected: collectionView.rx.itemSelected.asDriver(),
+      // alert
       alertDeleteButtonClick: alertDeleteButton.rx.tap.asDriver(),
       alertCancelButtonClick: alertCancelButton.rx.tap.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
-//    
-//    [
-//      outputs.openOverduedTasklist.drive(),
-//      outputs.openIdeaTaskList.drive(),
-//      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-//      outputs.dataSource.drive(dataSourceBinder),
-//      outputs.reloadItems.drive(reloadItemsBinder),
-//      outputs.hideCellWhenAlertClosed.drive(hideCellBinder),
-//      outputs.openTask.drive(),
-//      outputs.changeTaskStatusToIdea.drive(),
-//      outputs.changeTaskStatusToDeleted.drive(),
-//      outputs.alertIsHidden.drive(alertContainerView.rx.isHidden)
-//    ]
-//      .forEach { $0.disposed(by: disposeBag) }
+    
+    [
+      // overdued
+      outputs.overduredTaskListOpen.drive(),
+      // idea
+      outputs.ideaTaskListOpen.drive(),
+      // task list
+      outputs.taskListSections.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.taskListOpenTask.drive(),
+      // alert
+      outputs.deleteAlertIsHidden.drive(alertContainerView.rx.isHidden),
+      // task
+      outputs.saveTask.drive()
+    ]
+      .forEach { $0.disposed(by: disposeBag) }
 
   }
   
@@ -353,49 +359,10 @@ class MainTaskListViewController: UIViewController {
       }
     })
   }
-  
-  // MARK: - Task List Binders
-  var hideCellBinder: Binder<IndexPath> {
-    return Binder(self, binding: { vc, indexPath in
-      if let cell = vc.collectionView.cellForItem(at: indexPath) as? TaskCell {
-        cell.hideSwipe(animated: true)
-      }
-    })
-  }
-
-  var reloadItemsBinder: Binder<[IndexPath]> {
-    return Binder(self, binding: { vc, indexPaths in
-      if self.viewModel.editingIndexPath == nil {
-        vc.collectionView.reloadData()
-      } else {
-        UIView.performWithoutAnimation {
-         vc.collectionView.reloadItems(at: indexPaths)
-        }
-      }
-    })
-  }
-
-  var dataSourceBinder: Binder<[TaskListSection]> {
-    return Binder(self, binding: { vc, dataSource in
-      if dataSource.map { $0.items.count }.sum() == 0 {
-        vc.dragonImageView.isHidden = false
-      } else {
-        vc.dragonImageView.isHidden = true
-      }
-    })
-  }
 }
 
 // MARK: - SwipeCollectionViewCellDelegate
 extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
-  func collectionView(_ collectionView: UICollectionView, willBeginEditingItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) {
-    viewModel.editingIndexPath = indexPath
-  }
-
-  func collectionView(_ collectionView: UICollectionView, didEndEditingItemAt indexPath: IndexPath?, for orientation: SwipeActionsOrientation) {
-    viewModel.editingIndexPath = nil
-  }
-
   func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
     guard orientation == .right else { return nil }
 
@@ -430,7 +397,7 @@ extension MainTaskListViewController: SwipeCollectionViewCellDelegate {
 
   func configure(action: SwipeAction, with descriptor: ActionDescriptor) {
     let buttonDisplayMode: ButtonDisplayMode = .imageOnly
-    let buttonStyle: ButtonStyle = .circular
+    let buttonStyle: SwipeButtonStyle = .circular
 
     action.title = descriptor.title(forDisplayMode: buttonDisplayMode)
     action.image = descriptor.image(forStyle: buttonStyle, displayMode: buttonDisplayMode, size: CGSize(width: 35, height: 35))

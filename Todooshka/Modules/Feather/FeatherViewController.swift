@@ -96,11 +96,11 @@ class FeatherViewController: TDViewController {
     label.layer.zPosition = 10
 
     // collectionView
-    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+    collectionView.register(TaskListCell.self, forCellWithReuseIdentifier: TaskListCell.reuseID)
     collectionView.register(
-      TaskReusableView.self,
+      TaskListReusableView.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-      withReuseIdentifier: TaskReusableView.reuseID
+      withReuseIdentifier: TaskListReusableView.reuseID
     )
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
@@ -161,17 +161,17 @@ class FeatherViewController: TDViewController {
     collectionView.dataSource = nil
     dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(configureCell: { dataSource, collectionView, indexPath, item in
       guard let cell = collectionView.dequeueReusableCell(
-          withReuseIdentifier: TaskCell.reuseID,
+          withReuseIdentifier: TaskListCell.reuseID,
           for: indexPath
-      ) as? TaskCell else { return UICollectionViewCell() }
-      cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
+      ) as? TaskListCell else { return UICollectionViewCell() }
+      cell.configure(with: item)
       return cell
     }, configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
       guard let header = collectionView.dequeueReusableSupplementaryView(
         ofKind: kind,
-        withReuseIdentifier: TaskReusableView.reuseID,
+        withReuseIdentifier: TaskListReusableView.reuseID,
         for: indexPath
-      ) as? TaskReusableView else { return UICollectionReusableView() }
+      ) as? TaskListReusableView else { return UICollectionReusableView() }
       header.configure(text: dataSource[indexPath.section].header)
       return header
     })

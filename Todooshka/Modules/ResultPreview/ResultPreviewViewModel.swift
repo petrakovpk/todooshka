@@ -42,7 +42,7 @@ class ResultPreviewViewModel: Stepper {
     let task = managedContext.rx
       .entities(
         Task.self,
-        predicate: NSPredicate(format: "uuid == %@", task.uuid.uuidString))
+        predicate: NSPredicate(format: "uuid == %@", task.uuid.uuidString ))
       .compactMap { $0.first }
       .asDriverOnErrorJustComplete()
       .startWith(self.task)
@@ -50,16 +50,18 @@ class ResultPreviewViewModel: Stepper {
     let text = task
       .map { $0.text }
     
-    let image = task
-      .asObservable()
-      .flatMapLatest { task -> Observable<[TDImage]> in
-        self.managedContext.rx.entities(
-          TDImage.self,
-          predicate: NSPredicate(format: "uuid == %@", task.imageUUID?.uuidString ?? ""))
-      }
-      .compactMap { $0.first }
-      .map { $0.image }
-      .asDriverOnErrorJustComplete()
+//    let image = task
+//      .asObservable()
+//      .flatMapLatest { task -> Observable<[Image]> in
+//        self.managedContext.rx.entities(
+//          Image.self,
+//          predicate: NSPredicate(format: "uuid == %@", task.imageUUID?.uuidString ?? ""))
+//      }
+//      .compactMap { $0.first }
+//      .map { $0.image }
+//      .asDriverOnErrorJustComplete()
+    
+    let image = Driver<UIImage>.of(UIImage())
  
     return Output (
       navigateBack: navigateBack,

@@ -8,22 +8,20 @@
 import RxDataSources
 
 struct FunSection {
-    var header: String
-    var items: [FunItem]
-
-    init(header: String, items: [FunItem]) {
-        self.header = header
-        self.items = items
-    }
-
-    init(original: FunSection, items: [FunItem]) {
-        self = original
-        self.items = items
-    }
+  var items: [FunItemType]
+  
+  init(items: [FunItemType]) {
+    self.items = items
+  }
+  
+  init(original: FunSection, items: [FunItemType]) {
+    self = original
+    self.items = items
+  }
 }
 
 extension FunSection: AnimatableSectionModelType {
   var identity: String {
-    header
+    items.map { $0.identity }.joined(separator: "")
   }
 }

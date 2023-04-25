@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 import RxFlow
-
 import RxSwift
 import RxCocoa
 
@@ -37,14 +36,14 @@ class TabBarFlow: Flow {
     switch step {
     case .tabBarIsRequired:
       return navigateToTabBar()
-    case .openTaskIsRequired(let task, let isModal):
-      return navigateToTaskFlow(task: task, isModal: isModal)
+    case .openTaskIsRequired(let task, let taskListMode):
+      return navigateToTaskFlow(task: task, taskListMode: taskListMode)
     default:
       return .none
     }
   }
 
-  private func navigateToTaskFlow(task: Task, isModal: Bool) -> FlowContributors {
+  private func navigateToTaskFlow(task: Task, taskListMode: TaskListMode) -> FlowContributors {
     let taskFlow = TaskFlow(withServices: services)
 
     Flows.use(taskFlow, when: .created) { [unowned self] root in
@@ -60,7 +59,7 @@ class TabBarFlow: Flow {
         withNextStepper: OneStepper(
           withSingleStep: AppStep.openTaskIsRequired(
             task: task,
-            isModal: isModal
+            taskListMode: taskListMode
           )
         )
       )
@@ -72,7 +71,8 @@ class TabBarFlow: Flow {
     let mainTaskListFlow = MainTaskListFlow(withServices: self.services)
     let calendarFlow = CalendarFlow(withServices: self.services)
     let emptyFlow = EmptyFlow()
-
+    let taskFlow = TaskFlow(withServices: self.services)
+    
     let viewModel = TabBarViewModel(services: services)
     rootViewController.viewModel = viewModel
     rootViewController.bindViewModel()
@@ -105,11 +105,12 @@ class TabBarFlow: Flow {
     }
 
     return .multiple(flowContributors: [
+      .contribute(withNextPresentable: taskFlow, withNextStepper: OneStepper(withSingleStep: AppStep.empty) ),
       .contribute(withNextPresentable: self, withNextStepper: viewModel),
       .contribute(withNextPresentable: funFlow, withNextStepper: OneStepper(withSingleStep: AppStep.funIsRequired)),
       .contribute(withNextPresentable: mainTaskListFlow, withNextStepper: OneStepper(withSingleStep: AppStep.mainTaskListIsRequired)),
       .contribute(withNextPresentable: calendarFlow, withNextStepper: OneStepper(withSingleStep: AppStep.calendarIsRequired)),
-      .contribute(withNextPresentable: emptyFlow, withNextStepper: OneStepper(withSingleStep: AppStep.navigateBack))
+      .contribute(withNextPresentable: emptyFlow, withNextStepper: OneStepper(withSingleStep: AppStep.empty))
     ])
   }
 }

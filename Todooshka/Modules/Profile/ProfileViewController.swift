@@ -33,13 +33,13 @@ class ProfileViewController: TDViewController {
   }()
   
   private var collectionView: UICollectionView!
-  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskSection>!
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
   
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
-    configureDataSource()
+//    configureDataSource()
     bindViewModel()
   }
 
@@ -50,7 +50,7 @@ class ProfileViewController: TDViewController {
     
     // collection view
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
-    collectionView.register(TaskCell.self, forCellWithReuseIdentifier: TaskCell.reuseID)
+    collectionView.register(TaskListCell.self, forCellWithReuseIdentifier: TaskListCell.reuseID)
     collectionView.register(TaskWithImageCell.self, forCellWithReuseIdentifier: TaskWithImageCell.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
@@ -132,29 +132,29 @@ class ProfileViewController: TDViewController {
   }
   
   // MARK: - Color CollectionView
-  func configureDataSource() {
-    collectionView.dataSource = nil
-    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskSection>(
-      configureCell: {dataSource, collectionView, indexPath, item in
-        switch item.type {
-        case .text:
-          guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: TaskWithImageCell.reuseID,
-            for: indexPath
-          ) as? TaskCell else { return UICollectionViewCell() }
-       //   cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
-          return cell
-        case .textAndImage:
-          guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: TaskWithImageCell.reuseID,
-            for: indexPath
-          ) as? TaskWithImageCell else { return UICollectionViewCell() }
-          cell.configure(with: item.task)
-          return cell
-        }
-        return UICollectionViewCell()
-      })
-  }
+//  func configureDataSource() {
+//    collectionView.dataSource = nil
+//    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(
+//      configureCell: {dataSource, collectionView, indexPath, item in
+//        switch item.type {
+//        case .text:
+//          guard let cell = collectionView.dequeueReusableCell(
+//            withReuseIdentifier: TaskWithImageCell.reuseID,
+//            for: indexPath
+//          ) as? TaskListCell else { return UICollectionViewCell() }
+//       //   cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
+//          return cell
+//        case .textAndImage:
+//          guard let cell = collectionView.dequeueReusableCell(
+//            withReuseIdentifier: TaskWithImageCell.reuseID,
+//            for: indexPath
+//          ) as? TaskWithImageCell else { return UICollectionViewCell() }
+//          cell.configure(with: item.task)
+//          return cell
+//        }
+//        return UICollectionViewCell()
+//      })
+//  }
   
 }
 

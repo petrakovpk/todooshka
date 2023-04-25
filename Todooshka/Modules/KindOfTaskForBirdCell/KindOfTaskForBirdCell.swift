@@ -80,7 +80,7 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
     shapeLayer.fillColor = nil
   }
 
-  func configure(with kindOfTask: KindOfTask, isEnabled: Bool) {
+  func configure(with kind: Kind, isEnabled: Bool) {
     // removeFromSuperview
     imageView.removeFromSuperview()
     textView.removeFromSuperview()
@@ -91,20 +91,20 @@ class KindOfTaskForBirdCell: UICollectionViewCell {
 
     // contentView
     contentView.borderWidth = 1.0
-    contentView.borderColor = Style.Cells.KindOfTask.Border
+    contentView.borderColor = Style.Cells.Kind.Border
 
     // shapeLayer
-    shapeLayer.fillColor = isEnabled ? Style.Cells.KindOfTask.UnselectedBackground?.cgColor : UIColor.systemGray.withAlphaComponent(0.3).cgColor
+    shapeLayer.fillColor = isEnabled ? Style.Cells.Kind.UnselectedBackground?.cgColor : UIColor.systemGray.withAlphaComponent(0.3).cgColor
 
     // imageView
     imageView.anchorCenterXToSuperview()
     imageView.anchor(top: contentView.topAnchor, topConstant: 12, widthConstant: 25, heightConstant: 25)
-    imageView.image = kindOfTask.icon.image
-    imageView.tintColor = kindOfTask.color
+    imageView.image = kind.icon?.image
+    imageView.tintColor = kind.color
 
     // textView
     textView.anchor(top: imageView.bottomAnchor, left: contentView.leftAnchor, bottom: contentView.bottomAnchor, right: contentView.rightAnchor)
-    textView.text = kindOfTask.text
+    textView.text = kind.text
     textView.textColor = Style.App.text
   }
 }

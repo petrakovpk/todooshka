@@ -19,7 +19,7 @@ class ProfileViewModel: Stepper {
   }
   
   struct Output {
-    let dataSource: Driver<[TaskSection]>
+    let dataSource: Driver<[TaskListSection]>
   }
 
   // MARK: - Init
@@ -29,7 +29,7 @@ class ProfileViewModel: Stepper {
 
   func transform(input: Input) -> Output {
 
-    let dataSource = Driver<[TaskSection]>.just([])
+    let dataSource = Driver<[TaskListSection]>.just([])
     
     return Output(
       dataSource: dataSource

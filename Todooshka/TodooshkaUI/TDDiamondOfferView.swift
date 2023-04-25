@@ -61,7 +61,7 @@ class TDDiamondPackageOfferView: UIView {
     
     backgroundColor = Style.Views.GameCurrency.textViewBackground
     borderWidth = 1.0
-    borderColor = Style.Cells.KindOfTask.Border
+    borderColor = Style.Cells.Kind.Border
     
     // adding
     addSubviews([offerBackgroundView, priceLabel])

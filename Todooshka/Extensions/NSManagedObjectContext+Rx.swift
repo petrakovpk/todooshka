@@ -29,9 +29,9 @@ public extension Reactive where Base: NSManagedObjectContext {
         cacheName: cacheName
       )
 
-      return Disposables.create {
-        observerAdapter.dispose()
-      }
+        return Disposables.create {
+          observerAdapter.dispose()
+        }
     }
   }
 
@@ -169,22 +169,22 @@ public extension Reactive where Base: NSManagedObjectContext {
     persistable.update(try get(persistable) ?? self.create(P.self))
   }
 
-  func update<P: Persistable>(_ persistable: P) -> Observable<Result<Void, Error>> {
+  func update<P: Persistable>(_ persistable: P) -> Observable<Void> {
     return Observable.create { observer in
       do {
         let entity = try get(persistable) ?? self.create(P.self)
         persistable.update(entity)
         persistable.save(entity)
-        observer.onNext(.success(()))
+        observer.onNext(())
         observer.onCompleted()
       } catch {
-        observer.onNext(.failure(error))
+        observer.onError(error)
       }
       return Disposables.create()
     }
   }
 
-  func batchUpdate<P: Persistable>(_ persistables: [P]) -> Observable<Result<Void, Error>> {
+  func batchUpdate<P: Persistable>(_ persistables: [P]) -> Observable<Void> {
     return Observable.create { observer in
       do {
         for persistable in persistables {
@@ -193,10 +193,10 @@ public extension Reactive where Base: NSManagedObjectContext {
         }
 
         try self.base.save()
-        observer.onNext(.success(()))
+        observer.onNext(())
         observer.onCompleted()
       } catch {
-        observer.onNext(.failure(error))
+        observer.onError(error)
       }
       return Disposables.create()
     }

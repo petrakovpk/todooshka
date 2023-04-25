@@ -17,16 +17,16 @@ class TaskListViewController: TDViewController {
   private let disposeBag = DisposeBag()
 
   private var collectionView: UICollectionView!
-  private var dataSource: [TaskListSection] = []
+  private var dataSource: RxCollectionViewSectionedAnimatedDataSource<TaskListSection>!
 
-  private let alertView: UIView = {
+  private let alertContainerView: UIView = {
     let view = UIView()
     view.backgroundColor = .black.withAlphaComponent(0.5)
     view.isHidden = true
     return view
   }()
 
-  private let alertSubView: UIView = {
+  private let alertView: UIView = {
     let view = UIView()
     view.cornerRadius = 27
     view.backgroundColor = Style.App.background
@@ -65,6 +65,7 @@ class TaskListViewController: TDViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     configureUI()
+    configureDataSource()
     configureAlert()
     bindViewModel()
   }
@@ -78,15 +79,14 @@ class TaskListViewController: TDViewController {
     view.addSubview(collectionView)
 
     collectionView.register(
-      TaskCell.self,
-      forCellWithReuseIdentifier: TaskCell.reuseID)
+      TaskListCell.self,
+      forCellWithReuseIdentifier: TaskListCell.reuseID)
     collectionView.register(
-      TaskReusableView.self,
+      TaskListReusableView.self,
       forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-      withReuseIdentifier: TaskReusableView.reuseID)
+      withReuseIdentifier: TaskListReusableView.reuseID)
     collectionView.alwaysBounceVertical = true
     collectionView.backgroundColor = .clear
-    collectionView.dataSource = self
 
     collectionView.anchor(
       top: headerView.bottomAnchor,
@@ -102,29 +102,29 @@ class TaskListViewController: TDViewController {
 
   private func configureAlert() {
     view.addSubviews([
+      alertContainerView
+    ])
+    
+    alertContainerView.addSubviews([
       alertView
     ])
     
     alertView.addSubviews([
-      alertSubView
-    ])
-    
-    alertSubView.addSubviews([
       alertLabel,
       alertDeleteButton,
       alertCancelButton
     ])
 
-    alertView.anchor(
+    alertContainerView.anchor(
       top: view.topAnchor,
       left: view.leftAnchor,
       bottom: view.bottomAnchor,
       right: view.rightAnchor
     )
 
-    alertSubView.anchorCenterXToSuperview()
-    alertSubView.anchorCenterYToSuperview()
-    alertSubView.anchor(widthConstant: Sizes.Views.AlertDeleteView.width, heightConstant: Sizes.Views.AlertDeleteView.height)
+    alertView.anchorCenterXToSuperview()
+    alertView.anchorCenterYToSuperview()
+    alertView.anchor(widthConstant: Sizes.Views.AlertDeleteView.width, heightConstant: Sizes.Views.AlertDeleteView.height)
     
     alertLabel.anchorCenterXToSuperview()
     alertLabel.anchorCenterYToSuperview(constant: -1 * Sizes.Views.AlertDeleteView.height / 4)
@@ -161,62 +161,101 @@ class TaskListViewController: TDViewController {
     section.boundarySupplementaryItems = [header]
     return section
   }
+  
+  private func configureDataSource() {
+    collectionView.dataSource = nil
+    dataSource = RxCollectionViewSectionedAnimatedDataSource<TaskListSection>(
+      configureCell: { dataSource, collectionView, indexPath, item in
+        guard let cell = collectionView.dequeueReusableCell(
+          withReuseIdentifier: TaskListCell.reuseID,
+          for: indexPath
+        ) as? TaskListCell else { return UICollectionViewCell() }
+        cell.configure(with: item)
+        cell.delegate = self
+        cell.repeatButton.rx.tap
+          .map { _ -> IndexPath in indexPath }
+          .asDriver(onErrorJustReturn: nil)
+          .drive(self.repeatButtonBinder)
+          .disposed(by: cell.disposeBag)
+        return cell
+      },
+      configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
+        guard let header = collectionView.dequeueReusableSupplementaryView(
+          ofKind: kind,
+          withReuseIdentifier: TaskListReusableView.reuseID,
+          for: indexPath
+        ) as? TaskListReusableView else { return UICollectionReusableView() }
+        header.configure(text: dataSource[indexPath.section].header)
+        return header
+      }
+    )
+  }
 
   // MARK: - Bind To
   func bindViewModel() {
+    
+    switch viewModel.taskListMode {
+    case .idea:
+      addButton.isHidden = false
+      titleLabel.text = "Ящик идей"
+    case .overdued:
+      titleLabel.text = "Просроченные задачи"
+    case .deleted:
+      removeAllButton.isHidden = false
+      titleLabel.text = "Удаленные задачи"
+    case .day(let date):
+      titleLabel.text = date.string(withFormat: "dd MMMM yyyy")
+      addButton.isHidden = date.startOfDay <= Date().startOfDay
+    default:
+      titleLabel.text = ""
+    }
+    
     let input = TaskListViewModel.Input(
-      // BACK
+      // header button 
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      // ADD
       addTaskButtonClickTrigger: addButton.rx.tap.asDriver(),
-      // REMOVE ALL
       removeAllButtonClickTrigger: removeAllButton.rx.tap.asDriver(),
-      // SELECT TASK
-      selection: collectionView.rx.itemSelected.asDriver(),
-      // ALERT
+      // task list
+      taskSelected: collectionView.rx.itemSelected.asDriver(),
+      // alert
       alertDeleteButtonClick: alertDeleteButton.rx.tap.asDriver(),
       alertCancelButtonClick: alertCancelButton.rx.tap.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
-
+    
     [
-      // HEADER
-      outputs.title.drive(titleLabel.rx.text),
-      // NAVIGATE BACK
+      // header
       outputs.navigateBack.drive(),
-      // ADD TASK
-      outputs.addTask.drive(),
-    //  outputs.addTaskButtonIsHidden.drive(addButton.rx.isHidden),
-      // MODE
-      outputs.mode.drive(modeBinder),
-      // REMOVE ALL TASKS
-      outputs.removeAllTasks.drive(),
-    //  outputs.removeAllTasksButtonIsHidden.drive(removeAllButton.rx.isHidden),
-      // DATASOURCE
-      outputs.dataSource.drive(dataSourceBinder),
-      outputs.hideCellWhenAlertClosed.drive(hideCellBinder),
-      // TASK
+      // task list
+      outputs.taskListSections.drive(collectionView.rx.items(dataSource: dataSource)),
+      // alert
+      outputs.deleteAlertText.drive(alertLabel.rx.text),
+      outputs.deleteAlertIsHidden.drive(alertContainerView.rx.isHidden),
+      // task
       outputs.openTask.drive(),
-      outputs.changeTaskStatusToIdea.drive(),
-      outputs.changeTaskStatusToDeleted.drive(),
-      outputs.changeTaskStatusToInProgress.drive(),
-      // ALERT
-      outputs.alertText.drive(alertLabel.rx.text),
-      outputs.showAlert.drive(showAlertBinder),
-      outputs.hideAlert.drive(hideAlertBinder),
+      outputs.saveTask.drive()
     ]
-      .forEach({ $0?.disposed(by: disposeBag) })
+      .forEach { $0?.disposed(by: disposeBag) }
+
+    
+//      // REMOVE ALL TASKS
+//      outputs.removeAllTasks.drive(),
+
+//    ]
+//      .forEach({ $0?.disposed(by: disposeBag) })
   }
 
   // MARK: - Binders
-  var dataSourceBinder: Binder<[TaskListSection]> {
-    return Binder(self, binding: { _, dataSource in
-      self.dataSource = dataSource
-      self.collectionView.reloadData()
-    })
-  }
+//  var dataSourceBinder: Binder<[TaskListSection]> {
+//    return Binder(self, binding: { _, dataSource in
+//      self.dataSource = dataSource
+//      self.collectionView.reloadData()
+//    })
+//  }
 
+
+  
   var modeBinder: Binder<TaskListMode> {
     return Binder(self, binding: { vc, mode in
       switch mode {
@@ -232,19 +271,19 @@ class TaskListViewController: TDViewController {
   
   var showAlertBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
-      vc.alertView.isHidden = false
+      vc.alertContainerView.isHidden = false
     })
   }
   
   var hideAlertBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
-      vc.alertView.isHidden = true
+      vc.alertContainerView.isHidden = true
     })
   }
 
   var hideCellBinder: Binder<IndexPath> {
     return Binder(self, binding: { vc, indexPath in
-      if let cell = vc.collectionView.cellForItem(at: indexPath) as? TaskCell {
+      if let cell = vc.collectionView.cellForItem(at: indexPath) as? TaskListCell {
         cell.hideSwipe(animated: true)
       }
     })
@@ -258,50 +297,36 @@ class TaskListViewController: TDViewController {
   }
 }
 
-// MARK: - UICollectionViewDelegate
-extension TaskListViewController: UICollectionViewDelegate {
-}
-
-// MARK: - UICollectionViewDelegate
-extension TaskListViewController: UICollectionViewDelegateFlowLayout {
-}
-
 // MARK: - UICollectionViewDataSource
-extension TaskListViewController: UICollectionViewDataSource {
-  func numberOfSections(in collectionView: UICollectionView) -> Int {
-    dataSource.count
-  }
-
-  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    dataSource[section].items.count
-  }
-
-  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-    guard let cell = collectionView.dequeueReusableCell(
-      withReuseIdentifier: TaskCell.reuseID,
-      for: indexPath
-    ) as? TaskCell else { return UICollectionViewCell() }
-    let item = dataSource[indexPath.section].items[indexPath.item]
-    cell.configure(mode: dataSource[indexPath.section].mode, task: item.task, kindOfTask: item.kindOfTask)
-    cell.delegate = self
-    cell.repeatButton.rx.tap
-      .map { _ -> IndexPath in indexPath }
-      .asDriver(onErrorJustReturn: nil)
-      .drive(self.repeatButtonBinder)
-      .disposed(by: cell.disposeBag)
-    return cell
-  }
-
-  func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-    guard let section = collectionView.dequeueReusableSupplementaryView(
-      ofKind: kind,
-      withReuseIdentifier: TaskReusableView.reuseID,
-      for: indexPath
-    ) as? TaskReusableView else { return UICollectionReusableView() }
-    section.configure(text: dataSource[indexPath.section].header)
-    return section
-  }
-}
+//extension TaskListViewController: UICollectionViewDataSource {
+//
+//
+//  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//    guard let cell = collectionView.dequeueReusableCell(
+//      withReuseIdentifier: TaskListCell.reuseID,
+//      for: indexPath
+//    ) as? TaskListCell else { return UICollectionViewCell() }
+//    let item = dataSource[indexPath.section].items[indexPath.item]
+//    cell.configure(with: item)
+//    cell.delegate = self
+//    cell.repeatButton.rx.tap
+//      .map { _ -> IndexPath in indexPath }
+//      .asDriver(onErrorJustReturn: nil)
+//      .drive(self.repeatButtonBinder)
+//      .disposed(by: cell.disposeBag)
+//    return cell
+//  }
+//
+//  func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+//    guard let section = collectionView.dequeueReusableSupplementaryView(
+//      ofKind: kind,
+//      withReuseIdentifier: TaskListReusableView.reuseID,
+//      for: indexPath
+//    ) as? TaskListReusableView else { return UICollectionReusableView() }
+//    section.configure(text: dataSource[indexPath.section].header)
+//    return section
+//  }
+//}
 
 extension TaskListViewController: SwipeCollectionViewCellDelegate {
 
@@ -339,7 +364,7 @@ extension TaskListViewController: SwipeCollectionViewCellDelegate {
 
   func configure(action: SwipeAction, with descriptor: ActionDescriptor) {
     let buttonDisplayMode: ButtonDisplayMode = .imageOnly
-    let buttonStyle: ButtonStyle = .circular
+    let buttonStyle: SwipeButtonStyle = .circular
 
     action.title = descriptor.title(forDisplayMode: buttonDisplayMode)
     action.image = descriptor.image(forStyle: buttonStyle, displayMode: buttonDisplayMode, size: CGSize(width: 44, height: 44))

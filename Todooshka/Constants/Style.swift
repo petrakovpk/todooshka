@@ -44,7 +44,7 @@ struct Style {
       static let Selected = Palette.SingleColors.BlueRibbon
       static let Text = Palette.SingleColors.BlackPearl
     }
-    struct KindOfTask {
+    struct Kind {
       static let Border = Palette.DualColors.Periwinkle_200_202_255_PortGore_24_27_60
       static let SelectedBackground = Palette.SingleColors.BlueRibbon
       static let UnselectedBackground = Palette.DualColors.TitanWhite_244_245_255_Ebony_10_11_31

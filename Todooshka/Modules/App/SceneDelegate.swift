@@ -17,6 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   let disposeBag = DisposeBag()
   var window: UIWindow?
   var coordinator = FlowCoordinator()
+  let storageManager = StorageManager()
 
   // serrvices
 //  let authService = AuthService()
@@ -27,12 +28,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //  let tabBarService = TabBarService()
   
   let taskAPIService = TaskAPIService()
-  let userAPIService = UserAPIService()
+  let userAPIService = CurrentUserService()
 
   lazy var appServices = {
     return AppServices(
       taskAPIService: taskAPIService,
-      userAPIService: userAPIService
+      currentUserService: userAPIService
 //      authService: authService,
 //      actionService: actionService,
 //      dataService: dataService,

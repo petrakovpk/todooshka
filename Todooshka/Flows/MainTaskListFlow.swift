@@ -15,7 +15,7 @@ import YPImagePicker
 
 class MainTaskListFlow: Flow {
   var root: Presentable {
-    rootViewController
+    return rootViewController
   }
 
   private let rootViewController = UINavigationController()
@@ -32,38 +32,24 @@ class MainTaskListFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
-      // TASK LIST
     case .mainTaskListIsRequired:
       return navigateToMainTaskList()
-    case .ideaTaskListIsRequired:
-      return navigateToTaskList(mode: .idea)
-    case .overduedTaskListIsRequired:
-      return navigateToTaskList(mode: .overdued)
-      
-      // TASK
-//    case .createTaskIsRequired(let task, let isModal):
-//      return navigateToTask(task: task, isModal: isModal)
-//    case .openTaskIsRequired(let task):
-//      return navigateToTask(task: task, isModal: false )
-//    case .addPhotoIsRequired(let task):
-//      return navigateToImagePickerFlow(task: task)
-//    case .resultPreviewIsRequired(let task):
-//      return navigateToResultPreview(task: task)
-      
-      // KIND OF TASK LIST
-    case .kindsOfTaskListIsRequired:
-      return navigateToKindOfTaskList()
-      
-      // KIND OF TASK
-    case .createKindOfTaskIsRequired:
-      return navigateToCreateKindOfTask()
-    case .showKindOfTaskIsRequired(let kindOfTask):
-      return navigateToShowKindOfTask(kindOfTask: kindOfTask)
     
-      // BACK AND DISMISS
+    case .ideaTaskListIsRequired:
+      return navigateToTaskList(taskListMode: .idea)
+    case .overduedTaskListIsRequired:
+      return navigateToTaskList(taskListMode: .overdued)
+      
+    case .openTaskIsRequired(let task, let taskListMode):
+      return navigateToTask(task: task, taskListMode: taskListMode)
+      
+    case .kindListIsRequired:
+      return navigateToKindList()
+    case .openKindIsRequired(let kind):
+      return navigateToKind(kind: kind)
+
     case .navigateBack,
-        .taskProcessingIsCompleted,
-        .taskListIsCompleted:
+        .taskProcessingIsCompleted:
       return navigateBack()
 
     case .dismiss:
@@ -91,79 +77,36 @@ class MainTaskListFlow: Flow {
     )
   }
   
-  private func navigateToTask(task: Task, isModal: Bool) -> FlowContributors {
+  private func navigateToTask(task: Task, taskListMode: TaskListMode) -> FlowContributors {
     let viewController = TaskViewController()
-    let viewModel = TaskViewModel(services: services, task: task, isModal: isModal)
+    let viewModel = TaskViewModel(services: services, task: task, taskListMode: taskListMode)
     viewController.viewModel = viewModel
-    if isModal {
-      rootViewController.tabBarController?.tabBar.isHidden = false
-      rootViewController.present(viewController, animated: true)
-    } else {
-      rootViewController.tabBarController?.tabBar.isHidden = true
-      rootViewController.pushViewController(viewController, animated: true)
-    }
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
-  
-  private func navigateToImagePickerFlow(task: Task) -> FlowContributors {
-    let pickerFlow = ImagePickerFlow(withServices: services)
-    
-    Flows.use(pickerFlow, when: .created) { [unowned self] root in
-      DispatchQueue.main.async {
-        root.modalPresentationStyle = .automatic
-        rootViewController.present(root, animated: true)
-      }
-    }
-    
-    return .one(
-      flowContributor: .contribute(
-        withNextPresentable: pickerFlow,
-        withNextStepper: OneStepper(
-          withSingleStep: AppStep.addPhotoIsRequired(task: task)
-        )
-      )
-    )
-  }
-  
-  private func navigateToResultPreview(task: Task) -> FlowContributors {
-    let viewController = ResultPreviewViewController()
-    let viewModel = ResultPreviewViewModel(services: services, task: task)
-    viewController.viewModel = viewModel
+    rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToTaskList(mode: TaskListMode) -> FlowContributors {
+  private func navigateToTaskList(taskListMode: TaskListMode) -> FlowContributors {
     let viewController = TaskListViewController()
-    let viewModel = TaskListViewModel(services: services, mode: mode)
+    let viewModel = TaskListViewModel(services: services, taskListMode: taskListMode)
     viewController.viewModel = viewModel
     rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
 
-  private func navigateToKindOfTaskList() -> FlowContributors {
-    let viewController = KindOfTaskListViewController()
-    let viewModel = KindOfTaskListViewModel(services: services)
+  private func navigateToKindList() -> FlowContributors {
+    let viewController = KindListViewController()
+    let viewModel = KindListViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToCreateKindOfTask() -> FlowContributors {
-    let viewController = KindOfTaskViewController()
-    let viewModel = KindOfTaskViewModel(services: services, kindOfTaskUID: UUID().uuidString )
+  private func navigateToKind(kind: Kind) -> FlowContributors {
+    let viewController = KindViewController()
+    let viewModel = KindViewModel(services: services, kind: kind)
     viewController.viewModel = viewModel
-    rootViewController.tabBarController?.tabBar.isHidden = true
-    rootViewController.pushViewController(viewController, animated: true)
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
-
-  private func navigateToShowKindOfTask(kindOfTask: KindOfTask) -> FlowContributors {
-    let viewController = KindOfTaskViewController()
-    let viewModel = KindOfTaskViewModel(services: services, kindOfTaskUID: kindOfTask.UID )
-    viewController.viewModel = viewModel
-    rootViewController.tabBarController?.tabBar.isHidden = true
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }

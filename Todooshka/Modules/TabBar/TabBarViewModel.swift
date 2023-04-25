@@ -27,13 +27,14 @@ class TabBarViewModel: Stepper {
 
   func transform(input: Input) -> Output {
     let createTask = input.createTaskButtonClickTrigger
-      .do { _ in
-        self.steps.accept(
-          AppStep.openTaskIsRequired(
-            task: Task(uuid: UUID(), status: .inProgress),
-            isModal: true
-          ))
+      .withLatestFrom(services.currentUserService.currentUserEmptyKind)
+      .map { emptyKind in
+        self.steps.accept(AppStep.openTaskIsRequired(
+          task: Task(uuid: UUID(), status: .draft, kindUUID: emptyKind.uuid),
+          taskListMode: .tabBar
+        ))
       }
+      .mapToVoid()
 
     return Output(
       createTask: createTask
