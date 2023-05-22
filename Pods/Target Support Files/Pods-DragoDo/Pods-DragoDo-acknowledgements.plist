@@ -43,6 +43,37 @@ THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
+			<string>MIT License
+
+Copyright (c) 2019-2022 AnyImageKit.org
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</string>
+			<key>License</key>
+			<string>MIT</string>
+			<key>Title</key>
+			<string>AnyImageKit</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
 			<string>
                                  Apache License
                            Version 2.0, January 2004
@@ -4170,38 +4201,6 @@ Fuller's blog&lt;/a&gt;
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>Licensed under the **MIT** license
-
-&gt; Copyright (c) 2015 Hyper Interaktiv AS
-&gt;
-&gt; Permission is hereby granted, free of charge, to any person obtaining
-&gt; a copy of this software and associated documentation files (the
-&gt; "Software"), to deal in the Software without restriction, including
-&gt; without limitation the rights to use, copy, modify, merge, publish,
-&gt; distribute, sublicense, and/or sell copies of the Software, and to
-&gt; permit persons to whom the Software is furnished to do so, subject to
-&gt; the following conditions:
-&gt;
-&gt; The above copyright notice and this permission notice shall be
-&gt; included in all copies or substantial portions of the Software.
-&gt;
-&gt; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-&gt; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-&gt; MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-&gt; IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-&gt; CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-&gt; TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-&gt; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-</string>
-			<key>License</key>
-			<string>MIT</string>
-			<key>Title</key>
-			<string>ImagePicker</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
 			<string>Copyright (c) 2016 JayT &lt;patchthecode@gmail.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -4226,6 +4225,38 @@ THE SOFTWARE.
 			<string>MIT</string>
 			<key>Title</key>
 			<string>JTAppleCalendar</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
+			<string>The MIT License (MIT)
+
+Copyright (c) 2019 Wei Wang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+</string>
+			<key>License</key>
+			<string>MIT</string>
+			<key>Title</key>
+			<string>Kingfisher</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
@@ -4523,37 +4554,6 @@ The externally maintained libraries used by libuv are:
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>MIT License
-
-Copyright (c) 2017 Prynt
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-</string>
-			<key>License</key>
-			<string>MIT</string>
-			<key>Title</key>
-			<string>PryntTrimmerView</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
 			<string>The MIT License (MIT)
 
 Copyright (c) 2015 Junior B.
@@ -4694,35 +4694,6 @@ THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>Copyright (c) 2016 Thane Gill &lt;me@thanegill.com&gt;
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-</string>
-			<key>License</key>
-			<string>MIT</string>
-			<key>Title</key>
-			<string>RxOptional</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
 			<string>**The MIT License**
 **Copyright © 2015 Krunoslav Zaher, Shai Mishali**
 **All rights reserved.**
@@ -4793,9 +4764,7 @@ SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>The MIT License (MIT)
-
-Copyright (c) 2015 
+			<string>Copyright (c) 2011-Present SnapKit Team - https://github.com/SnapKit
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -4804,22 +4773,21 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 </string>
 			<key>License</key>
 			<string>MIT</string>
 			<key>Title</key>
-			<string>SteviaLayout</string>
+			<string>SnapKit</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
@@ -4882,37 +4850,6 @@ SOFTWARE.</string>
 			<string>MIT</string>
 			<key>Title</key>
 			<string>SwipeCellKit</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
-			<string>The MIT License (MIT)
-
-Copyright (c) 2016 ytakzk
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-</string>
-			<key>License</key>
-			<string>MIT</string>
-			<key>Title</key>
-			<string>YPImagePicker</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>

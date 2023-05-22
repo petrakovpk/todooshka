@@ -27,24 +27,38 @@ class StorageManager {
   }
   
   init() {
-    Auth.auth().rx.stateDidChange
-    // только при загрузке
-      .take(1)
-    // только если пользователь nil
-      .filter { user in user == nil }
-      .map { _ -> NSPredicate in
-        NSPredicate(format: "userUID == nil")
-      }
-      .flatMapLatest { predicate -> Observable<[Kind]> in
-        self.managedContext.rx.entities(Kind.self, predicate: predicate)
-      }
-    // только если у него нет пустых задач
-      .filter { $0.isEmpty }
-      .map { _ in InitialData.kinds }
-      .flatMapLatest { kinds -> Observable<Void> in
-        self.managedContext.rx.batchUpdate(kinds)
-      }
-      .subscribe()
-      .disposed(by: disposeBag)
+//    let currentUserPredicate = currentUser
+//      .map { user -> NSPredicate in
+//        if let uid = user?.uid {
+//          return NSPredicate(format: "userUID == %@", uid)
+//        } else {
+//          return NSPredicate(format: "userUID == nil")
+//        }
+//      }
+//
+    
+//    Auth.auth().rx.stateDidChange
+//    // только при загрузке
+//      .take(1)
+//    // только если пользователь nil
+//      .map { user -> NSPredicate in
+//        if user == nil {
+//          return NSPredicate(format: "userUID == nil")
+//        } else {
+//          
+//        }
+//        
+//      }
+//      .flatMapLatest { predicate -> Observable<[Kind]> in
+//        self.managedContext.rx.entities(Kind.self, predicate: predicate)
+//      }
+//    // только если у него нет пустых задач
+//      .filter { $0.isEmpty }
+//      .map { _ in InitialData.kinds }
+//      .flatMapLatest { kinds -> Observable<Void> in
+//        self.managedContext.rx.batchUpdate(kinds)
+//      }
+//      .subscribe()
+//      .disposed(by: disposeBag)
   }
 }

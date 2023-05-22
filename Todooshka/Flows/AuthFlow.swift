@@ -31,12 +31,12 @@ class AuthFlow: Flow {
     switch step {
     case .authIsRequired:
       return navigateToAuthScreen()
-    case .authIsCompleted:
-      return dismissAuthScreen()
     case .authWithEmailOrPhoneInIsRequired:
       return navigateToAuthWithEmailOrPhoneAccountScreen()
     case .navigateBack:
       return navigateBack()
+    case .authIsCompleted, .dismiss:
+      return dismiss()
     default:
       return .none
     }
@@ -65,7 +65,7 @@ class AuthFlow: Flow {
     return .none
   }
 
-  private func dismissAuthScreen() -> FlowContributors {
+  private func dismiss() -> FlowContributors {
     rootViewController.dismiss(animated: true)
     return .end(forwardToParentFlowWithStep: AppStep.authIsCompleted)
   }

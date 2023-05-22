@@ -17,9 +17,6 @@ RSYNC_PROTECT_TMP_FILES=(--filter "P .*.??????")
 variant_for_slice()
 {
   case "$1" in
-  "GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_armv7")
-    echo ""
-    ;;
   "GoogleAppMeasurementIdentitySupport.xcframework/tvos-arm64")
     echo ""
     ;;
@@ -29,25 +26,28 @@ variant_for_slice()
   "GoogleAppMeasurementIdentitySupport.xcframework/macos-arm64_x86_64")
     echo ""
     ;;
+  "GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_armv7")
+    echo ""
+    ;;
+  "GoogleAppMeasurementIdentitySupport.xcframework/tvos-arm64_x86_64-simulator")
+    echo "simulator"
+    ;;
   "GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_i386_x86_64-simulator")
     echo "simulator"
     ;;
-  "GoogleAppMeasurementIdentitySupport.xcframework/tvos-arm64_x86_64-simulator")
+  "GoogleAppMeasurement.xcframework/macos-arm64_x86_64")
+    echo ""
+    ;;
+  "GoogleAppMeasurement.xcframework/ios-arm64_x86_64-maccatalyst")
+    echo "maccatalyst"
+    ;;
+  "GoogleAppMeasurement.xcframework/ios-arm64_i386_x86_64-simulator")
     echo "simulator"
     ;;
   "GoogleAppMeasurement.xcframework/tvos-arm64_x86_64-simulator")
     echo "simulator"
     ;;
-  "GoogleAppMeasurement.xcframework/ios-arm64_x86_64-maccatalyst")
-    echo "maccatalyst"
-    ;;
   "GoogleAppMeasurement.xcframework/tvos-arm64")
-    echo ""
-    ;;
-  "GoogleAppMeasurement.xcframework/ios-arm64_i386_x86_64-simulator")
-    echo "simulator"
-    ;;
-  "GoogleAppMeasurement.xcframework/macos-arm64_x86_64")
     echo ""
     ;;
   "GoogleAppMeasurement.xcframework/ios-arm64_armv7")
@@ -59,9 +59,6 @@ variant_for_slice()
 archs_for_slice()
 {
   case "$1" in
-  "GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_armv7")
-    echo "arm64 armv7"
-    ;;
   "GoogleAppMeasurementIdentitySupport.xcframework/tvos-arm64")
     echo "arm64"
     ;;
@@ -71,26 +68,29 @@ archs_for_slice()
   "GoogleAppMeasurementIdentitySupport.xcframework/macos-arm64_x86_64")
     echo "arm64 x86_64"
     ;;
-  "GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_i386_x86_64-simulator")
-    echo "arm64 i386 x86_64"
+  "GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_armv7")
+    echo "arm64 armv7"
     ;;
   "GoogleAppMeasurementIdentitySupport.xcframework/tvos-arm64_x86_64-simulator")
     echo "arm64 x86_64"
     ;;
-  "GoogleAppMeasurement.xcframework/tvos-arm64_x86_64-simulator")
+  "GoogleAppMeasurementIdentitySupport.xcframework/ios-arm64_i386_x86_64-simulator")
+    echo "arm64 i386 x86_64"
+    ;;
+  "GoogleAppMeasurement.xcframework/macos-arm64_x86_64")
     echo "arm64 x86_64"
     ;;
   "GoogleAppMeasurement.xcframework/ios-arm64_x86_64-maccatalyst")
     echo "arm64 x86_64"
     ;;
-  "GoogleAppMeasurement.xcframework/tvos-arm64")
-    echo "arm64"
-    ;;
   "GoogleAppMeasurement.xcframework/ios-arm64_i386_x86_64-simulator")
     echo "arm64 i386 x86_64"
     ;;
-  "GoogleAppMeasurement.xcframework/macos-arm64_x86_64")
+  "GoogleAppMeasurement.xcframework/tvos-arm64_x86_64-simulator")
     echo "arm64 x86_64"
+    ;;
+  "GoogleAppMeasurement.xcframework/tvos-arm64")
+    echo "arm64"
     ;;
   "GoogleAppMeasurement.xcframework/ios-arm64_armv7")
     echo "arm64 armv7"
@@ -177,6 +177,6 @@ install_xcframework() {
   echo "Copied $source to $destination"
 }
 
-install_xcframework "${PODS_ROOT}/GoogleAppMeasurement/Frameworks/GoogleAppMeasurementIdentitySupport.xcframework" "GoogleAppMeasurement/AdIdSupport" "framework" "ios-arm64_armv7" "ios-arm64_x86_64-maccatalyst" "ios-arm64_i386_x86_64-simulator"
+install_xcframework "${PODS_ROOT}/GoogleAppMeasurement/Frameworks/GoogleAppMeasurementIdentitySupport.xcframework" "GoogleAppMeasurement/AdIdSupport" "framework" "ios-arm64_x86_64-maccatalyst" "ios-arm64_armv7" "ios-arm64_i386_x86_64-simulator"
 install_xcframework "${PODS_ROOT}/GoogleAppMeasurement/Frameworks/GoogleAppMeasurement.xcframework" "GoogleAppMeasurement/WithoutAdIdSupport" "framework" "ios-arm64_x86_64-maccatalyst" "ios-arm64_i386_x86_64-simulator" "ios-arm64_armv7"
 

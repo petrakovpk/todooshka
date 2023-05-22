@@ -12,20 +12,37 @@ enum AppStep: Step {
   case authIsRequired
   case authIsCompleted
   case authWithEmailOrPhoneInIsRequired
+  
+  // User Image
+  case extUserDataCameraForIsRequired(extUserData: UserExtData)
+  case extUserDataPhotoLibraryForIsRequired(extUserData: UserExtData)
 
   // Tab Bar
   case tabBarIsRequired
   case funIsRequired
+  case marketplaceIsRequired
   case mainTaskListIsRequired
-  case calendarIsRequired
+  case addTabBarPresentationIsRequired
 
   // Task
   case openTaskIsRequired(task: Task, taskListMode: TaskListMode)
-  case addPhotoIsRequired(task: Task)
   case resultPreviewIsRequired(task: Task)
   case taskProcessingIsCompleted
   
-  // Changing
+  // Publication
+  case publicationIsRequired(publication: Publication)
+  case publicationEditIsRequired(publication: Publication, publicationImage: PublicationImage?)
+  case publicationSettingsIsRequired(publication: Publication, publicationImage: PublicationImage?)
+  case publicationCameraIsRequired(publication: Publication)
+  case publicationPhotoLibraryIsRequired(publication: Publication)
+  case publicationPublicKindIsRequired(publication: Publication)
+  
+  case publicationEditProcesingIsCompleted
+  case publicationProcesingIsCompleted
+  
+  // Settings
+  case settingsIsRequired
+  case accountSettingsIsRequired
   case changingNameIsRequired
   case changingGenderIsRequired
   case changingBirthdayIsRequired
@@ -37,18 +54,14 @@ enum AppStep: Step {
   case overduedTaskListIsRequired
   case ideaTaskListIsRequired
   case dayTaskListIsRequired(date: Date)
-  //case completedTaskListIsRequired(date: Date)
   case deletedTaskListIsRequired
   case taskListIsCompleted
 
-  // KindOfTask
+  // Kind
   case openKindIsRequired(kind: Kind)
 
- // User Profile
-  case userProfileIsRequired
-
   // Deleted Task Type List
-  case deletedTaskTypeListIsRequired
+  case deletedKindListIsRequired
 
   // Delete Account
   case deleteAccountIsRequired
@@ -58,6 +71,8 @@ enum AppStep: Step {
 
   // Dismiss
   case dismiss
+  case dismissVC(viewController: UIViewController)
+  case dismissModalRoot
 
   // Feather
   case featherIsRequired
@@ -71,9 +86,6 @@ enum AppStep: Step {
   // Logout
   case logoutIsRequired
 
-  // Marketplace
-  case marketplaceIsRequired
-
   // NavigateBack
   case dismissAndNavigateBack
   case navigateBack
@@ -85,15 +97,15 @@ enum AppStep: Step {
   case onboardingIsRequired
   case onboardingIsCompleted
   
-  // profile
+  // user profile
   case profileIsRequired
+  case imagePickerIsRequired
+  case followersIsRequired
+  case subsriptionsIsRequired
 
   // Remove Task
   case removeTaskIsRequired
-
-  // Settings
-  case settingsIsRequired
-
+  
   // Support
   case supportIsRequired
 
@@ -104,13 +116,18 @@ enum AppStep: Step {
   // Show Bird
   case showBirdIsRequired(bird: Bird)
 
-  // Theme
-  case themeIsRequired(theme: Theme)
-  case themeSettingsIsRequired(theme: Theme)
-  case themeStepIsRequired(themeStep: ThemeStep, openViewControllerMode: OpenViewControllerMode)
-  case themeTaskIsRequired(themeTaskUID: String, openViewControllerMode: OpenViewControllerMode)
-  case themeProcessingIsCompleted
+  // Quest
+  case questOpenIsRequired(quest: Quest)
+  case questEditIsRequired(quest: Quest)
+  case questEditPreviewIsRequired(quest: Quest)
+  case questGalleryOpenIsRequired(quest: Quest, questImage: QuestImage)
+  case questOpenKindPresentationIsRequired(quest: Quest)
+  case questOpenAddImagePresentationIsRequired(quest: Quest)
+  case questOpenCameraIsRequired(quest: Quest)
+  case questOpenPhotoLibraryIsRequired(quest: Quest)
+  case questPresentationIsRequired(quest: Quest)
+  case questProcessingIsCompleted
   
+  // Empty
   case empty
-
 }

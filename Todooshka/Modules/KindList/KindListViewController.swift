@@ -67,9 +67,8 @@ class KindListViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-    // settings
     backButton.isHidden = false
-    addButton.isHidden = false
+    headerSaveButton.isHidden = true
 
     // collectionView
     collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
@@ -152,10 +151,23 @@ class KindListViewController: TDViewController {
 
   // MARK: - Bind To
   func bindViewModel() {
+    if viewModel.kindListMode == .deleted {
+      removeAllButton.isHidden = false
+      descriptionLabel.isHidden = true
+      addButton.isHidden = true
+      titleLabel.text = "Удаленные типы"
+    } else {
+      removeAllButton.isHidden = true
+      descriptionLabel.isHidden = false
+      addButton.isHidden = false
+      titleLabel.text = "Типы"
+    }
+
     let input = KindListViewModel.Input(
       // header buttons
       addButtonClickTrigger: addButton.rx.tap.asDriver(),
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      removeAllButtonClickTrigger: removeAllButton.rx.tap.asDriver(),
       // kind list
       kindSelected: collectionView.rx.itemSelected.asDriver() ,
       kindMoved: itemMoved.asDriver().compactMap { $0 } ,
@@ -177,7 +189,8 @@ class KindListViewController: TDViewController {
       // alert
       outputs.alertIsHidden.drive(alertContainerView.rx.isHidden),
       // kind
-      outputs.kindRemove.drive()
+      outputs.kindRemove.drive(),
+      outputs.kindRemoveAllDeleted.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
 

@@ -7,20 +7,34 @@
 
 import RxDataSources
 
+enum KindSectionItemType {
+  case emptyKind
+  case kind(kind: Kind)
+}
+
+extension KindSectionItemType: Equatable {
+  
+}
+
 struct KindSectionItem {
-  let kind: Kind
+  let kindSectionItemType: KindSectionItemType
   let isSelected: Bool
 }
 
 extension KindSectionItem: IdentifiableType {
   var identity: String {
-    return kind.uuid.uuidString
+    switch kindSectionItemType {
+    case .emptyKind:
+      return "emptyKind"
+    case .kind(let kind):
+      return kind.identity
+    }
   }
 }
 
 extension KindSectionItem: Equatable {
   static func == (lhs: KindSectionItem, rhs: KindSectionItem) -> Bool {
     lhs.isSelected == rhs.isSelected &&
-    lhs.kind == rhs.kind
+    lhs.kindSectionItemType == rhs.kindSectionItemType
   }
 }

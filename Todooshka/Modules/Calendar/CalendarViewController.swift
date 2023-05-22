@@ -427,7 +427,9 @@ class CalendarViewController: UIViewController {
       calendarScrollToNextMonthButtonClickTrigger: scrollToNextPeriodButton.rx.tap.asDriver(),
       calendarScrollToPreviousMonthButtonClickTrigger: scrollToPreviousPeriodButton.rx.tap.asDriver(),
       // all tasks
-      allTasksButtonClickTrigger: allTasksButton.rx.tap.asDriver()
+      allTasksButtonClickTrigger: allTasksButton.rx.tap.asDriver(),
+      // task list
+      taskSelected: collectionView.rx.itemSelected.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
@@ -445,7 +447,8 @@ class CalendarViewController: UIViewController {
       outputs.openDayTaskList.drive(),
       // task list
       outputs.taskListLabelText.drive(taskListLabel.rx.text),
-      outputs.taskListSections.drive(collectionView.rx.items(dataSource: dataSource))
+      outputs.taskListSections.drive(collectionView.rx.items(dataSource: dataSource)),
+      outputs.taskListOpenTask.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
 

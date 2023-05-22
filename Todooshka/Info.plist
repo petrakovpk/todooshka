@@ -35,6 +35,10 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Let's add photo to our task!</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Let's add photo to our task!</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -65,10 +69,6 @@
 	<array>
 		<string>armv7</string>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>Let&apos;s add photo to our task!</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Let&apos;s add photo to our task!</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -12,13 +12,10 @@ import RxDataSources
 import UIKit
 
 class SetPhoneViewController: TDViewController {
-  // MARK: - Rx
-  private let disposeBag = DisposeBag()
-
-  // MARK: - MVVM
   public var viewModel: SetPhoneViewModel!
-
-  // MARK: - UI Elemenets
+  
+  private let disposeBag = DisposeBag()
+  
   private let phoneNumberTextField = TDAuthTextField(type: .phone)
   private let OTPCodeTextField = TDAuthTextField(type: .otp)
   
@@ -71,7 +68,6 @@ class SetPhoneViewController: TDViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-    //  header
     backButton.isHidden = false
     titleLabel.text = "Телефонные номера"
     
@@ -155,7 +151,7 @@ class SetPhoneViewController: TDViewController {
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       checkOTPCodeButtonClickTrigger: checkOTPCodeButton.rx.tap.asDriver(),
       phoneTextFieldText: phoneNumberTextField.rx.text.orEmpty.asDriver(),
-      saveButtonClickTrigger: saveButton.rx.tap.asDriver(),
+      saveButtonClickTrigger: headerSaveButton.rx.tap.asDriver(),
       sendOTPCodeButtonClickTrigger: sendOTPCodeButton.rx.tap.asDriver(),
       OTPCodeTextFieldText: OTPCodeTextField.rx.text.orEmpty.asDriver()
     )
@@ -169,7 +165,6 @@ class SetPhoneViewController: TDViewController {
       outputs.errorText.drive(errorTextView.rx.text),
       outputs.isPhoneNotSet.drive(isPhoneNotSetBinder),
       outputs.sendCodeButtonIsEnabled.drive(sendCodeButtonIsEnabledBinder),
-      outputs.successLink.drive(successLinkBinder),
       outputs.navigateBack.drive()
     ]
       .forEach({ $0.disposed(by: disposeBag) })

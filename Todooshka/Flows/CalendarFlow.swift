@@ -14,26 +14,23 @@ class CalendarFlow: Flow {
   var root: Presentable {
     self.rootViewController
   }
-
+  
   private let rootViewController = UINavigationController()
   private let services: AppServices
-
+  
   init(withServices services: AppServices) {
     self.services = services
   }
-
+  
   deinit {
     print("\(type(of: self)): \(#function)")
   }
-
+  
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
     case .calendarIsRequired:
       return navigateToCalendar()
-      
-    case .authIsRequired:
-      return navigateToAuthFlow()
       
     case .dayTaskListIsRequired(let date):
       return navigateToDayTaskList(date: date)
@@ -47,6 +44,16 @@ class CalendarFlow: Flow {
       
     case .settingsIsRequired:
       return navigateToSettings()
+    case .authIsRequired:
+      return navigateToAuthFlow()
+    case .accountSettingsIsRequired:
+      return navigateToUserProfile()
+    case .deletedTaskListIsRequired:
+      return navigateToDeletedTaskList()
+    case .deletedKindListIsRequired:
+      return navigateToDeletedKindList()
+    case .supportIsRequired:
+      return navigateToSupport()
       
     case .navigateBack:
       return navigateBack()
@@ -55,26 +62,6 @@ class CalendarFlow: Flow {
     }
   }
   
-  private func navigateToAuthFlow() -> FlowContributors {
-    let authFlow = AuthFlow(withServices: services)
-    
-    Flows.use(authFlow, when: .created) { [unowned self] root in
-      DispatchQueue.main.async {
-        root.modalPresentationStyle = .automatic
-        rootViewController.present(root, animated: true)
-      }
-    }
-    
-    return .one(
-      flowContributor: .contribute(
-        withNextPresentable: authFlow,
-        withNextStepper: OneStepper(
-          withSingleStep: AppStep.authIsRequired
-        )
-      )
-    )
-  }
-
   private func navigateToCalendar() -> FlowContributors {
     let viewController = CalendarViewController()
     let viewModel = CalendarViewModel(services: services)
@@ -120,6 +107,59 @@ class CalendarFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
+  private func navigateToAuthFlow() -> FlowContributors {
+    let authFlow = AuthFlow(withServices: services)
+    
+    Flows.use(authFlow, when: .created) { [unowned self] root in
+      DispatchQueue.main.async {
+        root.modalPresentationStyle = .automatic
+        rootViewController.present(root, animated: true)
+      }
+    }
+    
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: authFlow,
+        withNextStepper: OneStepper(
+          withSingleStep: AppStep.authIsRequired
+        )
+      )
+    )
+  }
+  
+  private func navigateToUserProfile() -> FlowContributors {
+    let viewController = SettingsAccountViewController()
+    let viewModel = SettingsAccountViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToDeletedTaskList() -> FlowContributors {
+    let viewController = TaskListViewController()
+    let viewModel = TaskListViewModel(services: services, taskListMode: .deleted)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToDeletedKindList() -> FlowContributors {
+    let viewController = KindListViewController()
+    let viewModel = KindListViewModel(services: services, kindListMode: .deleted)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToSupport() -> FlowContributors {
+    let viewController = SupportViewController()
+    let viewModel = SupportViewModel(services: services)
+    viewController.viewModel = viewModel
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  
   private func navigateToBird(bird: Bird) -> FlowContributors {
     let viewController = BirdViewController()
     let viewModel = BirdViewModel(birdUID: bird.UID, services: services)
@@ -131,5 +171,5 @@ class CalendarFlow: Flow {
   private func navigateBack() -> FlowContributors {
     rootViewController.popViewController(animated: true)
     return .none
-    }
+  }
 }

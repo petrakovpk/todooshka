@@ -31,6 +31,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   //  YMMYandexMetrica.activate(with: configuration!)
 
     FirebaseApp.configure()
+    
+    if let clientID = FirebaseApp.app()?.options.clientID {
+      // Create Google Sign In configuration object.
+      let config = GIDConfiguration(clientID: clientID)
+      GIDSignIn.sharedInstance.configuration = config
+    }
 
     Auth.auth().languageCode = "ru"
     Database.database().isPersistenceEnabled = true

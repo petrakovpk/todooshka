@@ -15,9 +15,9 @@ enum SelectedOnboardingScreen {
 }
 
 final class OnboardingViewController: UIViewController {
-  // MARK: - Properties
+  public var viewModel: OnboardingViewModel!
+
   private let disposeBag = DisposeBag()
-  var viewModel: OnboardingViewModel!
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<OnboardingSectionModel>!
 
   // MARK: - UI Elements

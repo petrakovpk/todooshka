@@ -21,13 +21,13 @@ class FunViewModel: Stepper {
     let dataSource: Driver<[FunSection]>
     let reaction: Driver<Void>
     let scrollToNextSection: Driver<Void>
-    let currentVisibleItem: Driver<FunItemType?>
+    let currentVisibleItem: Driver<FunCellType?>
   }
   
   private let loadMoreDataTrigger = PublishRelay<Void>()
   private let isLoading = BehaviorRelay<Bool>(value: false)
   private let dataSourceRelay = BehaviorRelay<[FunSection]>(value: [])
-  public let currentVisibleItemRelay = BehaviorRelay<FunItemType?>(value: nil)
+  public let currentVisibleItemRelay = BehaviorRelay<FunCellType?>(value: nil)
   
   init(services: AppServices) {
     self.services = services
@@ -63,23 +63,23 @@ class FunViewModel: Stepper {
     return tasksToAdd
   }
   
-  private func fetchTaskData(for tasks: [Task]) -> Observable<[FunItemType]> {
-    let fetchTasksData = tasks.map { task -> Observable<FunItemType> in
+  private func fetchTaskData(for tasks: [Task]) -> Observable<[FunCellType]> {
+    let fetchTasksData = tasks.map { task -> Observable<FunCellType> in
       self.isLoading.accept(true)
       let fetchUser = task.fetchTaskUser().asObservable()
       let fetchImage = task.fetchTaskImage().asObservable()
       let fetchReaction = task.fetchTaskReactionForCurrentUser().asObservable().debug()
       
-      return Observable.zip(fetchUser, fetchImage, fetchReaction) { (user, image, reaction) -> FunItemType in
+      return Observable.zip(fetchUser, fetchImage, fetchReaction) { (user, image, reaction) -> FunCellType in
         self.isLoading.accept(false)
-        return FunItemType.task(FunItemTask(author: user, task: task, image: image, reactionType: reaction?.type, isLoading: false))
+        return FunCellType.task(FunItem(userExtData: user, task: task, image: image, reactionType: reaction?.type, isLoading: false))
       }
     }
     
     return Observable.zip(fetchTasksData)
   }
   
-  private func updateDataSource(with funItemTypes: [FunItemType]) {
+  private func updateDataSource(with funItemTypes: [FunCellType]) {
     let currentSections = dataSourceRelay.value
     var newSections = currentSections
     
@@ -103,7 +103,7 @@ class FunViewModel: Stepper {
   private func shouldAddNoMoreTasks() -> Bool {
     return !dataSourceRelay.value.contains { section in
       section.items.contains { item in
-        item == FunItemType.noMoreTasks
+        item == FunCellType.noMoreTasks
       }
     }
   }
@@ -149,24 +149,24 @@ class FunViewModel: Stepper {
       .withLatestFrom(isLoading)
       .filter { !$0 }
       .asObservable()
-      .flatMapLatest { [weak self] _ -> Observable<[FunItemType]> in
+      .flatMapLatest { [weak self] _ -> Observable<[FunCellType]> in
         guard let self = self else { return Observable.just([]) }
         
         return self.fetchRecommendedTasks()
-          .map { [weak self] tasks -> [FunItemType] in
+          .map { [weak self] tasks -> [FunCellType] in
             guard let self = self else { return [] }
             
             let tasksToAdd = self.filterExistingTasks(tasks: tasks)
             
             if tasksToAdd.isEmpty {
               if self.shouldAddNoMoreTasks() {
-                return [FunItemType.noMoreTasks]
+                return [FunCellType.noMoreTasks]
               } else {
                 return []
               }
             } else {
               return tasksToAdd.map { task in
-                FunItemType.task(FunItemTask(author: nil, task: task, image: nil, reactionType: nil, isLoading: true))
+                FunCellType.task(FunItem(userExtData: nil, task: task, image: nil, reactionType: nil, isLoading: true))
               }
             }
           }
@@ -178,7 +178,7 @@ class FunViewModel: Stepper {
               self.dataSourceRelay.accept(newSections)
             }
           })
-          .flatMap { [weak self] funItemTypes -> Observable<[FunItemType]> in
+          .flatMap { [weak self] funItemTypes -> Observable<[FunCellType]> in
             guard let self = self else { return Observable.just(funItemTypes) }
             let tasksToFetchData = funItemTypes.compactMap { funItemType -> Task? in
               guard case .task(let funItemTask) = funItemType else { return nil }
@@ -216,7 +216,7 @@ class FunViewModel: Stepper {
   }
   
   // Update the currently visible item
-  func updateCurrentVisibleItem(type: FunItemType) {
+  func updateCurrentVisibleItem(type: FunCellType) {
     self.currentVisibleItemRelay.accept(type)
   }
 }

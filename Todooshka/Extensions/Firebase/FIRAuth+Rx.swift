@@ -108,13 +108,13 @@ extension Reactive where Base: Auth {
    
    @remarks See `FIRAuthErrors` for a list of error codes that are common to all API methods.
    */
-  public func signIn(withEmail email: String, password: String) -> Observable<Result<AuthDataResult, Error>> {
+  public func signIn(withEmail email: String, password: String) -> Observable<AuthDataResult> {
     return Observable.create { observer in
       self.base.signIn(withEmail: email, password: password) { auth, error in
         if let error = error {
-          observer.onNext(.failure(error))
+          observer.onError(error)
         } else if let auth = auth {
-          observer.onNext(.success(auth))
+          observer.onNext(auth)
           observer.onCompleted()
         }
       }
@@ -195,13 +195,13 @@ extension Reactive where Base: Auth {
    
    @remarks See `FIRAuthErrors` for a list of error codes that are common to all API methods
    */
-  public func signInAndRetrieveData(with credential: AuthCredential) -> Observable<Result<AuthDataResult, Error>> {
+  public func signInAndRetrieveData(with credential: AuthCredential) -> Observable<AuthDataResult> {
     return Observable.create { observer in
       self.base.signIn(with: credential) { auth, error in
         if let error = error {
-          observer.onNext(.failure(error))
+          observer.onError(error)
         } else if let auth = auth {
-          observer.onNext(.success(auth))
+          observer.onNext(auth)
           observer.onCompleted()
         }
       }
@@ -292,13 +292,13 @@ extension Reactive where Base: Auth {
    
    @remarks See `FIRAuthErrors` for a list of error codes that are common to all API methods.
    */
-  public func createUser(withEmail email: String, password: String) -> Observable<Result<AuthDataResult, Error>> {
+  public func createUser(withEmail email: String, password: String) -> Observable<AuthDataResult> {
     return Observable.create { observer in
       self.base.createUser(withEmail: email, password: password) { auth, error in
         if let error = error {
-          observer.onNext(.failure(error))
+          observer.onError(error)
         } else if let auth = auth {
-          observer.onNext(.success(auth))
+          observer.onNext(auth)
           observer.onCompleted()
         }
       }
@@ -423,13 +423,13 @@ extension Reactive where Base: Auth {
    
    
    */
-  public func sendPasswordReset(withEmail email: String) -> Observable<Result<Void, Error>> {
+  public func sendPasswordReset(withEmail email: String) -> Observable<Void> {
     return Observable.create { observer in
       self.base.sendPasswordReset(withEmail: email) { error in
         if let error = error {
-          observer.onNext(.failure(error))
+          observer.onError(error)
         } else {
-          observer.onNext(.success(()))
+          observer.onNext(())
           observer.onCompleted()
         }
       }
@@ -558,6 +558,19 @@ extension Reactive where Base: Auth {
       return Disposables.create {
         self.base.removeIDTokenDidChangeListener(handle)
       }
+    }
+  }
+  
+  public func signOut() -> Observable<Void> {
+    return Observable.create { observer in
+      do {
+        try self.base.signOut()
+        observer.onNext(())
+        observer.onCompleted()
+      } catch {
+        observer.onError(error)
+      }
+      return Disposables.create()
     }
   }
 }

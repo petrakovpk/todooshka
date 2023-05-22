@@ -18,13 +18,13 @@ import RxAlamofire
 
 class TaskViewModel: Stepper {
   public let steps = PublishRelay<Step>()
+  
   public let task: BehaviorRelay<Task>
   public let taskListMode: TaskListMode
   
   private let disposeBag = DisposeBag()
   private let services: AppServices
-  
-  
+
   struct Input {
     // text
     let taskTextField: Driver<String>
@@ -50,6 +50,7 @@ class TaskViewModel: Stepper {
     let expectedTimePickerBackgroundClickTrigger: Driver<Void>
     // bottom buttons
     let createButtonClickTrigger: Driver<Void>
+    let completeButtonClickTrigger: Driver<Void>
     // header buttons
     let backButtonClickTrigger: Driver<Void>
   }
@@ -89,19 +90,21 @@ class TaskViewModel: Stepper {
   // MARK: - Transform
   func transform(input: Input) -> Output {
     let task = task.asDriver()
-    let kinds = services.currentUserService.currentUserKinds
+    let kinds = services.currentUserService.kinds
+    let errorTracker = ErrorTracker()
     
     let taskTextSaveButtonIsHidden = Driver
       .combineLatest(input.taskTextField, task) { text, task -> Bool in
-        text == task.text
+        text == task.text || task.status == .draft
       }
     
     let taskDescriptionSaveButtonIsHidden = Driver
       .combineLatest(input.taskDescriptionTextView, task) { description, task -> Bool in
-        task.description == description
+        task.description == description || task.status == .draft
       }
     
-    let taskTextChange = input.taskTextSaveButtonClickTrigger
+    let taskTextChange = Driver.of(input.taskTextSaveButtonClickTrigger, input.createButtonClickTrigger)
+      .merge()
       .withLatestFrom(input.taskTextField)
       .withLatestFrom(task) { text, task -> Task in
         var task = task
@@ -109,31 +112,50 @@ class TaskViewModel: Stepper {
         return task
       }
     
-    let taskDescriptionChange = input.taskDescriptionSaveButtonClickTrigger
+    let taskDescriptionChange = Driver.of(input.taskDescriptionSaveButtonClickTrigger, input.createButtonClickTrigger)
+      .merge()
       .withLatestFrom(input.taskDescriptionTextView)
       .withLatestFrom(task) { description, task -> Task in
         var task = task
         task.description = description
         return task
       }
-
-    let kindSections = Driver.combineLatest(task, kinds) { task, kinds -> KindSection in
-      KindSection(
-        header: "",
-        items: kinds.map { kind -> KindSectionItem in
-          KindSectionItem(kind: kind, isSelected: kind.uuid == task.kindUUID)
-        })
-    }
-      .map { [$0] }
+    
+    let emptyKindItem = task
+      .map { task -> KindSectionItem in
+        KindSectionItem(kindSectionItemType: .emptyKind, isSelected: task.kindUUID == nil)
+      }
+    
+    let kindItems = Driver
+      .combineLatest(task, kinds) { task, kinds -> [KindSectionItem] in
+        kinds.map { kind -> KindSectionItem in
+          KindSectionItem(
+            kindSectionItemType: .kind(kind: kind),
+            isSelected: kind.uuid == task.kindUUID)
+        }
+      }
+    
+    
+    let kindSections = Driver
+      .combineLatest(emptyKindItem, kindItems) { emptyKindItem, kindItems -> [KindSectionItem] in
+        [emptyKindItem] + kindItems
+      }
+      .map { items -> [KindSection] in
+        [KindSection(header: "", items: items)]
+      }
     
     let taskKindChange = input.kindOfTaskSelection
       .withLatestFrom(kindSections) { indexPath, sections -> KindSectionItem in
         sections[indexPath.section].items[indexPath.item]
       }
-      .map { item -> Kind in item.kind }
-      .withLatestFrom(task) { kind, task -> Task in
+      .withLatestFrom(task) { item, task -> Task in
         var task = task
-        task.kindUUID = kind.uuid
+        switch item.kindSectionItemType {
+        case .emptyKind:
+          task.kindUUID = nil
+        case .kind(let kind):
+          task.kindUUID = kind.uuid
+        }
         return task
       }
     
@@ -183,24 +205,34 @@ class TaskViewModel: Stepper {
         return task
       }
     
+    let taskComplete = input.completeButtonClickTrigger
+      .withLatestFrom(task)
+      .map { task -> Task in
+        var task = task
+        task.status = .completed
+        task.completed = Date()
+        return task
+      }
+    
     let taskSave = Driver.of(
       taskTextChange,
       taskDescriptionChange,
       taskKindChange,
       taskExpectedDateChange,
       taskExpectedTimeChange,
-      taskDraftStatusChange
+      taskDraftStatusChange,
+      taskComplete
     )
       .merge()
       .do { task in
         self.task.accept(task)
       }
-      .asObservable()
-      .flatMapLatest { task -> Observable<Void> in
-        return task.updateToStorage()
+      .flatMapLatest { task -> Driver<Void> in
+        task.updateToStorage()
+          .trackError(errorTracker)
+          .asDriverOnErrorJustComplete()
       }
-      .asDriver(onErrorJustReturn: ())
-    
+
     let kindOpenSettings = input.kindOfTaskSettingsButtonClickTrigger
       .do { [self] _ in
         steps.accept(AppStep.kindListIsRequired)
@@ -220,7 +252,8 @@ class TaskViewModel: Stepper {
     
     let expectedTimePickerClose = Driver.of(
       input.expectedTimePickerBackgroundClickTrigger,
-      input.expectedTimePickerOkButtonClickTrigger )
+      input.expectedTimePickerOkButtonClickTrigger
+    )
       .merge()
     
     let bottomButtonsMode = task
@@ -228,12 +261,18 @@ class TaskViewModel: Stepper {
         switch task.status {
         case .draft:
           return .create
+        case .completed:
+          return .publish
         default:
           return .complete
         }
       }
     
-    let close = Driver.of(input.createButtonClickTrigger, input.backButtonClickTrigger)
+    let close = Driver.of(
+      input.createButtonClickTrigger,
+      input.completeButtonClickTrigger,
+      input.backButtonClickTrigger
+    )
       .merge()
       .map { _ -> AppStep in
         if self.taskListMode == .tabBar {

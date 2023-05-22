@@ -6,8 +6,7 @@
 //
 
 import CoreData
-import RxSwift
-import RxCocoa
+import UIKit
 
 extension Kind: Persistable {
   typealias T = NSManagedObject
@@ -24,14 +23,12 @@ extension Kind: Persistable {
     guard
       let uuid = entity.value(forKey: "uuid") as? UUID,
       let index = entity.value(forKey: "index") as? Int,
-      let text = entity.value(forKey: "text") as? String,
-      let isEmptyKind = entity.value(forKey: "isEmptyKind") as? Bool
+      let text = entity.value(forKey: "text") as? String
     else { return nil }
 
     self.uuid = uuid
     self.index = index
     self.text = text
-    self.isEmptyKind = isEmptyKind
 
     userUID = entity.value(forKey: "userUID") as? String
 
@@ -66,7 +63,6 @@ extension Kind: Persistable {
     entity.setValue(status.rawValue, forKey: "statusRawValue")
     entity.setValue(text, forKey: "text")
     entity.setValue(userUID, forKey: "userUID")
-    entity.setValue(isEmptyKind, forKey: "isEmptyKind")
   }
 
   func save(_ entity: T) {

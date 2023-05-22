@@ -28,10 +28,10 @@ class SetEmailViewModel: Stepper {
     let emailLabelText: Driver<String>
     let emailTextFieldText: Driver<String>
     let navigateBack: Driver<Void>
-    let sendEmailVerification: Driver<Void>
+   // let sendEmailVerification: Driver<Void>
     let sendVerificationEmailButtonIsEnabled: Driver<Bool>
     let setNewEmailButtonIsEnabled: Driver<Bool>
-    let setNewEmail: Driver<Void>
+   // let setNewEmail: Driver<Void>
     let errorText: Driver<String>
   }
 
@@ -41,8 +41,8 @@ class SetEmailViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
+    let errorTracker = ErrorTracker()
     let reload = reload.asDriver()
-
     let refresh = Driver.of(reload, input.refreshButtonClickTrigger).merge()
 
     let userStart = Driver<User?>
@@ -51,7 +51,8 @@ class SetEmailViewModel: Stepper {
     let userReload = refresh
       .map {
         Auth.auth().currentUser?.reload()
-      }.map {
+      }
+      .map {
         Auth.auth().currentUser
       }
 
@@ -92,22 +93,23 @@ class SetEmailViewModel: Stepper {
       .filter { $0 }
       .withLatestFrom(input.currentEmailTextFieldText) { $1 }
       .withLatestFrom(user) { ($0, $1) }.asObservable()
-      .flatMapLatest { _, user -> Observable<Result<Void, Error>>  in
+      .flatMapLatest { _, user -> Observable<Void>  in
         user.rx.sendEmailVerification()
       }
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+      .trackError(errorTracker)
+     
 
-    let sendEmailVerificationError = sendEmailVerification
-      .compactMap { result -> Error? in
-        guard case .failure(let error) = result else { return nil }
-        return error
-      }
+//    let sendEmailVerificationError = sendEmailVerification
+//      .compactMap { result -> Error? in
+//        guard case .failure(let error) = result else { return nil }
+//        return error
+//      }
 
-    let sendEmailVerificationSuccess = sendEmailVerification
-      .compactMap { result -> Void? in
-        guard case .success = result else { return nil }
-        return ()
-      }
+//    let sendEmailVerificationSuccess = sendEmailVerification
+//      .compactMap { result -> Void? in
+//        guard case .success = result else { return nil }
+//        return ()
+//      }
 
     let sendVerificationEmailButtonIsEnabled = Driver
       .combineLatest(isEmailVerified, isCurrentEmailValid) { isEmailVerified, isCurrentEmailValid -> Bool in
@@ -120,47 +122,48 @@ class SetEmailViewModel: Stepper {
       .withLatestFrom(user) { $1 }
       .withLatestFrom(input.newEmailTextFieldText) { ($0, $1) }
       .asObservable()
-      .flatMapLatest { user, email -> Observable<Result<Void, Error>>  in
+      .flatMapLatest { user, email -> Observable<Void> in
         user.rx.updateEmail(to: email)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let setNewEmailTryError = setNewEmailTry
-      .compactMap { result -> Error? in
-        guard case .failure(let error) = result else { return nil }
-        return error
       }
+      .trackError(errorTracker)
 
-    let setNewEmail = setNewEmailTry
-      .compactMap { result -> Void? in
-        guard case .success = result else { return nil }
-        return ()
-      }.do { _ in self.reload.accept(()) }
+   
+
+//    let setNewEmail = setNewEmailTry
+//      .compactMap { result -> Void? in
+//        guard case .success = result else { return nil }
+//        return ()
+//      }.do { _ in self.reload.accept(()) }
 
     let navigateBack = input.backButtonClickTrigger
       .map { _ in self.steps.accept(AppStep.navigateBack) }
 
-    let setError = Driver
-      .of(sendEmailVerificationError, setNewEmailTryError)
-      .merge()
+//    let setError = Driver
+//      .of(sendEmailVerificationError, setNewEmailTryError)
+//      .merge()
+//      .map { $0.localizedDescription }
+//
+//    let clearEror = Driver
+//      .of(sendEmailVerificationSuccess, setNewEmail)
+//      .merge()
+//      .map { "" }
+//
+//    let errorText = Driver
+//      .of(setError, clearEror)
+//      .merge()
+    
+    let errorText = errorTracker
       .map { $0.localizedDescription }
-
-    let clearEror = Driver
-      .of(sendEmailVerificationSuccess, setNewEmail)
-      .merge()
-      .map { "" }
-
-    let errorText = Driver
-      .of(setError, clearEror)
-      .merge()
+      .asDriver()
 
     return Output(
       emailLabelText: emailLabelText,
       emailTextFieldText: emailTextFieldText,
       navigateBack: navigateBack,
-      sendEmailVerification: sendEmailVerificationSuccess,
+     // sendEmailVerification: sendEmailVerificationSuccess,
       sendVerificationEmailButtonIsEnabled: sendVerificationEmailButtonIsEnabled,
       setNewEmailButtonIsEnabled: setNewEmailButtonIsEnabled,
-      setNewEmail: setNewEmail,
+      //setNewEmail: setNewEmail,
       errorText: errorText
     )
   }

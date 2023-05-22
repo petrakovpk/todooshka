@@ -11,12 +11,15 @@ import RxSwift
 import RxCocoa
 
 class SetPhoneViewModel: Stepper {
-  let services: AppServices
-  let steps = PublishRelay<Step>()
-  let reload = BehaviorRelay<Void>(value: ())
+  public let steps = PublishRelay<Step>()
+  
+  private let services: AppServices
+  private let reload = BehaviorRelay<Void>(value: ())
 
   struct Input {
+    // header
     let backButtonClickTrigger: Driver<Void>
+    
     let checkOTPCodeButtonClickTrigger: Driver<Void>
     let phoneTextFieldText: Driver<String>
     let saveButtonClickTrigger: Driver<Void>
@@ -31,8 +34,7 @@ class SetPhoneViewModel: Stepper {
     let errorText: Driver<String>
     let isPhoneNotSet: Driver<Bool>
     let sendCodeButtonIsEnabled: Driver<Bool>
-    let successLink: Driver<AuthDataResult>
-    let navigateBack: Driver<Void>
+    let navigateBack: Driver<AppStep>
   }
 
   // MARK: - Init
@@ -41,13 +43,15 @@ class SetPhoneViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
+    let errorTracker = ErrorTracker()
     let reload = reload.asDriver()
 
     let user = reload
       .asObservable()
       .flatMapLatest { _ -> Observable<User?>  in
         Auth.auth().rx.stateDidChange
-      }.asDriver(onErrorJustReturn: nil)
+      }
+      .asDriver(onErrorJustReturn: nil)
       .compactMap { $0 }
 
     let isPhoneNotSet = Driver
@@ -121,80 +125,50 @@ class SetPhoneViewModel: Stepper {
     let sendOTPCode = input.sendOTPCodeButtonClickTrigger
       .withLatestFrom(correctPhoneNumber) { "+" + $1.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression) }
       .asObservable()
-      .flatMapLatest { phoneNumber -> Observable<Result<String, Error>> in
+      .flatMapLatest { phoneNumber -> Observable<String> in
         PhoneAuthProvider.provider().rx.verifyPhoneNumber(phoneNumber)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+      }
+      .trackError(errorTracker)
+      .asDriver(onErrorJustReturn: "")
 
-    let verificationID = sendOTPCode
-      .compactMap { result -> String? in
-        guard case .success(let verificationID) = result else { return nil }
-        return verificationID
-      }.asDriver(onErrorJustReturn: "")
-
-    let errorSendOTPCode = sendOTPCode
-      .compactMap { result -> Error? in
-        guard case .failure(let error) = result else { return nil }
-        return error
-      }.asDriver(onErrorJustReturn: ErrorType.driverError)
-
-    let signUpWithPhoneAttr = Driver
-      .combineLatest(verificationID, correctOTPCode) { SignUpWithPhoneAttr(verificationID: $0, verificationCode: $1) }
+//    let signUpWithPhoneAttr = Driver
+//      .combineLatest(
+//        sendOTPCode,
+//        correctOTPCode
+//      ) { SignUpWithPhoneAttr(verificationID: $0, verificationCode: $1) }
 
     let credential = input.checkOTPCodeButtonClickTrigger
-      .withLatestFrom(signUpWithPhoneAttr) {
-        PhoneAuthProvider.provider().credential(withVerificationID: $1.verificationID, verificationCode: $1.verificationCode)
+      .withLatestFrom(sendOTPCode)
+      .withLatestFrom(correctOTPCode) { verificationID, verificationCode -> PhoneAuthCredential in
+        PhoneAuthProvider.provider().credential(withVerificationID: verificationID, verificationCode: verificationCode)
       }
 
     let link = credential
       .withLatestFrom(user) { ($0, $1) }
       .asObservable()
-      .flatMapLatest { credential, user in
+      .flatMapLatest { credential, user -> Observable<AuthDataResult> in
         user.rx.linkAndRetrieveData(with: credential)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let successLink = link
-      .compactMap { result -> AuthDataResult? in
-        guard case .success(let authDataResult) = result else { return nil }
-        return authDataResult
-      }.do { _ in self.reload.accept(()) }
-
-    let errorLink = link
-      .compactMap { result -> Error? in
-        guard case .failure(let error) = result else { return nil }
-        return error
       }
-
-    let clearError = Driver
-      .of(
-        credential.map { _ in "" },
-        successLink.map { _ in "" }
-      ).merge()
-      .asDriver()
-
-    let errorText = Driver
-      .of(
-        errorSendOTPCode,
-        errorLink
-      ).merge()
-      .map { $0.localizedDescription }
-
-    let errorFinal = Driver
-      .of(
-        errorText,
-        clearError
-      ).merge()
-
+      .trackError(errorTracker)
+ 
     let navigateBack = input.backButtonClickTrigger
-      .map { _ in self.steps.accept(AppStep.navigateBack) }
+      .map { _ in AppStep.navigateBack }
+      .do { step in
+        self.steps.accept(step)
+      }
+    
+    let errorText = errorTracker
+      .map { $0.localizedDescription }
+      .asDriver()
 
     return Output(
       checkOTPCodeButtonIsEnabled: isOTPCodeValid,
       correctOTPCode: correctOTPCode,
       correctPhoneNumber: correctPhoneNumber,
-      errorText: errorFinal,
+      errorText: errorText,
       isPhoneNotSet: isPhoneNotSet,
       sendCodeButtonIsEnabled: sendCodeButtonIsEnabled,
-      successLink: successLink,
+    //  successLink: successLink,
       navigateBack: navigateBack
     )
   }

@@ -12,13 +12,13 @@ import RxSwift
 import UIKit
 
 class SettingsViewController: TDViewController {
-  // MARK: - Properties
-  let disposeBag = DisposeBag()
+  public var viewModel: SettingsViewModel!
+  
+  private let disposeBag = DisposeBag()
 
-  var tableView: UITableView!
-  var viewModel: SettingsViewModel!
-  var dataSource: RxTableViewSectionedReloadDataSource<SettingsCellSectionModel>!
-
+  private var tableView: UITableView!
+  private var dataSource: RxTableViewSectionedReloadDataSource<SettingSection>!
+  
   // MARK: - UI Elements
   private let alertBackgroundView: UIView = {
     let view = UIView()
@@ -62,6 +62,11 @@ class SettingsViewController: TDViewController {
     bindViewModel()
   }
 
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    tableView.reloadData()
+  }
+  
   // MARK: - Configure UI
   func configureUI() {
     // header
@@ -128,27 +133,27 @@ class SettingsViewController: TDViewController {
   func bindViewModel() {
     let input = SettingsViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      selection: tableView.rx.itemSelected.asDriver()
+      settingIsSelected: tableView.rx.itemSelected.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
 
     [
-      outputs.backButtonClick.drive(),
-      outputs.itemSelected.drive(),
-      outputs.dataSource.drive(tableView.rx.items(dataSource: dataSource))
+      // header
+      outputs.navigateBack.drive(),
+      // settings list
+      outputs.settingsSections.drive(tableView.rx.items(dataSource: dataSource)),
+      // open the setting
+      outputs.openTheSetting.drive()
     ]
-      .forEach({ $0.disposed(by: disposeBag) })
+      .forEach { $0.disposed(by: disposeBag) }
   }
 
   func configureDataSource() {
     tableView.dataSource = nil
-    dataSource = RxTableViewSectionedReloadDataSource<SettingsCellSectionModel>(configureCell: { _, tableView, indexPath, item in
-      guard let cell = tableView.dequeueReusableCell(
-        withIdentifier: SettingsCell.reuseID,
-        for: indexPath
-      ) as? SettingsCell else { return UITableViewCell() }
-      cell.configure(image: item.image, text: item.text)
+    dataSource = RxTableViewSectionedReloadDataSource<SettingSection>(configureCell: { _, tableView, indexPath, item in
+      let cell = tableView.dequeueReusableCell(withIdentifier: SettingsCell.reuseID, for: indexPath) as! SettingsCell
+      cell.configure(item: item)
       return cell
     }, titleForHeaderInSection: { dataSource, index in
       return dataSource.sectionModels[index].header

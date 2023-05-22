@@ -45,7 +45,6 @@ class TaskListViewModel: Stepper {
     let deleteAlertText: Driver<String>
     let deleteAlertIsHidden: Driver<Bool>
     // task
-   // let addTask: Driver<AppStep>
     let openTask: Driver<AppStep>
     let saveTask: Driver<Void>
   }
@@ -57,24 +56,21 @@ class TaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let tasks = services.currentUserService.currentUserTasks
-    let kinds = services.currentUserService.currentUserKinds
-    let emptyKind = services.currentUserService.currentUserEmptyKind
+    let tasks = services.currentUserService.tasks
+    let kinds = services.currentUserService.kinds
     
     let swipeIdeaButtonClickTrigger = swipeIdeaButtonClickTrigger.asDriverOnErrorJustComplete()
     let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
     let inProgressButtonClickTrigger = inProgressButtonClickTrigger.asDriverOnErrorJustComplete()
     
-    
     // MARK: - Add task
     let createTaskIsRequired = input.addTaskButtonClickTrigger
-      .withLatestFrom(emptyKind)
-      .compactMap { emptyKind -> Task? in
+      .compactMap { _ -> Task? in
         switch self.taskListMode {
         case .idea:
-          return Task(uuid: UUID(), status: .idea, kindUUID: emptyKind.uuid)
+          return Task(uuid: UUID(), status: .draft)
         case .day(let date):
-          return Task(uuid: UUID(), status: .inProgress, planned: date, kindUUID: emptyKind.uuid)
+          return Task(uuid: UUID(), status: .draft, planned: date)
         default:
           return nil
         }

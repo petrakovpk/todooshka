@@ -11,13 +11,11 @@ import RxCocoa
 import RxDataSources
 import Lottie
 import RxGesture
-import YPImagePicker
 
 enum BottomButtonsMode {
   case create
   case complete
   case publish
-  case unpublish
 }
 
 class TaskViewController: TDViewController {
@@ -204,23 +202,6 @@ class TaskViewController: TDViewController {
     return view
   }()
   
-  // MARK: - UI Elements - RESULT
-  private let resultPhotoLabel: UILabel = {
-    let label = UILabel(text: "Фото результата:")
-    label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-    label.textAlignment = .left
-    return label
-  }()
-  
-  private let resultImageView: UIImageView = {
-    let imageView = UIImageView()
-    imageView.backgroundColor = .white
-    imageView.contentMode = .scaleToFill
-    imageView.cornerRadius = 8
-    imageView.clipsToBounds = true
-    return imageView
-  }()
-  
   // MARK: - UI Elements - BOTTOM BUTTONS
   private let bottomButtonsStackView: UIStackView = {
     let stackView = UIStackView()
@@ -249,15 +230,6 @@ class TaskViewController: TDViewController {
     return button
   }()
   
-  private let getPhotoButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.cornerRadius = 8
-    button.backgroundColor = UIColor(hexString: "#C66DF1")
-    button.setImage(Icon.camera.image.template, for: .normal)
-    button.tintColor = .white
-    return button
-  }()
-  
   private let closeButton: UIButton = {
     let button = UIButton(type: .system)
     button.cornerRadius = 8
@@ -265,6 +237,7 @@ class TaskViewController: TDViewController {
     button.setTitleColor(.white, for: .normal)
     button.backgroundColor = UIColor(hexString: "#D6D7EC")
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+    button.isHidden = true
     return button
   }()
   
@@ -273,21 +246,11 @@ class TaskViewController: TDViewController {
     button.cornerRadius = 8
     button.setTitle("Опубликовать!", for: .normal)
     button.setTitleColor(.white, for: .normal)
-    button.backgroundColor = Palette.SingleColors.BlueRibbon
+    button.backgroundColor = Palette.SingleColors.PurpleHeart
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
     return button
   }()
-  
-  private let unpublishButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.cornerRadius = 8
-    button.setTitle("Снять с публикации.", for: .normal)
-    button.setTitleColor(.white, for: .normal)
-    button.backgroundColor = Palette.SingleColors.BlueRibbon
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-    return button
-  }()
-  
+
   // MARK: - UI Elements - Animation
   private let animationView: AnimationView = {
     let animationView = AnimationView(name: "taskDone1")
@@ -324,6 +287,7 @@ class TaskViewController: TDViewController {
   
   private func setupHeader() {
     titleLabel.text = "Задача"
+    backButton.isHidden = false
   }
   
   private func setupSubviews() {
@@ -340,8 +304,6 @@ class TaskViewController: TDViewController {
       taskDescriptionTextView,
       taskDescriptionSaveButton,
       dividerView,
-      resultPhotoLabel,
-      resultImageView,
       bottomButtonsStackView,
       animationView,
       expectedDateTimeBackground,
@@ -357,9 +319,8 @@ class TaskViewController: TDViewController {
       createButton,
       closeButton,
       publishButton,
-      unpublishButton,
-      completeButton,
-      getPhotoButton])
+      completeButton
+    ])
   }
   
   private func setupConstraints() {
@@ -509,29 +470,6 @@ class TaskViewController: TDViewController {
       heightConstant: 1.0
     )
     
-    resultPhotoLabel.anchor(
-      top: dividerView.bottomAnchor,
-      left: view.leftAnchor,
-      topConstant: 16,
-      leftConstant: 16
-    )
-    
-    resultImageView.anchorCenterXToSuperview()
-    resultImageView.anchor(
-      top: resultPhotoLabel.bottomAnchor,
-      topConstant: 16,
-      widthConstant: 100,
-      heightConstant: 100
-    )
-    
-    getPhotoButton.anchor(
-      widthConstant: Sizes.Buttons.AppButton.height
-    )
-    
-    closeButton.anchor(
-      widthConstant: (UIScreen.main.bounds.width - 2 * 16 - Sizes.Buttons.AppButton.height - 8 * 2) / 2
-    )
-    
     bottomButtonsStackView.anchor(
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.bottomAnchor,
@@ -546,7 +484,8 @@ class TaskViewController: TDViewController {
       top: view.topAnchor,
       left: view.leftAnchor,
       bottom: view.bottomAnchor,
-      right: view.rightAnchor)
+      right: view.rightAnchor
+    )
   }
   
   // MARK: - CollectionView
@@ -582,9 +521,6 @@ class TaskViewController: TDViewController {
     expectedDateButton.setTitle(DateFormatter.midDateFormatter.string(for: task.planned), for: .normal)
     expectedTimeButton.setTitle(DateFormatter.midTimeFormatter.string(for: task.planned), for: .normal)
     
-    let taskListMode = viewModel.taskListMode
-    backButton.isHidden = (taskListMode == .tabBar)
-    
     let input = TaskViewModel.Input(
       // text
       taskTextField: taskTextField.rx.text.orEmpty.asDriver(),
@@ -612,10 +548,10 @@ class TaskViewController: TDViewController {
         .asLocation().filter { !self.expectedTimePicker.frame.contains($0) }.mapToVoid().asDriverOnErrorJustComplete(),
       // bottom buttons
       createButtonClickTrigger: createButton.rx.tap.asDriver(),
+      completeButtonClickTrigger: completeButton.rx.tap.asDriver(),
       // headre buttons
       backButtonClickTrigger: backButton.rx.tap.asDriver()
     )
-
 
     let outputs = viewModel.transform(input: input)
 
@@ -645,103 +581,15 @@ class TaskViewController: TDViewController {
       outputs.close.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
-//
-//    let input = TaskViewModel.Input(
-//      // header
-//      backButtonClickTrigger: backButton.rx.tap.asDriver(),
-//      // nameTextField
-//      nameTextField: nameTextField.rx.text.orEmpty.asDriver(),
-//      nameTextFieldEditingDidEndOnExit: nameTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
-//      saveNameTextFieldButtonClickTrigger: saveNameTextFieldButton.rx.tap.asDriver(),
-//      // expected DateTime
-
-
-//      // kindsOfTask
-//      kindOfTaskSettingsButtonClickTrigger: kindOfTaskSettingsButton.rx.tap.asDriver(),
-//      kindOfTaskSelection: collectionView.rx.itemSelected.asDriver(),
-//      // description
-//      descriptionTextView: descriptionTextView.rx.text.orEmpty.asDriver(),
-//      descriptionTextViewDidBeginEditing: descriptionTextView.rx.didBeginEditing.asDriver(),
-//      descriptionTextViewDidEndEditing: descriptionTextView.rx.didEndEditing.asDriver(),
-//      saveDescriptionTextViewButtonClickTrigger: saveDescriptionTextViewButton.rx.tap.asDriver(),
-//      // imageView
-//      resultImageViewClickTrigger: resultImageView.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
-//      // bottom buttons
-//      addTaskButtonClickTrigger: saveTaskButton.rx.tap.asDriver(),
-//      completeButtonClickTrigger: completeButton.rx.tap.asDriver(),
-//      getPhotoButtonClickTrigger: getPhotoButton.rx.tap.asDriver(),
-//      closeButtonClickTrigger: closeButton.rx.tap.asDriver(),
-//      publishButtonClickTrigger: publishButton.rx.tap.asDriver(),
-//      unpublishButtonClickTrigger: unpublishButton.rx.tap.asDriver()
-//    )
-    
-//    let outputs = viewModel.transform(input: input)
-//
-//    [
-//      // INIT
-//      outputs.initData.drive(initDataBinder),
-//      outputs.taskIsNew.drive(taskIsNewBinder),
-//      outputs.isModal.drive(isModalBinder),
-//      // MODE
-//      outputs.bottomButtonsMode.drive(bottomButtonsModeBinder),
-//      // BACK
-//      outputs.navigateBack.drive(),
-//      // TEXT
-//      outputs.saveNameTextFieldButtonIsHidden.drive(saveNameTextFieldButton.rx.isHidden),
-//      outputs.saveText.drive(),
-//      // EXPECTED
-//      outputs.expectedDateTime.drive(expectedDateTimeBinder),
-//      outputs.openExpectedDatePickerTrigger.drive(openExpectedDatePickerTriggerBinder),
-//      outputs.closeExpectedDatePickerTrigger.drive(closeExpectedDatePickerTriggerBinder),
-//      outputs.saveExpectedDate.drive(),
-//      outputs.openExpectedTimePickerTrigger.drive(openExpectedTimePickerTriggerBinder),
-//      outputs.closeExpectedTimePickerTrigger.drive(closeExpectedTimePickerTriggerBinder),
-//      outputs.scrollToTodayDatePickerTrigger.drive(scrollToTodayDatePickerTriggerBinder),
-//      outputs.scrollToEndOfDateTimePickerTrigger.drive(scrollToEndOfDateTimePickerTriggerBinder),
-//      outputs.saveExpectedTime.drive(),
-//      // KINDOFTASK
-//      outputs.openKindOfTaskSettings.drive(),
-//      outputs.dataSource.drive(collectionView.rx.items(dataSource: dataSource)),
-//      outputs.selectKindOfTask.drive(),
-//      // DESCRIPTION
-//      outputs.hideDescriptionPlaceholder.drive(hideDescriptionPlaceholderBinder),
-//      outputs.showDescriptionPlaceholder.drive(showDescriptionPlaceholderBinder),
-//      outputs.saveDescriptionTextViewButtonIsHidden.drive(saveDescriptionTextViewButton.rx.isHidden),
-//      outputs.saveDescription.drive(),
-//      // COMPLETE TASK
-//      outputs.addPhoto.drive(),
-//      outputs.completeTask.drive(),
-//      // IMAGE
-//      outputs.openResultPreview.drive(),
-//      outputs.image.drive(imageBinder),
-//      // CLOSE VIEW CONTROLLER
-//      outputs.dismissViewController.drive(),
-//      // ADD PHOTO
-//      outputs.addPhoto.drive(),
-//      // PUBLISH
-//      outputs.saveTaskStatus.drive(),
-//      outputs.publishTask.drive(),
-//      //  outputs.publishImage.drive(),
-//      // ANIMATION
-//      outputs.playAnimationViewTrigger.drive(playAnimationViewBinder)
-//      // yandex
-//      //   outputs.yandexMetrika.drive()
-//    ]
-//      .forEach { $0.disposed(by: disposeBag) }
   }
   
   // MARK: - INIT BINDERS
-  
   var taskIsNewBinder: Binder<Bool> {
     return Binder(self, binding: { vc, isNew in
       if isNew {
         vc.taskTextField.becomeFirstResponder()
-        vc.resultPhotoLabel.isHidden = true
-        vc.resultImageView.isHidden = true
       } else {
         vc.hideKeyboardWhenTappedAround()
-        vc.resultPhotoLabel.isHidden = false
-        vc.resultImageView.isHidden = false
       }
     })
   }
@@ -823,33 +671,15 @@ class TaskViewController: TDViewController {
       case .create:
         vc.createButton.isHidden = false
         vc.completeButton.isHidden = true
-        vc.getPhotoButton.isHidden = true
-        vc.closeButton.isHidden = true
         vc.publishButton.isHidden = true
-        vc.unpublishButton.isHidden = true
-        vc.resultPhotoLabel.isHidden = true
-        vc.resultImageView.isHidden = true
       case .complete:
         vc.createButton.isHidden = true
         vc.completeButton.isHidden = false
-        vc.getPhotoButton.isHidden = false
-        vc.closeButton.isHidden = true
         vc.publishButton.isHidden = true
-        vc.unpublishButton.isHidden = true
       case .publish:
         vc.createButton.isHidden = true
         vc.completeButton.isHidden = true
-        vc.getPhotoButton.isHidden = false
-        vc.closeButton.isHidden = false
         vc.publishButton.isHidden = false
-        vc.unpublishButton.isHidden = true
-      case .unpublish:
-        vc.createButton.isHidden = true
-        vc.completeButton.isHidden = true
-        vc.getPhotoButton.isHidden = false
-        vc.closeButton.isHidden = false
-        vc.publishButton.isHidden = true
-        vc.unpublishButton.isHidden = false
       }
     })
   }
@@ -859,24 +689,13 @@ class TaskViewController: TDViewController {
       vc.animationView.play()
     })
   }
-  
-  // MARK: - BINDERS - Photo
-  var imageBinder: Binder<UIImage> {
-    return Binder(self, binding: { (vc, image) in
-      vc.resultImageView.backgroundColor = .clear
-      vc.resultImageView.image = image
-    })
-  }
-  
+
   // MARK: - Configure Data Source
   func configureDataSource() {
     kindCollectionView.dataSource = nil
     kindDataSource = RxCollectionViewSectionedAnimatedDataSource<KindSection>(
       configureCell: {_, collectionView, indexPath, item in
-        guard  let cell = collectionView.dequeueReusableCell(
-          withReuseIdentifier: KindCell.reuseID,
-          for: indexPath
-        ) as? KindCell else { return UICollectionViewCell() }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KindCell.reuseID, for: indexPath) as! KindCell
         cell.configure(with: item)
         return cell
       })

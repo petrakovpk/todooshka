@@ -283,6 +283,7 @@ class TaskListCell: SwipeCollectionViewCell {
       chartLabel.isHidden = true
       heartImageView.isHidden = true
       heartLabel.isHidden = true
+      oldLineGradientLayer?.isHidden = false
     case .time:
       timeLabel.text = task.planned.string(withFormat: "HH:mm")
       timeView.backgroundColor = task.planned < Date() ? UIColor(hexString: "FA5123") : Style.Cells.TaskList.TimeLeftViewBackground
@@ -292,6 +293,7 @@ class TaskListCell: SwipeCollectionViewCell {
       chartLabel.isHidden = true
       heartImageView.isHidden = true
       heartLabel.isHidden = true
+      oldLineGradientLayer?.isHidden = false
     case .blueLine:
       configureLineLayout(
         percent: max((task.planned.timeIntervalSince1970 - Date().timeIntervalSince1970) / (24 * 60 * 60), 0),
@@ -302,6 +304,7 @@ class TaskListCell: SwipeCollectionViewCell {
       chartLabel.isHidden = true
       heartImageView.isHidden = true
       heartLabel.isHidden = true
+      oldLineGradientLayer?.isHidden = false
     case .repeatButton:
       timeView.isHidden = true
       repeatButton.isHidden = false
@@ -309,6 +312,7 @@ class TaskListCell: SwipeCollectionViewCell {
       chartLabel.isHidden = true
       heartImageView.isHidden = true
       heartLabel.isHidden = true
+      oldLineGradientLayer?.isHidden = true
     case .likes:
       timeView.isHidden = true
       repeatButton.isHidden = true
@@ -323,6 +327,7 @@ class TaskListCell: SwipeCollectionViewCell {
       chartLabel.isHidden = true
       heartImageView.isHidden = true
       heartLabel.isHidden = true
+      oldLineGradientLayer?.isHidden = true
     default:
       return 
     }

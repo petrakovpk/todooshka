@@ -23,14 +23,14 @@ extension Reactive where Base: PhoneAuthProvider {
    invalid.
    + `FIRAuthErrorCodeMissingPhoneNumber` - Indicates that a phone number was not provided.
    */
-  public func verifyPhoneNumber(_ phoneNumber: String, uiDelegate: AuthUIDelegate? = nil) -> Observable<Result<String, Error>> {
+  public func verifyPhoneNumber(_ phoneNumber: String, uiDelegate: AuthUIDelegate? = nil) -> Observable<String> {
     return Observable.create { observer in
       self.base.verifyPhoneNumber(phoneNumber, uiDelegate: uiDelegate) { result, error in
         if let result = result {
-          observer.onNext(.success(result))
+          observer.onNext(result)
           observer.onCompleted()
         } else if let error = error {
-          observer.onNext(.failure(error))
+          observer.onError(error)
         }
       }
       return Disposables.create()

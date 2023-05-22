@@ -8,7 +8,12 @@
 import UIKit
 
 class TDViewController: UIViewController {
-  // MARK: - UI Elements
+  public let topHeaderView: UIView = {
+    let view = UIView()
+    view.backgroundColor = Style.Views.Header.Background
+    return view
+  }()
+  
   public let headerView: UIView = {
     let view = UIView()
     view.backgroundColor = Style.Views.Header.Background
@@ -38,10 +43,18 @@ class TDViewController: UIViewController {
     return button
   }()
   
-  public let saveButton: UIButton = {
+  public let headerSaveButton: UIButton = {
     let button = UIButton(type: .system)
     button.isHidden = true
     button.setImage(Icon.tickSquare.image.template, for: .normal)
+    button.tintColor = Style.App.text
+    return button
+  }()
+  
+  public let moreButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.isHidden = true
+    button.setImage(Icon.more.image.template, for: .normal)
     button.tintColor = Style.App.text
     return button
   }()
@@ -65,14 +78,8 @@ class TDViewController: UIViewController {
   public let removeAllButton: UIButton = {
     let button = UIButton(type: .system)
     button.isHidden = true
-    button.setImage(Icon.trashCustom.image, for: .normal)
+    button.setImage(Icon.trashCustom.image.original, for: .normal)
     return button
-  }()
-
-  private let safeAreaHeaderView: UIView = {
-    let view = UIView()
-    view.backgroundColor = Style.Views.Header.Background
-    return view
   }()
   
   private let dividerView: UIView = {
@@ -91,25 +98,26 @@ class TDViewController: UIViewController {
   private func configureHeader() {
     navigationItem.setHidesBackButton(true, animated: false)
     
+    view.backgroundColor = Style.App.background
+    
     view.addSubviews([
-      safeAreaHeaderView,
+      topHeaderView,
       headerView
     ])
-
-    view.backgroundColor = Style.App.background
-
+    
     headerView.addSubviews([
       backButton,
       titleLabel,
       addButton,
-      saveButton,
+      headerSaveButton,
       settingsButton,
       refreshButton,
       removeAllButton,
+      moreButton,
       dividerView
     ])
-
-    safeAreaHeaderView.anchor(
+    
+    topHeaderView.anchor(
       top: view.topAnchor,
       left: view.leftAnchor,
       bottom: view.safeAreaLayoutGuide.topAnchor,
@@ -138,7 +146,15 @@ class TDViewController: UIViewController {
       widthConstant: UIScreen.main.bounds.width / 12
     )
     
-    saveButton.anchor(
+    headerSaveButton.anchor(
+      top: headerView.topAnchor,
+      bottom: headerView.bottomAnchor,
+      right: headerView.rightAnchor,
+      rightConstant: 16,
+      widthConstant: UIScreen.main.bounds.width / 12
+    )
+    
+    moreButton.anchor(
       top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
       right: headerView.rightAnchor,
@@ -149,7 +165,7 @@ class TDViewController: UIViewController {
     settingsButton.anchor(
       top: headerView.topAnchor,
       bottom: headerView.bottomAnchor,
-      right: saveButton.leftAnchor,
+      right: headerView.rightAnchor,
       rightConstant: 8,
       widthConstant: UIScreen.main.bounds.width / 12
     )
@@ -175,9 +191,9 @@ class TDViewController: UIViewController {
       left: headerView.leftAnchor,
       bottom: headerView.bottomAnchor,
       right: headerView.rightAnchor,
-      leftConstant: UIScreen.main.bounds.width / 6,
+      leftConstant: UIScreen.main.bounds.width / 12,
       bottomConstant: 20,
-      rightConstant: UIScreen.main.bounds.width / 6
+      rightConstant: UIScreen.main.bounds.width / 12
     )
 
     dividerView.anchor(

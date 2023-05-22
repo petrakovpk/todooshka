@@ -56,7 +56,8 @@ class KindCell: UICollectionViewCell {
       top: imageView.bottomAnchor,
       left: contentView.leftAnchor,
       bottom: contentView.bottomAnchor,
-      right: contentView.rightAnchor)
+      right: contentView.rightAnchor
+    )
 
     if let oldShapeLayer = oldShapeLayer {
       contentView.layer.replaceSublayer(oldShapeLayer, with: shapeLayer)
@@ -69,15 +70,21 @@ class KindCell: UICollectionViewCell {
 
   // MARK: - Configure
   func configure(with item: KindSectionItem) {
-    let kind = item.kind
+    switch item.kindSectionItemType {
+    case .emptyKind:
+      textView.text = "Без типа"
+      imageView.image = Icon.unlimited.image.template
+      imageView.tintColor = item.isSelected ? .white : Palette.SingleColors.Corduroy
+    case .kind(let kind):
+      textView.text = kind.text
+      imageView.image = kind.icon?.image.template
+      imageView.tintColor = item.isSelected ? .white : kind.color
+    }
+
     let isSelected = item.isSelected
-    
-    textView.text = kind.text
+
     textView.textColor = isSelected ? .white : Style.App.text
-
-    imageView.image = kind.icon?.image.template
-    imageView.tintColor = isSelected ? .white : item.kind.color
-
+    
     shapeLayer.borderWidth = isSelected ? 0 : 1
     shapeLayer.borderColor = Style.Cells.Kind.Border?.cgColor
     shapeLayer.shadowOpacity = isSelected ? 1 : 0

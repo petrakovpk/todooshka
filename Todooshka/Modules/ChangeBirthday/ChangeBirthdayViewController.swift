@@ -44,7 +44,7 @@ class ChangeBirthdayViewController: TDViewController {
   func configureUI() {
     // settings
     backButton.isHidden = false
-    saveButton.isHidden = false
+    headerSaveButton.isHidden = false
 
     // adding
     view.addSubviews([
@@ -81,7 +81,7 @@ class ChangeBirthdayViewController: TDViewController {
     let input = ChangeBirthdayViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       datePicker: picker.rx.value.asDriver(),
-      saveButtonClickTrigger: saveButton.rx.tap.asDriver()
+      saveButtonClickTrigger: headerSaveButton.rx.tap.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)

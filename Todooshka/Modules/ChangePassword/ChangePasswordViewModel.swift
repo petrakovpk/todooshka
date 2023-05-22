@@ -25,7 +25,7 @@ class ChangePasswordViewModel: Stepper {
     let errorText: Driver<String>
     let navigateBack: Driver<Void>
     let setPasswordButtonIsEnabled: Driver<Bool>
-    let setPassword: Driver<Void>
+ //   let setPassword: Driver<Void>
   }
 
   // MARK: - Init
@@ -34,6 +34,7 @@ class ChangePasswordViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
+    let errorTracker = ErrorTracker()
     let user = Driver<User?>.of(Auth.auth().currentUser)
       .compactMap { $0 }
 
@@ -57,33 +58,23 @@ class ChangePasswordViewModel: Stepper {
       .withLatestFrom(input.repeatPasswordTextFieldText) { $1 }
       .withLatestFrom(user) { ($0, $1) }
       .asObservable()
-      .flatMapLatest { password, user -> Observable<Result<Void, Error>> in
+      .flatMapLatest { password, user -> Observable<Void> in
         user.rx.updatePassword(to: password)
-      }.asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-
-    let setPasswordSuccess = setPassword
-      .compactMap { result -> Void? in
-        guard case .success = result else { return nil }
-        return ()
       }
-
-    let setPasswordError = setPassword
-      .compactMap { result -> Error? in
-        guard case .failure(let error) = result else { return nil }
-        return error
-      }
-
-    let errorText = setPasswordError
-      .map { $0.localizedDescription }
+      .trackError(errorTracker)
 
     let navigateBack = input.backButtonClickTrigger
       .map { _ in self.steps.accept(AppStep.navigateBack) }
 
+    let errorText = errorTracker
+      .map { $0.localizedDescription }
+      .asDriver()
+    
     return Output(
       errorText: errorText,
       navigateBack: navigateBack,
-      setPasswordButtonIsEnabled: setPasswordButtonIsEnabled,
-      setPassword: setPasswordSuccess
+      setPasswordButtonIsEnabled: setPasswordButtonIsEnabled
+      //setPassword: setPasswordSuccess
     )
   }
 }

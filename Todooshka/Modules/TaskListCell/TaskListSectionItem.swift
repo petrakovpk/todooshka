@@ -13,7 +13,7 @@ struct TaskListSectionItem: IdentifiableType, Equatable {
   var mode: ListCellMode
 
   var identity: String {
-    task.uuid.uuidString + (kind?.uuid.uuidString ?? "")
+    task.identity + (kind?.identity ?? "")
   }
 
   static func == (lhs: TaskListSectionItem, rhs: TaskListSectionItem) -> Bool {

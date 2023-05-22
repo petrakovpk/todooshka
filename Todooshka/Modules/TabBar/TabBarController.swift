@@ -18,19 +18,24 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
+    configureUI()
+  }
+  
+  func configureUI() {
     setValue(customTabBar, forKey: "tabBar")
+    customTabBar.configureUI()
   }
   
   // MARK: - Bind
   func bindViewModel() {
     let input = TabBarViewModel.Input(
-      createTaskButtonClickTrigger: customTabBar.addTaskButton.rx.tap.asDriver()
+      tabBarAddButtonClickTrigger: customTabBar.addTaskButton.rx.tap.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
 
     [
-      outputs.createTask.drive()
+      outputs.showAddTabBarPresentation.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }

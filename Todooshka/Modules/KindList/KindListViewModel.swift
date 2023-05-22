@@ -11,9 +11,15 @@ import RxFlow
 import RxSwift
 import RxCocoa
 
+enum KindListMode {
+  case deleted
+  case normal
+}
+
 class KindListViewModel: Stepper {
   public let steps = PublishRelay<Step>()
   public let swipeDeleteButtonClickTrigger = PublishRelay<IndexPath>()
+  public let kindListMode: KindListMode
   
   private let services: AppServices
 
@@ -21,6 +27,7 @@ class KindListViewModel: Stepper {
     // header buttons
     let addButtonClickTrigger: Driver<Void>
     let backButtonClickTrigger: Driver<Void>
+    let removeAllButtonClickTrigger: Driver<Void>
     // kind list
     let kindSelected: Driver<IndexPath>
     let kindMoved: Driver<ItemMovedEvent>
@@ -30,7 +37,6 @@ class KindListViewModel: Stepper {
   }
 
   struct Output {
-//    let removeKindOfTask: Driver<Result<Void, Error>>
     // header
     let navigateBack: Driver<AppStep>
     let addKind: Driver<AppStep>
@@ -42,25 +48,35 @@ class KindListViewModel: Stepper {
     let alertIsHidden: Driver<Bool>
     // remove
     let kindRemove: Driver<Void>
+    let kindRemoveAllDeleted: Driver<Void>
   }
 
   // MARK: - Init
-  init(services: AppServices) {
+  init(services: AppServices, kindListMode: KindListMode) {
     self.services = services
+    self.kindListMode = kindListMode
   }
 
   func transform(input: Input) -> Output {
     let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
 
-    let kinds = services.currentUserService.currentUserKinds
+    let kinds = services.currentUserService.kinds
       .map { kinds -> [Kind] in
-        kinds.filter { $0.status != .deleted }
+        switch self.kindListMode {
+        case .deleted:
+          return kinds.filter { $0.status == .deleted }
+        case .normal:
+          return kinds.filter { $0.status != .deleted }
+        }
       }
     
     let kindListItems = kinds
       .map { kinds -> [KindListItem] in
         kinds.map { kind -> KindListItem in
-          KindListItem(kind: kind, cellMode: .empty)
+          KindListItem(
+            kind: kind,
+            cellMode: self.kindListMode == .deleted ? .repeatButton : .empty
+          )
         }
       }
     
@@ -110,7 +126,6 @@ class KindListViewModel: Stepper {
       .withLatestFrom(kindListSections) { indexPath, sections -> KindListItem in
         sections[indexPath.section].items[indexPath.item]
       }
-      .filter { !$0.kind.isEmptyKind }
     
     let showAlertTrigger = swipeDeleteKind.mapToVoid()
     let hideAlertTrigger = Driver.of(input.alertCancelButtonClickTrigger, input.alertDeleteButtonClickTrigger)
@@ -146,6 +161,15 @@ class KindListViewModel: Stepper {
       .do { step in
         self.steps.accept(step)
       }
+    
+    
+    let kindRemoveAllDeleted = input.removeAllButtonClickTrigger
+      .withLatestFrom(kinds)
+      .asObservable()
+      .flatMapLatest { kinds -> Observable<Void> in
+        StorageManager.shared.managedContext.rx.batchDelete(kinds)
+      }
+      .asDriver(onErrorJustReturn: ())
 
     return Output(
       // header
@@ -158,7 +182,8 @@ class KindListViewModel: Stepper {
       // alert
       alertIsHidden: removeAlertIsHidden,
       // kind
-      kindRemove: kindRemove
+      kindRemove: kindRemove,
+      kindRemoveAllDeleted: kindRemoveAllDeleted
     )
   }
 }

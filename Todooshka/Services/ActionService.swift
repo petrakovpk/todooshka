@@ -9,17 +9,16 @@ import CoreData
 import RxSwift
 import RxCocoa
 
-protocol HasActionService {
-  var actionService: ActionService { get }
+protocol HasTemporaryDataService {
+  var temporaryDataService: TemporaryDataService { get }
 }
 
-class ActionService {
-  // MARK: - Properties
-  var runBranchSceneActionsTrigger = BehaviorRelay<Void>(value: ())
-  var forceNestSceneTrigger = BehaviorRelay<Void?>(value: nil)
-  var forceBranchSceneTrigger = BehaviorRelay<Void?>(value: nil)
-
-  // MARK: - Init
+class TemporaryDataService {
+  public var temporaryPublicationImage = BehaviorRelay<PublicationImage?>(value: nil)
+  public var temporaryPublication = BehaviorRelay<Publication?>(value: nil)
+  public var temporaryPublicKind = BehaviorRelay<PublicKind?>(value: nil)
+  
   init() {
+    
   }
 }

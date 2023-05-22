@@ -40,7 +40,7 @@ class ChangeGenderViewController: TDViewController {
   func configureUI() {
     // settings
     backButton.isHidden = false
-    saveButton.isHidden = false
+    headerSaveButton.isHidden = false
 
     // tableView
     tableView = UITableView(frame: .zero, style: .plain)
@@ -70,7 +70,7 @@ class ChangeGenderViewController: TDViewController {
   func bindViewModel() {
     let input = ChangeGenderViewModel.Input(
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      saveButtonClickTrigger: saveButton.rx.tap.asDriver(),
+      saveButtonClickTrigger: headerSaveButton.rx.tap.asDriver(),
       selection: tableView.rx.itemSelected.asDriver()
     )
 

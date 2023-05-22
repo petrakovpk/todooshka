@@ -34,8 +34,6 @@ class KindViewModel: Stepper {
   struct Output {
     // header
     let navigateBack: Driver<AppStep>
-    // is Enabled
-    let isChangeEnabled: Driver<Bool>
     // text
     let kindText: Driver<String>
     let kindTextLength: Driver<String>
@@ -56,8 +54,8 @@ class KindViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    let colors = services.currentUserService.currentUserColors
-    let icons = services.currentUserService.currentUserIcons
+    let colors = services.currentUserService.kindColors
+    let icons = services.currentUserService.kindIcons
     let kind = kind.asDriver()
     
     let selectedColor = kind
@@ -65,9 +63,6 @@ class KindViewModel: Stepper {
     
     let selectedIcon = kind
       .map { $0.icon }
-    
-    let isChangeEnabled = kind
-      .map { !$0.isEmptyKind }
     
     let kindText = input.text
       .map { text -> String in
@@ -160,8 +155,6 @@ class KindViewModel: Stepper {
     return Output(
       // header
       navigateBack: navigateBack,
-      // is locked
-      isChangeEnabled: isChangeEnabled,
       // text
       kindText: kindText,
       kindTextLength: kindTextLen,

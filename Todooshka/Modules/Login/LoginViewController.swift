@@ -219,47 +219,68 @@ class LoginViewController: UIViewController {
   // MARK: - Bind
   func bindViewModel() {
     let input = LoginViewModel.Input(
-      emailTextFieldText: emailTextField.rx.text.orEmpty.asDriver(),
-      OTPCodeTextFieldText: OTPCodeTextField.rx.text.orEmpty.asDriver(),
-      passwordTextFieldText: passwordTextField.rx.text.orEmpty.asDriver(),
-      phoneTextFieldText: phoneTextField.rx.text.orEmpty.asDriver(),
-      repeatPasswordTextFieldText: repeatPasswordTextField.rx.text.orEmpty.asDriver(),
+      // header
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      // buttons
       emailButtonClickTrigger: emailButton.rx.tap.asDriver(),
-      nextButtonClickTrigger: nextButton.rx.tap.asDriver(),
       phoneButtonClickTrigger: phoneButton.rx.tap.asDriver(),
+      // text fields - 1st screen
+      emailTextFieldText: emailTextField.rx.text.orEmpty.asDriver(),
+      phoneTextFieldText: phoneTextField.rx.text.orEmpty.asDriver(),
+      // text fields - 1st screen events
       emailTextFieldDidEndEditing: emailTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
+      phoneTextFieldDidEndEditing: phoneTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
+      // text fields - 2nd screen
+      passwordTextFieldText: passwordTextField.rx.text.orEmpty.asDriver(),
+      repeatPasswordTextFieldText: repeatPasswordTextField.rx.text.orEmpty.asDriver(),
+      OTPCodeTextFieldText: OTPCodeTextField.rx.text.orEmpty.asDriver(),
+      // text fields - 2nd screen - events
       passwordTextFieldDidEndEditing: passwordTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
       repeatPasswordTextFieldDidEndEditing: repeatPasswordTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
-      phoneTextFieldDidEndEditing: phoneTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
       OTPCodeTextFieldDidEndEditing: OTPCodeTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
+      // next button
+      nextButtonClickTrigger: nextButton.rx.tap.asDriver(),
+      // bottom buttons
       resetPasswordButtonClickTrigger: resetPasswordButton.rx.tap.asDriver(),
       sendOTPCodeButtonClickTriger: sendOTPCodeButton.rx.tap.asDriver()
     )
 
-    let output = viewModel.transform(input: input)
+    let outputs = viewModel.transform(input: input)
 
     [
-      output.auth.drive(),
-      output.correctNumber.drive(phoneTextField.rx.text),
-      output.errorText.drive(errorTextView.rx.text),
-      output.navigateBack.drive(),
-      output.nextButtonIsEnabled.drive(setNextButtonIsEnabledBinder),
-      output.sendEmailVerification.drive(),
-      output.setLoginViewControllerStyle.drive(loginViewControllerStyleBinder),
-      output.setFocusOnRepeatPasswordTextField.drive(setFocusOnRepeatPasswordTextFieldBinder),
-      output.updateUserData.drive(),
-      output.setResetPasswordButtonClickSuccess.drive(setResetPasswordButtonClickSuccessBinder),
-      output.setSendOTPCodeButtonClickSuccess.drive(setSendOTPCodeButtonClickSuccessBinder)
+      // header
+      outputs.navigateBack.drive(),
+      // style
+      outputs.loginViewControllerStyle.drive(loginViewControllerStyleBinder),
+      outputs.loginViewControllerStyleHandler.drive(),
+      // email
+      outputs.sendEmailVerification.drive(),
+      // phone
+      outputs.phoneNumberTextField.drive(phoneTextField.rx.text),
+      // repeat password
+      outputs.setFocusOnRepeatPasswordTextField.drive(setFocusOnRepeatPasswordTextFieldBinder),
+      // next button
+      outputs.nextButtonIsEnabled.drive(setNextButtonIsEnabledBinder),
+      // auth
+      outputs.auth.drive(),
+      // error
+      outputs.errorText.drive(errorTextView.rx.text)
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }
 
   var setNextButtonIsEnabledBinder: Binder<Bool> {
     return Binder(self, binding: { vc, isEnabled in
-      vc.nextButton.backgroundColor = isEnabled ? Style.Buttons.NextButton.EnabledBackground : Style.Buttons.NextButton.DisabledBackground
-      vc.nextButton.setTitleColor(isEnabled ? .white : Style.App.text?.withAlphaComponent(0.12), for: .normal)
-      vc.nextButton.isEnabled = isEnabled
+      if isEnabled {
+        vc.nextButton.backgroundColor = Style.Buttons.NextButton.EnabledBackground
+        vc.nextButton.setTitleColor(.white, for: .normal)
+        vc.nextButton.isEnabled = true
+      } else {
+        vc.nextButton.backgroundColor = Style.Buttons.NextButton.DisabledBackground
+        vc.nextButton.setTitleColor(Style.App.text?.withAlphaComponent(0.12), for: .normal)
+        vc.nextButton.isEnabled = false
+      }
+      
     })
   }
 
@@ -269,9 +290,9 @@ class LoginViewController: UIViewController {
     })
   }
 
-  var setResetPasswordButtonClickSuccessBinder: Binder<String> {
-    return Binder(self, binding: { vc, text in
-      vc.resetPasswordButton.setTitle(text, for: .normal)
+  var setResetPasswordButtonClickSuccessBinder: Binder<Void> {
+    return Binder(self, binding: { vc, _ in
+      vc.resetPasswordButton.setTitle("text", for: .normal)
     })
   }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D68" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22E261" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Bird" representedClassName="" syncable="YES">
         <attribute name="cladeRawValue" attributeType="String"/>
         <attribute name="currencyRawValue" attributeType="String"/>
@@ -34,19 +34,48 @@
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uid" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="Image" representedClassName="" syncable="YES">
-        <attribute name="imageData" optional="YES" attributeType="Binary"/>
-        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-    </entity>
     <entity name="Kind" representedClassName="" syncable="YES">
         <attribute name="colorHexString" attributeType="String" versionHashModifier="CoreDataTaskType"/>
         <attribute name="iconRawValue" attributeType="String"/>
         <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" elementID="orderNumber"/>
-        <attribute name="isEmptyKind" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="statusRawValue" attributeType="String"/>
         <attribute name="text" attributeType="String"/>
         <attribute name="userUID" optional="YES" attributeType="String"/>
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="Publication" representedClassName="" syncable="YES">
+        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="publicKindUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="published" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="statusRawValue" optional="YES" attributeType="String"/>
+        <attribute name="taskUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="userUID" optional="YES" attributeType="String"/>
+        <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="PublicationImage" representedClassName="" syncable="YES">
+        <attribute name="imageData" optional="YES" attributeType="Binary"/>
+        <attribute name="publicationUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="PublicKind" representedClassName="" syncable="YES">
+        <attribute name="imageData" optional="YES" attributeType="Binary"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="Quest" representedClassName="" syncable="YES">
+        <attribute name="categoryUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="desc" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="statusRawValue" attributeType="String"/>
+        <attribute name="userUID" optional="YES" attributeType="String"/>
+        <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="QuestImage" representedClassName="" syncable="YES">
+        <attribute name="imageData" optional="YES" attributeType="Binary"/>
+        <attribute name="questUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="rank" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
     </entity>
     <entity name="Reaction" representedClassName="Reaction" syncable="YES">
         <attribute name="taskUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -66,12 +95,9 @@
         <attribute name="userUID" optional="YES" attributeType="String"/>
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
     </entity>
-    <entity name="Theme" representedClassName="Theme" syncable="YES">
-        <attribute name="desc" attributeType="String"/>
-        <attribute name="image" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
-        <attribute name="name" attributeType="String"/>
-        <attribute name="statusRawValue" attributeType="String"/>
-        <attribute name="typeRawValue" optional="YES" attributeType="String"/>
-        <attribute name="uid" attributeType="String"/>
+    <entity name="UserExtData" representedClassName="" syncable="YES">
+        <attribute name="imageData" optional="YES" attributeType="Binary"/>
+        <attribute name="nickName" optional="YES" attributeType="String"/>
+        <attribute name="userUID" optional="YES" attributeType="String"/>
     </entity>
 </model>

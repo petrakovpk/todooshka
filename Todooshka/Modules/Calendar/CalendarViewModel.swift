@@ -34,6 +34,8 @@ class CalendarViewModel: Stepper {
     let calendarScrollToPreviousMonthButtonClickTrigger: Driver<Void>
     // all tasks button
     let allTasksButtonClickTrigger: Driver<Void>
+    // task list
+    let taskSelected: Driver<IndexPath>
   }
 
   struct Output {
@@ -50,6 +52,7 @@ class CalendarViewModel: Stepper {
     // task list
     let taskListLabelText: Driver<String>
     let taskListSections: Driver<[TaskListSection]>
+    let taskListOpenTask: Driver<AppStep>
   }
 
   // MARK: - Init
@@ -64,8 +67,8 @@ class CalendarViewModel: Stepper {
     let calendarStartMonth = calendarStartMonth.asDriver()
     let calendarEndMonth = calendarEndMonth.asDriver()
     
-    let tasks = services.currentUserService.currentUserTasks
-    let kinds = services.currentUserService.currentUserKinds
+    let tasks = services.currentUserService.tasks
+    let kinds = services.currentUserService.kinds
     
     let openShop = input.shopButtonClickTrigger
       .map { AppStep.shopIsRequired }
@@ -179,6 +182,7 @@ class CalendarViewModel: Stepper {
         TaskListSection(header: "Выполнено:", items: items)
       }
     
+    // MARK: - Datasource - Planned
     let plannedAllDayItems = Driver
       .combineLatest(kinds, tasks, calendarSelectedDate) { kinds, tasks, calendarSelectedDate -> [TaskListSectionItem] in
         tasks.filter { task -> Bool in
@@ -219,6 +223,7 @@ class CalendarViewModel: Stepper {
         ]
       }
     
+    // MARK: - Datasource - Task List Sections
     let taskListSections = Driver
       .combineLatest(completedTaskListSection, plannedTaskListSections) { completedTaskListSection, plannedTaskListSections -> [TaskListSection] in
         [completedTaskListSection] + plannedTaskListSections
@@ -227,6 +232,17 @@ class CalendarViewModel: Stepper {
         sections.filter { section -> Bool in
           !section.items.isEmpty
         }
+      }
+    
+    let taskListOpenTask = input.taskSelected
+      .withLatestFrom(taskListSections) { indexPath, sections -> Task in
+        sections[indexPath.section].items[indexPath.item].task
+      }
+      .map { task -> AppStep in
+        AppStep.openTaskIsRequired(task: task, taskListMode: .calendar)
+      }
+      .do { step in
+        self.steps.accept(step)
       }
     
     let openDayTaskList = input.allTasksButtonClickTrigger
@@ -251,7 +267,8 @@ class CalendarViewModel: Stepper {
       openDayTaskList: openDayTaskList,
       // task list
       taskListLabelText: taskListLabelText,
-      taskListSections: taskListSections
+      taskListSections: taskListSections,
+      taskListOpenTask: taskListOpenTask
     )
   }
   

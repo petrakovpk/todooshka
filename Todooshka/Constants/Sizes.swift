@@ -89,6 +89,10 @@ struct Sizes {
       static let width = 80.adjustByHeight
       static let height = 50.adjustByHeight
     }
+    struct UserProfilePublicationCell {
+      static let width = UIScreen.main.bounds.width / 3
+      static let height = UIScreen.main.bounds.width / 2
+    }
   }
 
   struct ImageViews {

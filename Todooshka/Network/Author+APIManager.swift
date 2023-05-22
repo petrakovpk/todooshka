@@ -7,8 +7,8 @@
 
 import RxSwift
 
-extension Author {
-//  func fetchTasks() -> Observable<[Task]> {
-//    return APIManager.shared.performFetchRequest(endpoint: APIConfig.urlForUserTasks(userUID: self.uid))
-//  }
-}
+//extension AppUser {
+////  func fetchTasks() -> Observable<[Task]> {
+////    return APIManager.shared.performFetchRequest(endpoint: APIConfig.urlForUserTasks(userUID: self.uid))
+////  }
+//}

@@ -15,14 +15,27 @@ class MarketplaceViewModel: Stepper {
   let steps = PublishRelay<Step>()
 
   struct Input {
-    let addThemeButtonClickTrigger: Driver<Void>
+    // auth
+    let authButtonClickTrigger: Driver<Void>
+    // create
+    let createQuestButtonClickTrigger: Driver<Void>
     let selection: Driver<IndexPath>
   }
-
+  
   struct Output {
-//    let addTheme: Driver<Void>
-//    let dataSource: Driver<[ThemeSection]>
-//    let openTheme: Driver<Theme>
+    // auth
+    let auth: Driver<AppStep>
+    // add
+    let addButtonIsHidden: Driver<Bool>
+    // pleaseAuthContainerViewIsHidden
+    let pleaseAuthContainerViewIsHidden: Driver<Bool>
+    // marketplace
+    let marketplaceQuestSections: Driver<[MarketplaceQuestSection]>
+    // selection
+    let openQuest: Driver<AppStep>
+    let createQuest: Driver<AppStep>
+    let editQuest: Driver<AppStep>
+    
   }
 
   // MARK: - Init
@@ -31,45 +44,131 @@ class MarketplaceViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-//    let themes = services.dataService.themes
-//
-//    let dataSource = themes
-//      .map { themes -> [ThemeSection] in
-//        [
-//          ThemeSection(
-//            header: "Мое",
-//            items: themes.map { theme -> ThemeItem in
-//                .theme(theme: theme)
-//            }
-//          )
-//        ]
-//      }
-//
-//    let itemSelected = input.selection
-//      .withLatestFrom(dataSource) { indexPath, dataSource -> ThemeItem in
-//        dataSource[indexPath.section].items[indexPath.item]
-//      }
-//
-//    let themeSelected = itemSelected
-//      .compactMap { item -> Theme? in
-//        guard case .theme(let theme) = item else { return nil }
-//        return theme
-//      }
-//
-//    let addTheme = input.addThemeButtonClickTrigger
-//      .do { _ in
-//        self.steps.accept(AppStep.themeIsRequired(theme: Theme.empty))
-//      }
-//
-//    let openTheme = themeSelected
-//      .do {
-//        self.steps.accept(AppStep.themeIsRequired(theme: $0))
-//      }
+    let currentUser = services.currentUserService.user
+    let quests = services.currentUserService.quests
+    let questImages = services.currentUserService.questImages
+  
+    let pleaseAuthContainerViewIsHidden = currentUser
+      .map { $0 != nil }
 
+    let addButtonIsHidden = pleaseAuthContainerViewIsHidden
+      .map { !$0 }
+    
+    let auth = input.authButtonClickTrigger
+      .map { _ -> AppStep in
+          .authIsRequired
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+    
+    let createQuest = input.createQuestButtonClickTrigger
+      .map { _ -> AppStep in
+          .questEditIsRequired(quest: Quest(uuid: UUID(), status: .draft))
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+    
+    let marketplaceDraftQuestSection = quests
+      .withLatestFrom(questImages) { quests, questImages -> [MarketplaceQuestSectionItem] in
+        quests
+          .filter { quest -> Bool in
+            quest.status == .draft
+          }
+          .map { quest -> MarketplaceQuestSectionItem in
+            MarketplaceQuestSectionItem(
+              quest: quest,
+              image: questImages
+                .first {
+                  $0.questUUID == quest.uuid }?.image ?? UIImage()
+            )
+          }
+      }
+      .map { items -> MarketplaceQuestSection in
+        MarketplaceQuestSection(
+          header: "Ваши задачи:",
+          type: .personal,
+          items: items)
+      }
+    
+    let marketplaceRecommendedQuestSection = quests
+      .withLatestFrom(questImages) { quests, questImages -> [MarketplaceQuestSectionItem] in
+        quests
+          .filter { quest -> Bool in
+            quest.status == .draft
+          }
+          .map { quest -> MarketplaceQuestSectionItem in
+            MarketplaceQuestSectionItem(
+              quest: quest,
+              image: questImages
+                .first {
+                  $0.questUUID == quest.uuid }?.image ?? UIImage()
+            )
+          }
+      }
+      .map { items -> MarketplaceQuestSection in
+        MarketplaceQuestSection(
+          header: "Рекомендумое:",
+          type: .recommended,
+          items: items)
+      }
+    
+    let marketplaceQuestSections = Driver
+      .combineLatest(marketplaceDraftQuestSection, marketplaceRecommendedQuestSection) { draft, recommended -> [MarketplaceQuestSection] in
+        [draft] + [recommended]
+      }
+      .compactMap { sections -> [MarketplaceQuestSection] in
+        sections.filter { !$0.items.isEmpty }
+      }
+    
+    let editQuest = input.selection
+      .withLatestFrom(marketplaceQuestSections) { indexPath, sections -> (section: MarketplaceQuestSection, item: MarketplaceQuestSectionItem) in
+        (sections[indexPath.section], sections[indexPath.section].items[indexPath.item])
+      }
+      .filter { (section, item) in
+        section.type == .personal
+      }
+      .map { (section, item) -> Quest in
+        item.quest
+      }
+      .map { quest -> AppStep in
+          .questEditIsRequired(quest: quest)
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+    
+    let openQuest = input.selection
+      .withLatestFrom(marketplaceQuestSections) { indexPath, sections -> (section: MarketplaceQuestSection, item: MarketplaceQuestSectionItem) in
+        (sections[indexPath.section], sections[indexPath.section].items[indexPath.item])
+      }
+      .filter { (section, item) in
+        section.type != .personal
+      }
+      .map { (section, item) -> Quest in
+        item.quest
+      }
+      .map { quest -> AppStep in
+          .questOpenIsRequired(quest: quest)
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+
+    
     return Output(
-//      addTheme: addTheme,
-//      dataSource: dataSource,
-//      openTheme: openTheme
+      auth: auth,
+      // hrader
+      addButtonIsHidden: addButtonIsHidden,
+      // pleaseAuthContainerViewIsHidden
+      pleaseAuthContainerViewIsHidden: pleaseAuthContainerViewIsHidden,
+      // marketplace
+      marketplaceQuestSections: marketplaceQuestSections,
+      // selection
+      openQuest: openQuest,
+      createQuest: createQuest,
+      editQuest: editQuest
     )
   }
 }

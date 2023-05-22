@@ -66,7 +66,7 @@ class TaskFlow: Flow {
 
   private func navigateToKindList() -> FlowContributors {
     let viewController = KindListViewController()
-    let viewModel = KindListViewModel(services: services)
+    let viewModel = KindListViewModel(services: services, kindListMode: .normal)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

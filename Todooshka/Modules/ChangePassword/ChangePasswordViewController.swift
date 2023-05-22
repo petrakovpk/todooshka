@@ -59,7 +59,7 @@ class ChangePasswordViewController: TDViewController {
   func configureUI() {
     // settings
     backButton.isHidden = false
-    saveButton.isHidden = false
+    headerSaveButton.isHidden = false
 
     // adding
     view.addSubviews([
@@ -145,7 +145,7 @@ class ChangePasswordViewController: TDViewController {
       outputs.errorText.drive(errorTextView.rx.text),
       outputs.navigateBack.drive(),
       outputs.setPasswordButtonIsEnabled.drive(setPasswordButtonIsEnabledBinder),
-      outputs.setPassword.drive(setPasswordBinder)
+      //outputs.setPassword.drive(setPasswordBinder)
     ]
       .forEach({ $0.disposed(by: disposeBag) })
   }

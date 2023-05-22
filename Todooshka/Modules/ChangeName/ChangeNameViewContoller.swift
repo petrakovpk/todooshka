@@ -44,7 +44,7 @@ class ChangeNameViewContoller: TDViewController {
   func configureUI() {
     // settings
     backButton.isHidden = false
-    saveButton.isHidden = false
+    headerSaveButton.isHidden = false
 
     // adding
     view.addSubview(textField)
@@ -63,7 +63,7 @@ class ChangeNameViewContoller: TDViewController {
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       nameTextFieldEditingDidEndOnExit: textField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
       nameTextFieldText: textField.rx.text.orEmpty.asDriver(),
-      saveButtonClickTrigger: saveButton.rx.tap.asDriver()
+      saveButtonClickTrigger: headerSaveButton.rx.tap.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)

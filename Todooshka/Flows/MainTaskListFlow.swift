@@ -10,8 +10,6 @@ import RxSwift
 import RxCocoa
 import UIKit
 import PhotosUI
-import ImagePicker
-import YPImagePicker
 
 class MainTaskListFlow: Flow {
   var root: Presentable {
@@ -63,9 +61,7 @@ class MainTaskListFlow: Flow {
   private func navigateToMainTaskList() -> FlowContributors {
     let viewController = MainTaskListViewController()
     let viewModel = MainTaskListViewModel(services: services)
-    let sceneModel = MainTaskListSceneModel(services: services)
     viewController.viewModel = viewModel
-    viewController.sceneModel = sceneModel
     rootViewController.navigationBar.isHidden = true
     rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.pushViewController(viewController, animated: false)
@@ -97,7 +93,7 @@ class MainTaskListFlow: Flow {
 
   private func navigateToKindList() -> FlowContributors {
     let viewController = KindListViewController()
-    let viewModel = KindListViewModel(services: services)
+    let viewModel = KindListViewModel(services: services, kindListMode: .normal)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: true)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))

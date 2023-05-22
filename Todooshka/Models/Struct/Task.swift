@@ -20,13 +20,12 @@ struct Task {
   var created = Date()
   var planned = Date().endOfDay
   var completed: Date?
-  var kindUUID: UUID
+  var kindUUID: UUID?
   var userUID: String? = Auth.auth().currentUser?.uid
   
   var secondsLeft: Double {
     max(planned.timeIntervalSince1970 - Date().startOfDay.timeIntervalSince1970, 0)
   }
-  
 }
 
 extension Task: IdentifiableType {

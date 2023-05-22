@@ -11,7 +11,7 @@ import RxSwift
 
 extension Task {
   
-  func fetchTaskUser() -> Observable<Author?> {
+  func fetchTaskUser() -> Observable<UserExtData?> {
     return APIManager.shared.performFetchRequest(endpoint: APIConfig.urlForTaskUser(taskID: self.uuid))
   }
 

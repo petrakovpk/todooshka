@@ -98,7 +98,7 @@ class KindViewController: TDViewController {
     iconCollectionView = UICollectionView(frame: .zero, collectionViewLayout: iconCollectionViewLayout)
     
     backButton.isHidden = false
-    saveButton.isHidden = false
+    headerSaveButton.isHidden = false
     
     view.backgroundColor = Style.App.background
     
@@ -228,7 +228,7 @@ class KindViewController: TDViewController {
     let input = KindViewModel.Input(
       // header
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
-      saveButtonClickTrigger: saveButton.rx.tap.asDriver(),
+      saveButtonClickTrigger: headerSaveButton.rx.tap.asDriver(),
       // text
       text: kindTextField.rx.text.orEmpty.asDriver(),
       // color
@@ -241,10 +241,6 @@ class KindViewController: TDViewController {
     [
       // header
       outputs.navigateBack.drive(),
-      // is locked
-      outputs.isChangeEnabled.drive(colorCollecionView.rx.isUserInteractionEnabled),
-      outputs.isChangeEnabled.drive(iconCollectionView.rx.isUserInteractionEnabled),
-      outputs.isChangeEnabled.drive(kindTextField.rx.isEnabled),
       // text
       outputs.kindText.drive(kindTextField.rx.text),
       outputs.kindTextLength.drive(kindTextLengthLabel.rx.text),

@@ -29,17 +29,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   
   let taskAPIService = TaskAPIService()
   let userAPIService = CurrentUserService()
+  let temporaryDataService = TemporaryDataService()
 
   lazy var appServices = {
-    return AppServices(
+    AppServices(
       taskAPIService: taskAPIService,
-      currentUserService: userAPIService
-//      authService: authService,
-//      actionService: actionService,
-//      dataService: dataService,
-//      migrationService: migrationService,
-//      preferencesService: preferencesService,
-//      tabBarService: tabBarService
+      currentUserService: userAPIService,
+      temporaryDataService: temporaryDataService
     )
   }()
 

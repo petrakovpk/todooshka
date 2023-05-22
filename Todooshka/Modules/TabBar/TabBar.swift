@@ -15,63 +15,25 @@ class TabBar: UITabBar {
   public let addTaskButton = TDAddTaskButton(type: .system)
   public let tabBarItem1 = UIImageView(image: Icon.crown.image.template)
   public let tabBarItem2 = UIImageView(image: Icon.clipboardTick.image.template)
-  public let tabBarItem3 = UIImageView(image: Icon.userSquare.image.template)
+  public let tabBarItem4 = UIImageView(image: Icon.userSquare.image.template)
+  public let tabBarItem5 = UIImageView(image: Icon.userSquare.image.template)
 
   private let shapeLayer = CAShapeLayer()
   private let gradientLayer = CAGradientLayer()
   private let backgroundLayer = CALayer()
   
   private var oldBackgroundLayer: CALayer?
-
-  override var selectedItem: UITabBarItem? {
-    didSet {
-      switch selectedItem?.tag {
-      case 1:
-        tabBarItem1.tintColor = Style.TabBar.Selected
-        tabBarItem2.tintColor = Style.TabBar.Unselected
-        tabBarItem3.tintColor = Style.TabBar.Unselected
-      case 2:
-        tabBarItem1.tintColor = Style.TabBar.Unselected
-        tabBarItem2.tintColor = Style.TabBar.Selected
-        tabBarItem3.tintColor = Style.TabBar.Unselected
-      case 3:
-        tabBarItem1.tintColor = Style.TabBar.Unselected
-        tabBarItem2.tintColor = Style.TabBar.Unselected
-        tabBarItem3.tintColor = Style.TabBar.Selected
-      default:
-        return
-      }
-
-    }
-  }
   
-  override func layoutSubviews() {
-    super.layoutSubviews()
-
+  func configureUI() {
     addSubviews([
-      addTaskButton,
-      tabBarItem1,
-      tabBarItem2,
-      tabBarItem3
+      addTaskButton
     ])
 
     backgroundColor = Style.App.background
     itemPositioning = .automatic
     layer.masksToBounds = false
 
-    tabBarItem1.anchor(widthConstant: 24, heightConstant: 24)
-    tabBarItem1.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + bounds.width / 8 )
-    tabBarItem1.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
-
-    tabBarItem2.anchor(widthConstant: 24, heightConstant: 24)
-    tabBarItem2.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 3 * bounds.width / 8 )
-    tabBarItem2.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
-
-    tabBarItem3.anchor(widthConstant: 24, heightConstant: 24)
-    tabBarItem3.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 5 * bounds.width / 8 )
-    tabBarItem3.anchorCenterYToSuperview(constant: bounds.height > 50 ? -16 : 0 )
-    
-    addTaskButton.anchorCenterXToSuperview(constant: -1 * bounds.width / 2 + 7 * bounds.width / 8 )
+    addTaskButton.anchorCenterXToSuperview()
     addTaskButton.anchorCenterYToSuperview(constant: -22)
     addTaskButton.anchor(
       widthConstant: 60.0,
@@ -81,11 +43,13 @@ class TabBar: UITabBar {
 
   override func draw(_ rect: CGRect) {
     traitCollection.userInterfaceStyle == .dark ? drawDarkMode() : drawLightMode()
+    configureUI()
   }
 
   private func drawDarkMode() {
     shapeLayer.path = createPath()
 
+    gradientLayer.isHidden = false
     gradientLayer.locations = [0, 1]
     gradientLayer.startPoint = CGPoint(x: 0, y: 0)
     gradientLayer.endPoint = CGPoint(x: 0, y: 1)
@@ -113,6 +77,7 @@ class TabBar: UITabBar {
   func drawLightMode() {
     shapeLayer.path = createPath()
 
+    gradientLayer.isHidden = true
     backgroundLayer.frame = bounds
     backgroundLayer.mask = shapeLayer
     backgroundLayer.backgroundColor = Style.TabBar.Background?.cgColor
@@ -132,25 +97,13 @@ class TabBar: UITabBar {
     let centerWidth = self.frame.width / 2
     let width = self.frame.width
 
-    // start top left minus 17
-    path.move(to: CGPoint(x: 0, y: 0))
-
-    // arc left to the button
-    path.addArc(
-      withCenter: CGPoint(
-        x: (7 * bounds.width / 8 - plusButtonRadius - 17),
-        y: 17
-      ),
-      radius: 17,
-      startAngle: -.pi / 2,
-      endAngle: 0,
-      clockwise: true
-    )
+    // start top left (0, 17)
+    path.move(to: CGPoint(x: 0, y: -17))
     
-    // arc right to the button
+    // add arc to (17,0)
     path.addArc(
       withCenter: CGPoint(
-        x: (7 * bounds.width / 8 + plusButtonRadius + 17),
+        x: 17,
         y: 17
       ),
       radius: 17,
@@ -158,13 +111,45 @@ class TabBar: UITabBar {
       endAngle: -.pi / 2,
       clockwise: true
     )
-    
-    // to the right top
-    path.addLine(to: CGPoint(x: self.frame.width, y: 0))
-    
+
+    // arc left to the button
+    path.addArc(
+      withCenter: CGPoint(
+        x: (centerWidth - plusButtonRadius - 17),
+        y: 17
+      ),
+      radius: 17,
+      startAngle: -.pi / 2,
+      endAngle: 0,
+      clockwise: true
+    )
+
+    // arc right to the button
+    path.addArc(
+      withCenter: CGPoint(
+        x: (centerWidth + plusButtonRadius + 17),
+        y: 17
+      ),
+      radius: 17,
+      startAngle: -.pi,
+      endAngle: -.pi / 2,
+      clockwise: true
+    )
+
+    // arc right to the frame
+    path.addArc(
+      withCenter: CGPoint(
+        x: self.frame.width - 17,
+        y: 17),
+      radius: 17,
+      startAngle: -.pi / 2,
+      endAngle: 0,
+      clockwise: true
+    )
+
     // to the right bottom
     path.addLine(to: CGPoint(x: self.frame.width, y: self.frame.height))
-    
+
     // to the left bottom
     path.addLine(to: CGPoint(x: 0, y: self.frame.height))
     

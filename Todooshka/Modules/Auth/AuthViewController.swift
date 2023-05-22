@@ -13,8 +13,7 @@ import RxSwift
 import UIKit
 
 class AuthViewController: UIViewController {
-  // MARK: - Public
-  var viewModel: AuthViewModel!
+  public var viewModel: AuthViewModel!
 
   // MARK: - Private
   private let disposeBag = DisposeBag()
@@ -119,14 +118,15 @@ class AuthViewController: UIViewController {
 
   // MARK: - Configure UI
   func configureUI() {
-    // adding
-    view.addSubview(headerLabel)
-    view.addSubview(secondHeaderLabel)
-    view.addSubview(headerDescriptionTextView)
-    view.addSubview(emailOrPhoneAccountButton)
-    view.addSubview(appleButton)
-    view.addSubview(googleButton)
-    view.addSubview(skipButton)
+    view.addSubviews([
+      headerLabel,
+      secondHeaderLabel,
+      headerDescriptionTextView,
+      emailOrPhoneAccountButton,
+      appleButton,
+      googleButton,
+      skipButton
+    ])
 
     // view
     view.backgroundColor = Style.Auth.Background
@@ -191,8 +191,8 @@ class AuthViewController: UIViewController {
   // MARK: - Bind
   func bindViewModel() {
     let input = AuthViewModel.Input(
-      appleButtonClickTrigger: appleButton.rx.tap.asDriver(),
       emailOrPhoneAccountButtonClickTrigger: emailOrPhoneAccountButton.rx.tap.asDriver(),
+      appleButtonClickTrigger: appleButton.rx.tap.asDriver(),
       googleButtonClickTrigger: googleButton.rx.tap.asDriver().map { _ in self },
       skipButtonClickTrigger: skipButton.rx.tap.asDriver()
     )
@@ -200,15 +200,15 @@ class AuthViewController: UIViewController {
     let output = viewModel.transform(input: input)
 
     [
-      output.appleGetNonceString.drive(signInWithAppleBinder),
-      output.auth.drive(),
       output.authWithEmailOrPhone.drive(),
+      output.appleAskForAuthRequest.drive(appleAskForAuthRequestBinder),
+      output.auth.drive(),
       output.skip.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }
 
-  var signInWithAppleBinder: Binder<String> {
+  var appleAskForAuthRequestBinder: Binder<String> {
     return Binder(self, binding: { vc, currentNonce in
       vc.currentNonce = currentNonce
 

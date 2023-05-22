@@ -12,6 +12,7 @@ enum TaskListMode: Equatable {
   case overdued
   case idea
   case day(date: Date)
- // case completed(date: Date)
+  case calendar
   case deleted
+  case userProfile
 }

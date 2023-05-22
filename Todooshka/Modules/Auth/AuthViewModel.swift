@@ -18,122 +18,109 @@ struct AuthWithGoogleData {
 }
 
 class AuthViewModel: Stepper {
-  // MARK: - Properties
-  let steps = PublishRelay<Step>()
-  let credential = BehaviorRelay<AuthCredential?>(value: nil)
-
+  public let steps = PublishRelay<Step>()
+  public let credential = PublishRelay<AuthCredential>()
+  
   private let services: AppServices
   private let disposeBag = DisposeBag()
-
+  
   struct Input {
-    let appleButtonClickTrigger: Driver<Void>
     let emailOrPhoneAccountButtonClickTrigger: Driver<Void>
+    let appleButtonClickTrigger: Driver<Void>
     let googleButtonClickTrigger: Driver<UIViewController>
-  //  let logInButtonClickTrigger: Driver<Void>
     let skipButtonClickTrigger: Driver<Void>
   }
-
+  
   struct Output {
-    let appleGetNonceString: Driver<String>
-    let auth: Driver<Void>
-    let authWithEmailOrPhone: Driver<Void>
-   // let logIn: Driver<Void>
-    let skip: Driver<Void>
+    let authWithEmailOrPhone: Driver<AppStep>
+    let appleAskForAuthRequest: Driver<String>
+    let auth: Driver<AuthDataResult>
+    let skip: Driver<AppStep>
   }
-
+  
   // MARK: - Init
   init(services: AppServices) {
     self.services = services
   }
-
+  
   func transform(input: Input) -> Output {
-    let appleGetNonceString = input.appleButtonClickTrigger
-      .map { self.randomNonceString() }
-
-    // AUTH WITH APPLE
-    let appleGetCredential = self.credential
-      .asDriver()
-      .compactMap { $0 }
-
-    // AUTH WITH GOOGLE
-    let authWithGoogle = input.googleButtonClickTrigger
-      .asObservable()
-      .flatMapLatest { viewController -> Observable<Result<GIDSignInResult, Error>>  in
-        GIDSignIn.sharedInstance.rx.signIn(with: viewController)
-      }
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-//      .compactMap { viewController -> AuthWithGoogleData? in
-//        guard let clientID = FirebaseApp.app()?.options.clientID else { return nil }
-//        return AuthWithGoogleData(viewController: viewController, config: GIDConfiguration(clientID: clientID))
-//      }
-     
-      
-      
-
-//    let googleGetCredential = authWithGoogle
-//      .compactMap { result -> GIDSignInResult? in
-//        guard case .success(let result) = result else { return nil }
-//        return result
-//      }
-//      .compactMap { result -> AuthCredential? in
-//        guard let idToken = result.user.authentication.idToken else { return nil }
-//        return GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user.authentication.accessToken)
-//      }
-//
-//    let appleGetCredential = Driver
-//      .of(googleGetCredential, appleGetCredential)
-//      .merge()
-//      .asObservable()
-//      .flatMapLatest { credential ->  Observable<Result<AuthDataResult, Error>> in
-//        Auth.auth().rx.signInAndRetrieveData(with: credential)
-//      }
-    //      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
+    let errorTracker = ErrorTracker()
     
-    let auth = appleGetCredential
-      .asObservable()
-      .flatMapLatest { credential ->  Observable<Result<AuthDataResult, Error>> in
-        Auth.auth().rx.signInAndRetrieveData(with: credential)
+    // Auth with Email or Phone
+    let authWithEmailOrPhone = input.emailOrPhoneAccountButtonClickTrigger
+      .map { _ -> AppStep in
+        AppStep.authWithEmailOrPhoneInIsRequired
       }
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-      .compactMap { result -> AuthDataResult? in
-        guard case .success(let authDataResult) = result else { return nil }
-        return authDataResult
-      }.do { _ in
+      .do { step in
+        self.steps.accept(step)
+      }
+    
+    // Auth with apple
+    let appleGetCredential = credential
+      .asDriverOnErrorJustComplete()
+    
+    let appleAskForAuthRequest = input.appleButtonClickTrigger
+      .map { _ -> String in
+        self.randomNonceString()
+      }
+    
+    // Auth with google
+    let signInWithGoogle = input.googleButtonClickTrigger
+      .flatMapLatest { viewController -> Driver<GIDSignInResult> in
+        GIDSignIn.sharedInstance.rx
+          .signIn(with: viewController)
+          .trackError(errorTracker)
+          .asDriverOnErrorJustComplete()
+      }
+    
+    let googleGetCredentials = signInWithGoogle
+      .compactMap { result -> AuthCredential? in
+        if let idToken = result.user.idToken {
+          return GoogleAuthProvider.credential(
+            withIDToken: idToken.tokenString,
+            accessToken: result.user.accessToken .tokenString)
+        } else {
+          return nil
+        }
+      }
+    
+    let auth = Driver.of(appleGetCredential, googleGetCredentials)
+      .merge()
+      .flatMapLatest { credential -> Driver<AuthDataResult> in
+        Auth.auth().rx
+          .signInAndRetrieveData(with: credential)
+          .trackError(errorTracker)
+          .asDriverOnErrorJustComplete()
+      }
+      .do { authDataResult in
         self.steps.accept(AppStep.authIsCompleted)
       }
-
-    // UPDATE DATA
-    let updateUserData = auth
-      .asObservable()
-      .flatMapLatest { authDataResult -> Observable<Result<DatabaseReference, Error>> in
-        Database.database().reference().child("USERS").child(authDataResult.user.uid).rx.updateChildValues(
-          ["email": authDataResult.user.email,
-           "phoneNumber": authDataResult.user.phoneNumber,
-           "displayName": authDataResult.user.displayName ]  )
-      }.map { _ in () }
-      .asDriver(onErrorJustReturn: ())
-
-    let authWithEmailOrPhone = input.emailOrPhoneAccountButtonClickTrigger
-      .map { self.steps.accept(AppStep.authWithEmailOrPhoneInIsRequired) }
-
+    
+      
     let skip = input.skipButtonClickTrigger
-      .map { self.steps.accept(AppStep.authIsCompleted) }
-
+      .map { _ -> AppStep in
+        AppStep.authIsCompleted
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+  
+    
     return Output(
-      appleGetNonceString: appleGetNonceString,
-      auth: updateUserData,
       authWithEmailOrPhone: authWithEmailOrPhone,
+      appleAskForAuthRequest: appleAskForAuthRequest,
+      auth: auth,
       skip: skip
     )
   }
-
+  
   // MARK: - Helpers
   private func randomNonceString(length: Int = 32) -> String {
     precondition(length > 0)
     let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
     var result = ""
     var remainingLength = length
-
+    
     while remainingLength > 0 {
       let randoms: [UInt8] = (0 ..< 16).map { _ in
         var random: UInt8 = 0
@@ -143,19 +130,19 @@ class AuthViewModel: Stepper {
         }
         return random
       }
-
+      
       randoms.forEach { random in
         if remainingLength == 0 {
           return
         }
-
+        
         if random < charset.count {
           result.append(charset[Int(random)])
           remainingLength -= 1
         }
       }
     }
-
+    
     return result
   }
 }

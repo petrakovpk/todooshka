@@ -18,7 +18,6 @@ struct Kind {
   var status: KindOfTaskStatus = .active
   var text: String = ""
   var userUID: String? = Auth.auth().currentUser?.uid
-  var isEmptyKind: Bool = false 
 }
 
 extension Kind: IdentifiableType {
@@ -36,6 +35,5 @@ extension Kind: Equatable {
     && lhs.index == rhs.index
     && lhs.status == rhs.status
     && lhs.userUID == rhs.userUID
-    && lhs.isEmptyKind == rhs.isEmptyKind
   }
 }

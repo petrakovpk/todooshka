@@ -19,10 +19,22 @@ class CalendarCell: JTACDayCell {
     return label
   }()
   
-  private let imageView: UIImageView = {
+  private let wingsImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     return imageView
+  }()
+  
+  private let isSelectedView: UIView = {
+    let view = UIView()
+    view.backgroundColor = Palette.SingleColors.BlueRibbon
+    return view
+  }()
+  
+  private let isTodayView: UIView = {
+    let view = UIView()
+    view.layer.borderColor = Palette.SingleColors.BlueRibbon.cgColor
+    return view
   }()
   
   private let leftDot: UIView = {
@@ -52,16 +64,30 @@ class CalendarCell: JTACDayCell {
   override func draw(_ rect: CGRect) {
     super.draw(rect)
     let dotsStackView = UIStackView(arrangedSubviews: [leftDot, centralDot, rightDot])
-    
-    cornerRadius = bounds.width / 2
-    
-    contentView.cornerRadius = bounds.width / 2
-    contentView.borderColor = Style.Cells.Calendar.Selected
+
     contentView.addSubviews([
-      imageView,
+      isSelectedView,
+      isTodayView,
+      wingsImageView,
       dateLabel,
       dotsStackView
     ])
+    
+    isSelectedView.cornerRadius = min(bounds.height, bounds.width) / 2
+    isSelectedView.anchorCenterXToSuperview()
+    isSelectedView.anchorCenterYToSuperview()
+    isSelectedView.anchor(
+      widthConstant: min(bounds.height, bounds.width),
+      heightConstant: min(bounds.height, bounds.width)
+    )
+    
+    isTodayView.cornerRadius = min(bounds.height, bounds.width) / 2
+    isTodayView.anchorCenterXToSuperview()
+    isTodayView.anchorCenterYToSuperview()
+    isTodayView.anchor(
+      widthConstant: min(bounds.height, bounds.width),
+      heightConstant: min(bounds.height, bounds.width)
+    )
     
     dateLabel.anchor(
       top: contentView.topAnchor,
@@ -69,7 +95,7 @@ class CalendarCell: JTACDayCell {
       bottom: contentView.bottomAnchor,
       right: contentView.rightAnchor)
     
-    imageView.anchor(
+    wingsImageView.anchor(
       top: contentView.topAnchor,
       left: contentView.leftAnchor,
       bottom: contentView.bottomAnchor,
@@ -102,7 +128,7 @@ class CalendarCell: JTACDayCell {
     dateLabel.textColor = Style.App.text
     dateLabel.text = ""
     
-    imageView.image = nil
+    wingsImageView.image = nil
     
     leftDot.isHidden = true
     centralDot.isHidden = true
@@ -111,25 +137,25 @@ class CalendarCell: JTACDayCell {
   
   func configure(cellState: CellState, isSelected: Bool, completedTasksCount: Int, plannedTasksCount: Int) {
     dateLabel.text = cellState.text
-    imageView.image = getImage(count: completedTasksCount)
+    wingsImageView.image = getImage(count: completedTasksCount)
 
     if cellState.dateBelongsTo == .thisMonth {
       if isSelected {
-        backgroundColor = Style.Cells.Calendar.Selected
+        isSelectedView.backgroundColor = Style.Cells.Calendar.Selected
         dateLabel.textColor = completedTasksCount == 0 ? .white : Style.App.text
       } else {
-        backgroundColor = .clear
+        isSelectedView.backgroundColor = .clear
         dateLabel.textColor = Style.App.text
       }
     } else {
-      backgroundColor = .clear
+      isSelectedView.backgroundColor = .clear
       dateLabel.textColor = .lightGray
     }
     
     if cellState.date.startOfDay == Date().startOfDay {
-      contentView.borderWidth = 1.0
+      isTodayView.borderWidth = 1.0
     } else {
-      contentView.borderWidth = 0
+      isTodayView.borderWidth = 0
     }
     
     if cellState.date.startOfDay <= Date().startOfDay {

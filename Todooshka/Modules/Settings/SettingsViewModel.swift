@@ -13,31 +13,28 @@ import RxCocoa
 import UIKit
 
 class SettingsViewModel: Stepper {
-  let services: AppServices
-  let steps = PublishRelay<Step>()
+  public let steps = PublishRelay<Step>()
+  
+  private let services: AppServices
+  
 
-  private let dataSource = BehaviorRelay<[SettingsCellSectionModel]>(value: [])
+  private let dataSource = BehaviorRelay<[SettingSection]>(value: [])
   private let showAlert = BehaviorRelay<Bool>(value: false)
 
-  // auth
-  let logInIsRequired = SettingsItem(image: Icon.login.image, text: "Войти в аккаунт", type: .logInIsRequired)
-  // data
-  let syncDataIsRequired = SettingsItem(image: Icon.boxTick.image, text: "Синхронизировать данные", type: .syncDataIsRequired)
-  // deleted
-  let deletedTaskTypeListIsRequired = SettingsItem(image: Icon.trash.image, text: "Типы", type: .deletedTaskTypeListIsRequired)
-  let deletedTaskListIsRequired = SettingsItem(image:Icon.trash.image, text: "Задачи", type: .deletedTaskListIsRequired)
-  // help
-  let askSupport = SettingsItem(image: Icon.messageNotif.image, text: "Обратиться в поддержку", type: .supportIsRequired)
-
   struct Input {
+    // header
     let backButtonClickTrigger: Driver<Void>
-    let selection: Driver<IndexPath>
+    // table view
+    let settingIsSelected: Driver<IndexPath>
   }
 
   struct Output {
-    let backButtonClick: Driver<Void>
-    let itemSelected: Driver<Void>
-    let dataSource: Driver<[SettingsCellSectionModel]>
+    // header
+    let navigateBack: Driver<AppStep>
+    // table
+    let settingsSections: Driver<[SettingSection]>
+    // settings
+    let openTheSetting: Driver<AppStep>
   }
 
   // MARK: - Init
@@ -46,84 +43,85 @@ class SettingsViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let currentUser = Auth.auth().rx.stateDidChange
-      .asDriver(onErrorJustReturn: nil)
-
-    let userName = currentUser
-      .compactMap { $0 }
-      .asObservable()
-      .flatMapLatest({ dbUserRef.child($0.uid).child("PERSONAL").rx.observeEvent(.value) })
-      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-      .compactMap { result -> DataSnapshot? in
-        guard case .success(let dataSnapshot) = result else { return nil }
-        return dataSnapshot
-      }
-      .map { snapshot -> NSDictionary? in
-        snapshot.value as? NSDictionary
-      }
-      .map { dict -> String? in
-        dict?.value(forKey: "name") as? String
-      }.withLatestFrom(currentUser) { name, currentUser -> String in
-        name ?? (currentUser?.displayName ?? "Главный герой")
-      }
-
-    let userProfileIsRequired = userName
-      .startWith("")
-      .map {
-        SettingsItem(
-          image: Icon.userSquare.image,
-          text: $0,
-          type: .userProfileIsRequiared
-        )
-      }
-
-    // dataSource
-    let dataSource = Driver
-      .combineLatest(currentUser, userProfileIsRequired) { currentUser, userProfileIsRequired in
-        [
-          SettingsCellSectionModel(
-            header: "Аккаунт",
-            items: [currentUser == nil ? self.logInIsRequired : userProfileIsRequired]),
-          SettingsCellSectionModel(
-            header: "Облако",
-            items: [self.syncDataIsRequired]),
-          SettingsCellSectionModel(
-            header: "Удаленные данные",
-            items: [self.deletedTaskTypeListIsRequired, self.deletedTaskListIsRequired]),
-          SettingsCellSectionModel(
-            header: "Поддержка",
-            items: [self.askSupport])
-        ]
-      }
-
-    let itemSelected = input.selection
-      .withLatestFrom(dataSource) { indexPath, dataSource in
-        let item = dataSource[indexPath.section].items[indexPath.item]
-        switch item.type {
-        case .deletedTaskListIsRequired:
-          self.steps.accept(AppStep.deletedTaskListIsRequired)
-        case .deletedTaskTypeListIsRequired:
-          self.steps.accept(AppStep.deletedTaskTypeListIsRequired)
-        case .logInIsRequired:
-          self.steps.accept(AppStep.authIsRequired)
-        case .userProfileIsRequiared:
-          self.steps.accept(AppStep.userProfileIsRequired)
-        case .syncDataIsRequired:
-          self.steps.accept(AppStep.syncDataIsRequired)
-        case .supportIsRequired:
-          self.steps.accept(AppStep.supportIsRequired)
-        default:
-          return
+    let currentUser = services.currentUserService.user
+    
+    let accountItems = currentUser
+      .flatMapLatest { user -> Driver<[SettingItem]> in
+        if let user = user {
+          return Driver.just([SettingItem(text: "Потом загрузить", type: .openProfileIsRequired) ])
+        } else {
+          return Driver.just([SettingItem(text: "Войти в аккаунт", type: .authIsRequired)])
         }
       }
+     
+    let accountSection = accountItems
+      .map { items -> SettingSection in
+        SettingSection(header: "Аккаунт", items: items)
+      }
+    
+    let deletedItems = Driver<[SettingItem]>.of([
+      SettingItem(text: "Типы", type: .deletedKindListIsRequired),
+      SettingItem(text: "Задачи", type: .deletedTaskListIsRequired)
+    ])
+      .asDriver(onErrorJustReturn: [])
+    
+    let deletedSection = deletedItems
+      .map { items -> SettingSection in
+        SettingSection(header: "Удаленные данные", items: items)
+      }
+    
+    let supportItems = Driver<[SettingItem]>.of([
+      SettingItem(text: "Обратиться в поддержку", type: .supportIsRequired)
+    ])
+      .asDriver(onErrorJustReturn: [])
 
-    let backButtonClick = input.backButtonClickTrigger
-      .map { self.steps.accept(AppStep.navigateBack) }
+    let supportSection = supportItems
+      .map { items -> SettingSection in
+        SettingSection(header: "Поддержка", items: items)
+      }
+    
+    let settingsSections = Driver<[SettingSection]>
+      .combineLatest(accountSection, deletedSection, supportSection) { accountSection, deletedSection, supportSection -> [SettingSection] in
+        [accountSection, deletedSection, supportSection]
+      }
+    
+    let openTheSetting = input.settingIsSelected
+      .withLatestFrom(settingsSections) { indexPath, sections -> SettingItem in
+        sections[indexPath.section].items[indexPath.item]
+      }
+      .compactMap { item -> AppStep? in
+        switch item.type {
+        case .authIsRequired:
+          return AppStep.authIsRequired
+        case .openProfileIsRequired:
+          return AppStep.accountSettingsIsRequired
+        case .deletedKindListIsRequired:
+          return AppStep.deletedKindListIsRequired
+        case .deletedTaskListIsRequired:
+          return AppStep.deletedTaskListIsRequired
+        case .supportIsRequired:
+          return AppStep.supportIsRequired
+        default:
+          return nil
+        }
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+    
+    let navigateBack = input.backButtonClickTrigger
+      .map { _ in AppStep.navigateBack }
+      .do { step in
+        self.steps.accept(step)
+      }
 
     return Output(
-      backButtonClick: backButtonClick,
-      itemSelected: itemSelected,
-      dataSource: dataSource
+      // header
+      navigateBack: navigateBack,
+      // table
+      settingsSections: settingsSections,
+      // settings
+      openTheSetting: openTheSetting
     )
   }
 

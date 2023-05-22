@@ -13,8 +13,15 @@ import UIKit
 
 class MainTaskListViewModel: Stepper {
   public let steps = PublishRelay<Step>()
+  
   public let swipeDeleteButtonClickTrigger = PublishRelay<IndexPath>()
   public let swipeIdeaButtonClickTrigger = PublishRelay<IndexPath>()
+  
+  public let calendarSelectedDate = BehaviorRelay<Date>(value: Date())
+  public let calendarVisibleMonth = BehaviorRelay<Date>(value: Date())
+  
+  private let calendarStartMonth = BehaviorRelay<Date>(value: Date().adding(.month, value: -4))
+  private let calendarEndMonth = BehaviorRelay<Date>(value: Date().adding(.month, value: 3))
 
   private let services: AppServices
   private let disposeBag = DisposeBag()
@@ -26,6 +33,9 @@ class MainTaskListViewModel: Stepper {
     let ideaButtonClickTrigger: Driver<Void>
     // task list
     let taskSelected: Driver<IndexPath>
+    // calendar
+    let calendarMonthLabelClickTrigger: Driver<Void>
+    let calendarButtonClickTrigger: Driver<Void>
     // alert
     let alertDeleteButtonClick: Driver<Void>
     let alertCancelButtonClick: Driver<Void>
@@ -39,6 +49,12 @@ class MainTaskListViewModel: Stepper {
     // task sections
     let taskListSections: Driver<[TaskListSection]>
     let taskListOpenTask: Driver<AppStep>
+    // calendar
+    let calendarMonthLabelText: Driver<String>
+    let calendarSections: Driver<[CalendarSection]>
+    let calendarIsHidden: Driver<Bool>
+    let calendarScrollToDate: Driver<Date>
+    let calendarButtonImage: Driver<UIImage>
     // alert
     let deleteAlertIsHidden: Driver<Bool>
     // save task
@@ -51,49 +67,87 @@ class MainTaskListViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let kinds = services.currentUserService.currentUserKinds
-    let tasks = services.currentUserService.currentUserTasks
+    let kinds = services.currentUserService.kinds
+    let tasks = services.currentUserService.tasks
     let swipeIdeaButtonClickTrigger = swipeIdeaButtonClickTrigger.asDriverOnErrorJustComplete()
     let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
+    let calendarVisibleMonth = calendarVisibleMonth.asDriver()
+    let calendarSelectedDate = calendarSelectedDate.asDriver()
+    let calendarStartMonth = calendarStartMonth.asDriver()
+    let calendarEndMonth = calendarEndMonth.asDriver()
+    let errorTracker = ErrorTracker()
     
-    let allDayItems = Driver
-      .combineLatest(kinds, tasks) { kinds, tasks -> [TaskListSectionItem] in
+    // MARK: - Datasource - Completed
+    let completedTaskListItems = Driver
+      .combineLatest(kinds, tasks, calendarSelectedDate) { kinds, tasks, calendarSelectedDate -> [TaskListSectionItem] in
         tasks.filter { task -> Bool in
-          task.status == .inProgress &&
-          task.planned.roundToTheBottomMinute == Date().endOfDay.roundToTheBottomMinute
+          task.status == .completed &&
+          task.completed?.startOfDay == calendarSelectedDate.startOfDay
         }
         .map { task -> TaskListSectionItem in
           TaskListSectionItem(
             task: task,
             kind: kinds.first { $0.uuid == task.kindUUID },
-            mode: .blueLine
-          )
+            mode: .empty)
         }
-    }
+      }
     
-    let inDayItems = Driver
-      .combineLatest(kinds, tasks) { kinds, tasks -> [TaskListSectionItem] in
+    let completedTaskListSection = completedTaskListItems
+      .map { items -> TaskListSection in
+        TaskListSection(header: "Выполнено:", items: items)
+      }
+    
+    // MARK: - Datasource - Planned
+    let plannedAllDayItems = Driver
+      .combineLatest(kinds, tasks, calendarSelectedDate) { kinds, tasks, calendarSelectedDate -> [TaskListSectionItem] in
         tasks.filter { task -> Bool in
           task.status == .inProgress &&
-          task.planned >= Date().startOfDay &&
-          task.planned.roundToTheBottomMinute < Date().endOfDay.roundToTheBottomMinute
+          task.planned.roundToTheBottomMinute == calendarSelectedDate.endOfDay.roundToTheBottomMinute &&
+          task.planned.startOfDay == calendarSelectedDate.startOfDay &&
+          task.planned.startOfDay >= Date().startOfDay
         }
         .map { task -> TaskListSectionItem in
           TaskListSectionItem(
             task: task,
             kind: kinds.first { $0.uuid == task.kindUUID },
-            mode: .redLineAndTime
+            mode: calendarSelectedDate.isInToday ? .blueLine : .empty
           )
         }
     }
+    
+    let plannedInDayItems = Driver
+      .combineLatest(kinds, tasks, calendarSelectedDate) { kinds, tasks, calendarSelectedDate -> [TaskListSectionItem] in
+        tasks.filter { task -> Bool in
+          task.status == .inProgress &&
+          task.planned >= calendarSelectedDate.startOfDay &&
+          task.planned.roundToTheBottomMinute < calendarSelectedDate.endOfDay.roundToTheBottomMinute &&
+          task.planned.startOfDay >= Date().startOfDay
+        }
+        .map { task -> TaskListSectionItem in
+          TaskListSectionItem(
+            task: task,
+            kind: kinds.first { $0.uuid == task.kindUUID },
+            mode: calendarSelectedDate.isInToday ? .redLineAndTime : .time
+          )
+        }
+    }
+    
+    let plannedTaskListSections = Driver
+      .zip(plannedAllDayItems, plannedInDayItems) { plannedAllDayItems, plannedInDayItems -> [TaskListSection] in
+        [
+          TaskListSection(header: "В течении дня:", items: plannedAllDayItems),
+          TaskListSection(header: "Ко времени", items: plannedInDayItems)
+        ]
+      }
     
     let taskListSections = Driver
-      .combineLatest(allDayItems, inDayItems) { allDayItems, inDayItems -> [TaskListSection] in
-        [
-          TaskListSection(header: "В течении дня:", items: allDayItems),
-          TaskListSection(header: "Внимание, время:", items: inDayItems)
-        ]
-          .filter { !$0.items.isEmpty }
+      .zip(completedTaskListSection, plannedTaskListSections) { completedTaskListSection, plannedTaskListSections -> [TaskListSection] in
+        plannedTaskListSections + [completedTaskListSection]
+      }
+      .map { sections -> [TaskListSection] in
+        sections.filter { section -> Bool in
+          !section.items.isEmpty
+        }
       }
     
     let overduredTaskListOpen = input.overduedButtonClickTrigger
@@ -115,6 +169,60 @@ class MainTaskListViewModel: Stepper {
       }
       .do { step in
         self.steps.accept(step)
+      }
+    
+    // MARK: - Calendar
+    let calendarMonthLabelText = calendarVisibleMonth
+      .map { date -> String in
+        "\(DateFormatter.month.string(from: date).capitalized) \(date.year.string)"
+      }
+    
+    let calendarSections = Driver
+      .combineLatest(tasks, calendarStartMonth, calendarEndMonth, calendarSelectedDate) { [self] tasks, calendarStartMonth, calendarEndMonth, calendarSelectedDate -> [CalendarSection] in
+        getAllMonthsBetween(
+          calendarStartMonth: calendarStartMonth,
+          calendarEndMonth: calendarEndMonth)
+          .map { date -> CalendarSection in
+            CalendarSection(
+              month: date,
+              items: getAllDaysOfMonth(for: date).map { date -> CalendarItem in
+                CalendarItem(
+                  date: date,
+                  isSelected: calendarSelectedDate.startOfDay == date.startOfDay,
+                  completedTasksCount: tasks
+                    .filter { task -> Bool in
+                      (task.status == .completed || task.status == .published) &&
+                      (task.completed ?? Date()).startOfDay == date.startOfDay
+                    }.count,
+                  plannedTasksCount: tasks
+                    .filter { task -> Bool in
+                      task.status == .inProgress &&
+                      task.planned.startOfDay == date.startOfDay
+                    }.count
+                )
+              }
+            )
+          }
+      }
+    
+    let calendarScrollToToday = input.calendarMonthLabelClickTrigger
+      .map { Date() }
+    
+    let calendarIsHidden = input.calendarButtonClickTrigger
+      .scan(true) { isHiden, _ -> Bool in
+        !isHiden
+      }
+    
+    let calendarButtonImage = calendarIsHidden
+      .compactMap { isHidden -> UIImage? in
+        isHidden ?
+        Icon.calendar.image.template :
+        UIImage(
+          systemName: "xmark",
+          withConfiguration: UIImage.SymbolConfiguration(
+            pointSize: 14,
+            weight: .light,
+            scale: .medium))?.template
       }
     
     let swipeDeleteButtonItem = swipeDeleteButtonClickTrigger
@@ -157,121 +265,12 @@ class MainTaskListViewModel: Stepper {
     let saveTask = Driver
       .of(taskChangeStatusToDeleted, taskChangeStatusToIdea)
       .merge()
-      .asObservable()
-      .flatMapLatest { task -> Observable<Void> in
-        return task.updateToStorage()
+      .flatMapLatest { task -> Driver<Void> in
+        task.updateToStorage()
+          .trackError(errorTracker)
+          .asDriverOnErrorJustComplete()
       }
-      .asDriver(onErrorJustReturn: ())
-    
-//    // MARK: - INIT
-//    let tasks = services.dataService.tasks
-//    let kindsOfTask = services.dataService.kindsOfTask
-
-//
-//    // MARK: - NAVIGATE
-//    let openOverduedTaskList = input.overduedButtonClickTrigger
-//      .do { _ in self.steps.accept(AppStep.overduedTaskListIsRequired) }
-//
-//    let openIdeaTaskList = input.ideaButtonClickTrigger
-//      .do { _ in self.steps.accept(AppStep.ideaTaskListIsRequired) }
-//
-//    // MARK: - DATASOURCE
-//    let dataSource = Driver
-//      .combineLatest(tasks, kindsOfTask) { tasks, kindsOfTask -> [TaskListSectionItem] in
-//        tasks
-//          .filter { task -> Bool in
-//            task.status == .inProgress &&
-//            task.planned.startOfDay >= Date().startOfDay &&
-//            task.planned.endOfDay <= Date().endOfDay
-//          }
-//          .map { task -> TaskListSectionItem in
-//            TaskListSectionItem(
-//              task: task,
-//              kindOfTask: kindsOfTask.first { $0.UID == task.kindOfTaskUID } ?? KindOfTask.Standart.Simple
-//            )
-//          }
-//          .sorted { prevItem, nextItem -> Bool in
-//            (prevItem.task.planned == nextItem.task.planned) ? (prevItem.task.created < nextItem.task.created) : (prevItem.task.planned < nextItem.task.planned)
-//          }
-//      }
-//      .map { items -> [TaskListSection] in
-//        [
-//          TaskListSection(
-//            header: "Внимание, время:",
-//            mode: .redLineAndTime,
-//            items: items.filter { item -> Bool in
-//                item.task.planned.roundToTheBottomMinute != Date().endOfDay.roundToTheBottomMinute
-//              }
-//          ),
-//          TaskListSection(
-//            header: "В течении дня:",
-//            mode: .blueLine,
-//            items: items.filter { item -> Bool in
-//              item.task.planned.roundToTheBottomMinute == Date().endOfDay.roundToTheBottomMinute
-//            }
-//          )
-//        ]
-//      }
-//      .map {
-//        $0.filter { !$0.items.isEmpty }
-//      }
-//
-//    let timer = Observable<Int>
-//      .timer(.seconds(0), period: .seconds(60), scheduler: MainScheduler.instance)
-//      .asDriver(onErrorJustReturn: 0)
-//
-//    let reloadItems = timer
-//      .withLatestFrom(dataSource) { _, dataSource -> [IndexPath] in
-//        dataSource.enumerated().flatMap { sectionIndex, section -> [IndexPath] in
-//          section.items.enumerated().compactMap { itemIndex, item -> IndexPath? in
-//            (IndexPath(item: itemIndex, section: sectionIndex) == self.editingIndexPath) ? nil : IndexPath(item: itemIndex, section: sectionIndex)
-//          }
-//        }
-//      }
-//
-//    let openTask = input.selection
-//      .withLatestFrom(dataSource) { indexPath, dataSource -> Task in
-//        dataSource[indexPath.section].items[indexPath.item].task
-//      }
-//      .map { self.steps.accept(AppStep.showTaskIsRequired(task: $0 )) }
-//
-//
-//    let changeTaskStatusToIdea = swipeIdeaButtonClickTrigger
-//      .withLatestFrom(dataSource) { indexPath, dataSource -> Task in
-//        dataSource[indexPath.section].items[indexPath.item].task
-//      }
-//      .change(status: .idea)
-//      .asObservable()
-//      .flatMapLatest { self.managedContext.rx.update($0) }
-//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-//
-//    let taskForRemoving = swipeDeleteButtonClickTrigger
-//      .withLatestFrom(dataSource) { indexPath, dataSource -> Task in
-//        dataSource[indexPath.section].items[indexPath.item].task
-//      }
-//
-//    let showAlertTriger = taskForRemoving
-//      .map { _ in false }
-//
-//    let hideAlertTrigger = Driver
-//      .of(input.alertCancelButtonClick, input.alertDeleteButtonClick)
-//      .merge()
-//      .map { _ in true  }
-//
-//    let alertIsHidden = Driver
-//      .of(showAlertTriger, hideAlertTrigger)
-//      .merge()
-//
-//    let hideCellWhenAlertClosed = hideAlertTrigger
-//      .withLatestFrom(swipeDeleteButtonClickTrigger)
-//
-//    let changeTaskStatusToDeleted = input.alertDeleteButtonClick
-//      .withLatestFrom(taskForRemoving)
-//      .change(status: .deleted)
-//      .asObservable()
-//      .flatMapLatest { self.managedContext.rx.update($0) }
-//      .asDriver(onErrorJustReturn: .failure(ErrorType.driverError))
-                      
+                
     return Output(
       // overdued
       overduredTaskListOpen: overduredTaskListOpen,
@@ -280,16 +279,52 @@ class MainTaskListViewModel: Stepper {
       // task list
       taskListSections: taskListSections,
       taskListOpenTask: taskListOpenTask,
+      // calendar:
+      calendarMonthLabelText: calendarMonthLabelText,
+      calendarSections: calendarSections,
+      calendarIsHidden: calendarIsHidden,
+      calendarScrollToDate: calendarScrollToToday,
+      calendarButtonImage: calendarButtonImage,
       // alert
       deleteAlertIsHidden: deleteAlertIsHidden,
       // save task
       saveTask: saveTask
-//      reloadItems: reloadItems,
-//      hideCellWhenAlertClosed: hideCellWhenAlertClosed,
-//      openTask: openTask,
-//      changeTaskStatusToIdea: changeTaskStatusToIdea,
-//      changeTaskStatusToDeleted: changeTaskStatusToDeleted,
-//      alertIsHidden: alertIsHidden
     )
+  }
+  
+  func getAllMonthsBetween(calendarStartMonth: Date, calendarEndMonth: Date) -> [Date] {
+      var months: [Date] = []
+      let calendar = Calendar.current
+      
+      var currentDate = calendarStartMonth
+      
+      while currentDate <= calendarEndMonth {
+          months.append(currentDate)
+          if let nextMonth = calendar.date(byAdding: .month, value: 1, to: currentDate) {
+              currentDate = nextMonth
+          } else {
+              break
+          }
+      }
+      
+      return months
+  }
+  
+  func getAllDaysOfMonth(for date: Date) -> [Date] {
+      var days: [Date] = []
+      let calendar = Calendar.current
+      
+      // Найти начало месяца и количество дней в месяце
+      if let startOfMonth = calendar.dateInterval(of: .month, for: date)?.start,
+         let range = calendar.range(of: .day, in: .month, for: date) {
+          
+          for dayOffset in range {
+              if let day = calendar.date(byAdding: .day, value: dayOffset - 1, to: startOfMonth) {
+                  days.append(day)
+              }
+          }
+      }
+      
+      return days
   }
 }

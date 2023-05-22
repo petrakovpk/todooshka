@@ -12,7 +12,7 @@ struct ThemeTypeItem {
   var isSelected: Bool
 }
 
-// MARK: - Identity
+// MARK: - IdentifiableType
 extension ThemeTypeItem: IdentifiableType {
   var identity: String {
     type.rawValue + isSelected.string

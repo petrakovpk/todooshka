@@ -9,7 +9,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxDataSources
-import SkeletonView
 
 class FunViewController: TDViewController {
   private let disposeBag = DisposeBag()
@@ -26,8 +25,8 @@ class FunViewController: TDViewController {
       tableView.separatorStyle = .none
       tableView.translatesAutoresizingMaskIntoConstraints = false
       tableView.contentInsetAdjustmentBehavior = .never
-      tableView.register(FunItemNoMoreTasksCell.self, forCellReuseIdentifier: FunItemNoMoreTasksCell.reuseID)
-      tableView.register(FunItemTaskCell.self, forCellReuseIdentifier: FunItemTaskCell.reuseID)
+      tableView.register(AddMoreFunCell.self, forCellReuseIdentifier: AddMoreFunCell.reuseID)
+      tableView.register(FunCell.self, forCellReuseIdentifier: FunCell.reuseID)
     }
   }
   
@@ -125,7 +124,7 @@ class FunViewController: TDViewController {
     })
   }
   
-  var currentVisibleItemRelayBinder: Binder<FunItemType> {
+  var currentVisibleItemRelayBinder: Binder<FunCellType> {
     return Binder(self, binding: { vc, funItemType in
       switch funItemType {
       case .noMoreTasks:
@@ -155,10 +154,10 @@ class FunViewController: TDViewController {
       configureCell: {_, tableView, indexPath, item in
         switch item {
         case .noMoreTasks:
-          let cell = tableView.dequeueReusableCell(withIdentifier: FunItemNoMoreTasksCell.reuseID, for: indexPath) as! FunItemNoMoreTasksCell
+          let cell = tableView.dequeueReusableCell(withIdentifier: AddMoreFunCell.reuseID, for: indexPath) as! AddMoreFunCell
           return cell
         case .task(let funItemTask):
-          let cell = tableView.dequeueReusableCell(withIdentifier: FunItemTaskCell.reuseID, for: indexPath) as! FunItemTaskCell
+          let cell = tableView.dequeueReusableCell(withIdentifier: FunCell.reuseID, for: indexPath) as! FunCell
           cell.configure(with: funItemTask)
           return cell
         }

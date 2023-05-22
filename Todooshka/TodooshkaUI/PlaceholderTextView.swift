@@ -22,7 +22,7 @@ class PlaceholderTextView: UITextView {
         }
     }
 
-    private var placeholderLabel: UILabel!
+    public var placeholderLabel: UILabel!
 
     // MARK: - Init
     required init?(coder aDecoder: NSCoder) {

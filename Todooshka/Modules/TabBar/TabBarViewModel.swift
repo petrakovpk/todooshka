@@ -10,15 +10,16 @@ import RxSwift
 import RxCocoa
 
 class TabBarViewModel: Stepper {
-  let steps = PublishRelay<Step>()
-  let services: AppServices
+  public let steps = PublishRelay<Step>()
+  
+  private let services: AppServices
 
   struct Input {
-    let createTaskButtonClickTrigger: Driver<Void>
+    let tabBarAddButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
-    let createTask: Driver<Void>
+    let showAddTabBarPresentation: Driver<AppStep>
   }
 
   init(services: AppServices) {
@@ -26,18 +27,19 @@ class TabBarViewModel: Stepper {
   }
 
   func transform(input: Input) -> Output {
-    let createTask = input.createTaskButtonClickTrigger
-      .withLatestFrom(services.currentUserService.currentUserEmptyKind)
-      .map { emptyKind in
-        self.steps.accept(AppStep.openTaskIsRequired(
-          task: Task(uuid: UUID(), status: .draft, kindUUID: emptyKind.uuid),
-          taskListMode: .tabBar
-        ))
+    let showAddTabBarPresentation = input.tabBarAddButtonClickTrigger
+      .map { _ -> Task in
+        Task(uuid: UUID(), status: .draft)
       }
-      .mapToVoid()
+      .map { task -> AppStep in
+          .addTabBarPresentationIsRequired
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
 
     return Output(
-      createTask: createTask
+      showAddTabBarPresentation: showAddTabBarPresentation
     )
   }
 }
