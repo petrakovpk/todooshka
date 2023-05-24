@@ -14,54 +14,49 @@ class QuestEditPreviewViewController: TDViewController {
   public var viewModel: QuestEditPreviewViewModel!
   
   private let disposeBag = DisposeBag()
- 
+  
+  private var addPhotoImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.image = Icon.camera.image
+    imageView.contentMode = .scaleAspectFit
+    return imageView
+  }()
+  
+  private let coverImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.cornerRadius = 12
+    imageView.backgroundColor = Palette.SingleColors.Portage.withAlphaComponent(0.3)
+    return imageView
+  }()
+  
+  private let coverTextLabelContainerView: UIView = {
+    let view = UIView()
+    view.backgroundColor = Palette.SingleColors.Portage
+    return view
+  }()
+  
+  private let coverTextLabel: UILabel = {
+    let label = UILabel()
+    label.font = UIFont.systemFont(ofSize: 10, weight: .light)
+    label.textAlignment = .center
+    label.lineBreakMode = .byWordWrapping
+    label.numberOfLines = 0
+    return label
+  }()
+  
   private let questTextLabel: UILabel = {
     let label = UILabel(text: "Название задачи:")
     label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
     label.textAlignment = .left
     return label
   }()
-  
-  private let questNameTextField: TDTaskTextField = {
-    let textField = TDTaskTextField(placeholder: "Шикарные блинчики")
-    let spacer = UIView()
-    textField.returnKeyType = .done
-    textField.rightView = spacer
-    textField.rightViewMode = .always
-    spacer.anchor(
-      widthConstant: Sizes.TextFields.TDTaskTextField.heightConstant,
-      heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant)
-    return textField
-  }()
-  
-  private let questNameSaveButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.setImage(Icon.tickSquare.image.template, for: .normal)
-    button.tintColor = .black
-    return button
-  }()
  
-  private let coverLabel: UILabel = {
-    let label = UILabel(text: "Обложка:")
-    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-    label.textAlignment = .left
-    return label
-  }()
-  
-  private let coverImageView: UIImageView = {
-    let imageView = UIImageView()
-    imageView.contentMode = .scaleToFill
-    imageView.cornerRadius = 8
-    imageView.backgroundColor = .lightGray
-    return imageView
-  }()
-  
-  private let questCategoryLabel: UILabel = {
-    let label = UILabel(text: "В какую категорию добавить:")
-    label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-    label.textAlignment = .left
-    return label
-  }()
+    private let questCategoryLabel: UILabel = {
+      let label = UILabel(text: "В какую категорию добавить:")
+      label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+      label.textAlignment = .left
+      return label
+    }()
   
   private var questCategoryCollectionView: UICollectionView!
   private var questCategoryDataSource: RxCollectionViewSectionedAnimatedDataSource<PublicKindSection>!
@@ -87,60 +82,54 @@ class QuestEditPreviewViewController: TDViewController {
     questCategoryCollectionView.register(QuestCategoryCell.self, forCellWithReuseIdentifier: QuestCategoryCell.reuseID)
     
     view.addSubviews([
-      questTextLabel,
-      questNameTextField,
-      questNameSaveButton,
-      coverLabel,
       coverImageView,
       questCategoryLabel,
       questCategoryCollectionView
     ])
     
-    questTextLabel.anchor(
-      top: headerView.bottomAnchor,
-      left: view.leftAnchor,
-      right: view.rightAnchor,
-      topConstant: 8,
-      leftConstant: 16,
-      rightConstant: 16
-    )
-    
-    questNameTextField.anchor(
-      top: questTextLabel.bottomAnchor,
-      left: view.leftAnchor,
-      right: view.rightAnchor,
-      topConstant: 8,
-      leftConstant: 16,
-      rightConstant: 16,
-      heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant
-    )
-    
-    questNameSaveButton.centerYAnchor.constraint(equalTo: questNameTextField.centerYAnchor).isActive = true
-    questNameSaveButton.anchor(
-      right: questNameTextField.rightAnchor,
-      widthConstant: 24,
-      heightConstant: 24
-    )
-    
-    coverLabel.anchor(
-      top: questNameTextField.bottomAnchor,
-      left: view.leftAnchor,
-      topConstant: 8,
-      leftConstant: 16
-    )
+    coverImageView.addSubviews([
+      addPhotoImageView,
+      coverTextLabelContainerView,
+      coverTextLabel
+    ])
     
     coverImageView.anchorCenterXToSuperview()
     coverImageView.anchor(
-      top: coverLabel.bottomAnchor,
-      topConstant: 8,
-      widthConstant: 60,
-      heightConstant: 90
+      top: headerView.bottomAnchor,
+      topConstant: 12,
+      widthConstant: (UIScreen.main.bounds.width - 32) / 4,
+      heightConstant: (UIScreen.main.bounds.width - 32) / 3.5
     )
-
+    
+    addPhotoImageView.anchorCenterXToSuperview()
+    addPhotoImageView.anchorCenterYToSuperview(constant: -15)
+    addPhotoImageView.anchor(
+      widthConstant: 30,
+      heightConstant: 30
+    )
+    
+    coverTextLabelContainerView.anchor(
+      left: coverImageView.leftAnchor,
+      bottom: coverImageView.bottomAnchor,
+      right: coverImageView.rightAnchor,
+      heightConstant: 30
+    )
+    
+    coverTextLabel.anchor(
+      top: coverTextLabelContainerView.topAnchor,
+      left: coverTextLabelContainerView.leftAnchor,
+      bottom: coverTextLabelContainerView.bottomAnchor,
+      right: coverTextLabelContainerView.rightAnchor,
+      topConstant: 4,
+      leftConstant: 4,
+      bottomConstant: 4,
+      rightConstant: 4
+    )
+    
     questCategoryLabel.anchor(
-      top: coverImageView.bottomAnchor,
+      top: coverTextLabel.bottomAnchor,
       left: view.leftAnchor,
-      topConstant: 8,
+      topConstant: 12,
       leftConstant: 16
     )
     
@@ -153,36 +142,48 @@ class QuestEditPreviewViewController: TDViewController {
       rightConstant: 16,
       heightConstant: 100
     )
+    
   }
   
   // MARK: - Bind View Model
   func bindViewModel() {
-    questNameTextField.insertText(viewModel.quest.name)
     
     let input = QuestEditPreviewViewModel.Input(
       // header
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
       // text
-      questNameTextField: questNameTextField.rx.text.orEmpty.asDriver(),
-      questNameSaveButtonClickTrigger: questNameSaveButton.rx.tap.asDriver(),
+      questImageClickTrigger: coverImageView.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
       // quest category
       questCategorySelection: questCategoryCollectionView.rx.itemSelected.asDriver()
     )
-
+    //
     let outputs = viewModel.transform(input: input)
-
+    //
     [
       // header
       outputs.navigateBack.drive(),
-      // name
-      outputs.saveQuestName.drive(),
-      outputs.saveQuestNameButtonIsHidden.drive(questNameSaveButton.rx.isHidden),
-      // quest category
+      // image
+      outputs.previewText.drive(coverTextLabel.rx.text),
+      outputs.previewImage.drive(previewImageBinder),
+      outputs.openImagePickerIsRequired.drive(),
+      //  quest category
       outputs.questCategorySections.drive(questCategoryCollectionView.rx.items(dataSource: questCategoryDataSource)),
       outputs.saveQuestCategory.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
-    
+    //
+  }
+  
+  var previewImageBinder: Binder<UIImage?> {
+    return Binder(self, binding: { vc, image in
+      if let image = image {
+        vc.addPhotoImageView.isHidden = true
+        vc.coverImageView.image = image
+      } else {
+        vc.addPhotoImageView.isHidden = false
+        vc.coverImageView.image = nil
+      }
+    })
   }
   
   private func createQuestCategoryCompositionalLayout() -> UICollectionViewLayout {

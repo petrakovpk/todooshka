@@ -15,6 +15,8 @@ class QuestViewController: TDViewController {
   
   private let disposeBag = DisposeBag()
   
+
+  
   private let descriptionTextView: UITextView = {
     let textView = UITextView()
     textView.borderWidth = 0
@@ -92,6 +94,8 @@ class QuestViewController: TDViewController {
       questPublicationsCollectionView,
       publishButton
     ])
+    
+
     
     descriptionTextView.anchor(
       top: headerView.bottomAnchor,

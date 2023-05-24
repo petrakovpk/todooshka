@@ -20,30 +20,36 @@ class QuestEditViewModel: Stepper {
     // header
     let backButtonClickTrigger: Driver<Void>
     let moreButtonClickTrigger: Driver<Void>
-    // cover image
-    let coverImageViewClickTrigger: Driver<Void>
+    // title
+    let titleTextField: Driver<String>
+    let titleSaveButtonClickTrigger: Driver<Void>
     // description
-    let questDescriptionTextView: Driver<String>
-    let saveDescriptionButtonClickTrigger: Driver<Void>
+    let descriptionTextView: Driver<String>
+    let descriptionSaveButtonClickTrigger: Driver<Void>
     // author photo
-    let questImagesSelection: Driver<IndexPath>
+    let authorImagesSelection: Driver<IndexPath>
+    // preview
+    let previewButtonClickTrigger: Driver<Void>
+    // publish
+    let publishButtonClickTrigger: Driver<Void>
   }
 
   struct Output {
     // header
     let navigateBack: Driver<AppStep>
     let navigateToSettings: Driver<AppStep>
-    // coer
-    let openExtra: Driver<AppStep>
-    // quest image
-    let questImageSections: Driver<[QuestImageSection]>
-    let addQuestImage: Driver<AppStep>
-    let openGallery: Driver<AppStep>
-    // name
-    let questName: Driver<String>
+    let navigateToPreview: Driver<AppStep>
+    // title
+    let titleTextSaveButtonIsHidden: Driver<Bool>
     // description
+    let descriptionSaveButtonIsHidden: Driver<Bool>
+    // author images
+    let authorImagesSections: Driver<[QuestImageSection]>
+    let authorImagesAddImage: Driver<AppStep>
+    let authorImagesOpenGallery: Driver<AppStep>
+    // save
+    let saveTitle: Driver<Void>
     let saveDescription: Driver<Void>
-    let saveDescriptionButtonIsHidden: Driver<Bool>
     // bottom buttons
     let publishButtonIsEnabled: Driver<Bool>
   }
@@ -56,15 +62,13 @@ class QuestEditViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    let questCategories = services.currentUserService.publicKinds
-    
+    // quest
     let quest = services.currentUserService.quests
-      .compactMap { quests -> Quest? in
-        quests.first { $0.uuid == self.quest.uuid }
+      .map { quests -> Quest in
+        quests.first { $0.uuid == self.quest.uuid } ?? self.quest
       }
-      .startWith(self.quest)
     
-    let questImages = services.currentUserService.questImages
+    let authorImages = services.currentUserService.questImages
       .map { questImages -> [QuestImage] in
         questImages
           .filter { questImage -> Bool in
@@ -72,58 +76,7 @@ class QuestEditViewModel: Stepper {
           }
       }
     
-    let openExtra = input.coverImageViewClickTrigger
-      .map { _ -> AppStep in
-          .questEditPreviewIsRequired(quest: self.quest)
-      }
-      .do { step in
-        self.steps.accept(step)
-      }
-
-    let questImagesItems = questImages
-      .map { questImages -> [QuestImageItem] in
-        questImages.map { questImage -> QuestImageItem in
-            .questImage(questImage: questImage)
-        }
-      }
-    
-    let questImagesAddPhotoItem = Driver<QuestImageItem>.of(.addPhoto)
-    
-    let questImageSections = Driver
-      .combineLatest(questImagesItems, questImagesAddPhotoItem) { questImagesItems, addPhotoItem -> QuestImageSection in
-        QuestImageSection(header: "", items: questImagesItems + [addPhotoItem])
-      }
-      .map { [$0] }
-    
-    let questImageItemSelected = input.questImagesSelection
-      .withLatestFrom(questImageSections) { indexPath, sections -> QuestImageItem in
-        sections[indexPath.section].items[indexPath.item]
-      }
-    
-    let addQuestImage = questImageItemSelected
-      .filter { item -> Bool in
-        item == .addPhoto
-      }
-      .map { _ -> AppStep in
-          .questOpenAddImagePresentationIsRequired(quest: self.quest)
-      }
-      .do { step in
-        self.steps.accept(step)
-      }
-    
-    let openGallery = questImageItemSelected
-      .compactMap { item -> QuestImage? in
-        guard case .questImage(let questImage) = item else { return nil }
-        return questImage
-      }
-      .map { questImage -> AppStep in
-          .questGalleryOpenIsRequired(quest: self.quest, questImage: questImage)
-      }
-      .do { step in
-        self.steps.accept(step)
-      }
-    
-
+    // navigation
     let navigateBack = input.backButtonClickTrigger
       .map { _ -> AppStep in
           .navigateBack
@@ -134,17 +87,91 @@ class QuestEditViewModel: Stepper {
     
     let navigateToSettings = input.moreButtonClickTrigger
       .map { _ -> AppStep in
-          .questPresentationIsRequired(quest: self.quest)
+          .questSettingsPresentationIsRequired(quest: self.quest)
       }
       .do { step in
         self.steps.accept(step)
       }
     
-    let publishButtonIsEnabled = input.questDescriptionTextView
-      .map { !$0.isEmpty }
+    let navigateToPreview = input.previewButtonClickTrigger
+      .map { _ -> AppStep in
+          .questPreviewIsRequired(quest: self.quest)
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+
+    // title
+    let titleTextSaveButtonIsHidden = Driver
+      .combineLatest(quest, input.titleTextField) { quest, title -> Bool in
+        quest.name == title
+      }
     
-    let saveDescription = input.saveDescriptionButtonClickTrigger
-      .withLatestFrom(input.questDescriptionTextView)
+    // description
+    let descriptionSaveButtonIsHidden = Driver
+      .combineLatest(quest, input.descriptionTextView) { quest, description -> Bool in
+        quest.description == description
+      }
+    
+    // authorImagesSections
+    let authorImagesItems = authorImages
+      .map { questImages -> [QuestImageItem] in
+        questImages.map { questImage -> QuestImageItem in
+            .questImage(questImage: questImage)
+        }
+      }
+    
+    let authorImagesAddPhotoItem = Driver<QuestImageItem>.of(.addPhoto)
+    
+    let authorImagesSections = Driver
+      .combineLatest(authorImagesItems, authorImagesAddPhotoItem) { authorImagesItems, addPhotoItem -> QuestImageSection in
+        QuestImageSection(header: "", items: authorImagesItems + [addPhotoItem])
+      }
+      .map { [$0] }
+    
+    let authorImagesSelectedItem = input.authorImagesSelection
+      .withLatestFrom(authorImagesSections) { indexPath, sections -> QuestImageItem in
+        sections[indexPath.section].items[indexPath.item]
+      }
+    
+    let authorImagesAddImage = authorImagesSelectedItem
+      .filter { item -> Bool in
+        item == .addPhoto
+      }
+      .map { _ -> AppStep in
+          .questAuthorImagesPresentationIsRequired(quest: self.quest)
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+    
+    let authorImagesOpenGallery = authorImagesSelectedItem
+      .compactMap { item -> QuestImage? in
+        guard case .questImage(let questImage) = item else { return nil }
+        return questImage
+      }
+      .map { questImage -> AppStep in
+          .questGalleryIsRequired(quest: self.quest, questImage: questImage)
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+
+    let saveTitle = input.titleSaveButtonClickTrigger
+      .withLatestFrom(input.titleTextField)
+      .withLatestFrom(quest) { title, quest -> Quest in
+        var quest = quest
+        quest.name = title
+        return quest
+      }
+      .flatMapLatest { quest -> Driver<Void> in
+        StorageManager.shared.managedContext.rx
+          .update(quest)
+          .asDriverOnErrorJustComplete()
+      }
+    
+    let saveDescription = input.descriptionSaveButtonClickTrigger
+      .withLatestFrom(input.descriptionTextView)
       .withLatestFrom(quest) { description, quest -> Quest in
         var quest = quest
         quest.description = description
@@ -156,31 +183,27 @@ class QuestEditViewModel: Stepper {
           .asDriverOnErrorJustComplete()
       }
     
-    let saveDescriptionButtonIsHidden = Driver
-      .combineLatest(input.questDescriptionTextView, quest) { description, quest -> Bool in
-        quest.description == description
+    let publishButtonIsEnabled = quest
+      .map { quest -> Bool in
+        !quest.name.isEmpty && quest.previewImage != nil
       }
-    
-    let questName = quest
-      .map { quest -> String in
-        quest.name
-      }
-    
+
     return Output(
       // header
       navigateBack: navigateBack,
       navigateToSettings: navigateToSettings,
-      // cover
-      openExtra: openExtra,
-      // quest image
-      questImageSections: questImageSections,
-      addQuestImage: addQuestImage,
-      openGallery: openGallery,
-      // name
-      questName: questName,
+      navigateToPreview: navigateToPreview,
+      // title
+      titleTextSaveButtonIsHidden: titleTextSaveButtonIsHidden,
       // description
+      descriptionSaveButtonIsHidden: descriptionSaveButtonIsHidden,
+      // author image
+      authorImagesSections: authorImagesSections,
+      authorImagesAddImage: authorImagesAddImage,
+      authorImagesOpenGallery: authorImagesOpenGallery,
+      // save
+      saveTitle: saveTitle,
       saveDescription: saveDescription,
-      saveDescriptionButtonIsHidden: saveDescriptionButtonIsHidden,
       // bottom buttons
       publishButtonIsEnabled: publishButtonIsEnabled
     )

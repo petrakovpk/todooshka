@@ -16,6 +16,7 @@ class QuestImagePresentationViewModel: Stepper {
   private let services: AppServices
   private let disposeBag = DisposeBag()
   private let quest: Quest
+  private let isQuestPreviewImage: Bool
   
   struct Input {
     let selection: Driver<IndexPath>
@@ -27,9 +28,10 @@ class QuestImagePresentationViewModel: Stepper {
   }
   
   // MARK: - Init
-  init(services: AppServices, quest: Quest) {
+  init(services: AppServices, quest: Quest, isQuestPreviewImage: Bool) {
     self.services = services
     self.quest = quest
+    self.isQuestPreviewImage = isQuestPreviewImage
   }
   
   func transform(input: Input) -> Output {
@@ -37,7 +39,6 @@ class QuestImagePresentationViewModel: Stepper {
     
     let currentUser = services.currentUserService.user
     let currentUserExtData = services.currentUserService.extUserData
-   // let questImages = services.currentUserService.questImages
     
     let sections = Driver<[SettingSection]>.just([
       SettingSection(header: "Добавить изображение", items: [
@@ -55,9 +56,10 @@ class QuestImagePresentationViewModel: Stepper {
       .compactMap { item -> AppStep? in
         switch item.type {
         case .camera:
-          return .questOpenCameraIsRequired(quest: self.quest)
+          return self.isQuestPreviewImage ? .questPreviewImageCameraIsRequired(quest: self.quest) : .questAuthorImagesCameraIsRequired(quest: self.quest)
         case .photo:
-          return .questOpenPhotoLibraryIsRequired(quest: self.quest)
+          return self.isQuestPreviewImage ? .questPreviewImagePhotoLibraryIsRequired(quest: self.quest) :
+            .questAuthorImagesPhotoLibraryIsRequired(quest: self.quest)
         default:
           return nil
         }

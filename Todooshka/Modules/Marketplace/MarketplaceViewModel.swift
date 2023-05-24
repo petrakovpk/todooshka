@@ -150,7 +150,7 @@ class MarketplaceViewModel: Stepper {
         item.quest
       }
       .map { quest -> AppStep in
-          .questOpenIsRequired(quest: quest)
+          .questIsRequired(quest: quest)
       }
       .do { step in
         self.steps.accept(step)

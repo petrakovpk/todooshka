@@ -10,6 +10,13 @@ import RxFlow
 import RxSwift
 import RxCocoa
 
+enum CameraPickerResult {
+  case publicationImage(publicationImage: PublicationImage)
+  case questPreviewImage(quest: Quest)
+  case questAuthorImages(questImages: QuestImage)
+  case userExtData(userExtData: UserExtData)
+}
+
 class CameraPickerViewModel: Stepper {
   public let steps = PublishRelay<Step>()
   
@@ -23,9 +30,7 @@ class CameraPickerViewModel: Stepper {
   }
 
   struct Output {
-    let savePublicationImage: Driver<PublicationImage>
-    let saveQuestImage: Driver<Void>
-    let saveExtUserDataImage: Driver<Void>
+    let savePhoto: Driver<Void>
   }
 
   // MARK: - Init
@@ -41,65 +46,53 @@ class CameraPickerViewModel: Stepper {
     
     let didFinishCapturing = didFinishCapturing.asDriverOnErrorJustComplete()
     
-    let savePublicationImage = didFinishCapturing
-      .compactMap { result -> PublicationImage? in
-        guard
-          result.type == .photo,
-          case .publication(let publication) = self.imagePickerMode,
-          let imageData = try? Data(contentsOf: result.mediaURL),
-          let image = UIImage(data: imageData)
-        else {
-          return nil
-        }
-
-        return PublicationImage(uuid: UUID(), publicationUUID: publication.uuid, image: image)
-      }
-      .do { publicationImage in
-        self.services.temporaryDataService.temporaryPublicationImage.accept(publicationImage)
+    let image = didFinishCapturing
+      .compactMap { result -> UIImage? in
+        guard let imageData = try? Data(contentsOf: result.mediaURL),
+              let image = UIImage(data: imageData) else { return nil }
+        return image
       }
     
-    let saveQuestImage = didFinishCapturing
-      .compactMap { result -> QuestImage? in
-        guard
-          result.type == .photo,
-          case .quest(let quest) = self.imagePickerMode,
-          let imageData = try? Data(contentsOf: result.mediaURL),
-          let image = UIImage(data: imageData)
-        else {
-          return nil
+    let imagePickerResult = image
+      .map { image -> CameraPickerResult in
+        switch self.imagePickerMode {
+        case .publication(let publication):
+          return .publicationImage(
+            publicationImage: PublicationImage(uuid: UUID(), publicationUUID: publication.uuid, image: image)
+          )
+          
+        case .questAuthorImages(let quest):
+          return .questAuthorImages(
+            questImages: QuestImage(uuid: UUID(), questUUID: quest.uuid, image: image)
+          )
+          
+        case .questPreviewImage(var quest):
+          quest.previewImage = image
+          return .questPreviewImage(quest: quest)
+          
+        case .userExtData(var userExtData):
+          userExtData.image = image
+          return .userExtData(userExtData: userExtData)
         }
-
-        return QuestImage(uuid: UUID(), questUUID: quest.uuid, image: image)
-      }
-      .flatMapLatest { questImage -> Driver<Void> in
-        StorageManager.shared.managedContext.rx
-          .update(questImage)
-          .asDriverOnErrorJustComplete()
-      }
-
-    let saveExtUserDataImage = didFinishCapturing
-      .compactMap { result -> UserExtData? in
-        guard
-          result.type == .photo,
-          case .userProfile(var extUserData) = self.imagePickerMode,
-          let imageData = try? Data(contentsOf: result.mediaURL),
-          let image = UIImage(data: imageData)
-        else {
-          return nil
-        }
-        extUserData.image = image
-        return extUserData
-      }
-      .flatMapLatest { extUserData -> Driver<Void> in
-        StorageManager.shared.managedContext.rx
-          .update(extUserData)
-          .asDriverOnErrorJustComplete()
       }
     
+    let savePhoto = imagePickerResult
+      .flatMapLatest { photoLibraryResult -> Driver<Void> in
+        switch photoLibraryResult {
+        case .publicationImage(let publicationImage):
+          self.services.temporaryDataService.temporaryPublicationImage.accept(publicationImage)
+          return Driver<Void>.empty()
+        case .questAuthorImages(let questImage):
+          return StorageManager.shared.managedContext.rx.update(questImage).asDriverOnErrorJustComplete()
+        case .questPreviewImage(let quest):
+          return StorageManager.shared.managedContext.rx.update(quest).asDriverOnErrorJustComplete()
+        case .userExtData(let userExtData):
+          return StorageManager.shared.managedContext.rx.update(userExtData).asDriverOnErrorJustComplete()
+        }
+      }
+
     return Output(
-      savePublicationImage: savePublicationImage,
-      saveQuestImage: saveQuestImage,
-      saveExtUserDataImage: saveExtUserDataImage
+      savePhoto: savePhoto
     )
   }
 }

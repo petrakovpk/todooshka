@@ -15,10 +15,6 @@ struct QuestImage {
 }
 
 extension QuestImage: Equatable {
-  static func == (lhs: QuestImage, rhs: QuestImage) -> Bool {
-    lhs.uuid == rhs.uuid
-    && lhs.questUUID == rhs.questUUID
-    && lhs.image == rhs.image
-  }
+
 }
 

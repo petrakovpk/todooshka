@@ -19,9 +19,8 @@ class QuestEditPreviewViewModel: Stepper {
   struct Input {
     // header
     let backButtonClickTrigger: Driver<Void>
-    // text
-    let questNameTextField: Driver<String>
-    let questNameSaveButtonClickTrigger: Driver<Void>
+    // image
+    let questImageClickTrigger: Driver<Void>
     // quest category
     let questCategorySelection: Driver<IndexPath>
   }
@@ -29,9 +28,10 @@ class QuestEditPreviewViewModel: Stepper {
   struct Output {
     // header
     let navigateBack: Driver<AppStep>
-    // name
-    let saveQuestName: Driver<Void>
-    let saveQuestNameButtonIsHidden: Driver<Bool>
+    // image
+    let previewImage: Driver<UIImage?>
+    let previewText: Driver<String>
+    let openImagePickerIsRequired: Driver<AppStep>
     // quest category
     let questCategorySections: Driver<[PublicKindSection]>
     let saveQuestCategory: Driver<Void>
@@ -45,24 +45,29 @@ class QuestEditPreviewViewModel: Stepper {
 
   // MARK: - Transform
   func transform(input: Input) -> Output {
-    let questCategories = services.currentUserService.publicKinds
+    let publicKinds = services.currentUserService.publicKinds
     
     let quest = services.currentUserService.quests
-      .compactMap { quests -> Quest? in
-        quests.first { $0.uuid == self.quest.uuid }
+      .map { quests -> Quest in
+        quests.first { $0.uuid == self.quest.uuid } ?? self.quest
       }
-      .startWith(self.quest)
+      .debug()
     
-   
+    let previewImage = quest
+      .map { $0.previewImage }
+      .debug()
+    
+    let previewText = quest
+      .map { $0.name }
+    
     let questCategoryType = quest
-      .withLatestFrom(questCategories) { quest, questCategories -> PublicKindItemType in
-        if let questCategory = questCategories.first { $0.uuid == quest.categoryUUID } {
-          return .kind(kind: questCategory)
+      .withLatestFrom(publicKinds) { quest, publicKinds -> PublicKindItemType in
+        if let publicKind = publicKinds.first { $0.uuid == quest.categoryUUID } {
+          return .kind(kind: publicKind)
         } else {
           return .empty
         }
       }
-      .startWith(.empty)
 
     let questCategoryEmptyItem = quest
       .map { quest -> PublicKindItem in
@@ -72,7 +77,7 @@ class QuestEditPreviewViewModel: Stepper {
         )
       }
     
-    let questCategoryItems = Driver.combineLatest(questCategories, quest) { questCategories, quest -> [PublicKindItem] in
+    let questCategoryItems = Driver.combineLatest(publicKinds, quest) { questCategories, quest -> [PublicKindItem] in
       questCategories.map { questCategory -> PublicKindItem in
         PublicKindItem(
           publicKindItemType: .kind(kind: questCategory),
@@ -111,36 +116,28 @@ class QuestEditPreviewViewModel: Stepper {
 
     let navigateBack = input.backButtonClickTrigger
       .map { _ -> AppStep in
-          .navigateBack
+          .questPreviewProcessingIsCompleted
       }
       .do { step in
         self.steps.accept(step)
       }
     
-    let saveQuestName = input.questNameSaveButtonClickTrigger
-      .withLatestFrom(input.questNameTextField)
-      .withLatestFrom(quest) { name, quest -> Quest in
-        var quest = quest
-        quest.name = name
-        return quest
+    let openImagePickerIsRequired = input.questImageClickTrigger
+      .withLatestFrom(quest)
+      .map { quest -> AppStep in
+          .questPreviewImagePresentationIsRequired(quest: quest)
       }
-      .flatMapLatest { quest -> Driver<Void> in
-        StorageManager.shared.managedContext.rx
-          .update(quest)
-          .asDriverOnErrorJustComplete()
-      }
-    
-    let saveQuestNameButtonIsHidden = Driver
-      .combineLatest(input.questNameTextField, quest) { name, quest -> Bool in
-        quest.name == name
+      .do { step in
+        self.steps.accept(step)
       }
     
     return Output(
       // header
       navigateBack: navigateBack,
-      // text
-      saveQuestName: saveQuestName,
-      saveQuestNameButtonIsHidden: saveQuestNameButtonIsHidden,
+      // image
+      previewImage: previewImage,
+      previewText: previewText,
+      openImagePickerIsRequired: openImagePickerIsRequired,
       // quest category
       questCategorySections: questCategorySections,
       saveQuestCategory: saveQuestCategory

@@ -23,8 +23,6 @@ class UserProfileTaskListViewModel: Stepper {
     let openTask: Driver<AppStep>
   }
 
-
-  
   // MARK: - Init
   init(services: AppServices) {
     self.services = services

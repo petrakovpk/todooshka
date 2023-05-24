@@ -23,8 +23,8 @@ class TaskViewController: TDViewController {
   
   private let disposeBag = DisposeBag()
   
-  // MARK: - UI Elements - NAME
-  private let taskTextField: TDTaskTextField = {
+  // MARK: - UI Elements 
+  private let taskTitleTextField: TDTaskTextField = {
     let textField = TDTaskTextField(placeholder: "Введите название задачи")
     let spacer = UIView()
     textField.returnKeyType = .done
@@ -36,14 +36,14 @@ class TaskViewController: TDViewController {
     return textField
   }()
   
-  private let taskTextSaveButton: UIButton = {
+  private let taskTitleSaveButton: UIButton = {
     let button = UIButton(type: .system)
     button.setImage(Icon.tickSquare.image.template, for: .normal)
     button.tintColor = .black
     return button
   }()
   
-  private let taskDescriptionTextView: PlaceholderTextView = {
+  private let taskDescriptionInputView: PlaceholderTextView = {
     let textView = PlaceholderTextView()
     textView.borderWidth = 0
     textView.backgroundColor = .clear
@@ -292,8 +292,8 @@ class TaskViewController: TDViewController {
   
   private func setupSubviews() {
     view.addSubviews([
-      taskTextField,
-      taskTextSaveButton,
+      taskTitleTextField,
+      taskTitleSaveButton,
       expectedDateTimelabel,
       expectedDateButton,
       expectedTimeButton,
@@ -301,7 +301,7 @@ class TaskViewController: TDViewController {
       kindOfTaskSettingsButton,
       kindCollectionView,
       descriptionLabel,
-      taskDescriptionTextView,
+      taskDescriptionInputView,
       taskDescriptionSaveButton,
       dividerView,
       bottomButtonsStackView,
@@ -324,7 +324,7 @@ class TaskViewController: TDViewController {
   }
   
   private func setupConstraints() {
-    taskTextField.anchor(
+    taskTitleTextField.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
@@ -334,15 +334,15 @@ class TaskViewController: TDViewController {
       heightConstant: Sizes.TextFields.TDTaskTextField.heightConstant
     )
     
-    taskTextSaveButton.centerYAnchor.constraint(equalTo: taskTextField.centerYAnchor).isActive = true
-    taskTextSaveButton.anchor(
-      right: taskTextField.rightAnchor,
+    taskTitleSaveButton.centerYAnchor.constraint(equalTo: taskTitleTextField.centerYAnchor).isActive = true
+    taskTitleSaveButton.anchor(
+      right: taskTitleTextField.rightAnchor,
       widthConstant: 24,
       heightConstant: 24
     )
     
     expectedDateTimelabel.anchor(
-      top: taskTextField.bottomAnchor,
+      top: taskTitleTextField.bottomAnchor,
       left: view.leftAnchor,
       topConstant: 16,
       leftConstant: 16,
@@ -452,7 +452,7 @@ class TaskViewController: TDViewController {
       heightConstant: 24
     )
     
-    taskDescriptionTextView.anchor(
+    taskDescriptionInputView.anchor(
       top: descriptionLabel.bottomAnchor,
       left: view.leftAnchor,
       right: view.rightAnchor,
@@ -464,9 +464,9 @@ class TaskViewController: TDViewController {
     )
     
     dividerView.anchor(
-      left: taskDescriptionTextView.leftAnchor,
-      bottom: taskDescriptionTextView.bottomAnchor,
-      right: taskDescriptionTextView.rightAnchor,
+      left: taskDescriptionInputView.leftAnchor,
+      bottom: taskDescriptionInputView.bottomAnchor,
+      right: taskDescriptionInputView.rightAnchor,
       heightConstant: 1.0
     )
     
@@ -514,8 +514,8 @@ class TaskViewController: TDViewController {
   // MARK: - Bind
   func bindViewModel() {
     let task = viewModel.task.value
-    taskTextField.insertText(task.text)
-    taskDescriptionTextView.insertText(task.description)
+    taskTitleTextField.insertText(task.text)
+    taskDescriptionInputView.insertText(task.description)
     expectedDatePicker.date = task.planned
     expectedTimePicker.date = task.planned
     expectedDateButton.setTitle(DateFormatter.midDateFormatter.string(for: task.planned), for: .normal)
@@ -523,11 +523,11 @@ class TaskViewController: TDViewController {
     
     let input = TaskViewModel.Input(
       // text
-      taskTextField: taskTextField.rx.text.orEmpty.asDriver(),
-      taskTextFieldEditingDidEndOnExit: taskTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
-      taskTextSaveButtonClickTrigger: taskTextSaveButton.rx.tap.asDriver(),
+      taskTextField: taskTitleTextField.rx.text.orEmpty.asDriver(),
+      taskTextFieldEditingDidEndOnExit: taskTitleTextField.rx.controlEvent(.editingDidEndOnExit).asDriver(),
+      taskTextSaveButtonClickTrigger: taskTitleSaveButton.rx.tap.asDriver(),
       // description
-      taskDescriptionTextView: taskDescriptionTextView.rx.text.orEmpty.asDriver(),
+      taskDescriptionTextView: taskDescriptionInputView.rx.text.orEmpty.asDriver(),
       taskDescriptionSaveButtonClickTrigger: taskDescriptionSaveButton.rx.tap.asDriver(),
       // kind
       kindOfTaskSettingsButtonClickTrigger: kindOfTaskSettingsButton.rx.tap.asDriver(),
@@ -557,7 +557,7 @@ class TaskViewController: TDViewController {
 
     [
       // text
-      outputs.taskTextSaveButtonIsHidden.drive(taskTextSaveButton.rx.isHidden),
+      outputs.taskTextSaveButtonIsHidden.drive(taskTitleSaveButton.rx.isHidden),
       // description
       outputs.taskDescriptionSaveButtonIsHidden.drive(taskDescriptionSaveButton.rx.isHidden),
       // kinds
@@ -587,7 +587,7 @@ class TaskViewController: TDViewController {
   var taskIsNewBinder: Binder<Bool> {
     return Binder(self, binding: { vc, isNew in
       if isNew {
-        vc.taskTextField.becomeFirstResponder()
+        vc.taskTitleTextField.becomeFirstResponder()
       } else {
         vc.hideKeyboardWhenTappedAround()
       }

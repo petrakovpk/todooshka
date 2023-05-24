@@ -39,9 +39,7 @@ class PhotoLibraryViewController: ImagePickerController {
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.savePublicationImage.drive(),
-      outputs.saveQuestImage.drive(),
-      outputs.saveExtUserDataImage.drive()
+      outputs.saveImage.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }

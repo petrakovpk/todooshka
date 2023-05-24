@@ -24,7 +24,7 @@ class TaskViewModel: Stepper {
   
   private let disposeBag = DisposeBag()
   private let services: AppServices
-
+  
   struct Input {
     // text
     let taskTextField: Driver<String>
@@ -228,9 +228,7 @@ class TaskViewModel: Stepper {
         self.task.accept(task)
       }
       .flatMapLatest { task -> Driver<Void> in
-        task.updateToStorage()
-          .trackError(errorTracker)
-          .asDriverOnErrorJustComplete()
+        StorageManager.shared.managedContext.rx.update(task).asDriverOnErrorJustComplete()
       }
 
     let kindOpenSettings = input.kindOfTaskSettingsButtonClickTrigger
@@ -257,6 +255,9 @@ class TaskViewModel: Stepper {
       .merge()
     
     let bottomButtonsMode = task
+      .asObservable()
+      .take(1)
+      .asDriverOnErrorJustComplete()
       .map { task -> BottomButtonsMode in
         switch task.status {
         case .draft:

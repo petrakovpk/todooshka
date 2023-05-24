@@ -8,6 +8,7 @@
 import CoreData
 import FirebaseAuth
 import RxDataSources
+import UIKit
 
 enum QuestStatus: String {
   case draft
@@ -22,6 +23,7 @@ struct Quest {
   var categoryUUID: UUID?
   var userUID: String? = Auth.auth().currentUser?.uid
   var status: QuestStatus
+  var previewImage: UIImage?
 }
 
 // MARK: - IdentifiableType

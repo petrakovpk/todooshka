@@ -21,13 +21,13 @@ class PublicationEditViewController: TDViewController {
     return textView
   }()
   
-  private let kindImageView: UIImageView = {
-    let imageView = UIImageView()
-    imageView.cornerRadius = 8
-    imageView.backgroundColor = .lightGray.withAlphaComponent(0.2)
-    imageView.contentMode = .scaleAspectFit
-    return imageView
-  }()
+//  private let kindImageView: UIImageView = {
+//    let imageView = UIImageView()
+//    imageView.cornerRadius = 8
+//    imageView.backgroundColor = .lightGray.withAlphaComponent(0.2)
+//    imageView.contentMode = .scaleAspectFit
+//    return imageView
+//  }()
   
   private let publicationImageView: UIImageView = {
     let imageView = UIImageView()
@@ -80,7 +80,7 @@ class PublicationEditViewController: TDViewController {
     hideKeyboardWhenTappedAround()
     
     view.addSubviews([
-      kindImageView,
+     // kindImageView,
       publicationTextView,
       photoLibraryButton,
       cameraButton,
@@ -89,22 +89,22 @@ class PublicationEditViewController: TDViewController {
       clearButton
     ])
     
-    kindImageView.anchor(
-      top: headerView.bottomAnchor,
-      right: view.rightAnchor,
-      topConstant: 16,
-      rightConstant: 16,
-      widthConstant: 50,
-      heightConstant: 50
-    )
+//    kindImageView.anchor(
+//      top: headerView.bottomAnchor,
+//      right: view.rightAnchor,
+//      topConstant: 16,
+//      rightConstant: 16,
+//      widthConstant: 50,
+//      heightConstant: 50
+//    )
     
     publicationTextView.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
-      right: kindImageView.leftAnchor,
+      right: view.rightAnchor,
       topConstant: 16,
       leftConstant: 16,
-      rightConstant: 8,
+      rightConstant: 16,
       heightConstant: 50
     )
 
@@ -168,7 +168,7 @@ class PublicationEditViewController: TDViewController {
       // text
       publicationTextView: publicationTextView.rx.text.asDriver(),
       // publicationImageView
-      publicKindClickTrigger: kindImageView.rx.tapGesture().when(.recognized).mapToVoid().asDriver(onErrorJustReturn: ()),
+      publicKindClickTrigger: Driver<Void>.empty(), //kindImageView.rx.tapGesture().when(.recognized).mapToVoid().asDriver(onErrorJustReturn: ()),
       // bottom buttons
       photoLibraryButtonClickTrigger: photoLibraryButton.rx.tap.asDriver(),
       cameraButtonClickTrigger: cameraButton.rx.tap.asDriver(),
@@ -182,7 +182,7 @@ class PublicationEditViewController: TDViewController {
       // header
       outputs.navigateBack.drive(),
       outputs.openPublicKind.drive(),
-      outputs.publicKindUIImage.drive(kindImageView.rx.image),
+     // outputs.publicKindUIImage.drive(kindImageView.rx.image),
       // publication
       outputs.publicationText.drive(publicationTextBinder),
       outputs.publicationUIImage.drive(publicationImageView.rx.image),

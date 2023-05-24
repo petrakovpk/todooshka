@@ -23,13 +23,13 @@ class PublicationViewController: TDViewController {
     return textView
   }()
   
-  private let kindImageView: UIImageView = {
-    let imageView = UIImageView()
-    imageView.cornerRadius = 8
-    imageView.backgroundColor = .lightGray.withAlphaComponent(0.2)
-    imageView.contentMode = .scaleAspectFit
-    return imageView
-  }()
+//  private let kindImageView: UIImageView = {
+//    let imageView = UIImageView()
+//    imageView.cornerRadius = 8
+//    imageView.backgroundColor = .lightGray.withAlphaComponent(0.2)
+//    imageView.contentMode = .scaleAspectFit
+//    return imageView
+//  }()
   
   private let publicationImageView: UIImageView = {
     let imageView = UIImageView()
@@ -72,27 +72,27 @@ class PublicationViewController: TDViewController {
     
     view.addSubviews([
       publicationTextView,
-      kindImageView,
+     // kindImageView,
       publishButton,
       publicationImageView
     ])
     
-    kindImageView.anchor(
-      top: headerView.bottomAnchor,
-      right: view.rightAnchor,
-      topConstant: 16,
-      rightConstant: 16,
-      widthConstant: 50,
-      heightConstant: 50
-    )
+//    kindImageView.anchor(
+//      top: headerView.bottomAnchor,
+//      right: view.rightAnchor,
+//      topConstant: 16,
+//      rightConstant: 16,
+//      widthConstant: 50,
+//      heightConstant: 50
+//    )
     
     publicationTextView.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
-      right: kindImageView.leftAnchor,
+      right: view.rightAnchor,
       topConstant: 16,
       leftConstant: 16,
-      rightConstant: 8,
+      rightConstant: 16,
       heightConstant: 50
     )
 
@@ -135,7 +135,7 @@ class PublicationViewController: TDViewController {
       outputs.navigateToPublicationSettings.drive(),
       outputs.titleHeader.drive(titleLabel.rx.text),
       // publicKind
-      outputs.publicKindUIImage.drive(kindImageView.rx.image),
+      //outputs.publicKindUIImage.drive(kindImageView.rx.image),
       // publication
       outputs.publicationText.drive(publicationTextView.rx.text),
       outputs.publicationUIImage.drive(publicationImageView.rx.image),

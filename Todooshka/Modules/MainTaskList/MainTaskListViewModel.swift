@@ -68,7 +68,7 @@ class MainTaskListViewModel: Stepper {
 
   func transform(input: Input) -> Output {
     let kinds = services.currentUserService.kinds
-    let tasks = services.currentUserService.tasks
+    let tasks = services.currentUserService.tasks.debug()
     let swipeIdeaButtonClickTrigger = swipeIdeaButtonClickTrigger.asDriverOnErrorJustComplete()
     let swipeDeleteButtonClickTrigger = swipeDeleteButtonClickTrigger.asDriverOnErrorJustComplete()
     let calendarVisibleMonth = calendarVisibleMonth.asDriver()

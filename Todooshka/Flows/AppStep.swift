@@ -117,16 +117,26 @@ enum AppStep: Step {
   case showBirdIsRequired(bird: Bird)
 
   // Quest
-  case questOpenIsRequired(quest: Quest)
-  case questEditIsRequired(quest: Quest)
-  case questEditPreviewIsRequired(quest: Quest)
-  case questGalleryOpenIsRequired(quest: Quest, questImage: QuestImage)
-  case questOpenKindPresentationIsRequired(quest: Quest)
-  case questOpenAddImagePresentationIsRequired(quest: Quest)
-  case questOpenCameraIsRequired(quest: Quest)
-  case questOpenPhotoLibraryIsRequired(quest: Quest)
-  case questPresentationIsRequired(quest: Quest)
+  case questIsRequired(quest: Quest)
+  case questGalleryIsRequired(quest: Quest, questImage: QuestImage)
+  case questAuthorImagesPresentationIsRequired(quest: Quest)
+  case questAuthorImagesPhotoLibraryIsRequired(quest: Quest)
+  case questAuthorImagesCameraIsRequired(quest: Quest)
   case questProcessingIsCompleted
+  
+  case questSettingsPresentationIsRequired(quest: Quest)
+  
+  case questEditIsRequired(quest: Quest)
+  
+  case questPreviewIsRequired(quest: Quest)
+  case questPreviewImagePresentationIsRequired(quest: Quest)
+  case questPreviewImagePhotoLibraryIsRequired(quest: Quest)
+  case questPreviewImageCameraIsRequired(quest: Quest)
+  case questPreviewProcessingIsCompleted
+  
+//  case questOpenCameraIsRequired(quest: Quest)
+//  case questOpenPhotoLibraryIsRequired(quest: Quest)
+  
   
   // Empty
   case empty

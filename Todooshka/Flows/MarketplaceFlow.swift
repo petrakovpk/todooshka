@@ -36,29 +36,30 @@ class MarketplaceFlow: Flow {
     case .authIsRequired:
       return navigateToAuth()
       
-    case .questOpenIsRequired(let quest):
+    case .questIsRequired(let quest):
       return navigateToOpenQuest(quest: quest)
-   
+    case .questGalleryIsRequired(let quest, let questImage):
+      return navigateToQuestGallery(quest: quest, questImage: questImage)
+    case .questSettingsPresentationIsRequired(let quest):
+      return navigateToQuestSettingsPresentation(quest: quest)
       
     case .questEditIsRequired(let quest):
       return navigateToEditQuest(quest: quest)
+    case .questAuthorImagesPresentationIsRequired(let quest):
+      return navigateToQuestAuthorImagesPresentation(quest: quest)
+    case .questAuthorImagesPhotoLibraryIsRequired(let quest):
+      return navigateToAuthorImagesPhotoLibrary(quest: quest)
+    case .questAuthorImagesCameraIsRequired(let quest):
+      return navigateToAuthorImagesCamera(quest: quest)
       
-    case .questEditPreviewIsRequired(let quest):
-      return navigateToQuestEditPreview(quest: quest)
-      
-    case .questGalleryOpenIsRequired(let quest, let questImage):
-      return navigateToQuestGallery(quest: quest, questImage: questImage)
-      
-    case .questOpenAddImagePresentationIsRequired(let quest):
-      return navigateToQuestImage(quest: quest)
-    case .questOpenPhotoLibraryIsRequired(let quest):
-      return navigateToImageLibrary(quest: quest)
-      
-    case .questOpenKindPresentationIsRequired(let quest):
-      return navigateToOpenKindPresentationIsRequired(quest: quest)
-      
-    case .questPresentationIsRequired(let quest):
-      return navigateToQuestPresentation(quest: quest)
+    case .questPreviewIsRequired(let quest):
+      return navigateToQuestPreview(quest: quest)
+    case .questPreviewImagePresentationIsRequired(let quest):
+      return navigateToQuestPreviewImagePresentation(quest: quest)
+    case .questPreviewImagePhotoLibraryIsRequired(let quest):
+      return navigateToQuestPreviewImagePhotoLibrary(quest: quest)
+    case .questPreviewImageCameraIsRequired(let quest):
+      return navigateToQuestPreviewImageCamera(quest: quest)
       
     case .questProcessingIsCompleted:
       return navigateBack(tabBarIsHidden: false)
@@ -68,6 +69,8 @@ class MarketplaceFlow: Flow {
       return dismissAndNavigateBack(tabBarIsHidden: true)
     case .navigateBack:
       return navigateBack(tabBarIsHidden: false)
+    case .questPreviewProcessingIsCompleted:
+      return navigateBack(tabBarIsHidden: true)
    
     default:
       return .none
@@ -121,7 +124,7 @@ class MarketplaceFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToQuestEditPreview(quest: Quest) -> FlowContributors {
+  private func navigateToQuestPreview(quest: Quest) -> FlowContributors {
     let viewController = QuestEditPreviewViewController()
     let viewModel = QuestEditPreviewViewModel(services: services, quest: quest)
     viewController.viewModel = viewModel
@@ -140,67 +143,7 @@ class MarketplaceFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToQuestImage(quest: Quest) -> FlowContributors {
-    let viewController = QuestImagePresentationViewController()
-    let viewModel = QuestImagePresentationViewModel(services: services, quest: quest)
-    viewController.viewModel = viewModel
-    
-    
-    if let sheet = viewController.sheetPresentationController {
-      let multiplier = 0.25
-      let fraction = UISheetPresentationController.Detent.custom { context in
-        UIScreen.main.bounds.height * multiplier
-      }
-      sheet.detents = [fraction, .medium()]
-      sheet.prefersGrabberVisible = true
-    }
-   
-    rootViewController.present(viewController, animated: true)
-
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
-  
-  private func navigateToOpenKindPresentationIsRequired(quest: Quest) -> FlowContributors {
-    let viewController = QuestCategoryPresentationViewController()
-    let viewModel = QuestCategoryPresentationViewModel(services: services, quest: quest)
-    viewController.viewModel = viewModel
-    
-    
-    if let sheet = viewController.sheetPresentationController {
-      let multiplier = 0.25
-      let fraction = UISheetPresentationController.Detent.custom { context in
-        UIScreen.main.bounds.height * multiplier
-      }
-      sheet.detents = [fraction, .medium()]
-      sheet.prefersGrabberVisible = true
-    }
-   
-    rootViewController.present(viewController, animated: true)
-
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
-  
-  private func navigateToImageLibrary(quest: Quest) -> FlowContributors {
-    var options = PickerOptionsInfo()
-    options.selectLimit = 10
-    options.selectionTapAction = .openEditor
-    options.saveEditedAsset = false
-    options.editorOptions = [.photo]
-    options.editorPhotoOptions.toolOptions = [.crop]
-    options.editorPhotoOptions.cropOptions = [.custom(w: 5, h: 10)]
-
-    let viewController = PhotoLibraryViewController(options: options)
-    let viewModel = PhotoLibraryViewModel(services: services, imagePickerMode: .quest(quest: quest))
-    viewController.viewModel = viewModel
-    viewController.modalPresentationStyle = .fullScreen
-    
-    rootViewController.dismiss(animated: true)
-    rootViewController.present(viewController, animated: true)
-    
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
-  
-  private func navigateToQuestPresentation(quest: Quest) -> FlowContributors {
+  private func navigateToQuestSettingsPresentation(quest: Quest) -> FlowContributors {
     let viewController = QuestSettingsPresentationViewController()
     let viewModel = QuestSettingsPresentationViewModel(services: services, quest: quest)
     viewController.viewModel = viewModel
@@ -214,11 +157,126 @@ class MarketplaceFlow: Flow {
       sheet.detents = [fraction, .medium()]
     }
     
-    rootViewController.tabBarController?.tabBar.isHidden = false
+   // rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.present(viewController, animated: true)
 
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
+  
+  private func navigateToQuestAuthorImagesPresentation(quest: Quest) -> FlowContributors {
+    let viewController = QuestImagePresentationViewController()
+    let viewModel = QuestImagePresentationViewModel(services: services, quest: quest, isQuestPreviewImage: false)
+    viewController.viewModel = viewModel
+    
+    if let sheet = viewController.sheetPresentationController {
+      let multiplier = 0.25
+      let fraction = UISheetPresentationController.Detent.custom { context in
+        UIScreen.main.bounds.height * multiplier
+      }
+      sheet.detents = [fraction, .medium()]
+      sheet.prefersGrabberVisible = true
+    }
+   
+    rootViewController.present(viewController, animated: true)
+
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToQuestPreviewImagePresentation(quest: Quest) -> FlowContributors {
+    let viewController = QuestImagePresentationViewController()
+    let viewModel = QuestImagePresentationViewModel(services: services, quest: quest, isQuestPreviewImage: true)
+    viewController.viewModel = viewModel
+    
+    if let sheet = viewController.sheetPresentationController {
+      let multiplier = 0.25
+      let fraction = UISheetPresentationController.Detent.custom { context in
+        UIScreen.main.bounds.height * multiplier
+      }
+      sheet.detents = [fraction, .medium()]
+      sheet.prefersGrabberVisible = true
+    }
+   
+    rootViewController.present(viewController, animated: true)
+
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToAuthorImagesPhotoLibrary(quest: Quest) -> FlowContributors {
+    var options = PickerOptionsInfo()
+    options.selectLimit = 10
+    options.selectionTapAction = .openEditor
+    options.saveEditedAsset = false
+    options.editorOptions = [.photo]
+    options.editorPhotoOptions.toolOptions = [.crop]
+    options.editorPhotoOptions.cropOptions = [.custom(w: 5, h: 10)]
+
+    let viewController = PhotoLibraryViewController(options: options)
+    let viewModel = PhotoLibraryViewModel(services: services, imagePickerMode: .questAuthorImages(quest: quest))
+    viewController.viewModel = viewModel
+    viewController.modalPresentationStyle = .fullScreen
+    
+    rootViewController.dismiss(animated: true)
+    rootViewController.present(viewController, animated: true)
+    
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToAuthorImagesCamera(quest: Quest) -> FlowContributors {
+    var options = CaptureOptionsInfo()
+    options.mediaOptions = [.photo]
+    options.photoAspectRatio = .ratio1x1
+    options.flashMode = .off
+    options.preferredPresets = CapturePreset.createPresets(enableHighResolution: true, enableHighFrameRate: true)
+    
+    let viewController = CameraPickerController(options: options)
+    let viewModel = CameraPickerViewModel(services: services, imagePickerMode: .questPreviewImage(quest: quest))
+    viewController.viewModel = viewModel
+    viewController.modalPresentationStyle = .fullScreen
+    
+    rootViewController.dismiss(animated: true)
+    rootViewController.present(viewController, animated: true)
+    
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToQuestPreviewImagePhotoLibrary(quest: Quest) -> FlowContributors {
+    var options = PickerOptionsInfo()
+    options.selectLimit = 1
+    options.selectionTapAction = .openEditor
+    options.saveEditedAsset = false
+    options.editorOptions = [.photo]
+    options.editorPhotoOptions.toolOptions = [.crop]
+    options.editorPhotoOptions.cropOptions = [.custom(w: 5, h: 10)]
+
+    let viewController = PhotoLibraryViewController(options: options)
+    let viewModel = PhotoLibraryViewModel(services: services, imagePickerMode: .questPreviewImage(quest: quest))
+    viewController.viewModel = viewModel
+    viewController.modalPresentationStyle = .fullScreen
+    
+    rootViewController.dismiss(animated: true)
+    rootViewController.present(viewController, animated: true)
+    
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToQuestPreviewImageCamera(quest: Quest) -> FlowContributors {
+    var options = CaptureOptionsInfo()
+    options.mediaOptions = [.photo]
+    options.photoAspectRatio = .ratio1x1
+    options.flashMode = .off
+    options.preferredPresets = CapturePreset.createPresets(enableHighResolution: true, enableHighFrameRate: true)
+    
+    let viewController = CameraPickerController(options: options)
+    let viewModel = CameraPickerViewModel(services: services, imagePickerMode: .questPreviewImage(quest: quest))
+    viewController.viewModel = viewModel
+    viewController.modalPresentationStyle = .fullScreen
+    
+    rootViewController.dismiss(animated: true)
+    rootViewController.present(viewController, animated: true)
+    
+    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+
   
   private func dismissAndNavigateBack(tabBarIsHidden: Bool) -> FlowContributors {
     rootViewController.tabBarController?.tabBar.isHidden = tabBarIsHidden

@@ -39,9 +39,7 @@ class CameraPickerController: ImageCaptureController {
     let outputs = viewModel.transform(input: input)
     
     [
-      outputs.saveQuestImage.drive(),
-      outputs.savePublicationImage.drive(),
-      outputs.saveExtUserDataImage.drive()
+      outputs.savePhoto.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }

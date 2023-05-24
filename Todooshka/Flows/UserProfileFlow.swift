@@ -64,10 +64,10 @@ class UserProfileFlow: Flow {
     case .publicationPublicKindIsRequired(let publication):
       return navigateToPublicKindIsRequired(publication: publication)
       
-    case .extUserDataCameraForIsRequired(let extUserData):
-      return navigateToCamera(extUserData: extUserData)
-    case .extUserDataPhotoLibraryForIsRequired(let extUserData):
-      return navigateToImageLibrary(extUserData: extUserData)
+    case .extUserDataCameraForIsRequired(let userExtData):
+      return navigateToCamera(userExtData: userExtData)
+    case .extUserDataPhotoLibraryForIsRequired(let userExtData):
+      return navigateToImageLibrary(userExtData: userExtData)
       
     case .publicationPhotoLibraryIsRequired(let publication):
       return navigateToImageLibrary(publication: publication)
@@ -234,7 +234,7 @@ class UserProfileFlow: Flow {
     )
   }
   
-  private func navigateToCamera(extUserData: UserExtData) -> FlowContributors {
+  private func navigateToCamera(userExtData: UserExtData) -> FlowContributors {
     var options = CaptureOptionsInfo()
     options.mediaOptions = [.photo]
     options.photoAspectRatio = .ratio1x1
@@ -242,7 +242,7 @@ class UserProfileFlow: Flow {
     options.preferredPresets = CapturePreset.createPresets(enableHighResolution: true, enableHighFrameRate: true)
     
     let viewController = CameraPickerController(options: options)
-    let viewModel = CameraPickerViewModel(services: services, imagePickerMode: .userProfile(extUserData: extUserData))
+    let viewModel = CameraPickerViewModel(services: services, imagePickerMode: .userExtData(userExtData: userExtData))
     viewController.viewModel = viewModel
     viewController.modalPresentationStyle = .fullScreen
     
@@ -252,7 +252,7 @@ class UserProfileFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToImageLibrary(extUserData: UserExtData) -> FlowContributors {
+  private func navigateToImageLibrary(userExtData: UserExtData) -> FlowContributors {
     var options = PickerOptionsInfo()
     options.selectLimit = 1
     options.selectionTapAction = .openEditor
@@ -262,7 +262,7 @@ class UserProfileFlow: Flow {
     options.editorPhotoOptions.cropOptions = [.custom(w: 1, h: 1)]
 
     let viewController = PhotoLibraryViewController(options: options)
-    let viewModel = PhotoLibraryViewModel(services: services, imagePickerMode: .userProfile(extUserData: extUserData))
+    let viewModel = PhotoLibraryViewModel(services: services, imagePickerMode: .userExtData(userExtData: userExtData))
     viewController.viewModel = viewModel
     viewController.modalPresentationStyle = .fullScreen
     

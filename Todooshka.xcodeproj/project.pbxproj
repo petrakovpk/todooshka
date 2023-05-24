@@ -1073,7 +1073,7 @@
 				9D7626552A0D7EE3004F0A5E /* QuestCategoryCell */,
 				9D76264C2A0D3062004F0A5E /* QuestCategoryPresentation */,
 				9D9733D129192F7E00733C45 /* QuestEdit */,
-				9D6384EB2A0F9D60004BCB22 /* QuestEditPreview */,
+				9D6384EB2A0F9D60004BCB22 /* QuestPreview */,
 				9D6384EC2A10D8E6004BCB22 /* QuestGalleryViewController */,
 				9D76263A2A0CFF9F004F0A5E /* QuestImageCell */,
 				9D7626472A0D2ABB004F0A5E /* QuestImagePresentation */,
@@ -1255,8 +1255,8 @@
 				608FD86A2688827200819D68 /* Kind.swift */,
 				9DFF7A7829FA6A1400FCB9C3 /* Publication.swift */,
 				9D6384DE2A0E6675004BCB22 /* PublicationImage.swift */,
-				9D0A8218290FEC41006D777C /* Quest.swift */,
 				9D7626512A0D7BB6004F0A5E /* PublicKind.swift */,
+				9D0A8218290FEC41006D777C /* Quest.swift */,
 				9D6384D82A0E54C4004BCB22 /* QuestImage.swift */,
 				9DE2EA5729B5D3990029D026 /* Reaction.swift */,
 				600935652804227A0028C9AA /* SceneAction.swift */,
@@ -1676,13 +1676,13 @@
 			path = QuestSettingsPresentation;
 			sourceTree = "<group>";
 		};
-		9D6384EB2A0F9D60004BCB22 /* QuestEditPreview */ = {
+		9D6384EB2A0F9D60004BCB22 /* QuestPreview */ = {
 			isa = PBXGroup;
 			children = (
 				9D6384E72A0F96A9004BCB22 /* QuestEditPreviewViewController.swift */,
 				9D6384E92A0F96B9004BCB22 /* QuestEditPreviewViewModel.swift */,
 			);
-			path = QuestEditPreview;
+			path = QuestPreview;
 			sourceTree = "<group>";
 		};
 		9D6384EC2A10D8E6004BCB22 /* QuestGalleryViewController */ = {

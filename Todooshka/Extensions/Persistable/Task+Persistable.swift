@@ -26,7 +26,6 @@ extension Task: Persistable {
       let created = entity.value(forKey: "created") as? Date,
       let description = entity.value(forKey: "desc") as? String,
       let index = entity.value(forKey: "index") as? Int,
-      let kindUUID = entity.value(forKey: "kindUUID") as? UUID,
       let statusRawValue = entity.value(forKey: "statusRawValue") as? String,
       let status = TaskStatus(rawValue: statusRawValue),
       let text = entity.value(forKey: "text") as? String,
@@ -36,7 +35,7 @@ extension Task: Persistable {
     self.uuid = uuid
     self.created = created
     self.index = index
-    self.kindUUID = kindUUID
+    self.kindUUID = entity.value(forKey: "kindUUID") as? UUID
     self.status = status
     self.text = text
     self.completed = entity.value(forKey: "closed") as? Date
