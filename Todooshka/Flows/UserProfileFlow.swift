@@ -61,9 +61,9 @@ class UserProfileFlow: Flow {
       return navigateToPublicationSettings(publication: publication, publicationImage: publicationImage)
     case .publicationEditIsRequired(let publication, let publicationImage):
       return navigateToEditPublication(publication: publication, publicationImage: publicationImage)
-    case .publicationPublicKindIsRequired(let publication):
-      return navigateToPublicKindIsRequired(publication: publication)
-      
+//    case .publicationPublicKindIsRequired(let publication):
+//      return navigateToPublicKindIsRequired(publication: publication)
+
     case .extUserDataCameraForIsRequired(let userExtData):
       return navigateToCamera(userExtData: userExtData)
     case .extUserDataPhotoLibraryForIsRequired(let userExtData):
@@ -133,24 +133,24 @@ class UserProfileFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToPublicKindIsRequired(publication: Publication) -> FlowContributors {
-    let viewController = PublicationPublicKindViewController()
-    let viewModel = PublicationPublicKindViewModel(services: services, publication: publication)
-    viewController.viewModel = viewModel
-    
-    if let sheet = viewController.sheetPresentationController {
-      let multiplier = 0.5
-      let fraction = UISheetPresentationController.Detent.custom { context in
-        UIScreen.main.bounds.height * multiplier
-      }
-      sheet.detents = [fraction]
-    }
-    
-    rootViewController.tabBarController?.tabBar.isHidden = false
-    rootViewController.present(viewController, animated: true)
-    
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
-  }
+//  private func navigateToPublicKindIsRequired(publication: Publication) -> FlowContributors {
+//    let viewController = PublicationPublicKindViewController()
+//    let viewModel = PublicationPublicKindViewModel(services: services, publication: publication)
+//    viewController.viewModel = viewModel
+//
+//    if let sheet = viewController.sheetPresentationController {
+//      let multiplier = 0.5
+//      let fraction = UISheetPresentationController.Detent.custom { context in
+//        UIScreen.main.bounds.height * multiplier
+//      }
+//      sheet.detents = [fraction]
+//    }
+//
+//    rootViewController.tabBarController?.tabBar.isHidden = false
+//    rootViewController.present(viewController, animated: true)
+//
+//    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+//  }
 
   private func navigateToSettings() -> FlowContributors {
     let viewController = SettingsViewController()

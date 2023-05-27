@@ -8,16 +8,56 @@ import Alamofire
 import FirebaseAuth
 
 struct APIConfig {
-  static let baseURL = "http://127.0.0.1:5050/api/v1.0"
+  static let baseURL = "http://127.0.0.1:7070/api/v1.0"
   static let commonHeaders: HTTPHeaders = [
     "Content-Type": "application/json"
   ]
   
+  struct Device {
+    static func urlForRecommendedPublications(deviceUUID: String) -> String {
+      return "\(baseURL)/publication/get_unreacted_publications_for_device/\(deviceUUID)"
+    }
+  }
+  
+  struct DevicePublicationView {
+    static func urlForDevicePublicationView() -> String {
+      return "\(baseURL)/device_publication_view/"
+    }
+  }
+  
+  struct Publication {
+    static func urlForUnsafeImage(publicationUUID: String) -> String {
+      return "\(baseURL)/publication/\(publicationUUID)/image/unsafe/"
+    }
+  }
+  
+  struct Reaction {
+    static func urlForUserPublicationReaction(reactionUUID: UUID) -> String {
+      return "\(baseURL)/user_publication_reaction/\(reactionUUID)"
+    }
+  }
+  
+  struct User {
+    static func urlForRecommendedPublications(userUID: String) -> String {
+      return "\(baseURL)/publication/get_unreacted_publications_for_user/\(userUID)"
+    }
+  }
+  
+  struct UserPublicationView {
+    static func urlForUserPublicationView() -> String {
+      return "\(baseURL)/user_publication_view/"
+    }
+  }
+  
+  struct UserExtData {
+    static func urlForUpdateUser(userUID: String) -> String {
+      return "\(baseURL)/user/\(userUID)"
+    }
+  }
+  
   static let urlForTask = "\(baseURL)/task"
   
-  static func urlForReaction(reactionUUID: UUID) -> String {
-    return "\(baseURL)/reaction/\(reactionUUID)"
-  }
+
   
   static func urlForTaskImage(taskID: UUID) -> String {
     return "\(baseURL)/task/\(taskID)/image"
@@ -35,9 +75,6 @@ struct APIConfig {
     return "\(baseURL)/task/\(taskID)/user"
   }
   
-  static func urlForUserRecommendedTasks(userUID: String) -> String {
-    return "\(baseURL)/user/\(userUID)/recommended"
-  }
 
   static func authorizedHeaders(completion: @escaping (HTTPHeaders?) -> Void) {
     guard let currentUser = Auth.auth().currentUser else {

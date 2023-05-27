@@ -11,7 +11,7 @@ import RxCocoa
 
 extension UserExtData: Persistable {
   var identity: String {
-    userUID
+    uid
   }
   
   typealias T = NSManagedObject
@@ -21,16 +21,16 @@ extension UserExtData: Persistable {
   }
 
   static var primaryAttributeName: String {
-    return "userUID"
+    return "uid"
   }
 
   init?(entity: T) {
     guard
-      let userUID = entity.value(forKey: "userUID") as? String
+      let uid = entity.value(forKey: "uid") as? String
     else { return nil }
 
-    self.userUID = userUID
-    self.nickName = entity.value(forKey: "nickName") as? String
+    self.uid = uid
+    self.nickname = entity.value(forKey: "nickName") as? String
     
     if let imageData = entity.value(forKey: "imageData") as? Data, let image = UIImage(data: imageData) {
       self.image = image
@@ -39,8 +39,8 @@ extension UserExtData: Persistable {
   }
 
   func update(_ entity: T) {
-    entity.setValue(userUID, forKey: "userUID")
-    entity.setValue(nickName, forKey: "nickName")
+    entity.setValue(uid, forKey: "uid")
+    entity.setValue(nickname, forKey: "nickName")
     entity.setValue(image?.pngData(), forKey: "imageData")
   }
 

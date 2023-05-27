@@ -30,12 +30,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   let taskAPIService = TaskAPIService()
   let userAPIService = CurrentUserService()
   let temporaryDataService = TemporaryDataService()
+  let networkService = NetworkService()
 
   lazy var appServices = {
     AppServices(
       taskAPIService: taskAPIService,
       currentUserService: userAPIService,
-      temporaryDataService: temporaryDataService
+      temporaryDataService: temporaryDataService,
+      networkService: networkService
     )
   }()
 

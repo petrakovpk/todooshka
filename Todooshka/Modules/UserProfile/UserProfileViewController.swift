@@ -157,20 +157,6 @@ class UserProfileViewController: TDViewController {
     configureUI()
     configurePageViewController()
     bindViewModel()
-    
-    for viewController in viewControllers {
-      if let viewController = viewController as? UserProfileTaskListViewContoller {
-        viewController.configureUI()
-        viewController.configureDataSource()
-        viewController.bindViewModel()
-      }
-      
-      if let viewController = viewController as? UserProfilePublicationsViewController {
-        viewController.configureUI()
-        viewController.configureDataSource()
-        viewController.bindViewModel()
-      }
-    }
   }
 
   // MARK: - Configure UI
@@ -293,6 +279,20 @@ class UserProfileViewController: TDViewController {
   }
   
   func configurePageViewController() {
+    for viewController in viewControllers {
+      if let viewController = viewController as? UserProfileTaskListViewContoller {
+        viewController.configureUI()
+        viewController.configureDataSource()
+        viewController.bindViewModel()
+      }
+      
+      if let viewController = viewController as? UserProfilePublicationsViewController {
+        viewController.configureUI()
+        viewController.configureDataSource()
+        viewController.bindViewModel()
+      }
+    }
+    
     if let firstVC = viewControllers.first {
       self.pageViewController.setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
      }

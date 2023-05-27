@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxDataSources
+import RxGesture
 
 class MarketplaceViewController: TDViewController {
   // MARK: - Rx
@@ -18,22 +19,6 @@ class MarketplaceViewController: TDViewController {
   public var viewModel: MarketplaceViewModel!
   
   // MARK: - UI Elements
-  private let pleaseAuthContainerView: UIView = {
-    let view = UIView()
-    view.backgroundColor = Style.App.background
-    view.layer.zPosition = 10
-    return view
-  }()
-  
-  private let authButton: UIButton = {
-    let button = UIButton(type: .system)
-    button.setTitle("Войти в систему", for: .normal)
-    button.setTitleColor(.white, for: .normal)
-    button.cornerRadius = 8
-    button.backgroundColor = Palette.SingleColors.Cerise
-    return button
-  }()
-  
   private var collectionView: UICollectionView!
   private var dataSource: RxCollectionViewSectionedAnimatedDataSource<MarketplaceQuestSection>!
   
@@ -69,31 +54,11 @@ class MarketplaceViewController: TDViewController {
     collectionView.register(MarketplaceQuestCell.self, forCellWithReuseIdentifier: MarketplaceQuestCell.reuseID)
     collectionView.register(MarketplaceQuestHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: MarketplaceQuestHeader.reuseID)
     
-    // adding
     view.addSubviews([
       searchBar,
-      collectionView,
-      pleaseAuthContainerView
+      collectionView
     ])
-    
-    pleaseAuthContainerView.addSubviews([
-      authButton
-    ])
-    
-    pleaseAuthContainerView.anchor(
-      top: headerView.bottomAnchor,
-      left: view.leftAnchor,
-      bottom: view.safeAreaLayoutGuide.bottomAnchor,
-      right: view.rightAnchor
-    )
-    
-    authButton.anchorCenterXToSuperview()
-    authButton.anchorCenterYToSuperview()
-    authButton.anchor(
-      widthConstant: 200,
-      heightConstant: 40
-    )
-    
+
     searchBar.anchor(
       top: headerView.bottomAnchor,
       left: view.leftAnchor,
@@ -116,28 +81,22 @@ class MarketplaceViewController: TDViewController {
   // MARK: - Bind ViewModel
   func bindViewModel() {
     let input = MarketplaceViewModel.Input(
-      // auth
-      authButtonClickTrigger: authButton.rx.tap.asDriver(),
+      // search
+      searchBarClickTrigger: searchBar.rx.tapGesture().when(.recognized).mapToVoid().asDriverOnErrorJustComplete(),
       // create
       createQuestButtonClickTrigger: addButton.rx.tap.asDriver(),
       selection: collectionView.rx.itemSelected.asDriver()
     )
 
     let outputs = viewModel.transform(input: input)
-
+    
     [
       // auth
-      outputs.auth.drive(),
-      // header
-      outputs.addButtonIsHidden.drive(addButton.rx.isHidden),
-      // pleaseAuthContainerViewIsHidden
-      outputs.pleaseAuthContainerViewIsHidden.drive(pleaseAuthContainerView.rx.isHidden),
+    
+      outputs.navigateToQuest.drive(),
+      outputs.navigateToSearch.drive(),
       // marketplace
       outputs.marketplaceQuestSections.drive(collectionView.rx.items(dataSource: dataSource)),
-      // selection
-      outputs.createQuest.drive(),
-      outputs.editQuest.drive(),
-      outputs.openQuest.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }

@@ -30,6 +30,9 @@ class PublicationFlow: Flow {
   func navigate(to step: Step) -> FlowContributors {
     guard let step = step as? AppStep else { return .none }
     switch step {
+    case .authIsRequired:
+      return navigateToAuth()
+      
     case .publicationIsRequired(let publication):
       return navigateToPublication(publication: publication)
     case .publicationEditIsRequired(let publication, let publicationImage):
@@ -39,9 +42,9 @@ class PublicationFlow: Flow {
       return navigateToCamera(publication: publication)
     case .publicationPhotoLibraryIsRequired(let publication):
       return navigateToImageLibrary(publication: publication)
-    case .publicationPublicKindIsRequired(let publication):
-      return navigateToPublicKindIsRequired(publication: publication)
-      
+//    case .publicationPublicKindIsRequired(let publication):
+//      return navigateToPublicKindIsRequired(publication: publication)
+//      
     case .navigateBack:
       return navigateBack()
     case .publicationProcesingIsCompleted,
@@ -63,24 +66,44 @@ class PublicationFlow: Flow {
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   
-  private func navigateToPublicKindIsRequired(publication: Publication) -> FlowContributors {
-    let viewController = PublicationPublicKindViewController()
-    let viewModel = PublicationPublicKindViewModel(services: services, publication: publication)
-    viewController.viewModel = viewModel
+  private func navigateToAuth() -> FlowContributors {
+    let authFlow = AuthFlow(withServices: services)
     
-    if let sheet = viewController.sheetPresentationController {
-      let multiplier = 0.5
-      let fraction = UISheetPresentationController.Detent.custom { context in
-        UIScreen.main.bounds.height * multiplier
+    Flows.use(authFlow, when: .created) { [unowned self] root in
+      DispatchQueue.main.async {
+        root.modalPresentationStyle = .automatic
+        rootViewController.present(root, animated: true)
       }
-      sheet.detents = [fraction]
     }
     
-    rootViewController.tabBarController?.tabBar.isHidden = false
-    rootViewController.present(viewController, animated: true)
-    
-    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: authFlow,
+        withNextStepper: OneStepper(
+          withSingleStep: AppStep.authIsRequired
+        )
+      )
+    )
   }
+  
+//  private func navigateToPublicKindIsRequired(publication: Publication) -> FlowContributors {
+//    let viewController = PublicationPublicKindViewController()
+//    let viewModel = PublicationPublicKindViewModel(services: services, publication: publication)
+//    viewController.viewModel = viewModel
+//
+//    if let sheet = viewController.sheetPresentationController {
+//      let multiplier = 0.5
+//      let fraction = UISheetPresentationController.Detent.custom { context in
+//        UIScreen.main.bounds.height * multiplier
+//      }
+//      sheet.detents = [fraction]
+//    }
+//
+//    rootViewController.tabBarController?.tabBar.isHidden = false
+//    rootViewController.present(viewController, animated: true)
+//
+//    return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+//  }
   
   
   private func navigateToEditPublication(publication: Publication, publicationImage: PublicationImage?) -> FlowContributors {

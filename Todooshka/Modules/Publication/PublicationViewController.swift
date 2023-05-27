@@ -22,15 +22,7 @@ class PublicationViewController: TDViewController {
     textView.textAlignment = .center
     return textView
   }()
-  
-//  private let kindImageView: UIImageView = {
-//    let imageView = UIImageView()
-//    imageView.cornerRadius = 8
-//    imageView.backgroundColor = .lightGray.withAlphaComponent(0.2)
-//    imageView.contentMode = .scaleAspectFit
-//    return imageView
-//  }()
-  
+
   private let publicationImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.backgroundColor = .lightGray.withAlphaComponent(0.2)

@@ -54,7 +54,6 @@ class FunViewController: TDViewController {
     configureUI()
     configureDataSource()
     bindViewModel()
-    viewModel.loadMoreItems()
   }
   
   // MARK: - Configure UI
@@ -101,20 +100,22 @@ class FunViewController: TDViewController {
     )
     
     let outputs = viewModel.transform(input: input)
-    
+  
     [
-      outputs.dataSource.drive(tableView.rx.items(dataSource: dataSource)),
+      outputs.navigateToAuth.drive(),
+      outputs.reloadData.drive(),
       outputs.loadMoreData.drive(),
-      outputs.reaction.drive(),
-      outputs.scrollToNextSection.drive(buttonTappedBinder),
-      outputs.currentVisibleItem.compactMap { $0 }.drive(currentVisibleItemRelayBinder)
+      outputs.scrollToNextCell.drive(scrollToNextCellBinder),
+      outputs.saveReaction.drive(),
+      outputs.saveView.drive(),
+      outputs.dataSource.drive(tableView.rx.items(dataSource: dataSource)),
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }
   
-  var buttonTappedBinder: Binder<Void> {
+  var scrollToNextCellBinder: Binder<Void> {
     return Binder(self, binding: { vc, _ in
-      let currentIndexPath = vc.tableView.indexPathsForVisibleRows?.first ?? IndexPath(row: 0, section: 0)
+      let currentIndexPath = vc.tableView.indexPathsForVisibleRows?.last ?? IndexPath(row: 0, section: 0)
       let nextSection = currentIndexPath.section + 1
       
       if nextSection < vc.dataSource.sectionModels.count {
@@ -124,43 +125,37 @@ class FunViewController: TDViewController {
     })
   }
   
-  var currentVisibleItemRelayBinder: Binder<FunCellType> {
-    return Binder(self, binding: { vc, funItemType in
-      switch funItemType {
-      case .noMoreTasks:
-        self.upvoteButton.isSelected = false
-        self.downvoteButton.isSelected = false
-      case .task(let taskItem):
-        switch taskItem.reactionType {
-        case .upvote:
-          self.upvoteButton.isSelected = true
-          self.downvoteButton.isSelected = false
-        case .downvote:
-          self.upvoteButton.isSelected = false
-          self.downvoteButton.isSelected = true
-        case .skip:
-          self.upvoteButton.isSelected = true
-          self.downvoteButton.isSelected = true
-        case nil:
-          self.upvoteButton.isSelected = false
-          self.downvoteButton.isSelected = false
-        }
-      }
+  var currentVisibleItemRelayBinder: Binder<FunItem> {
+    return Binder(self, binding: { vc, funItem in
+//      switch funItemType {
+//      case .noMoreTasks:
+//        self.upvoteButton.isSelected = false
+//        self.downvoteButton.isSelected = false
+//      case .task(let taskItem):
+//        switch taskItem.reactionType {
+//        case .upvote:
+//          self.upvoteButton.isSelected = true
+//          self.downvoteButton.isSelected = false
+//        case .downvote:
+//          self.upvoteButton.isSelected = false
+//          self.downvoteButton.isSelected = true
+//        case .skip:
+//          self.upvoteButton.isSelected = true
+//          self.downvoteButton.isSelected = true
+//        case nil:
+//          self.upvoteButton.isSelected = false
+//          self.downvoteButton.isSelected = false
+//        }
+//      }
     })
   }
   
   func configureDataSource() {
     dataSource = RxTableViewSectionedAnimatedDataSource<FunSection>(
       configureCell: {_, tableView, indexPath, item in
-        switch item {
-        case .noMoreTasks:
-          let cell = tableView.dequeueReusableCell(withIdentifier: AddMoreFunCell.reuseID, for: indexPath) as! AddMoreFunCell
-          return cell
-        case .task(let funItemTask):
-          let cell = tableView.dequeueReusableCell(withIdentifier: FunCell.reuseID, for: indexPath) as! FunCell
-          cell.configure(with: funItemTask)
-          return cell
-        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: FunCell.reuseID, for: indexPath) as! FunCell
+        cell.configure(with: item)
+        return cell
       })
   }
 }
@@ -170,23 +165,23 @@ extension FunViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return tableView.bounds.height
   }
+  
+  func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    self.scrollViewDidEndDecelerating(scrollView)
+  }
 
   func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
     let currentIndexPath = tableView.indexPathsForVisibleRows?.first ?? IndexPath(row: 0, section: 0)
     let visibleItem = dataSource[currentIndexPath.section].items[currentIndexPath.row]
     
-    viewModel.updateCurrentVisibleItem(type: visibleItem)
+    guard let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows else { return }
     
-
-  }
-  
-  func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    let offsetY = scrollView.contentOffset.y
-    let contentHeight = scrollView.contentSize.height
-    let screenHeight = UIScreen.main.bounds.height
-    
-    if offsetY > contentHeight - 2 * screenHeight {
-      viewModel.loadMoreItems()
+    if indexPathsForVisibleRows.count == 1 {
+      viewModel.scrolledUpperVisibleIndexPath.accept(nil)
+      viewModel.scrolledVisibleIndexPath.accept(IndexPath(row: 0, section: 0))
+    } else {
+      viewModel.scrolledUpperVisibleIndexPath.accept(indexPathsForVisibleRows[safe: 0])
+      viewModel.scrolledVisibleIndexPath.accept(indexPathsForVisibleRows[safe: 1])
     }
   }
   

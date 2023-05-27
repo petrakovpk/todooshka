@@ -70,7 +70,7 @@ class MarketplaceQuestCell: UICollectionViewCell {
 
   // MARK: - UI Elements
   func configure(with item: MarketplaceQuestSectionItem) {
-    imageView.image = item.image
+    imageView.image = item.quest.previewImage
     nameLabel.text = item.quest.name
   }
 }

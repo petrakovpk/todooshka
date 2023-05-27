@@ -30,20 +30,42 @@ class FunFlow: Flow {
     guard let step = step as? AppStep else { return .none }
     switch step {
     case .funIsRequired:
-      return navigateToFeed()
+      return navigateToFun()
+    case .authIsRequired:
+      return navigateToAuth()
     case .navigateBack:
       return navigateBack(tabBarIsHidden: true)
     default:
       return .none
     }
   }
-
-  private func navigateToFeed() -> FlowContributors {
+  
+  private func navigateToFun() -> FlowContributors {
     let viewController = FunViewController()
     let viewModel = FunViewModel(services: services)
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: false)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToAuth() -> FlowContributors {
+    let authFlow = AuthFlow(withServices: services)
+    
+    Flows.use(authFlow, when: .created) { [unowned self] root in
+      DispatchQueue.main.async {
+        root.modalPresentationStyle = .automatic
+        rootViewController.present(root, animated: true)
+      }
+    }
+    
+    return .one(
+      flowContributor: .contribute(
+        withNextPresentable: authFlow,
+        withNextStepper: OneStepper(
+          withSingleStep: AppStep.authIsRequired
+        )
+      )
+    )
   }
 
   private func navigateBack(tabBarIsHidden: Bool) -> FlowContributors {

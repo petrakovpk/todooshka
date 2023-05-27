@@ -14,20 +14,28 @@ class PublicationEditViewController: TDViewController {
   
   private let disposeBag = DisposeBag()
   
+  private let pleaseAuthContainerView: UIView = {
+    let view = UIView()
+    view.backgroundColor = Style.App.background
+    view.layer.zPosition = 10
+    return view
+  }()
+  
+  private let authButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.setTitle("Войти в систему", for: .normal)
+    button.setTitleColor(.white, for: .normal)
+    button.cornerRadius = 8
+    button.backgroundColor = Palette.SingleColors.Cerise
+    return button
+  }()
+  
   private let publicationTextView: PlaceholderTextView = {
     let textView = PlaceholderTextView()
     textView.backgroundColor = .lightGray.withAlphaComponent(0.2)
     textView.cornerRadius = 8
     return textView
   }()
-  
-//  private let kindImageView: UIImageView = {
-//    let imageView = UIImageView()
-//    imageView.cornerRadius = 8
-//    imageView.backgroundColor = .lightGray.withAlphaComponent(0.2)
-//    imageView.contentMode = .scaleAspectFit
-//    return imageView
-//  }()
   
   private let publicationImageView: UIImageView = {
     let imageView = UIImageView()
@@ -80,7 +88,7 @@ class PublicationEditViewController: TDViewController {
     hideKeyboardWhenTappedAround()
     
     view.addSubviews([
-     // kindImageView,
+      pleaseAuthContainerView,
       publicationTextView,
       photoLibraryButton,
       cameraButton,
@@ -89,14 +97,23 @@ class PublicationEditViewController: TDViewController {
       clearButton
     ])
     
-//    kindImageView.anchor(
-//      top: headerView.bottomAnchor,
-//      right: view.rightAnchor,
-//      topConstant: 16,
-//      rightConstant: 16,
-//      widthConstant: 50,
-//      heightConstant: 50
-//    )
+    pleaseAuthContainerView.addSubviews([
+      authButton
+    ])
+    
+    pleaseAuthContainerView.anchor(
+      top: headerView.bottomAnchor,
+      left: view.leftAnchor,
+      bottom: view.safeAreaLayoutGuide.bottomAnchor,
+      right: view.rightAnchor
+    )
+    
+    authButton.anchorCenterXToSuperview()
+    authButton.anchorCenterYToSuperview()
+    authButton.anchor(
+      widthConstant: 200,
+      heightConstant: 40
+    )
     
     publicationTextView.anchor(
       top: headerView.bottomAnchor,
@@ -165,6 +182,8 @@ class PublicationEditViewController: TDViewController {
     let input = PublicationEditViewModel.Input(
       // header
       backButtonClickTrigger: backButton.rx.tap.asDriver(),
+      // auth
+      authButtonClickTrigger: authButton.rx.tap.asDriver(),
       // text
       publicationTextView: publicationTextView.rx.text.asDriver(),
       // publicationImageView
@@ -181,8 +200,9 @@ class PublicationEditViewController: TDViewController {
     [
       // header
       outputs.navigateBack.drive(),
-      outputs.openPublicKind.drive(),
-     // outputs.publicKindUIImage.drive(kindImageView.rx.image),
+      // auth
+      outputs.navigateToAuth.drive(),
+      outputs.authContainerIsHidden.drive(pleaseAuthContainerView.rx.isHidden),
       // publication
       outputs.publicationText.drive(publicationTextBinder),
       outputs.publicationUIImage.drive(publicationImageView.rx.image),
@@ -194,7 +214,7 @@ class PublicationEditViewController: TDViewController {
       outputs.publicationAddImageButtonsIsHidden.drive(photoLibraryButton.rx.isHidden),
       // save
       outputs.publicationSaveToCoreData.drive(),
-      outputs.publicationImageSaveToCoreData.drive()
+      outputs.publicationImageSaveToCoreData.drive(),
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }

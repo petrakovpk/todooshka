@@ -4,11 +4,21 @@ import RxFlow
 import RxSwift
 import RxCocoa
 
+enum FunItemView {
+  case device(deviceView: DevicePublicationView)
+  case user(userView: UserPublicationView)
+}
+
 class FunViewModel: Stepper {
   public let steps = PublishRelay<Step>()
+  public let scrolledUpperVisibleIndexPath = BehaviorRelay<IndexPath?>(value: nil)
+  public let scrolledVisibleIndexPath = BehaviorRelay<IndexPath?>(value: nil)
   
   private let services: AppServices
   private let disposeBag = DisposeBag()
+  private let dataSourceRelay = BehaviorRelay<[FunSection]>(value: [])
+  
+  private var isLoading: Bool = false
   
   struct Input {
     let downvoteButtonTap: Driver<Void>
@@ -17,206 +27,192 @@ class FunViewModel: Stepper {
   }
   
   struct Output {
-    let loadMoreData: Driver<Void>
+    let navigateToAuth: Driver<AppStep>
+    let reloadData: Driver<[FunSection]>
+    let loadMoreData: Driver<[FunSection]>
+    let scrollToNextCell: Driver<Void>
+    let saveReaction: Driver<Void>
+    let saveView: Driver<Void>
     let dataSource: Driver<[FunSection]>
-    let reaction: Driver<Void>
-    let scrollToNextSection: Driver<Void>
-    let currentVisibleItem: Driver<FunCellType?>
   }
-  
-  private let loadMoreDataTrigger = PublishRelay<Void>()
-  private let isLoading = BehaviorRelay<Bool>(value: false)
-  private let dataSourceRelay = BehaviorRelay<[FunSection]>(value: [])
-  public let currentVisibleItemRelay = BehaviorRelay<FunCellType?>(value: nil)
   
   init(services: AppServices) {
     self.services = services
   }
   
-  private func fetchRecommendedTasks() -> Observable<[Task]> {
-    guard let currentUser = Auth.auth().currentUser else {
-      return Observable.just([])
-    }
-    
-    isLoading.accept(true)
-    
-    return currentUser.fetchRecommendedTasks()
-      .observeOn(MainScheduler.instance)
-      .do(onNext: { [weak self] _ in self?.isLoading.accept(false) },
-          onError: { [weak self] _ in self?.isLoading.accept(false) })
-  }
-  
-  private func filterExistingTasks(tasks: [Task]) -> [Task] {
-    var tasksToAdd: [Task] = []
-    
-    for task in tasks {
-      if !dataSourceRelay.value.contains(where: { section in
-        section.items.contains(where: { item in
-          guard case .task(let funItemTask) = item else { return false }
-          return funItemTask.task.uuid == task.uuid
-        })
-      }) {
-        tasksToAdd.append(task)
-      }
-    }
-    
-    return tasksToAdd
-  }
-  
-  private func fetchTaskData(for tasks: [Task]) -> Observable<[FunCellType]> {
-    let fetchTasksData = tasks.map { task -> Observable<FunCellType> in
-      self.isLoading.accept(true)
-      let fetchUser = task.fetchTaskUser().asObservable()
-      let fetchImage = task.fetchTaskImage().asObservable()
-      let fetchReaction = task.fetchTaskReactionForCurrentUser().asObservable().debug()
-      
-      return Observable.zip(fetchUser, fetchImage, fetchReaction) { (user, image, reaction) -> FunCellType in
-        self.isLoading.accept(false)
-        return FunCellType.task(FunItem(userExtData: user, task: task, image: image, reactionType: reaction?.type, isLoading: false))
-      }
-    }
-    
-    return Observable.zip(fetchTasksData)
-  }
-  
-  private func updateDataSource(with funItemTypes: [FunCellType]) {
-    let currentSections = dataSourceRelay.value
-    var newSections = currentSections
-    
-    for funItemType in funItemTypes {
-      guard case .task(let updatedFunItemTask) = funItemType else { continue }
-      for (sectionIndex, section) in newSections.enumerated() {
-        if let itemIndex = section.items.firstIndex(where: { item -> Bool in
-          guard case .task(let funItemTask) = item else { return false }
-          return funItemTask.task.uuid == updatedFunItemTask.task.uuid
-        }) {
-          var newSection = section
-          newSection.items[itemIndex] = .task(updatedFunItemTask)
-          newSections[sectionIndex] = newSection
-          break
-        }
-      }
-    }
-    dataSourceRelay.accept(newSections)
-  }
-  
-  private func shouldAddNoMoreTasks() -> Bool {
-    return !dataSourceRelay.value.contains { section in
-      section.items.contains { item in
-        item == FunCellType.noMoreTasks
-      }
-    }
-  }
-  
   func transform(input: Input) -> Output {
-    let loadMoreDataTrigger = loadMoreDataTrigger.asDriverOnErrorJustComplete()
-    let isLoading = isLoading.asDriver().debug()
+    let currentUser = services.currentUserService.user
+    let scrolledUpperVisibleIndexPath = scrolledUpperVisibleIndexPath.asDriver()
+    let scrolledVisibleIndexPath = scrolledVisibleIndexPath.asDriver()
     let dataSource = dataSourceRelay.asDriver().debug()
-    let currentVisibleItem = currentVisibleItemRelay.asDriverOnErrorJustComplete().debug()
     
-    let reactionTriggers = Driver.of(
-      input.downvoteButtonTap.map { ReactionType.downvote },
-      input.upvoteButtonTap.map { ReactionType.upvote },
-      input.scrollTrigger.map { ReactionType.skip }
-    )
-      .merge()
-    
-    let scrollToNextSection = Driver
+    let navigateToAuth = Driver
       .of(input.downvoteButtonTap, input.upvoteButtonTap)
       .merge()
-    
-    let currentTask = currentVisibleItem
-      .compactMap { funItemType -> Task? in
-        guard case .task(let funItemTask) = funItemType else { return nil }
-        return funItemTask.task
+      .withLatestFrom(currentUser)
+      .filter { $0 == nil }
+      .map { _ -> AppStep in
+          .authIsRequired
+      }
+      .do { step in
+        self.steps.accept(step)
       }
     
-    let reaction = reactionTriggers
-      .withLatestFrom(currentTask) { reactionType, task -> Reaction? in
-        guard let currentUser = Auth.auth().currentUser else { return nil }
-        return Reaction(uuid: UUID(), userUID: currentUser.uid, taskUUID: task.uuid, type: reactionType)
-      }
-      .compactMap { $0 }
-      .asObservable()
-      .flatMapLatest { reaction -> Observable<Void> in
-        reaction.putReactionToCloud()
-      }
-      .compactMap { $0 }
-      .asDriver(onErrorJustReturn: ())
-    
-    
-    let loadMoreData = loadMoreDataTrigger
-      .withLatestFrom(isLoading)
-      .filter { !$0 }
-      .asObservable()
-      .flatMapLatest { [weak self] _ -> Observable<[FunCellType]> in
-        guard let self = self else { return Observable.just([]) }
-        
-        return self.fetchRecommendedTasks()
-          .map { [weak self] tasks -> [FunCellType] in
-            guard let self = self else { return [] }
-            
-            let tasksToAdd = self.filterExistingTasks(tasks: tasks)
-            
-            if tasksToAdd.isEmpty {
-              if self.shouldAddNoMoreTasks() {
-                return [FunCellType.noMoreTasks]
-              } else {
-                return []
-              }
-            } else {
-              return tasksToAdd.map { task in
-                FunCellType.task(FunItem(userExtData: nil, task: task, image: nil, reactionType: nil, isLoading: true))
-              }
-            }
-          }
-          .do(onNext: { [weak self] funItemTypes in
-            guard let self = self else { return }
-            if !funItemTypes.isEmpty {
-              let currentSections = self.dataSourceRelay.value
-              let newSections = currentSections + funItemTypes.map { FunSection(items: [$0]) }
-              self.dataSourceRelay.accept(newSections)
-            }
-          })
-          .flatMap { [weak self] funItemTypes -> Observable<[FunCellType]> in
-            guard let self = self else { return Observable.just(funItemTypes) }
-            let tasksToFetchData = funItemTypes.compactMap { funItemType -> Task? in
-              guard case .task(let funItemTask) = funItemType else { return nil }
-              return funItemTask.task
-            }
-            
-            return self.fetchTaskData(for: tasksToFetchData)
-          }
-          .do(onNext: { [weak self] funItemTypes in
-            self?.updateDataSource(with: funItemTypes)
-          }, onError: { [weak self] _ in
-            self?.isLoading.accept(false)
-          })
-            }
-      .asDriverOnErrorJustComplete()
-      .map { funItemTypes in
-        if let funItemType = funItemTypes[safe: 0], self.currentVisibleItemRelay.value == nil {
-          self.currentVisibleItemRelay.accept(funItemType)
+    let reloadData = currentUser
+      .filter { _ in self.isLoading == false }
+      .flatMapLatest { user -> Driver<[Publication]> in
+        self.isLoading = true
+        if let user = user {
+          return user.fetchRecommendedPublications().debug().asDriver(onErrorJustReturn: [])
+        } else {
+          return UIDevice.current.fetchRecommendedPublications().debug().asDriver(onErrorJustReturn: [])
         }
       }
+      .flatMap { publications -> Driver<[FunSection]> in
+        let funItemsObservable = publications.map { publication -> Driver<FunItem> in
+          publication.fetchUnsafeImage()
+            .map { image -> FunItem in
+              var funItem = FunItem(publication: publication, image: image)
+              funItem.isLoading = false
+              return funItem
+            }
+            .asDriverOnErrorJustComplete()
+        }
+        
+        return Driver.combineLatest(funItemsObservable)
+          .map { funItems -> [FunSection] in
+            funItems.map { funItem -> FunSection in
+              FunSection(items: [funItem])
+            }
+          }
+      }
+      .do { funSections in
+        self.dataSourceRelay.accept(funSections)
+        self.isLoading = false
+      }
+      .asDriver(onErrorJustReturn: [])
+    
+    let loadMoreDataTrigger = Driver
+      .combineLatest(scrolledVisibleIndexPath.compactMap { $0 }, dataSource) { indexPath, dataSource -> Bool in
+        indexPath.section >= dataSource.count - 2
+      }
+      .flatMapLatest { trigger -> Driver<Void> in
+        trigger ? Driver<Void>.of(()) : Driver<Void>.empty()
+      }
+    
+//    let loadMoreData = loadMoreDataTrigger
+//      .filter { _ in self.isLoading == false }
+//      .withLatestFrom(currentUser)
+//      .flatMapLatest { user -> Driver<[Publication]> in
+//        self.isLoading = true
+//        if let user = user {
+//          return user.fetchRecommendedPublications().asDriver(onErrorJustReturn: [])
+//        } else {
+//          return UIDevice.current.fetchRecommendedPublications().asDriver(onErrorJustReturn: [])
+//        }
+//      }
+//      .flatMap { publications -> Driver<[FunSection]> in
+//        let dataSource = self.dataSourceRelay.value
+//        let dataSourcePublications = Set(dataSource.flatMap { $0.items.map { $0.publication.uuid.uuidString } })
+//
+//        let funItemsObservable = publications
+//          .compactMap { publication -> Driver<FunSection>? in
+//            if !dataSourcePublications.contains(publication.uuid.uuidString) {
+//              publication.fetchUnsafeImage()
+//                .map { image -> FunSection in
+//                  FunSection(items: [FunItem(publication: publication, image: image, isLoading: false)])
+//                }
+//                .asDriverOnErrorJustComplete()
+//            }
+//            return nil
+//          }
+//
+//        return Driver.combineLatest(funItemsObservable)
+//      }
+//      .do { newSections in
+//        var currentSections = self.dataSourceRelay.value
+//        let currentUUIDs = Set(currentSections.flatMap { $0.items.map { $0.publication.uuid.uuidString } })
+//        let uniqueNewSections = newSections.filter { newSection in
+//          let newUUID = newSection.items.first?.publication.uuid.uuidString
+//          return newUUID != nil && !currentUUIDs.contains(newUUID!)
+//        }
+//        currentSections.append(contentsOf: uniqueNewSections)
+//        self.dataSourceRelay.accept(currentSections)
+//        self.isLoading = false
+//      }
+//      .asDriver(onErrorJustReturn: [])
+    
+    
+    let upvoteReaction = input.upvoteButtonTap
+      .withLatestFrom(scrolledVisibleIndexPath.map { $0 ?? IndexPath(row: 0, section: 0) } )
+      .withLatestFrom(dataSource) { indexPath, dataSource -> FunItem in
+        dataSource[indexPath.section].items[indexPath.item]
+      }
+      .withLatestFrom(currentUser.compactMap { $0 }) { item, currentUser -> Reaction in
+        Reaction(uuid: UUID(), userUID: currentUser.uid, publicationUUID: item.publication.uuid, reactionType: .upvote)
+      }
+    
+    let downvoteReaction = input.downvoteButtonTap
+      .withLatestFrom(scrolledVisibleIndexPath.map { $0 ?? IndexPath(row: 0, section: 0) } )
+      .withLatestFrom(dataSource) { indexPath, dataSource -> FunItem in
+        dataSource[indexPath.section].items[indexPath.item]
+      }
+      .withLatestFrom(currentUser.compactMap { $0 }) { item, currentUser -> Reaction in
+        Reaction(uuid: UUID(), userUID: currentUser.uid, publicationUUID: item.publication.uuid, reactionType: .downvote)
+      }
+    
+    let saveReaction = Driver
+      .of(upvoteReaction, downvoteReaction)
+      .merge()
+      .flatMapLatest { reaction -> Driver<Void> in
+        reaction.saveToServer().debug().asDriver(onErrorJustReturn: ())
+      }
+    
+    let scrollToNextCell = Driver
+      .of(input.upvoteButtonTap, input.downvoteButtonTap)
+      .merge()
+    
+    let saveView = scrolledUpperVisibleIndexPath
+      .compactMap { $0 }
+      .debug()
+      .withLatestFrom(dataSource) { indexPath, dataSource -> FunItem in
+        dataSource[indexPath.section].items[indexPath.row]
+      }
+      .debug()
+      .withLatestFrom(currentUser) { funItem, currentUser -> FunItemView in
+        if let currentUser = currentUser {
+          return .user(userView: UserPublicationView(publicationUUID: funItem.publication.uuid, userUID: currentUser.uid))
+        } else {
+          return .device(deviceView: DevicePublicationView(
+            publicationUUID: funItem.publication.uuid,
+            deviceUUID: UIDevice.current.identifierForVendor as! UUID
+          ))
+        }
+      }
+      .debug()
+      .flatMapLatest { funItemView -> Driver<Void> in
+        switch funItemView {
+        case .device(let deviceView):
+          return deviceView.saveToServer().asDriver(onErrorJustReturn: ())
+        case .user(let userView):
+          return userView.saveToServer().asDriver(onErrorJustReturn: ())
+        }
+      }
+      .debug()
+
+    
+    let loadMoreData = Driver<[FunSection]>.empty()
     
     return Output(
+      navigateToAuth: navigateToAuth,
+      reloadData: reloadData,
       loadMoreData: loadMoreData,
-      dataSource: dataSource,
-      reaction: reaction,
-      scrollToNextSection: scrollToNextSection,
-      currentVisibleItem: currentVisibleItem
+      scrollToNextCell: scrollToNextCell,
+      saveReaction: saveReaction,
+      saveView: saveView,
+      dataSource: dataSource
     )
     
   }
   
-  // Load more data
-  func loadMoreItems() {
-    self.loadMoreDataTrigger.accept(())
-  }
-  
-  // Update the currently visible item
-  func updateCurrentVisibleItem(type: FunCellType) {
-    self.currentVisibleItemRelay.accept(type)
-  }
 }

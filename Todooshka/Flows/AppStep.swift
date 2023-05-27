@@ -23,6 +23,9 @@ enum AppStep: Step {
   case marketplaceIsRequired
   case mainTaskListIsRequired
   case addTabBarPresentationIsRequired
+  
+  // Search
+  case searchIsRequired
 
   // Task
   case openTaskIsRequired(task: Task, taskListMode: TaskListMode)
@@ -133,10 +136,6 @@ enum AppStep: Step {
   case questPreviewImagePhotoLibraryIsRequired(quest: Quest)
   case questPreviewImageCameraIsRequired(quest: Quest)
   case questPreviewProcessingIsCompleted
-  
-//  case questOpenCameraIsRequired(quest: Quest)
-//  case questOpenPhotoLibraryIsRequired(quest: Quest)
-  
   
   // Empty
   case empty

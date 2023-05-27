@@ -17,7 +17,7 @@ extension User {
   }
   
   func fetchUserExtData() -> Observable<UserExtData?> {
-    let predicate = NSPredicate(format: "userUID == %@", self.uid as CVarArg)
+    let predicate = NSPredicate(format: "uid == %@", self.uid as CVarArg)
     return StorageManager.shared.managedContext.rx.entities(UserExtData.self, predicate: predicate)
       .map { $0.first }
   }

@@ -15,11 +15,7 @@ struct PublicationImage {
 }
 
 extension PublicationImage: Equatable {
-  static func == (lhs: PublicationImage, rhs: PublicationImage) -> Bool {
-    lhs.uuid == rhs.uuid
-    && lhs.publicationUUID == rhs.publicationUUID
-    && lhs.image == rhs.image
-  }
+
 }
 
 

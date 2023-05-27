@@ -8,27 +8,19 @@
 import RxDataSources
 
 struct FunItem {
-  var userExtData: UserExtData?
-  var task: Task
+  var publication: Publication
   var image: UIImage?
-  var reactionType: ReactionType?
-  var isLoading: Bool
+  var isLoading: Bool = false
 }
 
 extension FunItem: IdentifiableType {
   var identity: String {
-    task.uuid.uuidString
+    publication.uuid.uuidString
   }
 }
 
 extension FunItem: Equatable {
-  static func ==(lhs: FunItem, rhs: FunItem) -> Bool {
-    return lhs.userExtData == rhs.userExtData &&
-    lhs.task == rhs.task &&
-    lhs.image == rhs.image &&
-    lhs.reactionType == rhs.reactionType &&
-    lhs.isLoading == rhs.isLoading
-  }
+
 }
 
 

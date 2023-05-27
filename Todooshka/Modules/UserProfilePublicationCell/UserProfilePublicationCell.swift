@@ -47,10 +47,10 @@ class UserProfilePublicationCell: UICollectionViewCell {
 
   // MARK: - UI Elements
   func configure(with item: UserProfilePublicationItem) {
-    if item.publication.status == .unpublished {
-      imageView.image = item.publicationImage?.image.tint(.clear, blendMode: .normal, alpha: 0.5)
-    } else {
+    if item.publication.isPublic {
       imageView.image = item.publicationImage?.image
+    } else {
+      imageView.image = item.publicationImage?.image.tint(.clear, blendMode: .normal, alpha: 0.5)
     }
     
     viewsLabel.text = item.viewsCount.string

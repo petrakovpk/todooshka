@@ -35,15 +35,9 @@ class AddPresentationViewModel: Stepper {
     //let emptyKind = services.currentUserService.emptyKind
     
     let createPublication = input.createPublicationButtonClickTrigger
-      .withLatestFrom(currentUser)
-      .map { currentUser -> AppStep in
-        if currentUser == nil {
-          return .authIsRequired
-        } else {
-          return .publicationIsRequired(publication: Publication(uuid: UUID()))
-        }
+      .map { _ -> AppStep in
+          .publicationIsRequired(publication: Publication(uuid: UUID()))
       }
- 
       .do { step in
         self.steps.accept(step)
       }

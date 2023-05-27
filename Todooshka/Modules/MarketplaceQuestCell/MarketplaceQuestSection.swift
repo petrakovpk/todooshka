@@ -8,6 +8,7 @@
 import RxDataSources
 
 enum MarketplaceQuestSectionType {
+  case draft
   case personal
   case recommended
   case category(category: PublicKind)

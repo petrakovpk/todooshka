@@ -15,8 +15,8 @@ class MarketplaceViewModel: Stepper {
   let steps = PublishRelay<Step>()
 
   struct Input {
-    // auth
-    let authButtonClickTrigger: Driver<Void>
+    // search
+    let searchBarClickTrigger: Driver<Void>
     // create
     let createQuestButtonClickTrigger: Driver<Void>
     let selection: Driver<IndexPath>
@@ -24,18 +24,12 @@ class MarketplaceViewModel: Stepper {
   
   struct Output {
     // auth
-    let auth: Driver<AppStep>
-    // add
-    let addButtonIsHidden: Driver<Bool>
-    // pleaseAuthContainerViewIsHidden
-    let pleaseAuthContainerViewIsHidden: Driver<Bool>
+
+    let navigateToQuest: Driver<AppStep>
+    let navigateToSearch: Driver<AppStep>
+
     // marketplace
     let marketplaceQuestSections: Driver<[MarketplaceQuestSection]>
-    // selection
-    let openQuest: Driver<AppStep>
-    let createQuest: Driver<AppStep>
-    let editQuest: Driver<AppStep>
-    
   }
 
   // MARK: - Init
@@ -48,127 +42,115 @@ class MarketplaceViewModel: Stepper {
     let quests = services.currentUserService.quests
     let questImages = services.currentUserService.questImages
   
-    let pleaseAuthContainerViewIsHidden = currentUser
-      .map { $0 != nil }
+    // navigate
 
-    let addButtonIsHidden = pleaseAuthContainerViewIsHidden
-      .map { !$0 }
     
-    let auth = input.authButtonClickTrigger
+    let navigateToSearch = input.searchBarClickTrigger
       .map { _ -> AppStep in
-          .authIsRequired
+        .searchIsRequired
       }
       .do { step in
         self.steps.accept(step)
       }
     
-    let createQuest = input.createQuestButtonClickTrigger
+    let navigateToCreateQuest = input.createQuestButtonClickTrigger
       .map { _ -> AppStep in
           .questEditIsRequired(quest: Quest(uuid: UUID(), status: .draft))
       }
-      .do { step in
-        self.steps.accept(step)
-      }
-    
+
+    // questSections
     let marketplaceDraftQuestSection = quests
-      .withLatestFrom(questImages) { quests, questImages -> [MarketplaceQuestSectionItem] in
+      .map { quests -> [MarketplaceQuestSectionItem] in
         quests
-          .filter { quest -> Bool in
+          .filter { quest in
             quest.status == .draft
           }
           .map { quest -> MarketplaceQuestSectionItem in
-            MarketplaceQuestSectionItem(
-              quest: quest,
-              image: questImages
-                .first {
-                  $0.questUUID == quest.uuid }?.image ?? UIImage()
-            )
+            MarketplaceQuestSectionItem(quest: quest)
           }
       }
       .map { items -> MarketplaceQuestSection in
         MarketplaceQuestSection(
-          header: "Ваши задачи:",
+          header: "Черновики:",
+          type: .personal,
+          items: items)
+      }
+    
+    let marketplacePersonalQuestSection = quests
+      .withLatestFrom(currentUser) { quests, currentUser -> [MarketplaceQuestSectionItem] in
+        quests
+          .filter { quest in
+            quest.status == .published && quest.userUID == currentUser?.uid
+          }
+          .map { quest -> MarketplaceQuestSectionItem in
+            MarketplaceQuestSectionItem(quest: quest)
+          }
+    }
+      .map { items -> MarketplaceQuestSection in
+        MarketplaceQuestSection(
+          header: "Мое опубликованное:",
           type: .personal,
           items: items)
       }
     
     let marketplaceRecommendedQuestSection = quests
-      .withLatestFrom(questImages) { quests, questImages -> [MarketplaceQuestSectionItem] in
+      .withLatestFrom(currentUser) { quests, currentUser -> [MarketplaceQuestSectionItem] in
         quests
-          .filter { quest -> Bool in
-            quest.status == .draft
+          .filter { quest in
+            quest.status == .published && quest.userUID != currentUser?.uid
           }
           .map { quest -> MarketplaceQuestSectionItem in
-            MarketplaceQuestSectionItem(
-              quest: quest,
-              image: questImages
-                .first {
-                  $0.questUUID == quest.uuid }?.image ?? UIImage()
-            )
+            MarketplaceQuestSectionItem(quest: quest)
           }
-      }
+    }
       .map { items -> MarketplaceQuestSection in
         MarketplaceQuestSection(
-          header: "Рекомендумое:",
+          header: "Рекомендованное:",
           type: .recommended,
           items: items)
       }
     
     let marketplaceQuestSections = Driver
-      .combineLatest(marketplaceDraftQuestSection, marketplaceRecommendedQuestSection) { draft, recommended -> [MarketplaceQuestSection] in
-        [draft] + [recommended]
+      .combineLatest(marketplaceDraftQuestSection, marketplacePersonalQuestSection, marketplaceRecommendedQuestSection) { draft, personal, recommended -> [MarketplaceQuestSection] in
+        [draft] + [personal] + [recommended]
       }
       .compactMap { sections -> [MarketplaceQuestSection] in
         sections.filter { !$0.items.isEmpty }
       }
-    
-    let editQuest = input.selection
-      .withLatestFrom(marketplaceQuestSections) { indexPath, sections -> (section: MarketplaceQuestSection, item: MarketplaceQuestSectionItem) in
-        (sections[indexPath.section], sections[indexPath.section].items[indexPath.item])
-      }
-      .filter { (section, item) in
-        section.type == .personal
-      }
-      .map { (section, item) -> Quest in
-        item.quest
-      }
-      .map { quest -> AppStep in
-          .questEditIsRequired(quest: quest)
-      }
-      .do { step in
-        self.steps.accept(step)
+  
+    let selectedItem = input.selection
+      .withLatestFrom(marketplaceQuestSections) { indexPath, sections -> MarketplaceQuestSectionItem in
+        sections[indexPath.section].items[indexPath.item]
       }
     
-    let openQuest = input.selection
-      .withLatestFrom(marketplaceQuestSections) { indexPath, sections -> (section: MarketplaceQuestSection, item: MarketplaceQuestSectionItem) in
-        (sections[indexPath.section], sections[indexPath.section].items[indexPath.item])
-      }
-      .filter { (section, item) in
-        section.type != .personal
-      }
-      .map { (section, item) -> Quest in
-        item.quest
-      }
-      .map { quest -> AppStep in
-          .questIsRequired(quest: quest)
-      }
-      .do { step in
-        self.steps.accept(step)
+    let navigateToSelectionQuest = selectedItem
+      .compactMap { item -> AppStep? in
+        switch item.quest.status {
+        case .draft:
+          return .questEditIsRequired(quest: item.quest)
+        case .published:
+          return item.quest.userUID == Auth.auth().currentUser?.uid ? .questEditIsRequired(quest: item.quest) : .questIsRequired(quest: item.quest)
+        default:
+          return nil
+        }
       }
 
+    let navigateToQuest = Driver
+      .of(navigateToCreateQuest, navigateToSelectionQuest)
+      .merge()
+      .do { step in
+        self.steps.accept(step)
+      }
     
     return Output(
-      auth: auth,
-      // hrader
-      addButtonIsHidden: addButtonIsHidden,
-      // pleaseAuthContainerViewIsHidden
-      pleaseAuthContainerViewIsHidden: pleaseAuthContainerViewIsHidden,
+      // navigate
+  
+      navigateToQuest: navigateToQuest,
+      navigateToSearch: navigateToSearch,
+      // auth container
+    //  
       // marketplace
-      marketplaceQuestSections: marketplaceQuestSections,
-      // selection
-      openQuest: openQuest,
-      createQuest: createQuest,
-      editQuest: editQuest
+      marketplaceQuestSections: marketplaceQuestSections
     )
   }
 }

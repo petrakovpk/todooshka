@@ -10,7 +10,6 @@ import UIKit
 
 struct MarketplaceQuestSectionItem {
   let quest: Quest
-  let image: UIImage
 }
 
 // MARK: - Identity
@@ -22,7 +21,5 @@ extension MarketplaceQuestSectionItem: IdentifiableType {
 
 // MARK: - Equatable
 extension MarketplaceQuestSectionItem: Equatable {
-  static func == (lhs: MarketplaceQuestSectionItem, rhs: MarketplaceQuestSectionItem) -> Bool {
-    lhs.quest == rhs.quest
-  }
+
 }

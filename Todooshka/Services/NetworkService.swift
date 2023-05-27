@@ -5,6 +5,7 @@
 //  Created by Pavel Petakov on 16.11.2022.
 //
 
+import FirebaseAuth
 import Foundation
 import RxAlamofire
 import RxCocoa
@@ -18,9 +19,15 @@ class NetworkService {
   let disposeBag = DisposeBag()
   
   init() {
-    RxAlamofire.requestData(.get, "http://185.182.110.164/task/all")
-      .debug()
-      .asDriverOnErrorJustComplete()
+    Auth.auth().rx.stateDidChange
+      .compactMap { $0 }
+      .map { user -> UserExtData in
+        UserExtData(uid: user.uid, nickname: user.displayName)
+      }
+      .flatMapLatest { userExtData -> Observable<Void> in
+        userExtData.putUserToCloud()
+      }
+      .asDriver(onErrorJustReturn: ())
       .drive()
       .disposed(by: disposeBag)
   }

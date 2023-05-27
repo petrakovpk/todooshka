@@ -19,6 +19,8 @@ class PublicationEditViewModel: Stepper {
   struct Input {
     // header
     let backButtonClickTrigger: Driver<Void>
+    // auth
+    let authButtonClickTrigger: Driver<Void>
     // text
     let publicationTextView: Driver<String?>
     // kind
@@ -33,9 +35,10 @@ class PublicationEditViewModel: Stepper {
   struct Output {
     // header
     let navigateBack: Driver<AppStep>
-    let openPublicKind: Driver<AppStep>
+    // auth
+    let navigateToAuth: Driver<AppStep>
+    let authContainerIsHidden: Driver<Bool>
     // imageView
-    let publicKindUIImage: Driver<UIImage?>
     // publication
     let publicationText: Driver<String?>
     let publicationUIImage: Driver<UIImage?>
@@ -58,6 +61,8 @@ class PublicationEditViewModel: Stepper {
   
   // MARK: - Transform
   func transform(input: Input) -> Output {
+    let currentUser = services.currentUserService.user
+    
     let publication = services.temporaryDataService
       .temporaryPublication
       .asDriver()
@@ -70,19 +75,19 @@ class PublicationEditViewModel: Stepper {
     
     let publicKinds = services.currentUserService.publicKinds
     
-    let publicKind = Driver
-      .combineLatest(publication, publicKinds) { publication, publicKinds -> PublicKind? in
-        publicKinds.first { $0.uuid == publication.publicKindUUID }
-    }
-      .debug()
-        
+//    let publicKind = Driver
+//      .combineLatest(publication, publicKinds) { publication, publicKinds -> PublicKind? in
+//        publicKinds.first { $0.uuid == publication.publicKindUUID }
+//    }
+//      .debug()
+//        
     let publicationText = publication
       .map { $0.text }
     
-    let publicKindUIImage = publicKind
-      .map { publicKind -> UIImage? in
-        publicKind?.image
-      }
+//    let publicKindUIImage = publicKind
+//      .map { publicKind -> UIImage? in
+//        publicKind?.image
+//      }
     
     let publicationUIImage = publicationImage
       .map { $0?.image }
@@ -159,12 +164,23 @@ class PublicationEditViewModel: Stepper {
         self.steps.accept(step)
       }
     
+    let navigateToAuth = input.authButtonClickTrigger
+      .map { _ -> AppStep in
+          .authIsRequired
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
+    
+    let authContainerIsHidden = currentUser
+      .map { $0 != nil }
+    
     return Output(
       // header
       navigateBack: navigateBack,
-      openPublicKind: openPublicKind,
-      // public kind
-      publicKindUIImage: publicKindUIImage,
+      // auth
+      navigateToAuth: navigateToAuth,
+      authContainerIsHidden: authContainerIsHidden,
       // publication
       publicationText: publicationText,
       publicationUIImage: publicationUIImage,

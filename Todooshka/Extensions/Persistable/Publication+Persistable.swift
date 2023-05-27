@@ -31,28 +31,20 @@ extension Publication: Persistable {
     else { return nil }
 
     self.uuid = uuid
-    self.created = created
-    self.userUID = entity.value(forKey: "userUID") as? String
-    self.taskUUID = entity.value(forKey: "taskUUID") as? UUID
     self.text = entity.value(forKey: "text") as? String
+    self.isPublic = entity.value(forKey: "isPublic") as? Bool ?? false
+    self.created = created
     self.published = entity.value(forKey: "published") as? Date
-    self.publicKindUUID = entity.value(forKey: "publicKindUUID") as? UUID
-    
-    if let statusRawValue = entity.value(forKey: "statusRawValue") as? String,
-       let status = PublicationStatus(rawValue: statusRawValue) {
-      self.status = status
-    }
+    self.userUID = entity.value(forKey: "userUID") as? String
   }
 
   func update(_ entity: T) {
     entity.setValue(uuid, forKey: "uuid")
-    entity.setValue(userUID, forKey: "userUID")
-    entity.setValue(taskUUID, forKey: "taskUUID")
     entity.setValue(text, forKey: "text")
-    entity.setValue(status.rawValue, forKey: "statusRawValue")
+    entity.setValue(isPublic, forKey: "isPublic")
     entity.setValue(created, forKey: "created")
     entity.setValue(published, forKey: "published")
-    entity.setValue(publicKindUUID, forKey: "publicKindUUID")
+    entity.setValue(userUID, forKey: "userUID")
   }
 
   func save(_ entity: T) {

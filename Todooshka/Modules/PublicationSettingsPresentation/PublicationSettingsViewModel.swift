@@ -67,7 +67,7 @@ class PublicationSettingsViewModel: Stepper {
       .filter { $0.type == .draftIsRequired }
       .map { _ -> Publication in
         var publication = self.publication
-        publication.status = .unpublished
+        publication.isPublic = false
         return publication
       }
       .flatMapLatest { publication -> Driver<Void> in

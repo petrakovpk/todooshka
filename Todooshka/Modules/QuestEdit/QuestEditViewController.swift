@@ -326,7 +326,8 @@ class QuestEditViewController: TDViewController {
       outputs.saveTitle.drive(),
       outputs.saveDescription.drive(),
       // bottom buttons
-      outputs.publishButtonIsEnabled.drive(publishButtonIsEnabledBinder)
+      outputs.publishButtonIsEnabled.drive(publishButtonIsEnabledBinder),
+      outputs.publishQuest.drive()
     ]
       .forEach { $0.disposed(by: disposeBag) }
   }

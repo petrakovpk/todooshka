@@ -37,7 +37,7 @@ class PublicationViewModel: Stepper {
     let navigateToPublicationSettings: Driver<AppStep>
     let titleHeader: Driver<String>
     // imageView
-    let publicKindUIImage: Driver<UIImage?>
+  //  let publicKindUIImage: Driver<UIImage?>
     // publication
     let publicationText: Driver<String?>
     let publicationUIImage: Driver<UIImage?>
@@ -76,19 +76,19 @@ class PublicationViewModel: Stepper {
         publicationImages.first { $0.publicationUUID == publication.uuid }
       }
     
-    let publicKind = Driver
-      .combineLatest(publication, publicKinds) { publication, publicKinds -> PublicKind? in
-        publicKinds.first { $0.uuid == publication.publicKindUUID }
-      }
+//    let publicKind = Driver
+//      .combineLatest(publication, publicKinds) { publication, publicKinds -> PublicKind? in
+//        publicKinds.first { $0.uuid == publication.publicKindUUID }
+//      }
     
-    let publicKindUIImage = publicKind
-      .map { $0?.image }
-      
+//    let publicKindUIImage = publicKind
+//      .map { $0?.image }
+//
     let publish = input.publishButtonClickTrigger
       .withLatestFrom(publication)
       .map { publication -> Publication in
         var publication = publication
-        publication.status = .published
+        publication.isPublic = true
         return publication
       }
       .flatMapLatest { publication -> Driver<Void> in
@@ -125,23 +125,23 @@ class PublicationViewModel: Stepper {
     
     let titleHeader = publication
       .map { publication -> String in
-        publication.status == .unpublished ? "Черновик" : "Опубликовано"
+        publication.isPublic ? "Опубликовано" : "Черновик"
       }
 
     let publishButtonIsEnabled = publication
       .map { publication -> Bool in
-        publication.status == .unpublished
+        publication.isPublic == false
       }
 
     let publicationUIImage = publicationImage
-      .map{ $0?.image }
+      .map { $0?.image }
     
     return Output(
       // header
       navigateBack: navigateBack,
       navigateToPublicationSettings: navigateToPublicationSettings,
       titleHeader: titleHeader,
-      publicKindUIImage: publicKindUIImage,
+    //  publicKindUIImage: publicKindUIImage,
       // publication
       publicationText: publicationText,
       publicationUIImage: publicationUIImage,

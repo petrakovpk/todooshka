@@ -13,37 +13,19 @@ class FunCell: UITableViewCell {
   static var reuseID: String = "FunItemTaskCell"
   
   // MARK: - UI Elements
-  private let authorImageView: UIImageView = {
-    let view = UIImageView()
-    view.cornerRadius = 5
-    view.isSkeletonable = true
-    view.contentMode = .scaleAspectFit
-    return view
+  private let publicationTextView: UITextView = {
+    let textView = UITextView()
+    textView.backgroundColor = .lightGray.withAlphaComponent(0.2)
+    textView.cornerRadius = 15
+    textView.isEditable = false
+    textView.textAlignment = .center
+    return textView
   }()
   
-  private let authorNameLabel: UILabel = {
-    let label = UILabel()
-    label.cornerRadius = 5
-    label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-    label.isSkeletonable = true
-    return label
-  }()
-  
-  public let taskTextLabel: UILabel = {
-    let label = UILabel()
-    label.cornerRadius = 5
-    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-    label.lineBreakMode = .byWordWrapping
-    label.numberOfLines = 2
-    label.isSkeletonable = true
-    return label
-  }()
-  
-  private let resultImageView: UIImageView = {
+  private let publicationImageView: UIImageView = {
     let imageView = UIImageView()
-    imageView.layer.cornerRadius = 5
-    imageView.isSkeletonable = true
-    imageView.contentMode = .scaleAspectFit
+    imageView.backgroundColor = .lightGray.withAlphaComponent(0.2)
+    imageView.cornerRadius = 8
     return imageView
   }()
   
@@ -62,64 +44,78 @@ class FunCell: UITableViewCell {
     backgroundColor = Style.App.background
     selectionStyle = .none
     contentView.addSubviews([
-      authorImageView,
-      authorNameLabel,
-      taskTextLabel,
-      resultImageView
+      publicationTextView,
+      publicationImageView
     ])
     
-    setupConstraints()
-  }
-  
-  private func setupConstraints() {
-    authorImageView.anchor(
+    publicationTextView.anchor(
       top: contentView.topAnchor,
       left: contentView.leftAnchor,
-      topConstant: 16,
-      widthConstant: 75,
-      heightConstant: 75
-    )
-    
-    authorNameLabel.anchor(
-      top: contentView.topAnchor,
-      left: authorImageView.rightAnchor,
       right: contentView.rightAnchor,
       topConstant: 16,
       leftConstant: 16,
-      heightConstant: 20
-    )
-    
-    taskTextLabel.anchor(
-      top: authorNameLabel.bottomAnchor,
-      left: authorImageView.rightAnchor,
-      right: contentView.rightAnchor,
-      topConstant: 5,
-      leftConstant: 16,
+      rightConstant: 16,
       heightConstant: 50
     )
-    
-    resultImageView.anchor(
-      top: taskTextLabel.bottomAnchor,
+
+    publicationImageView.anchor(
+      top: publicationTextView.bottomAnchor,
       left: contentView.leftAnchor,
       bottom: contentView.bottomAnchor,
       right: contentView.rightAnchor,
-      topConstant: 16
+      topConstant: 8,
+      leftConstant: 16,
+      bottomConstant: 8,
+      rightConstant: 16
     )
+  }
+  
+  private func setupConstraints() {
+//    authorImageView.anchor(
+//      top: contentView.topAnchor,
+//      left: contentView.leftAnchor,
+//      topConstant: 16,
+//      widthConstant: 75,
+//      heightConstant: 75
+//    )
+//
+//    authorNameLabel.anchor(
+//      top: contentView.topAnchor,
+//      left: authorImageView.rightAnchor,
+//      right: contentView.rightAnchor,
+//      topConstant: 16,
+//      leftConstant: 16,
+//      heightConstant: 20
+//    )
+    
+//    taskTextLabel.anchor(
+//      top: contentView.topAnchor,
+//      left: contentView.leftAnchor,
+//      right: contentView.rightAnchor,
+//      topConstant: 5,
+//      leftConstant: 16,
+//      heightConstant: 50
+//    )
+//
+//    resultImageView.anchor(
+//      top: taskTextLabel.bottomAnchor,
+//      left: contentView.leftAnchor,
+//      bottom: contentView.bottomAnchor,
+//      right: contentView.rightAnchor,
+//      topConstant: 16
+//    )
   }
   
   func configure(with item: FunItem) {
     if item.isLoading {
-      authorImageView.showSkeleton(usingColor: .lightGray.withAlphaComponent(0.5))
-      authorNameLabel.showSkeleton(usingColor: .lightGray.withAlphaComponent(0.5))
-      taskTextLabel.showSkeleton(usingColor: .lightGray.withAlphaComponent(0.5))
-      resultImageView.showSkeleton(usingColor: .lightGray.withAlphaComponent(0.5))
+      publicationTextView.showSkeleton(usingColor: .lightGray.withAlphaComponent(0.5))
+      publicationImageView.showSkeleton(usingColor: .lightGray.withAlphaComponent(0.5))
+
     } else {
-      authorImageView.hideSkeleton()
-      authorNameLabel.hideSkeleton()
-      taskTextLabel.hideSkeleton()
-      resultImageView.hideSkeleton()
-      taskTextLabel.text = item.task.text
-      resultImageView.image = item.image
+      publicationTextView.hideSkeleton()
+      publicationImageView.hideSkeleton()
+      publicationTextView.text = item.publication.text
+      publicationImageView.image = item.image
     }
     
   }

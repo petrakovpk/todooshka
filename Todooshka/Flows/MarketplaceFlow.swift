@@ -36,6 +36,9 @@ class MarketplaceFlow: Flow {
     case .authIsRequired:
       return navigateToAuth()
       
+    case .searchIsRequired:
+      return navigateToSearch()
+      
     case .questIsRequired(let quest):
       return navigateToOpenQuest(quest: quest)
     case .questGalleryIsRequired(let quest, let questImage):
@@ -83,6 +86,29 @@ class MarketplaceFlow: Flow {
     viewController.viewModel = viewModel
     rootViewController.pushViewController(viewController, animated: false)
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
+  }
+  
+  private func navigateToSearch() -> FlowContributors {
+    let viewController = SearchViewController()
+    let viewModel = SearchViewModel(services: services)
+    
+    let searchQuestsViewController = SearchQuestsViewController()
+    let searchQuestsViewModel = SearchQuestsViewModel(services: services)
+    
+    let searchUsersViewController = SearchUsersViewController()
+    let searchUsersViewModel = SearchUsersViewModel(services: services)
+    
+    searchQuestsViewController.viewModel = searchQuestsViewModel
+    searchUsersViewController.viewModel = searchUsersViewModel
+    
+    viewController.viewControllers = [searchQuestsViewController, searchUsersViewController]
+    viewController.viewModel = viewModel
+    
+    rootViewController.pushViewController(viewController, animated: true)
+    return .one(flowContributor: .contribute(
+      withNextPresentable: viewController,
+      withNextStepper: CompositeStepper(steppers: [viewModel, searchQuestsViewModel, searchUsersViewModel])
+    ))
   }
   
   private func navigateToAuth() -> FlowContributors {
@@ -157,9 +183,7 @@ class MarketplaceFlow: Flow {
       sheet.detents = [fraction, .medium()]
     }
     
-   // rootViewController.tabBarController?.tabBar.isHidden = false
     rootViewController.present(viewController, animated: true)
-
     return .one(flowContributor: .contribute(withNextPresentable: viewController, withNextStepper: viewModel))
   }
   

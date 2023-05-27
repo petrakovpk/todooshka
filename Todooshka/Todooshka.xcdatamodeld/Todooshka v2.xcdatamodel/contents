@@ -45,10 +45,8 @@
     </entity>
     <entity name="Publication" representedClassName="" syncable="YES">
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="publicKindUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isPublic" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="published" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="statusRawValue" optional="YES" attributeType="String"/>
-        <attribute name="taskUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="userUID" optional="YES" attributeType="String"/>
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
@@ -99,6 +97,6 @@
     <entity name="UserExtData" representedClassName="" syncable="YES">
         <attribute name="imageData" optional="YES" attributeType="Binary"/>
         <attribute name="nickName" optional="YES" attributeType="String"/>
-        <attribute name="userUID" optional="YES" attributeType="String"/>
+        <attribute name="uid" optional="YES" attributeType="String"/>
     </entity>
 </model>

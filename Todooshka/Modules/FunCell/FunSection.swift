@@ -8,13 +8,13 @@
 import RxDataSources
 
 struct FunSection {
-  var items: [FunCellType]
+  var items: [FunItem]
   
-  init(items: [FunCellType]) {
+  init(items: [FunItem]) {
     self.items = items
   }
   
-  init(original: FunSection, items: [FunCellType]) {
+  init(original: FunSection, items: [FunItem]) {
     self = original
     self.items = items
   }

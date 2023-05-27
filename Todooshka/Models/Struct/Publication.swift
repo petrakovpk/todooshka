@@ -7,20 +7,13 @@
 
 import FirebaseAuth
 
-enum PublicationStatus: String {
-  case unpublished
-  case published
-}
-
 struct Publication {
   let uuid: UUID
-  var userUID: String? = Auth.auth().currentUser?.uid
-  var taskUUID: UUID?
-  var publicKindUUID: UUID?
+  var text: String?
+  var isPublic: Bool = false
   var created: Date = Date()
   var published: Date?
-  var text: String? = ""
-  var status: PublicationStatus = .unpublished
+  var userUID: String? = Auth.auth().currentUser?.uid
 }
 
 extension Publication: Equatable {

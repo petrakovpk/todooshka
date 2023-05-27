@@ -23,8 +23,7 @@ class AddPresentationViewController: UIViewController {
   private let createPublicationButton: UIButton = {
     let attrString = NSAttributedString(
       string: "Публикация",
-      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)]
-    )
+      attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13, weight: .medium)])
     let button = UIButton(type: .system)
     button.backgroundColor = Palette.SingleColors.Rose
     button.setAttributedTitle(attrString, for: .normal)

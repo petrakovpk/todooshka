@@ -52,6 +52,7 @@ class QuestEditViewModel: Stepper {
     let saveDescription: Driver<Void>
     // bottom buttons
     let publishButtonIsEnabled: Driver<Bool>
+    let publishQuest: Driver<AppStep>
   }
 
   // MARK: - Init
@@ -187,6 +188,23 @@ class QuestEditViewModel: Stepper {
       .map { quest -> Bool in
         !quest.name.isEmpty && quest.previewImage != nil
       }
+    
+    let publishQuest = input.publishButtonClickTrigger
+      .withLatestFrom(quest)
+      .map { quest -> Quest in
+        var quest = quest
+        quest.status = .published
+        return quest
+      }
+      .flatMapLatest { quest -> Driver<Void> in
+        StorageManager.shared.managedContext.rx.update(quest).asDriverOnErrorJustComplete()
+      }
+      .map { _ -> AppStep in
+          .navigateBack
+      }
+      .do { step in
+        self.steps.accept(step)
+      }
 
     return Output(
       // header
@@ -205,7 +223,8 @@ class QuestEditViewModel: Stepper {
       saveTitle: saveTitle,
       saveDescription: saveDescription,
       // bottom buttons
-      publishButtonIsEnabled: publishButtonIsEnabled
+      publishButtonIsEnabled: publishButtonIsEnabled,
+      publishQuest: publishQuest
     )
   }
 }

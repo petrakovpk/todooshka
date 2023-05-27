@@ -40,17 +40,6 @@ class CurrentUserService {
       .asDriver(onErrorJustReturn: nil)
     
     // Анонимный вход
-    user
-      .asObservable()
-      .take(1)
-      .filter { $0 == nil }
-      .flatMapLatest { _ -> Observable<AuthDataResult> in
-        Auth.auth().rx.signInAnonymously()
-      }
-      .asDriverOnErrorJustComplete()
-      .drive()
-      .disposed(by: disposeBag)
-    
     let currentUserPredicate = user
       .map { user -> NSPredicate in
         if let uid = user?.uid {
@@ -71,7 +60,7 @@ class CurrentUserService {
       .withLatestFrom(user)
       .compactMap { $0 }
       .map { user -> UserExtData in
-        UserExtData(userUID: user.uid)
+        UserExtData(uid: user.uid)
       }
       .flatMapLatest { userExtData -> Driver<Void> in
         StorageManager.shared.managedContext.rx.update(userExtData)
@@ -150,6 +139,7 @@ class CurrentUserService {
       }
       .subscribe()
       .disposed(by: disposeBag)
+  
     
     kindColors = Driver<[UIColor]>.of([
       Palette.SingleColors.Amethyst,
